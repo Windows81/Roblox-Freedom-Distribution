@@ -1,0 +1,248 @@
+09:41:01:278 [08428] | INFO  | Initializing crosire's ReShade version '5.4.2.1607' (32-bit) loaded from "C:\Program Files\FilteringDisabled\Clients\2018M\Player\dxgi.dll" into "C:\Program Files\FilteringDisabled\Clients\2018M\Player\RobloxPlayerBeta.exe" ...
+09:41:01:279 [08428] | INFO  | Registering hooks for "user32.dll" ...
+09:41:01:279 [08428] | INFO  | > Libraries loaded.
+09:41:01:281 [08428] | INFO  | > Found 14 match(es). Installing ...
+09:41:01:319 [08428] | INFO  | Registering hooks for "C:\WINDOWS\system32\d2d1.dll" ...
+09:41:01:320 [08428] | INFO  | > Delayed.
+09:41:01:320 [08428] | INFO  | Registering hooks for "C:\WINDOWS\system32\d3d9.dll" ...
+09:41:01:320 [08428] | INFO  | > Delayed.
+09:41:01:320 [08428] | INFO  | Registering hooks for "C:\WINDOWS\system32\d3d10.dll" ...
+09:41:01:321 [08428] | INFO  | > Delayed.
+09:41:01:321 [08428] | INFO  | Registering hooks for "C:\WINDOWS\system32\d3d10_1.dll" ...
+09:41:01:321 [08428] | INFO  | > Delayed.
+09:41:01:322 [08428] | INFO  | Registering hooks for "C:\WINDOWS\system32\d3d11.dll" ...
+09:41:01:322 [08428] | INFO  | > Libraries loaded.
+09:41:01:322 [08428] | INFO  | > Found 3 match(es). Installing ...
+09:41:01:355 [08428] | INFO  | Registering hooks for "C:\WINDOWS\system32\d3d12.dll" ...
+09:41:01:356 [08428] | INFO  | > Delayed.
+09:41:01:356 [08428] | INFO  | Registering hooks for "C:\WINDOWS\system32\dxgi.dll" ...
+09:41:01:356 [08428] | INFO  | > Delayed until first call to an exported function.
+09:41:01:357 [08428] | INFO  | Registering hooks for "vrclient.dll" ...
+09:41:01:357 [08428] | INFO  | > Delayed.
+09:41:01:357 [08428] | INFO  | Registering hooks for "C:\WINDOWS\system32\dinput.dll" ...
+09:41:01:358 [08428] | INFO  | > Delayed.
+09:41:01:359 [08428] | INFO  | Initialized.
+09:41:01:359 [08428] | INFO  | Redirecting CreateDXGIFactory1(riid = {770AAE78-F26F-4DBA-A829-253C83D1B387}, ppFactory = 0019F1D0) ...
+09:41:01:360 [08428] | INFO  | Installing export hooks for "C:\WINDOWS\system32\dxgi.dll" ...
+09:41:01:360 [08428] | INFO  | > Found 5 match(es). Installing ...
+09:41:01:362 [10424] | INFO  | Redirecting RegisterClassExW(lpWndClassEx = 0D5CFEA8 { "Message", style = 0 }) ...
+09:41:01:372 [08428] | INFO  | Redirecting D3D11CreateDevice(pAdapter = 09D911E0, DriverType = 0, Software = 00000000, Flags = 0, pFeatureLevels = 0019F1E8, FeatureLevels = 3, SDKVersion = 7, ppDevice = 05B175CC, pFeatureLevel = 00000000, ppImmediateContext = 05B175D0) ...
+09:41:01:373 [08428] | INFO  | > Passing on to D3D11CreateDeviceAndSwapChain:
+09:41:01:373 [08428] | INFO  | Redirecting D3D11CreateDeviceAndSwapChain(pAdapter = 09D911E0, DriverType = 0, Software = 00000000, Flags = 0, pFeatureLevels = 0019F1E8, FeatureLevels = 3, SDKVersion = 7, pSwapChainDesc = 00000000, ppSwapChain = 00000000, ppDevice = 05B175CC, pFeatureLevel = 00000000, ppImmediateContext = 05B175D0) ...
+09:41:01:410 [08428] | INFO  | Using feature level 0xb000.
+09:41:01:413 [08428] | INFO  | Searching for add-ons (*.addon) in "C:\Program Files\FilteringDisabled\Clients\2018M\Player" ...
+09:41:01:415 [08428] | INFO  | Redirecting IDXGIFactory::CreateSwapChain(this = 09AD1568, pDevice = 09C61D6C, pDesc = 0019F198, ppSwapChain = 0019F1F4) ...
+09:41:01:415 [08428] | INFO  | > Dumping swap chain description:
+09:41:01:415 [08428] | INFO  |   +-----------------------------------------+-----------------------------------------+
+09:41:01:415 [08428] | INFO  |   | Parameter                               | Value                                   |
+09:41:01:415 [08428] | INFO  |   +-----------------------------------------+-----------------------------------------+
+09:41:01:415 [08428] | INFO  |   | Width                                   | 800                                     |
+09:41:01:415 [08428] | INFO  |   | Height                                  | 599                                     |
+09:41:01:415 [08428] | INFO  |   | RefreshRate                             | 0                   1                   |
+09:41:01:415 [08428] | INFO  |   | Format                                  | DXGI_FORMAT_R8G8B8A8_UNORM              |
+09:41:01:415 [08428] | INFO  |   | ScanlineOrdering                        | 0                                       |
+09:41:01:415 [08428] | INFO  |   | Scaling                                 | 0                                       |
+09:41:01:415 [08428] | INFO  |   | SampleCount                             | 1                                       |
+09:41:01:415 [08428] | INFO  |   | SampleQuality                           | 0                                       |
+09:41:01:415 [08428] | INFO  |   | BufferUsage                             | 0x20                                    |
+09:41:01:415 [08428] | INFO  |   | BufferCount                             | 1                                       |
+09:41:01:415 [08428] | INFO  |   | OutputWindow                            | 00020B38                                |
+09:41:01:415 [08428] | INFO  |   | Windowed                                | TRUE                                    |
+09:41:01:415 [08428] | INFO  |   | SwapEffect                              | 0                                       |
+09:41:01:415 [08428] | INFO  |   | Flags                                   | 0                                       |
+09:41:01:415 [08428] | INFO  |   +-----------------------------------------+-----------------------------------------+
+09:41:01:626 [08428] | INFO  | Running on AMD Radeon(TM) Graphics.
+09:41:01:665 [08428] | INFO  | Installing delayed hooks for "C:\WINDOWS\system32\d3d9.dll" (Just loaded via LoadLibrary("C:\WINDOWS\SYSTEM32\d3d9.dll")) ...
+09:41:01:666 [08428] | INFO  | > Found 9 match(es). Installing ...
+09:41:01:890 [09564] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Border.fx".
+09:41:01:903 [27772] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\AdaptiveFog.fx".
+09:41:01:923 [27936] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\CRT.fx".
+09:41:01:923 [27972] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FilmGrain2.fx".
+09:41:01:929 [27968] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Layer.fx".
+09:41:01:930 [09564] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Cartoon.fx".
+09:41:01:930 [27992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\MBMB.fx".
+09:41:01:931 [27980] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Nostalgia.fx".
+09:41:01:931 [10412] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_03_Curved_Levels.fx".
+09:41:01:932 [25404] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Contrast_Brightness_Saturation.fx".
+09:41:01:934 [27904] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FXAA.fx".
+09:41:01:940 [27868] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Depth_Cues.fx".
+09:41:01:952 [27772] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\AdaptiveSharpen.fx".
+09:41:01:963 [27972] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FilmicPass.fx".
+09:41:01:966 [28008] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_lightroom.fx".
+09:41:01:976 [27964] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\TrackingRays.fx".
+09:41:01:978 [26924] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Sketch.fx".
+09:41:01:978 [27968] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Levels.fx".
+09:41:01:983 [08428] | INFO  | Redirecting IDXGISwapChain::ResizeBuffers(this = 09DA93A0, BufferCount = 0, Width = 0, Height = 0, NewFormat = 0, SwapChainFlags = 0) ...
+09:41:01:986 [09564] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\CAS.fx".
+09:41:01:987 [27932] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_06_Luma_Fade.fx".
+09:41:01:988 [27992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\MinimalColorGrading.fx".
+09:41:01:991 [27980] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Overlay.fx".
+09:41:01:998 [27936] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\CRT_Lottes.fx".
+09:41:02:027 [27868] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\DisplayDepth.fx".
+09:41:02:035 [27968] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\LevelsPlus.fx".
+09:41:02:059 [27904] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\GaussianBlur.fx".
+09:41:02:061 [25404] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Magical_Rectangle.fx".
+09:41:02:082 [27964] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Trails.fx".
+09:41:02:082 [10412] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_03_Filmic_Adaptation.fx".
+09:41:02:093 [27772] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\AdaptiveTonemapper.fx".
+09:41:02:108 [28008] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_mxao.fx".
+09:41:02:123 [27972] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FineSharp.fx".
+09:41:02:136 [26924] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\SMAA.fx".
+09:41:02:168 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Border.fx".
+09:41:02:183 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\AdaptiveFog.fx".
+09:41:02:200 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\CRT.fx".
+09:41:02:202 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Layer.fx".
+09:41:02:202 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FilmGrain2.fx".
+09:41:02:208 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_03_Curved_Levels.fx".
+09:41:02:210 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\MBMB.fx".
+09:41:02:210 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Nostalgia.fx".
+09:41:02:211 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Cartoon.fx".
+09:41:02:217 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FXAA.fx".
+09:41:02:224 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Contrast_Brightness_Saturation.fx".
+09:41:02:230 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Depth_Cues.fx".
+09:41:02:245 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Levels.fx".
+09:41:02:253 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FilmicPass.fx".
+09:41:02:266 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\TrackingRays.fx".
+09:41:02:266 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\AdaptiveSharpen.fx".
+09:41:02:266 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_lightroom.fx".
+09:41:02:269 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Sketch.fx".
+09:41:02:277 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\MinimalColorGrading.fx".
+09:41:02:277 [03600] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_06_Luma_Fade.fx".
+09:41:02:289 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Overlay.fx".
+09:41:02:289 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\CRT_Lottes.fx".
+09:41:02:301 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\CAS.fx".
+09:41:02:339 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\GaussianBlur.fx".
+09:41:02:340 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_03_Filmic_Adaptation.fx".
+09:41:02:340 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\DisplayDepth.fx".
+09:41:02:351 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\LevelsPlus.fx".
+09:41:02:351 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Magical_Rectangle.fx".
+09:41:02:412 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Monochrome.fx".
+09:41:02:424 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Trails.fx".
+09:41:02:433 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\CRT_Yee64.fx".
+09:41:02:434 [03600] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_06_Posterize_Pixelate.fx".
+09:41:02:436 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\AdaptiveTonemapper.fx".
+09:41:02:446 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Checkerboard.fx".
+09:41:02:449 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Glitch.fx".
+09:41:02:471 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_03_Levels.fx".
+09:41:02:482 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_mxao.fx".
+09:41:02:483 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Dither.fx".
+09:41:02:495 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\LiftGammaGain.fx".
+09:41:02:495 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_01A_RT_Correct_Contrast.fx".
+09:41:02:495 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FineSharp.fx".
+09:41:02:507 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Saturation_Limit.fx".
+09:41:02:518 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\MultiFX.fx".
+09:41:02:542 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\SMAA.fx".
+09:41:02:543 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\CRT_Yeetron.fx".
+09:41:02:543 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\UIMask.fx".
+09:41:02:578 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Chromakey.fx".
+09:41:02:652 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Selective_Color.fx".
+09:41:02:603 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_03_Shadows_Midtones_Highlights.fx".
+09:41:02:614 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_sharp.fx".
+09:41:02:579 [03600] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PiecewiseFilmicTonemap.fx".
+09:41:02:688 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\AmbientLight.fx".
+09:41:02:698 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Smart_Sharp.fx".
+09:41:02:700 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\LightDoF.fx".
+09:41:02:701 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Cursor.fx".
+09:41:02:712 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\DLAA_Plus.fx".
+09:41:02:722 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\ChromaticAberration.fx".
+09:41:02:726 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_01B_RT_Correct_Color.fx".
+09:41:02:727 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Selective_Color_v2.fx".
+09:41:02:734 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_BlacknWhite.fx".
+09:41:02:735 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\GloomAO.fx".
+09:41:02:784 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\MXAO.fx".
+09:41:02:784 [03600] | WARN  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Pong.fx" with warnings:
+C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FXShaders/Digits.fxh(827, 31): warning X3206: implicit truncation of vector type
+C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Pong.fx(244, 38): warning X3206: implicit truncation of vector type
+
+09:41:02:796 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\UnrealLens.fx".
+09:41:02:796 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Splitscreen.fx".
+09:41:02:796 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Flair.fx".
+09:41:02:796 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Curves.fx".
+09:41:02:806 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_ssr.fx".
+09:41:02:822 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_01_Color_Gamut.fx".
+09:41:02:830 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Technicolor.fx".
+09:41:02:843 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Color_Balance.fx".
+09:41:02:878 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\LiquidLens.fx".
+09:41:02:926 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Clarity.fx".
+09:41:02:929 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\StageDepth.fx".
+09:41:02:955 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Flashlight.fx".
+09:41:02:956 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Daltonize.fx".
+09:41:02:975 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\HexLensFlare.fx".
+09:41:03:013 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\LumaSharpen.fx".
+09:41:03:015 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\NeoBloom.fx".
+09:41:03:016 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\ColorLab.fx".
+09:41:03:024 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Unsharp.fx".
+09:41:03:027 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_05_Sharpening.fx".
+09:41:03:034 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\SurfaceBlur.fx".
+09:41:03:034 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FlexibleCA.fx".
+09:41:03:046 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Deband.fx".
+09:41:03:058 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\HighPassSharpen.fx".
+09:41:03:059 [03600] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PPFX_Bloom.fx".
+09:41:03:070 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Color_Gradients.fx".
+09:41:03:082 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\LUT.fx".
+09:41:03:105 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\ColorMatrix.fx".
+09:41:03:106 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Vibrance.fx".
+09:41:03:117 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\NFAA.fx".
+09:41:03:130 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\DOF.fx".
+09:41:03:131 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_06_Chromatic_Aberration.fx".
+09:41:03:143 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Technicolor.fx".
+09:41:03:154 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Flip.fx".
+09:41:03:155 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_02_Bloom.fx".
+09:41:03:155 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\RadiantGI.fx".
+09:41:03:178 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\HQ4X.fx".
+09:41:03:191 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Denoise.fx".
+09:41:03:203 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Color_Isolation.fx".
+09:41:03:226 [04108] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Colourfulness.fx".
+09:41:03:227 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\ArcaneBloom.fx".
+09:41:03:238 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Vignette.fx".
+09:41:03:238 [03600] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PPFX_Godrays.fx".
+09:41:03:250 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\NightVision.fx".
+09:41:03:261 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\DPX.fx".
+09:41:03:273 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_06_Depth_Slicer.fx".
+09:41:03:274 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Technicolor2.fx".
+09:41:03:309 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_02_Bonus_LUT_pack.fx".
+09:41:03:321 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\ReflectiveBumpMapping.fx".
+09:41:03:333 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\HSL.fx".
+09:41:03:345 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\ArtisticVignette.fx".
+09:41:03:345 [01996] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\DepthAlpha.fx".
+09:41:03:346 [09748] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_04_Color_Temperature.fx".
+09:41:03:359 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FocalDOF.fx".
+09:41:03:360 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\VirtualResolution.fx".
+09:41:03:394 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Normal.fx".
+09:41:03:409 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\ASCII.fx".
+09:41:03:430 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Temporal_AA.fx".
+09:41:03:430 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\MagicBloom.fx".
+09:41:03:442 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_02_Cinetools_LUT.fx".
+09:41:03:445 [25716] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FramerateLimiter.fx".
+09:41:03:454 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\RetroFog.fx".
+09:41:03:454 [06392] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_06_Film_Grain.fx".
+09:41:03:455 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\HSLShift.fx".
+09:41:03:455 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\EyeAdaption.fx".
+09:41:03:457 [03780] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\WhitepointFixer.fx".
+09:41:03:467 [03600] | WARN  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PPFX_SSDO.fx" with warnings:
+warning: V__texNoise: another effect (PD80_03_Curved_Levels.fx) already created a texture with the same name but different dimensions
+warning: V__texNoise: another effect (PD80_03_Curved_Levels.fx) already created a texture with a different image file
+
+09:41:03:470 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\AspectRatioSuite.fx".
+09:41:03:483 [03468] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Tonemap.fx".
+09:41:03:483 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_02_LUT_Creator.fx".
+09:41:03:490 [10988] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\MagicHDR.fx".
+09:41:03:494 [27092] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\NormalMap.fx".
+09:41:03:497 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\RimLight.fx".
+09:41:03:521 [27984] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\HueShift.fx".
+09:41:03:533 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FakeHDR.fx".
+09:41:03:562 [03600] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_bloom.fx".
+09:41:03:575 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Bloom.fx".
+09:41:03:597 [27608] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\PD80_03_Color_Space_Curves.fx".
+09:41:03:620 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\SCurve.fx".
+09:41:03:647 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FakeMotionBlur.fx".
+09:41:03:658 [03600] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_deband.fx".
+09:41:03:677 [10368] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\BloomingHDR.fx".
+09:41:03:684 [03552] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\Sepia.fx".
+09:41:03:697 [01992] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\FilmGrain.fx".
+09:41:03:713 [03600] | INFO  | Successfully compiled "C:\Users\USERNAME\AppData\Local\Reshade\reshade-shaders\Shaders\qUINT_dof.fx".
+09:41:04:230 [08428] | INFO  | Resizing image data for texture 'V__lensDBTex' from 1024x576 to 1920x1080.
+09:41:04:280 [08428] | INFO  | Resizing image data for texture 'V__lensDB2Tex' from 1024x576 to 1920x1080.
+09:41:07:539 [08428] | INFO  | Exiting ...
+09:41:07:540 [08428] | INFO  | Uninstalling 35 hook(s) ...
+09:41:08:563 [08428] | INFO  | Finished exiting.
