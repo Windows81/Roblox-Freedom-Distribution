@@ -1,0 +1,17 @@
+{
+  "name": "Arial (Legacy)",
+  "faces": [
+    {
+      "name": "Regular",
+      "weight": 400,
+      "style": "normal",
+      "assetId": "rbxasset://fonts/arial.ttf"
+    },
+    {
+      "name": "Bold",
+      "weight": 700,
+      "style": "normal",
+      "assetId": "rbxasset://fonts/arialbd.ttf"
+    }
+  ]
+}

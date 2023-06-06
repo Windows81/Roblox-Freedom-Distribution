@@ -1,0 +1,41 @@
+{
+	"name": "Sarpanch",
+	"faces": [
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Sarpanch-Regular.ttf"
+		},
+		{
+			"name": "Medium",
+			"weight": 500,
+			"style": "normal",
+			"assetId": "rbxassetid://8075248692"
+		},
+		{
+			"name": "Semi Bold",
+			"weight": 600,
+			"style": "normal",
+			"assetId": "rbxassetid://8075249667"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Sarpanch-Bold.ttf"
+		},
+		{
+			"name": "Extra Bold",
+			"weight": 800,
+			"style": "normal",
+			"assetId": "rbxassetid://8075247756"
+		},
+		{
+			"name": "Black",
+			"weight": 900,
+			"style": "normal",
+			"assetId": "rbxassetid://8075246651"
+		}
+	]
+}

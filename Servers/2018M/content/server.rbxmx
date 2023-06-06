@@ -1,0 +1,14 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.localhost//roblox.xsd" version="4">
+    <External>null</External>
+    <External>nil</External>
+    <Item class="Script" referent="RBXA9BF459DE88842189FF810D1F9615061">
+		<Properties>
+			<bool name ="Disabled">false</bool>
+            <Content name="LinkedSource"><null></null></Content>
+			<string name ="Name">Script</string>
+            <string name="ScriptGuid">{1166F3A8-F70B-4DAF-B7C6-3C89D8BBC049}</string>
+			<ProtectedString name="Source"><![CDATA[_G.FilteringEnabled=true]]></ProtectedString>
+            <BinaryString name="Tags"></BinaryString>
+		</Properties>
+	</Item>
+</roblox>

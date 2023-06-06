@@ -1,0 +1,23 @@
+{
+	"name": "Kalam",
+	"faces": [
+		{
+			"name": "Light",
+			"weight": 300,
+			"style": "normal",
+			"assetId": "rbxassetid://8075177780"
+		},
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Kalam-Regular.ttf"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxassetid://8075176745"
+		}
+	]
+}

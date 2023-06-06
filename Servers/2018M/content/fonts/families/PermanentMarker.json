@@ -1,0 +1,11 @@
+{
+	"name": "Permanent Marker",
+	"faces": [
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/PermanentMarker-Regular.ttf"
+		}
+	]
+}

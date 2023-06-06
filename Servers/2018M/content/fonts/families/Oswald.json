@@ -1,0 +1,41 @@
+{
+	"name": "Oswald",
+	"faces": [
+		{
+			"name": "Extra Light",
+			"weight": 200,
+			"style": "normal",
+			"assetId": "rbxassetid://8075208793"
+		},
+		{
+			"name": "Light",
+			"weight": 300,
+			"style": "normal",
+			"assetId": "rbxassetid://8075210157"
+		},
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Oswald-Regular.ttf"
+		},
+		{
+			"name": "Medium",
+			"weight": 500,
+			"style": "normal",
+			"assetId": "rbxassetid://8075211253"
+		},
+		{
+			"name": "Semi Bold",
+			"weight": 600,
+			"style": "normal",
+			"assetId": "rbxassetid://8075212180"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Oswald-Bold.ttf"
+		}
+	]
+}

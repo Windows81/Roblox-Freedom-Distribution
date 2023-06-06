@@ -1,0 +1,35 @@
+{
+	"name": "Jura",
+	"faces": [
+		{
+			"name": "Light",
+			"weight": 300,
+			"style": "normal",
+			"assetId": "rbxassetid://8075172942"
+		},
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Jura-Regular.ttf"
+		},
+		{
+			"name": "Medium",
+			"weight": 500,
+			"style": "normal",
+			"assetId": "rbxassetid://8075174061"
+		},
+		{
+			"name": "Semi Bold",
+			"weight": 600,
+			"style": "normal",
+			"assetId": "rbxassetid://8075175707"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxassetid://8075171571"
+		}
+	]
+}

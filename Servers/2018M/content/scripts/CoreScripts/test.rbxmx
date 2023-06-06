@@ -1,0 +1,86 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.localhost//roblox.xsd" version="4">
+    <External>null</External>
+    <External>nil</External>
+    <Item class="LocalScript" referent="RBXA9BF459DE88842189FF810D1F9615061">
+		<Properties>
+			<bool name ="Disabled">false</bool>
+            <Content name="LinkedSource"><null></null></Content>
+			<string name ="Name">LocalScript</string>
+            <string name="ScriptGuid">{1166F3A8-F70B-4DAF-B7C6-3C89D8BBC049}</string>
+			<ProtectedString name="Source"><![CDATA[ _G.app='http://localhost/charscript/Custom.php/?hat=0;http://localhost/charscript/?id=0;http://localhost/asset/?id=6953584858;http://localhost/asset/?id=4737347763;http://localhost/asset/?id=212967757;http://localhost/asset/?id=86500036;http://localhost/asset/?id=86500078;http://localhost/asset/?id=86500064;http://localhost/asset/?id=86500054;http://localhost/asset/?id=86500008' print(_G.app)
+origstring =_G.app
+ local words = {}
+for w in (origstring .. ';'):gmatch('([^;]*);') do 
+    table.insert(words, w) 
+end
+local num1=words[1]
+local username1 = 'Jetray'  
+local username = 'Jetray' 
+local number= nil
+function loadchar()
+wait(0.5)
+local char = game:GetService('Players').LocalPlayer.Character
+for i,v in pairs(words) do
+    pcall(function()
+	local a=game:GetObjects(v)[1]
+	a.Parent=char
+	 end)
+	end
+local a={}
+		local newName = Instance.new('Model', char)
+		newName.Name = username..' - '..'Player'..number
+		local cl = char:WaitForChild('Head'):Clone()
+		cl.Parent = newName
+		cl:WaitForChild('face'):Destroy()
+		local hum = Instance.new('Humanoid', newName)
+		hum.Name = 'NameTag'
+		hum.MaxHealth = 0
+		hum.Health = 0
+		local weld = Instance.new('Weld', cl)
+		weld.Part0 = cl
+		weld.Part1 = char:WaitForChild('Head')
+		char:WaitForChild('Head').Transparency = 1
+        wait(0.5)
+        cl.BrickColor = char:WaitForChild('Head').BrickColor
+end
+if game:GetService('Players'):FindFirstChild('Player1') then
+if game:GetService('Players').LocalPlayer~= nil then
+ repeat wait() until game:GetService('Players').LocalPlayer.Character~= nil
+repeat wait() until game:GetService('ReplicatedStorage'):FindFirstChild('PlrCount')
+game: GetService('ReplicatedStorage'):FindFirstChild('PlrCount').Value = game:GetService('ReplicatedStorage'):FindFirstChild('PlrCount').Value + 1
+number = tostring(game: GetService('ReplicatedStorage').PlrCount.Value)
+if workspace:FindFirstChild(game: GetService('Players').LocalPlayer.Name) then
+if game:GetService('Players').LocalPlayer.Character~= nil then
+loadchar()
+game:GetService('Players').LocalPlayer.CharacterAdded:connect(function()
+pcall(function()
+loadchar()
+end)
+end)
+end
+end
+end
+end
+game:GetService('Players').PlayerAdded:connect(function(plr)
+if plr == game:GetService('Players').LocalPlayer then
+repeat wait() until game:GetService('ReplicatedStorage'):FindFirstChild('PlrCount')
+game:GetService('ReplicatedStorage'):FindFirstChild('PlrCount').Value=game:GetService('ReplicatedStorage'):FindFirstChild('PlrCount').Value+1
+number=tostring(game:GetService('ReplicatedStorage').PlrCount.Value)
+if workspace:FindFirstChild(plr.Name) then
+if plr.Character~=nil then
+loadchar()
+end
+end
+game:GetService('Players').LocalPlayer.CharacterAdded:connect(function()
+pcall(function()
+loadchar()
+end)
+end)
+end
+end)
+repeat wait() until number~=nil
+local a=Instance.new('StringValue') a.Parent=game:GetService('ReplicatedStorage') a.Name='Player'..number a.Value=username]]></ProtectedString>
+            <BinaryString name="Tags"></BinaryString>
+		</Properties>
+	</Item>
+</roblox>

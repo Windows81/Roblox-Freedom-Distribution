@@ -1,0 +1,11 @@
+{
+	"name": "Special Elite",
+	"faces": [
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/SpecialElite-Regular.ttf"
+		}
+	]
+}

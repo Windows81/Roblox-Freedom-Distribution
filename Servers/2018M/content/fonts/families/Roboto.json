@@ -1,0 +1,77 @@
+{
+	"name": "Roboto",
+	"faces": [
+		{
+			"name": "Thin",
+			"weight": 100,
+			"style": "normal",
+			"assetId": "rbxassetid://8075221981"
+		},
+		{
+			"name": "Thin Italic",
+			"weight": 100,
+			"style": "italic",
+			"assetId": "rbxassetid://8075223041"
+		},
+		{
+			"name": "Light",
+			"weight": 300,
+			"style": "normal",
+			"assetId": "rbxassetid://8075217365"
+		},
+		{
+			"name": "Light Italic",
+			"weight": 300,
+			"style": "italic",
+			"assetId": "rbxassetid://8075218609"
+		},
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Roboto-Regular.ttf"
+		},
+		{
+			"name": "Italic",
+			"weight": 400,
+			"style": "italic",
+			"assetId": "rbxasset://fonts/Roboto-Italic.ttf"
+		},
+		{
+			"name": "Medium",
+			"weight": 500,
+			"style": "normal",
+			"assetId": "rbxassetid://8075219809"
+		},
+		{
+			"name": "Medium Italic",
+			"weight": 500,
+			"style": "italic",
+			"assetId": "rbxassetid://8075220927"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Roboto-Bold.ttf"
+		},
+		{
+			"name": "Bold Italic",
+			"weight": 700,
+			"style": "italic",
+			"assetId": "rbxassetid://8075215812"
+		},
+		{
+			"name": "Black",
+			"weight": 900,
+			"style": "normal",
+			"assetId": "rbxassetid://8075213353"
+		},
+		{
+			"name": "Black Italic",
+			"weight": 900,
+			"style": "italic",
+			"assetId": "rbxassetid://8075214707"
+		}
+	]
+}

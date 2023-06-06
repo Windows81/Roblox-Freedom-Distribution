@@ -1,0 +1,41 @@
+{
+	"name": "Roboto Condensed",
+	"faces": [
+		{
+			"name": "Light",
+			"weight": 300,
+			"style": "normal",
+			"assetId": "rbxassetid://8075227470"
+		},
+		{
+			"name": "Light Italic",
+			"weight": 300,
+			"style": "italic",
+			"assetId": "rbxassetid://8075228979"
+		},
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/RobotoCondensed-Regular.ttf"
+		},
+		{
+			"name": "Italic",
+			"weight": 400,
+			"style": "italic",
+			"assetId": "rbxassetid://8075226282"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxassetid://8075224057"
+		},
+		{
+			"name": "Bold Italic",
+			"weight": 700,
+			"style": "italic",
+			"assetId": "rbxassetid://8075225339"
+		}
+	]
+}

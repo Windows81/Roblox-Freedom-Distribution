@@ -1,0 +1,89 @@
+{
+	"name": "Josefin Sans",
+	"faces": [
+		{
+			"name": "Thin",
+			"weight": 100,
+			"style": "normal",
+			"assetId": "rbxassetid://8075169096"
+		},
+		{
+			"name": "Thin Italic",
+			"weight": 100,
+			"style": "italic",
+			"assetId": "rbxassetid://8075170443"
+		},
+		{
+			"name": "Extra Light",
+			"weight": 200,
+			"style": "normal",
+			"assetId": "rbxassetid://8075158344"
+		},
+		{
+			"name": "Extra Light Italic",
+			"weight": 200,
+			"style": "italic",
+			"assetId": "rbxassetid://8075159689"
+		},
+		{
+			"name": "Light",
+			"weight": 300,
+			"style": "normal",
+			"assetId": "rbxassetid://8075162641"
+		},
+		{
+			"name": "Light Italic",
+			"weight": 300,
+			"style": "italic",
+			"assetId": "rbxassetid://8075163642"
+		},
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/JosefinSans-Regular.ttf"
+		},
+		{
+			"name": "Italic",
+			"weight": 400,
+			"style": "italic",
+			"assetId": "rbxassetid://8075161226"
+		},
+		{
+			"name": "Medium",
+			"weight": 500,
+			"style": "normal",
+			"assetId": "rbxassetid://8075164545"
+		},
+		{
+			"name": "Medium Italic",
+			"weight": 500,
+			"style": "italic",
+			"assetId": "rbxassetid://8075165536"
+		},
+		{
+			"name": "Semi Bold",
+			"weight": 600,
+			"style": "normal",
+			"assetId": "rbxassetid://8075166660"
+		},
+		{
+			"name": "Semi Bold Italic",
+			"weight": 600,
+			"style": "italic",
+			"assetId": "rbxassetid://8075167921"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxassetid://8075153954"
+		},
+		{
+			"name": "Bold Italic",
+			"weight": 700,
+			"style": "italic",
+			"assetId": "rbxassetid://8075155824"
+		}
+	]
+}

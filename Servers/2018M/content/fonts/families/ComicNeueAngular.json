@@ -1,0 +1,11 @@
+{
+	"name": "Comic Neue Angular",
+	"faces": [
+		{
+			"name": "Bold",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/ComicNeue-Angular-Bold.ttf"
+		}
+	]
+}

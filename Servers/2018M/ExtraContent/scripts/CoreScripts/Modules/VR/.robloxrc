@@ -1,0 +1,14 @@
+{
+	"lint": {
+		"DeprecatedGlobal": "fatal",
+		"FunctionUnused": "disabled",
+		"GlobalUsedAsLocal": "fatal",
+		"ImplicitReturn": "disabled",
+		"ImportUnused": "fatal",
+		"LocalShadow": "disabled",
+		"LocalUnused": "disabled",
+		"MultiLineStatement": "disabled",
+		"SameLineStatement": "disabled",
+		"UnknownGlobal": "fatal"
+	}
+}

@@ -1,0 +1,1 @@
+{"isSubjectToChinaPolicies":false,"arePaidRandomItemsRestricted":false,"isPaidItemTradingAllowed":true,"areAdsAllowed":true,"allowedExternalLinkReferences":["Discord","YouTube","Twitch","Facebook"]}

@@ -1,0 +1,11 @@
+{
+	"name": "Michroma",
+	"faces": [
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/Michroma-Regular.ttf"
+		}
+	]
+}

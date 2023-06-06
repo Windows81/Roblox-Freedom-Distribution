@@ -1,0 +1,29 @@
+{
+	"name": "Gotham SSm",
+	"faces": [
+		{
+			"name": "Book",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/GothamSSm-Book.otf"
+		},
+		{
+			"name": "Medium",
+			"weight": 500,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/GothamSSm-Medium.otf"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/GothamSSm-Bold.otf"
+		},
+		{
+			"name": "Black",
+			"weight": 900,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/GothamSSm-Black.otf"
+		}
+	]
+}

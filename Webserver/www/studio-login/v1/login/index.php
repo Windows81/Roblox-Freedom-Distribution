@@ -1,0 +1,1 @@
+{"user":{"UserId":701953216,"Username":"k643h20e48tNParker22 (Internal)","AgeBracket":0,"Roles":["Soothsayer","BetaTester"],"Email":{"value":"f**@roblox.com","isVerified":true},"IsBanned":false,"DisplayName":"k643h20e48tNParker22 (Internal)"},"userAgreements":[]}

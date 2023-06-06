@@ -1,0 +1,17 @@
+{
+	"name": "Amatic SC",
+	"faces": [
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/AmaticSC-Regular.ttf"
+		},
+		{
+			"name": "Bold",
+			"weight": 700,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/AmaticSC-Bold.ttf"
+		}
+	]
+}

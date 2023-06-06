@@ -1,0 +1,11 @@
+{
+	"name": "Accanthis ADF Std",
+	"faces": [
+		{
+			"name": "Regular",
+			"weight": 400,
+			"style": "normal",
+			"assetId": "rbxasset://fonts/AccanthisADFStd-Regular.otf"
+		}
+	]
+}
