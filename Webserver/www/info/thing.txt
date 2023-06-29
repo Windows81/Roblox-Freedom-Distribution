@@ -1,0 +1,13 @@
+-- Loaded by StartGameSharedScript --
+pcall(function() game:SetCreatorID(1, Enum.CreatorType.User) end)
+
+pcall(function() game:GetService("SocialService"):SetFriendUrl("http://localhost/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%lld&userid=%lld%22) end)
+pcall(function() game:GetService("SocialService"):SetBestFriendUrl("http://localhost/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%lld&userid=%lld%22) end)
+pcall(function() game:GetService("SocialService"):SetGroupUrl("http://localhost/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%lld&groupid=%lld%22) end)
+pcall(function() game:GetService("SocialService"):SetGroupRankUrl("http://localhost/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%lld&groupid=%lld%22) end)
+pcall(function() game:GetService("SocialService"):SetGroupRoleUrl("http://localhost/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%lld&groupid=%lld%22) end)
+pcall(function() game:GetService("GamePassService"):SetPlayerHasPassUrl("Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%lld&PassID=%lld") end)
+pcall(function() game:GetService("MarketplaceService"):SetProductInfoUrl("marketplace/productinfo?assetId=%lld") end)
+pcall(function() game:GetService("MarketplaceService"):SetDevProductInfoUrl("marketplace/productDetails?productId=%lld") end)
+pcall(function() game:GetService("MarketplaceService"):SetPlayerOwnsAssetUrl("ownership/hasasset?userId=%lld&assetId=%lld") end)
+pcall(function() game:SetPlaceVersion(0) end)

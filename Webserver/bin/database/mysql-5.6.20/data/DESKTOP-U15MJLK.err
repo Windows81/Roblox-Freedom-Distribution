@@ -1,0 +1,452 @@
+2022-03-24 21:52:18 7996 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-24 21:52:18 7996 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-24 21:52:18 7996 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-24 21:52:18 7996 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-24 21:52:18 7996 [Note] InnoDB: Memory barrier is not used
+2022-03-24 21:52:18 7996 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-24 21:52:18 7996 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-24 21:52:18 7996 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-24 21:52:18 7996 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-24 21:52:18 7996 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-24 21:52:18 7996 [Note] InnoDB: The log sequence numbers 1600777 and 1600777 in ibdata files do not match the log sequence number 1601203 in the ib_logfiles!
+2022-03-24 21:52:18 7996 [Note] InnoDB: Database was not shutdown normally!
+2022-03-24 21:52:18 7996 [Note] InnoDB: Starting crash recovery.
+2022-03-24 21:52:18 7996 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-24 21:52:18 7996 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-24 21:52:18 7996 [Note] InnoDB: from the doublewrite buffer...
+2022-03-24 21:52:18 7996 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-24 21:52:18 7996 [Note] InnoDB: Waiting for purge to start
+2022-03-24 21:52:18 7996 [Note] InnoDB: 5.6.20 started; log sequence number 1601203
+2022-03-24 21:52:18 7996 [Note] Recovering after a crash using mysql-bin
+2022-03-24 21:52:18 7996 [Note] Starting crash recovery...
+2022-03-24 21:52:18 7996 [Note] Crash recovery finished.
+2022-03-24 21:52:18 7996 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-24 21:52:18 7996 [Note] IPv6 is available.
+2022-03-24 21:52:18 7996 [Note]   - '::' resolves to '::';
+2022-03-24 21:52:18 7996 [Note] Server socket created on IP: '::'.
+2022-03-24 21:52:18 7996 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:52:18 7996 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-24 21:52:18 7996 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:52:18 7996 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:52:18 7996 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-24 21:52:18 7996 [Note] Event Scheduler: Loaded 0 events
+2022-03-24 21:52:18 7996 [Note] C:\Users\catoa\Desktop\roblox 2016 working\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-24 21:54:35 7996 [Note] C:\Users\catoa\Desktop\roblox 2016 working\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: Normal shutdown
+
+2022-03-24 21:54:35 7996 [Note] Giving 0 client threads a chance to die gracefully
+2022-03-24 21:54:35 7996 [Note] Event Scheduler: Purging the queue. 0 events
+2022-03-24 21:54:35 7996 [Note] Shutting down slave threads
+2022-03-24 21:54:35 7996 [Note] Forcefully disconnecting 0 remaining clients
+2022-03-24 21:54:35 7996 [Note] Binlog end
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'partition'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'PERFORMANCE_SCHEMA'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_DATAFILES'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_TABLESPACES'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_FOREIGN_COLS'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_FOREIGN'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_FIELDS'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_COLUMNS'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_INDEXES'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_TABLESTATS'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_SYS_TABLES'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_FT_INDEX_TABLE'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_FT_INDEX_CACHE'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_FT_CONFIG'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_FT_BEING_DELETED'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_FT_DELETED'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_FT_DEFAULT_STOPWORD'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_METRICS'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_BUFFER_POOL_STATS'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_BUFFER_PAGE_LRU'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_BUFFER_PAGE'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_CMP_PER_INDEX_RESET'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_CMP_PER_INDEX'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_CMPMEM_RESET'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_CMPMEM'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_CMP_RESET'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_CMP'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_LOCK_WAITS'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_LOCKS'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'INNODB_TRX'
+2022-03-24 21:54:35 7996 [Note] Shutting down plugin 'InnoDB'
+2022-03-24 21:54:35 7996 [Note] InnoDB: FTS optimize thread exiting.
+2022-03-24 21:54:35 7996 [Note] InnoDB: Starting shutdown...
+2022-03-24 21:54:36 7996 [Note] InnoDB: Shutdown completed; log sequence number 1601213
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'BLACKHOLE'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'ARCHIVE'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'MRG_MYISAM'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'MyISAM'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'MEMORY'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'CSV'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'sha256_password'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'mysql_old_password'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'mysql_native_password'
+2022-03-24 21:54:36 7996 [Note] Shutting down plugin 'binlog'
+2022-03-24 21:54:36 7996 [Note] C:\Users\catoa\Desktop\roblox 2016 working\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: Shutdown complete
+
+2022-03-24 21:56:20 9876 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-24 21:56:20 9876 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-24 21:56:20 9876 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-24 21:56:20 9876 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-24 21:56:20 9876 [Note] InnoDB: Memory barrier is not used
+2022-03-24 21:56:20 9876 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-24 21:56:20 9876 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-24 21:56:20 9876 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-24 21:56:20 9876 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-24 21:56:20 9876 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-24 21:56:20 9876 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-24 21:56:20 9876 [Note] InnoDB: Waiting for purge to start
+2022-03-24 21:56:20 9876 [Note] InnoDB: 5.6.20 started; log sequence number 1601213
+2022-03-24 21:56:20 9876 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-24 21:56:20 9876 [Note] IPv6 is available.
+2022-03-24 21:56:20 9876 [Note]   - '::' resolves to '::';
+2022-03-24 21:56:20 9876 [Note] Server socket created on IP: '::'.
+2022-03-24 21:56:20 9876 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:56:20 9876 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-24 21:56:20 9876 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:56:20 9876 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:56:20 9876 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-24 21:56:20 9876 [Note] Event Scheduler: Loaded 0 events
+2022-03-24 21:56:20 9876 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-24 21:58:16 10044 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-24 21:58:16 10044 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-24 21:58:16 10044 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-24 21:58:16 10044 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-24 21:58:16 10044 [Note] InnoDB: Memory barrier is not used
+2022-03-24 21:58:16 10044 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-24 21:58:16 10044 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-24 21:58:16 10044 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-24 21:58:16 10044 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-24 21:58:16 10044 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-24 21:58:16 10044 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601223 in the ib_logfiles!
+2022-03-24 21:58:16 10044 [Note] InnoDB: Database was not shutdown normally!
+2022-03-24 21:58:16 10044 [Note] InnoDB: Starting crash recovery.
+2022-03-24 21:58:16 10044 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-24 21:58:16 10044 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-24 21:58:16 10044 [Note] InnoDB: from the doublewrite buffer...
+2022-03-24 21:58:16 10044 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-24 21:58:16 10044 [Note] InnoDB: Waiting for purge to start
+2022-03-24 21:58:16 10044 [Note] InnoDB: 5.6.20 started; log sequence number 1601223
+2022-03-24 21:58:16 10044 [Note] Recovering after a crash using mysql-bin
+2022-03-24 21:58:16 10044 [Note] Starting crash recovery...
+2022-03-24 21:58:16 10044 [Note] Crash recovery finished.
+2022-03-24 21:58:16 10044 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-24 21:58:16 10044 [Note] IPv6 is available.
+2022-03-24 21:58:16 10044 [Note]   - '::' resolves to '::';
+2022-03-24 21:58:16 10044 [Note] Server socket created on IP: '::'.
+2022-03-24 21:58:16 10044 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:58:16 10044 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-24 21:58:16 10044 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:58:16 10044 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:58:16 10044 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-24 21:58:16 10044 [Note] Event Scheduler: Loaded 0 events
+2022-03-24 21:58:16 10044 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-24 21:59:56 5836 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-24 21:59:56 5836 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-24 21:59:56 5836 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-24 21:59:56 5836 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-24 21:59:56 5836 [Note] InnoDB: Memory barrier is not used
+2022-03-24 21:59:56 5836 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-24 21:59:56 5836 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-24 21:59:56 5836 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-24 21:59:56 5836 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-24 21:59:56 5836 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-24 21:59:56 5836 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601233 in the ib_logfiles!
+2022-03-24 21:59:56 5836 [Note] InnoDB: Database was not shutdown normally!
+2022-03-24 21:59:56 5836 [Note] InnoDB: Starting crash recovery.
+2022-03-24 21:59:56 5836 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-24 21:59:56 5836 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-24 21:59:56 5836 [Note] InnoDB: from the doublewrite buffer...
+2022-03-24 21:59:56 5836 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-24 21:59:56 5836 [Note] InnoDB: Waiting for purge to start
+2022-03-24 21:59:56 5836 [Note] InnoDB: 5.6.20 started; log sequence number 1601233
+2022-03-24 21:59:56 5836 [Note] Recovering after a crash using mysql-bin
+2022-03-24 21:59:56 5836 [Note] Starting crash recovery...
+2022-03-24 21:59:56 5836 [Note] Crash recovery finished.
+2022-03-24 21:59:56 5836 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-24 21:59:56 5836 [Note] IPv6 is available.
+2022-03-24 21:59:56 5836 [Note]   - '::' resolves to '::';
+2022-03-24 21:59:56 5836 [Note] Server socket created on IP: '::'.
+2022-03-24 21:59:56 5836 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:59:56 5836 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-24 21:59:56 5836 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:59:56 5836 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 21:59:56 5836 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-24 21:59:56 5836 [Note] Event Scheduler: Loaded 0 events
+2022-03-24 21:59:56 5836 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-24 22:01:15 10212 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-24 22:01:15 10212 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-24 22:01:15 10212 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-24 22:01:15 10212 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-24 22:01:15 10212 [Note] InnoDB: Memory barrier is not used
+2022-03-24 22:01:15 10212 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-24 22:01:15 10212 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-24 22:01:15 10212 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-24 22:01:15 10212 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-24 22:01:15 10212 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-24 22:01:15 10212 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601243 in the ib_logfiles!
+2022-03-24 22:01:15 10212 [Note] InnoDB: Database was not shutdown normally!
+2022-03-24 22:01:15 10212 [Note] InnoDB: Starting crash recovery.
+2022-03-24 22:01:15 10212 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-24 22:01:15 10212 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-24 22:01:15 10212 [Note] InnoDB: from the doublewrite buffer...
+2022-03-24 22:01:16 10212 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-24 22:01:16 10212 [Note] InnoDB: Waiting for purge to start
+2022-03-24 22:01:16 10212 [Note] InnoDB: 5.6.20 started; log sequence number 1601243
+2022-03-24 22:01:16 10212 [Note] Recovering after a crash using mysql-bin
+2022-03-24 22:01:16 10212 [Note] Starting crash recovery...
+2022-03-24 22:01:16 10212 [Note] Crash recovery finished.
+2022-03-24 22:01:16 10212 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-24 22:01:16 10212 [Note] IPv6 is available.
+2022-03-24 22:01:16 10212 [Note]   - '::' resolves to '::';
+2022-03-24 22:01:16 10212 [Note] Server socket created on IP: '::'.
+2022-03-24 22:01:16 10212 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:01:16 10212 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-24 22:01:16 10212 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:01:16 10212 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:01:16 10212 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-24 22:01:16 10212 [Note] Event Scheduler: Loaded 0 events
+2022-03-24 22:01:16 10212 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-24 22:03:29 7836 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-24 22:03:29 7836 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-24 22:03:29 7836 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-24 22:03:29 7836 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-24 22:03:29 7836 [Note] InnoDB: Memory barrier is not used
+2022-03-24 22:03:29 7836 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-24 22:03:29 7836 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-24 22:03:29 7836 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-24 22:03:29 7836 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-24 22:03:29 7836 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-24 22:03:29 7836 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601253 in the ib_logfiles!
+2022-03-24 22:03:29 7836 [Note] InnoDB: Database was not shutdown normally!
+2022-03-24 22:03:29 7836 [Note] InnoDB: Starting crash recovery.
+2022-03-24 22:03:29 7836 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-24 22:03:29 7836 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-24 22:03:29 7836 [Note] InnoDB: from the doublewrite buffer...
+2022-03-24 22:03:29 7836 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-24 22:03:29 7836 [Note] InnoDB: Waiting for purge to start
+2022-03-24 22:03:29 7836 [Note] InnoDB: 5.6.20 started; log sequence number 1601253
+2022-03-24 22:03:29 7836 [Note] Recovering after a crash using mysql-bin
+2022-03-24 22:03:29 7836 [Note] Starting crash recovery...
+2022-03-24 22:03:29 7836 [Note] Crash recovery finished.
+2022-03-24 22:03:30 7836 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-24 22:03:30 7836 [Note] IPv6 is available.
+2022-03-24 22:03:30 7836 [Note]   - '::' resolves to '::';
+2022-03-24 22:03:30 7836 [Note] Server socket created on IP: '::'.
+2022-03-24 22:03:30 7836 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:03:30 7836 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-24 22:03:30 7836 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:03:30 7836 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:03:30 7836 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-24 22:03:30 7836 [Note] Event Scheduler: Loaded 0 events
+2022-03-24 22:03:30 7836 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-24 22:07:59 6760 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-24 22:08:00 6760 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-24 22:08:00 6760 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-24 22:08:00 6760 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-24 22:08:00 6760 [Note] InnoDB: Memory barrier is not used
+2022-03-24 22:08:00 6760 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-24 22:08:00 6760 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-24 22:08:00 6760 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-24 22:08:00 6760 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-24 22:08:01 6760 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-24 22:08:01 6760 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601263 in the ib_logfiles!
+2022-03-24 22:08:01 6760 [Note] InnoDB: Database was not shutdown normally!
+2022-03-24 22:08:01 6760 [Note] InnoDB: Starting crash recovery.
+2022-03-24 22:08:01 6760 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-24 22:08:03 6760 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-24 22:08:03 6760 [Note] InnoDB: from the doublewrite buffer...
+2022-03-24 22:08:03 6760 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-24 22:08:03 6760 [Note] InnoDB: Waiting for purge to start
+2022-03-24 22:08:03 6760 [Note] InnoDB: 5.6.20 started; log sequence number 1601263
+2022-03-24 22:08:04 6760 [Note] Recovering after a crash using mysql-bin
+2022-03-24 22:08:04 6760 [Note] Starting crash recovery...
+2022-03-24 22:08:04 6760 [Note] Crash recovery finished.
+2022-03-24 22:08:10 6760 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-24 22:08:10 6760 [Note] IPv6 is available.
+2022-03-24 22:08:10 6760 [Note]   - '::' resolves to '::';
+2022-03-24 22:08:10 6760 [Note] Server socket created on IP: '::'.
+2022-03-24 22:08:10 6760 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:08:10 6760 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-24 22:08:10 6760 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:08:10 6760 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-24 22:08:10 6760 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-24 22:08:11 6760 [Note] Event Scheduler: Loaded 0 events
+2022-03-24 22:08:11 6760 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-25 13:33:04 2908 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-25 13:33:04 2908 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-25 13:33:04 2908 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-25 13:33:04 2908 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-25 13:33:04 2908 [Note] InnoDB: Memory barrier is not used
+2022-03-25 13:33:04 2908 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-25 13:33:04 2908 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-25 13:33:04 2908 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-25 13:33:04 2908 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-25 13:33:04 2908 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-25 13:33:04 2908 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601273 in the ib_logfiles!
+2022-03-25 13:33:04 2908 [Note] InnoDB: Database was not shutdown normally!
+2022-03-25 13:33:04 2908 [Note] InnoDB: Starting crash recovery.
+2022-03-25 13:33:04 2908 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-25 13:33:05 2908 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-25 13:33:05 2908 [Note] InnoDB: from the doublewrite buffer...
+2022-03-25 13:33:05 2908 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-25 13:33:05 2908 [Note] InnoDB: Waiting for purge to start
+2022-03-25 13:33:05 2908 [Note] InnoDB: 5.6.20 started; log sequence number 1601273
+2022-03-25 13:33:05 2908 [Note] Recovering after a crash using mysql-bin
+2022-03-25 13:33:05 2908 [Note] Starting crash recovery...
+2022-03-25 13:33:05 2908 [Note] Crash recovery finished.
+2022-03-25 13:33:06 2908 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-25 13:33:06 2908 [Note] IPv6 is available.
+2022-03-25 13:33:06 2908 [Note]   - '::' resolves to '::';
+2022-03-25 13:33:06 2908 [Note] Server socket created on IP: '::'.
+2022-03-25 13:33:06 2908 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-25 13:33:06 2908 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-25 13:33:06 2908 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-25 13:33:06 2908 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-25 13:33:06 2908 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-25 13:33:07 2908 [Note] Event Scheduler: Loaded 0 events
+2022-03-25 13:33:07 2908 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-25 13:39:36 6440 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-25 13:39:36 6440 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-25 13:39:36 6440 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-25 13:39:36 6440 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-25 13:39:36 6440 [Note] InnoDB: Memory barrier is not used
+2022-03-25 13:39:36 6440 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-25 13:39:36 6440 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-25 13:39:36 6440 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-25 13:39:36 6440 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-25 13:39:36 6440 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-25 13:39:36 6440 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601283 in the ib_logfiles!
+2022-03-25 13:39:36 6440 [Note] InnoDB: Database was not shutdown normally!
+2022-03-25 13:39:36 6440 [Note] InnoDB: Starting crash recovery.
+2022-03-25 13:39:36 6440 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-25 13:39:36 6440 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-25 13:39:36 6440 [Note] InnoDB: from the doublewrite buffer...
+2022-03-25 13:39:36 6440 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-25 13:39:36 6440 [Note] InnoDB: Waiting for purge to start
+2022-03-25 13:39:37 6440 [Note] InnoDB: 5.6.20 started; log sequence number 1601283
+2022-03-25 13:39:37 6440 [Note] Recovering after a crash using mysql-bin
+2022-03-25 13:39:37 6440 [Note] Starting crash recovery...
+2022-03-25 13:39:37 6440 [Note] Crash recovery finished.
+2022-03-25 13:39:37 6440 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-25 13:39:37 6440 [Note] IPv6 is available.
+2022-03-25 13:39:37 6440 [Note]   - '::' resolves to '::';
+2022-03-25 13:39:37 6440 [Note] Server socket created on IP: '::'.
+2022-03-25 13:39:37 6440 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-25 13:39:37 6440 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-25 13:39:37 6440 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-25 13:39:37 6440 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-25 13:39:37 6440 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-25 13:39:37 6440 [Note] Event Scheduler: Loaded 0 events
+2022-03-25 13:39:37 6440 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-26 10:22:21 7668 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-26 10:22:21 7668 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-26 10:22:21 7668 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-26 10:22:21 7668 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-26 10:22:21 7668 [Note] InnoDB: Memory barrier is not used
+2022-03-26 10:22:21 7668 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-26 10:22:21 7668 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-26 10:22:21 7668 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-26 10:22:21 7668 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-26 10:22:22 7668 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-26 10:22:22 7668 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601293 in the ib_logfiles!
+2022-03-26 10:22:22 7668 [Note] InnoDB: Database was not shutdown normally!
+2022-03-26 10:22:22 7668 [Note] InnoDB: Starting crash recovery.
+2022-03-26 10:22:22 7668 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-26 10:22:22 7668 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-26 10:22:22 7668 [Note] InnoDB: from the doublewrite buffer...
+2022-03-26 10:22:22 7668 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-26 10:22:22 7668 [Note] InnoDB: Waiting for purge to start
+2022-03-26 10:22:22 7668 [Note] InnoDB: 5.6.20 started; log sequence number 1601293
+2022-03-26 10:22:22 7668 [Note] Recovering after a crash using mysql-bin
+2022-03-26 10:22:22 7668 [Note] Starting crash recovery...
+2022-03-26 10:22:22 7668 [Note] Crash recovery finished.
+2022-03-26 10:22:23 7668 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-26 10:22:23 7668 [Note] IPv6 is available.
+2022-03-26 10:22:23 7668 [Note]   - '::' resolves to '::';
+2022-03-26 10:22:23 7668 [Note] Server socket created on IP: '::'.
+2022-03-26 10:22:23 7668 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:22:23 7668 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-26 10:22:23 7668 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:22:24 7668 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:22:24 7668 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-26 10:22:25 7668 [Note] Event Scheduler: Loaded 0 events
+2022-03-26 10:22:25 7668 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-26 10:24:13 10064 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-26 10:24:13 10064 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-26 10:24:13 10064 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-26 10:24:13 10064 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-26 10:24:13 10064 [Note] InnoDB: Memory barrier is not used
+2022-03-26 10:24:13 10064 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-26 10:24:13 10064 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-26 10:24:13 10064 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-26 10:24:13 10064 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-26 10:24:13 10064 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-26 10:24:13 10064 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601303 in the ib_logfiles!
+2022-03-26 10:24:13 10064 [Note] InnoDB: Database was not shutdown normally!
+2022-03-26 10:24:13 10064 [Note] InnoDB: Starting crash recovery.
+2022-03-26 10:24:13 10064 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-26 10:24:13 10064 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-26 10:24:13 10064 [Note] InnoDB: from the doublewrite buffer...
+2022-03-26 10:24:14 10064 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-26 10:24:14 10064 [Note] InnoDB: Waiting for purge to start
+2022-03-26 10:24:14 10064 [Note] InnoDB: 5.6.20 started; log sequence number 1601303
+2022-03-26 10:24:14 10064 [Note] Recovering after a crash using mysql-bin
+2022-03-26 10:24:14 10064 [Note] Starting crash recovery...
+2022-03-26 10:24:14 10064 [Note] Crash recovery finished.
+2022-03-26 10:24:15 10064 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-26 10:24:15 10064 [Note] IPv6 is available.
+2022-03-26 10:24:15 10064 [Note]   - '::' resolves to '::';
+2022-03-26 10:24:15 10064 [Note] Server socket created on IP: '::'.
+2022-03-26 10:24:16 10064 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:24:16 10064 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-26 10:24:16 10064 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:24:16 10064 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:24:16 10064 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-26 10:24:16 10064 [Note] Event Scheduler: Loaded 0 events
+2022-03-26 10:24:16 10064 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)
+2022-03-26 10:25:25 6256 [Note] Plugin 'FEDERATED' is disabled.
+2022-03-26 10:25:25 6256 [Note] InnoDB: Using atomics to ref count buffer pool pages
+2022-03-26 10:25:25 6256 [Note] InnoDB: The InnoDB memory heap is disabled
+2022-03-26 10:25:25 6256 [Note] InnoDB: Mutexes and rw_locks use Windows interlocked functions
+2022-03-26 10:25:25 6256 [Note] InnoDB: Memory barrier is not used
+2022-03-26 10:25:25 6256 [Note] InnoDB: Compressed tables use zlib 1.2.3
+2022-03-26 10:25:25 6256 [Note] InnoDB: Not using CPU crc32 instructions
+2022-03-26 10:25:25 6256 [Note] InnoDB: Initializing buffer pool, size = 128.0M
+2022-03-26 10:25:25 6256 [Note] InnoDB: Completed initialization of buffer pool
+2022-03-26 10:25:25 6256 [Note] InnoDB: Highest supported file format is Barracuda.
+2022-03-26 10:25:25 6256 [Note] InnoDB: The log sequence numbers 1601213 and 1601213 in ibdata files do not match the log sequence number 1601313 in the ib_logfiles!
+2022-03-26 10:25:25 6256 [Note] InnoDB: Database was not shutdown normally!
+2022-03-26 10:25:25 6256 [Note] InnoDB: Starting crash recovery.
+2022-03-26 10:25:25 6256 [Note] InnoDB: Reading tablespace information from the .ibd files...
+2022-03-26 10:25:25 6256 [Note] InnoDB: Restoring possible half-written data pages 
+2022-03-26 10:25:25 6256 [Note] InnoDB: from the doublewrite buffer...
+2022-03-26 10:25:25 6256 [Note] InnoDB: 128 rollback segment(s) are active.
+2022-03-26 10:25:25 6256 [Note] InnoDB: Waiting for purge to start
+2022-03-26 10:25:25 6256 [Note] InnoDB: 5.6.20 started; log sequence number 1601313
+2022-03-26 10:25:25 6256 [Note] Recovering after a crash using mysql-bin
+2022-03-26 10:25:25 6256 [Note] Starting crash recovery...
+2022-03-26 10:25:25 6256 [Note] Crash recovery finished.
+2022-03-26 10:25:26 6256 [Note] Server hostname (bind-address): '*'; port: 3306
+2022-03-26 10:25:26 6256 [Note] IPv6 is available.
+2022-03-26 10:25:26 6256 [Note]   - '::' resolves to '::';
+2022-03-26 10:25:26 6256 [Note] Server socket created on IP: '::'.
+2022-03-26 10:25:26 6256 [Warning] InnoDB: Cannot open table mysql/slave_master_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:25:26 6256 [Warning] Info table is not ready to be used. Table 'mysql.slave_master_info' cannot be opened.
+2022-03-26 10:25:26 6256 [Warning] InnoDB: Cannot open table mysql/slave_worker_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:25:26 6256 [Warning] InnoDB: Cannot open table mysql/slave_relay_log_info from the internal data dictionary of InnoDB though the .frm file for the table exists. See http://dev.mysql.com/doc/refman/5.6/en/innodb-troubleshooting.html for how you can resolve the problem.
+2022-03-26 10:25:26 6256 [Warning] Info table is not ready to be used. Table 'mysql.slave_relay_log_info' cannot be opened.
+2022-03-26 10:25:27 6256 [Note] Event Scheduler: Loaded 0 events
+2022-03-26 10:25:27 6256 [Note] C:\Users\catoa\Desktop\Roblox Players\roblox 2016\Webserver\bin\database\mysql-5.6.20\bin\mysqld.exe: ready for connections.
+Version: '5.6.20-log'  socket: ''  port: 3306  MySQL Community Server (GPL)

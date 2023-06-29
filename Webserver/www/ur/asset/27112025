@@ -1,0 +1,14 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="CharacterMesh" referent="RBX0">
+		<Properties>
+			<int name="BaseTextureId">0</int>
+			<token name="BodyPart">1</token>
+			<int name="MeshId">27111894</int>
+			<string name="Name">Roblox 2.0 torso</string>
+			<int name="OverlayTextureId">0</int>
+			<bool name="archivable">true</bool>
+		</Properties>
+	</Item>
+</roblox>

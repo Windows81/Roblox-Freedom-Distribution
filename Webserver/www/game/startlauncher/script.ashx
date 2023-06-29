@@ -1,0 +1,1 @@
+%localappdata%\roblox\versions\version-november2016testreal!\RobloxPlayerBeta.exe -a "https://www.sitetest4.robloxlabs.com/login/negotiate.ashx" -t "1" -j "http://www.sitetest4.robloxlabs.com/game/placelauncher.ashx?&username=ferntert1&membership=BuildersClub&ip=26.76.93.232&port=53640&id=1&year=2016"

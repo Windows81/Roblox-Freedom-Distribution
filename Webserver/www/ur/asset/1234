@@ -1,0 +1,357 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="Tool" referent="RBX16C74FEB42964EB1B8429E790129796E">
+		<Properties>
+			<bool name="CanBeDropped">true</bool>
+			<bool name="Enabled">true</bool>
+			<CoordinateFrame name="Grip">
+				<X>0</X>
+				<Y>-0.5</Y>
+				<Z>-0.25</Z>
+				<R00>1</R00>
+				<R01>0</R01>
+				<R02>0</R02>
+				<R10>0</R10>
+				<R11>1</R11>
+				<R12>0</R12>
+				<R20>0</R20>
+				<R21>0</R21>
+				<R22>1</R22>
+			</CoordinateFrame>
+			<bool name="ManualActivationOnly">false</bool>
+			<string name="Name">CivilWarCannon</string>
+			<bool name="RequiresHandle">true</bool>
+			<Content name="TextureId"><url>http://www.roblox.com/asset?id=172086859</url></Content>
+			<string name="ToolTip"></string>
+		</Properties>
+		<Item class="Part" referent="RBX03924FD5329D44D5A7C4184C4B47A650">
+			<Properties>
+				<bool name="Anchored">false</bool>
+				<float name="BackParamA">-0.5</float>
+				<float name="BackParamB">0.5</float>
+				<token name="BackSurface">0</token>
+				<token name="BackSurfaceInput">0</token>
+				<float name="BottomParamA">-0.5</float>
+				<float name="BottomParamB">0.5</float>
+				<token name="BottomSurface">4</token>
+				<token name="BottomSurfaceInput">0</token>
+				<int name="BrickColor">194</int>
+				<CoordinateFrame name="CFrame">
+					<X>-9.37499619</X>
+					<Y>46.6499901</Y>
+					<Z>54.8999901</Z>
+					<R00>3.6955289e-006</R00>
+					<R01>-1.71482284e-007</R01>
+					<R02>1</R02>
+					<R10>4.43489299e-008</R10>
+					<R11>1</R11>
+					<R12>1.71482128e-007</R12>
+					<R20>-1</R20>
+					<R21>4.43482975e-008</R21>
+					<R22>3.69552868e-006</R22>
+				</CoordinateFrame>
+				<bool name="CanCollide">true</bool>
+				<PhysicalProperties name="CustomPhysicalProperties">
+					<CustomPhysics>false</CustomPhysics>
+				</PhysicalProperties>
+				<float name="Elasticity">0.5</float>
+				<float name="Friction">0.300000012</float>
+				<float name="FrontParamA">-0.5</float>
+				<float name="FrontParamB">0.5</float>
+				<token name="FrontSurface">0</token>
+				<token name="FrontSurfaceInput">0</token>
+				<float name="LeftParamA">-0.5</float>
+				<float name="LeftParamB">0.5</float>
+				<token name="LeftSurface">0</token>
+				<token name="LeftSurfaceInput">0</token>
+				<bool name="Locked">true</bool>
+				<token name="Material">256</token>
+				<string name="Name">Handle</string>
+				<float name="Reflectance">0</float>
+				<float name="RightParamA">-0.5</float>
+				<float name="RightParamB">0.5</float>
+				<token name="RightSurface">0</token>
+				<token name="RightSurfaceInput">0</token>
+				<Vector3 name="RotVelocity">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+				</Vector3>
+				<float name="TopParamA">-0.5</float>
+				<float name="TopParamB">0.5</float>
+				<token name="TopSurface">3</token>
+				<token name="TopSurfaceInput">0</token>
+				<float name="Transparency">0</float>
+				<Vector3 name="Velocity">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+				</Vector3>
+				<token name="formFactorRaw">3</token>
+				<token name="shape">1</token>
+				<Vector3 name="size">
+					<X>1.79999995</X>
+					<Y>1.5</Y>
+					<Z>2.75</Z>
+				</Vector3>
+			</Properties>
+			<Item class="SpecialMesh" referent="RBX1225100EC1BD4D2E8AD164C6C6DCA2E6">
+				<Properties>
+					<token name="LODX">2</token>
+					<token name="LODY">2</token>
+					<Content name="MeshId"><url>http://www.roblox.com/asset?id=172086774</url></Content>
+					<token name="MeshType">5</token>
+					<string name="Name">Mesh</string>
+					<Vector3 name="Offset">
+						<X>0</X>
+						<Y>0</Y>
+						<Z>0</Z>
+					</Vector3>
+					<Vector3 name="Scale">
+						<X>1</X>
+						<Y>1</Y>
+						<Z>1</Z>
+					</Vector3>
+					<Content name="TextureId"><url>http://www.roblox.com/asset?id=172086810</url></Content>
+					<Vector3 name="VertexColor">
+						<X>1</X>
+						<Y>1</Y>
+						<Z>1</Z>
+					</Vector3>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="Script" referent="RBX27B9F5773E5D401F9CC5B5CC57874744">
+			<Properties>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">Script</string>
+				<string name="ScriptGuid">{F5ED5B73-FA42-42D2-8721-CA8B4477ED2E}</string>
+				<ProtectedString name="Source"><![CDATA[--Made by Luckymaxer
+--Updated for R15 avatar by StarWars
+
+Tool = script.Parent
+Handle = Tool:WaitForChild("Handle")
+
+Players = game:GetService("Players")
+InsertService = game:GetService("InsertService")
+
+CannonModel = InsertService:LoadAsset(174258074)
+Cannon = CannonModel:GetChildren()[1]:Clone()
+CannonModel:Destroy()
+
+CurrentCannon = Tool:WaitForChild("CurrentCannon")
+
+Remover = script:WaitForChild("Remover")
+
+DisplayModel = Tool:FindFirstChild("DisplayModel")
+if DisplayModel then
+	DisplayModel:Destroy()
+end
+
+Equipped = false
+
+ReloadTime = 15
+
+ServerControl = (Tool:FindFirstChild("ServerControl") or Instance.new("RemoteFunction"))
+ServerControl.Name = "ServerControl"
+ServerControl.Parent = Tool
+
+Handle.Transparency = 0
+
+Tool.Enabled = true
+
+ServerControl.OnServerInvoke = (function(Player, Mode, Value)
+	if Mode == "Click" and Value and Tool.Enabled and Humanoid and Humanoid.Parent and Humanoid.Health > 0 and Torso and (not CurrentCannon.Value  or not CurrentCannon.Value.Parent) then
+		Tool.Enabled = false
+		CannonVehicle = Cannon:Clone()
+		CurrentCannon.Value = CannonVehicle
+		local RemoverClone = Remover:Clone()
+		local Creator = Instance.new("ObjectValue")
+		Creator.Name = "Creator"
+		Creator.Value = Player
+		Creator.Parent = CannonVehicle
+		RemoverClone.Disabled = false
+		RemoverClone.Parent = CannonVehicle
+		local CannonScript = CannonVehicle:FindFirstChild("Controller")
+		CannonScript.Disabled = true
+		CannonVehicle.Parent = game:GetService("Workspace")
+		local CannonBody = CannonVehicle:FindFirstChild("Body")
+		CannonBody.CFrame = (Torso.CFrame - Vector3.new(0, (Torso.Size.Y / 2), 0)) + Torso.CFrame.lookVector * (((CannonVehicle:GetModelSize().Z / 2) + (Torso.Size.Z / 2)) + 1)
+		CannonScript.Disabled = false
+		Handle.Transparency = 1
+		wait(ReloadTime)
+		Handle.Transparency = 0
+		Tool.Enabled = true
+	elseif Mode == "KeyPress" and Value.Key == "x" and Value.Down and CurrentCannon.Value then
+		CurrentCannon.Value:Destroy()
+	end
+end)
+
+Tool.Changed:connect(function(Property)
+	if Property == "Parent" and not Tool.Parent:IsA("Backpack") and Tool.Parent ~= Character then
+		CurrentCannon.Value:Destroy()
+	end
+end)
+
+function Equipped(Mouse)
+	Equipped = true
+	Character = Tool.Parent
+	Player = Players:GetPlayerFromCharacter(Character)
+	Humanoid = Character:FindFirstChild("Humanoid")
+	Torso = Character:FindFirstChild("Torso") or Character:FindFirstChild("UpperTorso")
+	if not Player or not Humanoid or Humanoid.Health == 0 or not Torso then
+		return
+	end
+end
+
+function Unequipped()
+	Equipped = false
+	Handle.Transparency = 0
+end
+
+Tool.Equipped:connect(Equipped)
+Tool.Unequipped:connect(Unequipped)]]></ProtectedString>
+			</Properties>
+			<Item class="Script" referent="RBX6813600C3A7F42239F59CD16E08BE498">
+				<Properties>
+					<bool name="Disabled">true</bool>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">Remover</string>
+					<string name="ScriptGuid">{E6D1B397-8E37-411E-81B8-B6540A343424}</string>
+					<ProtectedString name="Source"><![CDATA[--Made by Luckymaxer
+
+Model = script.Parent
+
+Creator = Model:FindFirstChild("Creator")
+
+Enabled = false
+
+if Creator and Creator.Value and Creator.Value.Parent and Creator.Value:IsA("Player") and Creator.Value.Character then
+	Player = Creator.Value
+	Character = Player.Character
+	Humanoid = Character:FindFirstChild("Humanoid")
+	if Humanoid and Humanoid.Health > 0 then
+		Player.Changed:connect(function(Property)
+			if Property == "Parent" and not Player.Parent then
+				Model:Destroy()
+			end
+		end)
+		Character.Changed:connect(function(Property)
+			if Property == "Parent" and not Character.Parent then
+				Model:Destroy()
+			end
+		end)
+		Humanoid.Died:connect(function()
+			Model:Destroy()
+		end)
+		Enabled = true
+	end
+end
+
+if not Enabled then
+	Model:Destroy()
+end]]></ProtectedString>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="ObjectValue" referent="RBX51DBA328FCA74968B6F4B0EBDDCF4BDF">
+			<Properties>
+				<string name="Name">CurrentCannon</string>
+				<Ref name="Value">null</Ref>
+			</Properties>
+		</Item>
+		<Item class="LocalScript" referent="RBXF1234BCEB7E342B8AD5AD78A22AB9822">
+			<Properties>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">MouseIcon</string>
+				<string name="ScriptGuid"></string>
+				<ProtectedString name="Source"><![CDATA[--Made by Luckymaxer
+
+Mouse_Icon = "rbxasset://textures/GunCursor.png"
+Reloading_Icon = "rbxasset://textures/GunWaitCursor.png"
+
+Tool = script.Parent
+
+Mouse = nil
+
+function UpdateIcon()
+	if Mouse then
+		Mouse.Icon = Tool.Enabled and Mouse_Icon or Reloading_Icon
+	end
+end
+
+function OnEquipped(ToolMouse)
+	Mouse = ToolMouse
+	UpdateIcon()
+end
+
+function OnChanged(Property)
+	if Property == "Enabled" then
+		UpdateIcon()
+	end
+end
+
+Tool.Equipped:connect(OnEquipped)
+Tool.Changed:connect(OnChanged)
+]]></ProtectedString>
+			</Properties>
+		</Item>
+		<Item class="LocalScript" referent="RBX0EC22827393B4A6DB5F96F80261621B1">
+			<Properties>
+				<bool name="Disabled">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">LocalScript</string>
+				<string name="ScriptGuid"></string>
+				<ProtectedString name="Source"><![CDATA[--Made by Luckymaxer
+
+Tool = script.Parent
+Handle = Tool:WaitForChild("Handle")
+
+Players = game:GetService("Players")
+
+ServerControl = Tool:WaitForChild("ServerControl")
+
+function InvokeServer(Mode, Value)
+	pcall(function()
+		ServerControl:InvokeServer(Mode, Value)
+	end)
+end
+
+function Equipped(Mouse)
+	Character = Tool.Parent
+	Player = Players:GetPlayerFromCharacter(Character)
+	Humanoid = Character:FindFirstChild("Humanoid")
+	if not Player or not Humanoid or Humanoid.Health == 0 then
+		return
+	end
+	Mouse.Button1Down:connect(function()
+		InvokeServer("Click", true)
+	end)
+	Mouse.KeyDown:connect(function(Key)
+		InvokeServer("KeyPress", {Key = Key, Down = true})
+	end)
+end
+
+function Unequipped()
+end
+
+Tool.Equipped:connect(Equipped)
+Tool.Unequipped:connect(Unequipped)]]></ProtectedString>
+			</Properties>
+		</Item>
+		<Item class="BoolValue" referent="RBXD9B4A98A894C45D6977FC8E8425331BF">
+			<Properties>
+				<string name="Name">ThisIsInserted</string>
+				<bool name="Value">false</bool>
+			</Properties>
+		</Item>
+		<Item class="RemoteFunction" referent="RBX4FF592A9A5E842AEA1E1EF094C7BD8BD">
+			<Properties>
+				<string name="Name">ServerControl</string>
+			</Properties>
+		</Item>
+	</Item>
+</roblox>

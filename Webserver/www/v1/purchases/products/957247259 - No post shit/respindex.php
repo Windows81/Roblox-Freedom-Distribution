@@ -1,0 +1,1 @@
+{"purchased":true,"reason":"Success","productId":4693938238,"currency":1,"assetName":"minecraft dog for gamers","assetType":"T-Shirt","assetTypeDisplayName":"","assetIsWearable":false,"sellerName":"Roblox","transactionVerb":"bought","isMultiPrivateSale":false}

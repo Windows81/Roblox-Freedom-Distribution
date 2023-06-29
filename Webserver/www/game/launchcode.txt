@@ -1,0 +1,1 @@
+{"jobId":"Test","status":2,"joinScriptUrl":"http://localhost/game/join.php?placeId=1818&ip=%ip%&port=%port%&id=%id%&app=%app%&user=%user%","authenticationUrl":"http://localhost/Login/Negotiate.ashx","authenticationTicket":-1,"message":null}
