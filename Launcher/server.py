@@ -1,19 +1,25 @@
 import versions
 import uwamp
 import json
+import io
 
 
 class Server(uwamp.UwAmpWrap):
-    def __init__(self, version: versions.Version) -> None:
+    def __init__(self, version: versions.Version, data: io.BufferedReader, **kwargs) -> None:
         folder = f'{version.folder()}/Server'
+
+        place_path = f'Webserver/www/_CACHE/{uwamp.PLACE_ID}'
+        with open(place_path, 'wb') as f:
+            f.write(data.read())
+
         gameserver_path = f'{folder}/gameserver.json'
-        with open(gameserver_path, 'w') as j:
+        with open(gameserver_path, 'w') as f:
             json.dump({
                 "Mode": "GameServer",
                 "GameId": 13058,
                 "Settings": {
                     "Type": "Avatar",
-                    "PlaceId": 1818,
+                    "PlaceId": uwamp.PLACE_ID,
                     "GameId": "Test",
                     "MachineAddress": "http://127.0.0.1",
                     "GsmInterval": 5,
@@ -24,7 +30,6 @@ class Server(uwamp.UwAmpWrap):
                     "DataCenterId": "69420",
                     "PlaceVisitAccessKey": "",
                     "UniverseId": 13058,
-                    "PlaceFetchUrl": "http://localhost/.localhost/asset/?id=1818",
                     "MatchmakingContextId": 1,
                     "CreatorId": 1,
                     "CreatorType": "User",
@@ -35,7 +40,8 @@ class Server(uwamp.UwAmpWrap):
                     "PreferredPort": 2005
                 },
                 "Arguments": {}
-            }, j)
+            }, f)
+
         super().__init__([
             f'{folder}/RCC.exe',
             '-Console', '-Verbose', '-placeid:1818',
