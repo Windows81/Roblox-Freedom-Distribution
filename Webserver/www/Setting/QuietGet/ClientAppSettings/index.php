@@ -870,7 +870,7 @@
     "SFFlagEnableRootPriority": "True",
     "SFFlagPartMasslessEnabled": "True",
     "FFlagFlyweightServiceDataRecievedCallbackCrashFixEnabled": "True",
-    "FFlagApsDebugClient2": "False",
+    "FFlagApsDebugClient2": "True",
     "SFFlagKeepRedundantWeldsExplicit": "True",
     "FFlagStudioFixPackageLinkManagementCastingError": "True",
     "FFlagUserNewPoppercam3": "True",

@@ -24,11 +24,37 @@ if __name__ == '__main__':
     studio_parser = mode_parsers.add_parser('studio')
     server_parser = mode_parsers.add_parser('server')
     server_parser.add_argument(
-        metavar='place', dest='data',
+        '--place', '-p', dest='data',
         type=lambda n: open(n, 'rb'),
         default=None, nargs='?',
     )
     player_parser = mode_parsers.add_parser('player')
+    player_parser.add_argument(
+        '--rcc_host', '-rh',
+        dest='rcc_host', type=str,
+        default=None, required=True,
+    )
+    player_parser.add_argument(
+        '--web_host', '-wh',
+        dest='web_host', type=str,
+        default=None, nargs='?',
+    )
+    player_parser.add_argument(
+        '--rcc_port', '-rp',
+        dest='rcc_port',
+        type=int, nargs='?',
+    )
+    player_parser.add_argument(
+        '--web_port', '-wp',
+        dest='web_port',
+        type=int, nargs='?',
+    )
+    player_parser.add_argument(
+        '--username', '-u',
+        dest='username',
+        type=str, nargs='?',
+        default='VisualPlugin'
+    )
 
     try:
         args = parser.parse_args()

@@ -8,7 +8,7 @@ $placeid = $_GET["placeid"];
 $ip = $_GET['ip'];
 $port = $_GET['port'];
 $id = $_GET['id'];
-$user = $_GET['user'];
+$username = $_GET['user'];
 $app = $_GET['app'];
 $membership = $_GET["membership"];
 
@@ -18,7 +18,7 @@ $a = [
 	'ServerPort' => $port,
 	'PingUrl' => '',
 	'PingInterval' => 0,
-	'UserName' => $user,
+	'UserName' => $username,
 	'SeleniumTestMode' => false,
 	'UserId' => intval($id),
 	'SuperSafeChat' => false,
@@ -34,7 +34,7 @@ $a = [
 	'CreatorId' => 1,
 	'CreatorTypeEnum' => 'User',
 	'MembershipType' => 'OutrageousBuildersClub',
-	'AccountAge' => 365,
+	'AccountAge' => date_diff(new DateTime('2008-12-01T02:45Z'), new DateTime('now'))->days,
 	'CookieStoreFirstTimePlayKey' => 'rbx_evt_ftp',
 	'CookieStoreFiveMinutePlayKey' => 'rbx_evt_fmp',
 	'CookieStoreEnabled' => false,
@@ -44,7 +44,7 @@ $a = [
 	'SessionId' => '',
 	'DataCenterId' => 0,
 	'FollowUserId' => 0,
-	'CharacterAppearanceId' => 4,
+	'CharacterAppearanceId' => intval($id),
 	'UniverseId' => 0,
 ];
 
