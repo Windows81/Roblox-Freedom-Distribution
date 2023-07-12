@@ -28,6 +28,17 @@ if __name__ == '__main__':
         type=lambda n: open(n, 'rb'),
         default=None, nargs='?',
     )
+    server_parser.add_argument(
+        '--rcc_port', '-rp',
+        dest='rcc_port',
+        type=int, nargs='?',
+    )
+    server_parser.add_argument(
+        '--web_port', '-wp',
+        dest='web_port',
+        type=int, nargs='?',
+    )
+
     player_parser = mode_parsers.add_parser('player')
     player_parser.add_argument(
         '--rcc_host', '-rh',

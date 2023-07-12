@@ -5,7 +5,14 @@ import io
 
 
 class Server(uwamp.UwAmpWrap):
-    def __init__(self, version: versions.Version, data: io.BufferedReader, **kwargs) -> None:
+    def __init__(
+        self,
+        version: versions.Version,
+        data: io.BufferedReader,
+        rcc_port: int = 2005,
+        web_port: int = 80,
+        **kwargs,
+    ) -> None:
         folder = f'{version.folder()}/Server'
 
         place_path = f'Webserver/www/_CACHE/{uwamp.PLACE_ID}'
@@ -21,7 +28,7 @@ class Server(uwamp.UwAmpWrap):
                     "Type": "Avatar",
                     "PlaceId": uwamp.PLACE_ID,
                     "GameId": "Test",
-                    "MachineAddress": "http://127.0.0.1",
+                    "MachineAddress": f"http://127.0.0.1:{web_port}",
                     "GsmInterval": 5,
                     "MaxPlayers": 4096,
                     "MaxGameInstances": 1,
@@ -37,7 +44,7 @@ class Server(uwamp.UwAmpWrap):
                     "BaseUrl": "localhost/.localhost",
                     "JobId": "Test",
                     "script": "print('Initializing NetworkServer.')",
-                    "PreferredPort": 2005
+                    "PreferredPort": rcc_port,
                 },
                 "Arguments": {}
             }, f)
