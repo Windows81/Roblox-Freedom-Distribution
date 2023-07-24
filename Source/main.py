@@ -3,7 +3,7 @@ import argparse
 import launcher.studio
 import launcher.server
 import launcher.player
-import launcher.versions
+import versions
 
 CLASSES: dict[str, type[subprocess.Popen]] = {
     'studio': launcher.studio.Studio,
@@ -16,7 +16,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--version', '-v',
-        type=lambda v: launcher.versions.VERSION_MAP[v],
+        choices=list(versions.Version),
+        type=lambda v: versions.VERSION_MAP[v],
     )
     mode_parsers = parser.add_subparsers(dest='mode')
 
@@ -70,11 +71,11 @@ if __name__ == '__main__':
         default='VisualPlugin'
     )
 
+    args = parser.parse_args()
+    instance = CLASSES[args.mode](
+        **{i: v for i, v in args.__dict__.items() if v}
+    )
     try:
-        args = parser.parse_args()
-        instance = CLASSES[args.mode](
-            **{i: v for i, v in args.__dict__.items() if v}
-        )
         instance.communicate()
     except KeyboardInterrupt:
         pass

@@ -1,4 +1,4 @@
-from webserver.handler import webserver_handler, server_path
+from webserver.logic import webserver_handler, server_path
 import webserver.assets
 
 

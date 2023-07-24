@@ -1,8 +1,9 @@
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from OpenSSL.crypto import sign, load_privatekey, FILETYPE_PEM
-from http.server import BaseHTTPRequestHandler
 from typing import Callable, Optional
 from urllib import parse
 import mimetypes
+import versions
 import base64
 import const
 import json
@@ -28,8 +29,20 @@ def rbx_sign(data: bytes, key: bytes) -> bytes:
     return b"--rbxsig%" + base64.b64encode(signature) + b'%' + data
 
 
+class webserver(ThreadingHTTPServer):
+    def __init__(
+        self,
+        server_address,
+        version: versions.Version = versions.Version.v348,
+        bind_and_activate=True,
+    ) -> None:
+        super().__init__(server_address, webserver_handler, bind_and_activate)
+        self.version = version
+
+
 class webserver_handler(BaseHTTPRequestHandler):
     default_request_version = "HTTP/1.1"
+    server: webserver
 
     def parse_request(self) -> bool:
         if not super().parse_request():

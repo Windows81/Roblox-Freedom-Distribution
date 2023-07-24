@@ -1,4 +1,4 @@
-from webserver.handler import server_path, webserver_handler
+from webserver.logic import server_path, webserver_handler
 from .load_assets import _
 from .join_game import _
 

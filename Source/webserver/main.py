@@ -1,6 +1,4 @@
-
-from http.server import ThreadingHTTPServer
-from .handler import webserver_handler
+import webserver.logic
 import ssl
 import os
 
@@ -8,8 +6,8 @@ import os
 from .endpoints.main import _
 
 
-def make_httpd(port=80, is_ssl=False) -> ThreadingHTTPServer:
-    httpd = ThreadingHTTPServer(('', port), webserver_handler)
+def make_server(port=80, is_ssl=False, *args, **kwargs) -> webserver.logic.webserver:
+    httpd = webserver.logic.webserver(('', port), *args, **kwargs)
     if is_ssl:
         dir_path = os.path.dirname(os.path.realpath(__file__))
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)

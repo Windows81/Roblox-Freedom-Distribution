@@ -1,4 +1,4 @@
-from webserver.handler import webserver_handler, server_path
+from webserver.logic import webserver_handler, server_path
 import const
 
 
@@ -128,5 +128,7 @@ def _(self: webserver_handler) -> bool:
 
 @server_path("/api.GetAllowedSecurityVersions/")
 def _(self: webserver_handler) -> bool:
-    self.send_json(const.ALLOWED_SECURITY_VERSIONS)
+    self.send_json({
+        "data": self.server.version.security_versions(),
+    })
     return True

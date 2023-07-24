@@ -1,6 +1,6 @@
 import launcher.webserver
-import launcher.versions
 import webserver.assets
+import versions
 import const
 import json
 import io
@@ -9,13 +9,13 @@ import io
 class Server(launcher.webserver.WebserverWrap):
     def __init__(
         self,
-        version: launcher.versions.Version,
+        version: versions.Version,
         data: io.BufferedReader,
         rcc_port: int = 2005,
         web_port: int = 80,
         **kwargs,
     ) -> None:
-        folder = f'{version.folder()}/Server'
+        folder = f'{version.binary_folder()}/Server'
 
         place_path = webserver.assets.get_asset_path(const.PLACE_ID)
         with open(place_path, 'wb') as f:
@@ -55,4 +55,4 @@ class Server(launcher.webserver.WebserverWrap):
             f'{folder}/RCC.exe',
             '-Console', '-Verbose', '-placeid:1818',
             '-localtest', gameserver_path, '-port 64989',
-        ])
+        ], version=version)

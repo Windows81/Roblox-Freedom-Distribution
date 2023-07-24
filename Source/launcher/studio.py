@@ -1,13 +1,13 @@
 
 import launcher.webserver
-import launcher.versions
+import versions
 
 
 class Studio(launcher.webserver.WebserverWrap):
     def __init__(
         self,
-        version: launcher.versions.Version,
+        version: versions.Version,
         args: list[str] = [],
         **kwargs,
     ) -> None:
-        super().__init__([f'{version.folder()}/Studio/RobloxStudioBeta.exe', *args])
+        super().__init__([f'{version.binary_folder()}/Studio/RobloxStudioBeta.exe', *args])
