@@ -1,0 +1,1 @@
+git commit -m (Get-Date -Format "yyyy-MM-ddTHH:mmZ") && git push
