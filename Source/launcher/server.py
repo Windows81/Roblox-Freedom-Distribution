@@ -31,6 +31,7 @@ class Server(launcher.webserver.WebserverWrap):
                     "PlaceId": const.PLACE_ID,
                     "GameId": "Test",
                     "MachineAddress": f"http://localhost:{web_port}",
+                    "PlaceFetchUrl": f"http://localhost/.127.0.0.1/asset/?id={const.PLACE_ID}",
                     "GsmInterval": 5,
                     "MaxPlayers": 4096,
                     "MaxGameInstances": 1,
@@ -55,4 +56,5 @@ class Server(launcher.webserver.WebserverWrap):
             f'{folder}/RCC.exe',
             '-Console', '-Verbose', '-placeid:1818',
             '-localtest', gameserver_path, '-port 64989',
+            '-settingsfile', f'{folder}/DevSettingsFile.json',
         ], version=version)

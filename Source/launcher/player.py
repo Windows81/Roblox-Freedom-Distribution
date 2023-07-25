@@ -1,18 +1,16 @@
-import launcher.webserver
 import urllib.parse
 import subprocess
 import versions
 import const
 
 
-def app_setting(host: str = '127.0.0.1', port: int = 80) -> str:
+def app_setting(base_url: str) -> str:
     return f"""
 <?xml version="1.0" encoding="UTF-8"?>
 <Settings>
 	<ContentFolder>content</ContentFolder>
-	<BaseUrl>http://{host}:{port}</BaseUrl>
-</Settings>
-    """
+	<BaseUrl>{base_url}</BaseUrl>
+</Settings>"""
 
 
 class Player(subprocess.Popen):
@@ -23,15 +21,18 @@ class Player(subprocess.Popen):
         rcc_port: int = 2005,
         web_host: str = None,
         web_port: int = 80,
+        web_ssl: bool = False,
         username: str = 'Byfron\'s Bad Byrother',
         appearance: str = const.DEFAULT_APPEARANCE,
         **kwargs,
     ) -> None:
         web_host, rcc_host = web_host or rcc_host, rcc_host or web_host
+        base_url = f'http{"s" if web_ssl else""}://{web_host}:{web_port}'
+        print(base_url)
 
         # Modifies settings to point to correct host name
         with open(f'{version.binary_folder()}/Player/AppSettings.xml', 'w') as f:
-            f.write(app_setting(web_host, web_port))
+            f.write(app_setting(base_url))
 
         qs = urllib.parse.urlencode({
             'placeid': const.PLACE_ID,
@@ -44,6 +45,6 @@ class Player(subprocess.Popen):
 
         super().__init__([
             f'{version.binary_folder()}/Player/RobloxPlayerBeta.exe',
-            '-j', f'http://{web_host}:{web_port}/game/placelauncher.ashx?{qs}',
-            '-t', '1', '-a', f'http://{web_host}:{web_port}/login/negotiate.ashx',
+            '-j', f'{base_url}/game/placelauncher.ashx?{qs}',
+            '-t', '1', '-a', f'{base_url}/login/negotiate.ashx',
         ])

@@ -16,7 +16,7 @@
 			"name": "Python: Launch Server",
 			"type": "python",
 			"request": "launch",
-			"program": "${workspaceFolder}/Source/main.py",
+			"program": "${workspaceFolder}/Source/_main.py",
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"-v",
@@ -24,6 +24,22 @@
 				"server",
 				"-p",
 				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl"
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		}
+		{
+			"name": "Python: Launch Local Client",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"-v",
+				"2018M",
+				"client",
+				"-wh",
+				"localhost"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true

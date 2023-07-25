@@ -1,4 +1,4 @@
-from webserver.logic import webserver_handler, server_path
+from ..logic import webserver_handler, server_path
 import const
 
 

@@ -1,5 +1,9 @@
 {
 	"robloxLsp.workspace.maxPreload": 696969,
 	"robloxLsp.workspace.ignoreDir": [],
-	"robloxLsp.diagnostics.workspaceDelay": -1
+	"robloxLsp.diagnostics.workspaceDelay": -1,
+	"python.analysis.autoSearchPaths": false,
+	"python.analysis.extraPaths": [
+		"./Source"
+	]
 }

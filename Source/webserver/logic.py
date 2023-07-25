@@ -17,7 +17,7 @@ STATIC_FUNCS = {}
 
 def server_path(path: str, regex: bool = False):
     def inner(f: Callable[[BaseHTTPRequestHandler, Optional[re.Match]], bool]):
-        (regex and REGEX_FUNCS or STATIC_FUNCS)[path] = f
+        (REGEX_FUNCS if regex else STATIC_FUNCS)[path] = f
         return f
     return inner
 
