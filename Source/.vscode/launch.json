@@ -25,6 +25,9 @@
 				"server",
 				"-p",
 				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl",
+				"-wp",
+				"443",
+				"--run_client"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true,

@@ -1,5 +1,6 @@
 import launcher.routines.webserver as webserver
 import launcher.routines.server as server
+import launcher.routines.player as player
 import launcher.subparsers.logic as logic
 import argparse
 
@@ -7,10 +8,9 @@ import argparse
 def subparse(
     parser: argparse.ArgumentParser,
     sub_parser: argparse.ArgumentParser,
-    additional_web_ports: set[webserver.port],
     use_ssl: bool = False,
     **kwargs,
-) -> server.argtype:
+):
 
     sub_parser.add_argument(
         '--place', '-p',
@@ -33,15 +33,32 @@ def subparse(
     )
 
     args = parser.parse_args()
-    return server.argtype(
-        place_path=args.place,
-        rcc_port_num=args.rcc_port,
-        web_port=webserver.port(
-            port_num=args.web_port,
-            is_ssl=use_ssl,
+    return [
+        webserver.argtype(
+            port=webserver.port(
+                port_num=args.web_port,
+                is_ssl=use_ssl,
+            ),
         ),
-        **kwargs,
-    )
+        server.argtype(
+            place_path=args.place,
+            rcc_port_num=args.rcc_port,
+            web_port=webserver.port(
+                port_num=args.web_port,
+                is_ssl=use_ssl,
+            ),
+            **kwargs,
+        ),
+    ] + [
+        player.argtype(
+            rcc_host='localhost',
+            rcc_port_num=args.rcc_port,
+            web_port=webserver.port(
+                port_num=args.web_port,
+                is_ssl=use_ssl,
+            ),
+        ),
+    ] if args.run_client else []
 
 
 @logic.launch_command(logic.launch_mode.SERVER)

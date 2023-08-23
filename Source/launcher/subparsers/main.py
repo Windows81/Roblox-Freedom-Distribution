@@ -8,12 +8,7 @@ import util.versions as versions
 import argparse
 
 
-def parse_args(parser: argparse.ArgumentParser) -> routine_logic.subparser_argtype:
-    parser.add_argument(
-        '--version', '-v',
-        choices=list(versions.Version),
-        type=lambda v: versions.VERSION_MAP[v],
-    )
+def parse_args(parser: argparse.ArgumentParser):
     mode_aliases = {
         n: m
         for m in logic.launch_mode
@@ -21,26 +16,33 @@ def parse_args(parser: argparse.ArgumentParser) -> routine_logic.subparser_argty
             m.name.lower(),
         ]
     }
-
-    mode_parser: argparse._SubParsersAction = parser.add_subparsers(dest='mode')
+    mode_parser = parser.add_subparsers(
+        dest='mode',
+    )
     sub_parsers = {
         m: mode_parser.add_parser(n)
         for n, m in mode_aliases.items()
     }
-    (args, _) = parser.parse_known_args()
+
+    parser.add_argument(
+        '--version', '-v',
+        choices=list(versions.Version),
+        type=lambda v: versions.VERSION_MAP[v],
+    )
+
+    args = parser.parse_known_args()[0]
     mode_val = mode_aliases[args.mode]
     sub_func = logic.VERSION_ROUTINES[mode_val][args.version]
     sub_parser = sub_parsers[mode_val]
+    args_list = sub_func(parser, sub_parser)
 
-    arg_obj = sub_func(parser, sub_parser)
-    arg_obj.global_args = routine_logic.global_argtype(
-        roblox_version=args.version,
-        parser_class=mode_val.value,
+    return routine_logic.routine(
+        routine_logic.global_argtype(
+            roblox_version=args.version,
+        ),
+        *args_list,
     )
-    return arg_obj
 
 
 def process(parser: argparse.ArgumentParser):
     argtype_obj = parse_args(parser)
-    mode_class = argtype_obj.global_args.parser_class
-    mode_class.run(argtype_obj)

@@ -1,10 +1,8 @@
 import launcher.routines.webserver as webserver
 import launcher.routines.logic as logic
-import util.versions as versions
 import util.const as const
 import urllib.parse
 import dataclasses
-import subprocess
 import functools
 import os
 
@@ -20,7 +18,7 @@ def app_setting(base_url: str) -> str:
 
 
 @dataclasses.dataclass
-class argtype(logic.subparser_argtype):
+class _argtype(logic.subparser_argtype):
     rcc_host: str = 'localhost'
     rcc_port_num: int = 2005
     web_host: str = None
@@ -30,13 +28,14 @@ class argtype(logic.subparser_argtype):
     ),
     username: str = 'Byfron\'s Bad Byrother'
     appearance: str = const.DEFAULT_APPEARANCE
+    delay: int = 0
 
 
-class player(logic.routine):
-    def __init__(self, args: argtype) -> None:
+class player(logic.popen_entry):
+    def __init__(self, global_args: logic.global_argtype, args: _argtype) -> None:
         web_host, rcc_host = args.web_host or args.rcc_host, args.rcc_host or args.web_host
         base_url = f'http{"s" if args.web_port.is_ssl else""}://{web_host}:{args.web_port.port_num}'
-        player_path = os.path.join(args.global_args.roblox_version.binary_folder(), 'Player')
+        player_path = os.path.join(global_args.roblox_version.binary_folder(), 'Player')
         print(base_url)
 
         # Modifies settings to point to correct host name
@@ -52,9 +51,13 @@ class player(logic.routine):
             'user': args.username,
         })
 
-        super().__init__([
+        self.make_popen([
             f'{player_path}/RobloxPlayerBeta.exe',
             '-a', f'{base_url}/login/negotiate.ashx',
             '-j', f'{base_url}/game/placelauncher.ashx?{qs}',
             '-t', '1',
         ])
+
+
+class argtype(_argtype):
+    obj_type = player

@@ -8,7 +8,7 @@ import json
 
 
 @dataclasses.dataclass
-class argtype(logic.subparser_argtype):
+class _argtype(logic.subparser_argtype):
     place_path: str
     rcc_port_num: int = 2005
     web_port: webserver.port = \
@@ -19,9 +19,9 @@ class argtype(logic.subparser_argtype):
     additional_web_ports: set[webserver.port] = dataclasses.field(default_factory=set)
 
 
-class server(logic.routine, webserver.webserver_wrap):
-    def __init__(self, args: argtype) -> None:
-        folder = f'{args.global_args.roblox_version.binary_folder()}/Server'
+class server(logic.popen_entry):
+    def __init__(self, global_args: logic.global_argtype, args: _argtype) -> None:
+        folder = f'{global_args.roblox_version.binary_folder()}/Server'
 
         place_path = assets.get_asset_path(const.PLACE_ID)
         shutil.copyfile(args.place_path, place_path)
@@ -58,14 +58,15 @@ class server(logic.routine, webserver.webserver_wrap):
                 "Arguments": {},
             }, f)
 
-        super().__init__([
+        self.make_popen([
             f'{folder}/RCC.exe',
             '-verbose',
             f'-placeid:{const.PLACE_ID}',
             '-localtest', gameserver_path,
             '-settingsfile', f'{folder}/DevSettingsFile.json',
             '-port 64989',
-        ],
-            roblox_version=args.global_args.roblox_version,
-            ports=args.additional_web_ports.union([args.web_port]),
-        )
+        ])
+
+
+class argtype(_argtype):
+    obj_type = server

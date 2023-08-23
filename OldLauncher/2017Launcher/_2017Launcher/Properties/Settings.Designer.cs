@@ -5,13 +5,13 @@ using System.Runtime.CompilerServices;
 
 namespace _2017Launcher.Properties
 {
-	// Token: 0x02000006 RID: 6
+	// Token: 0x02000011 RID: 17
 	[CompilerGenerated]
-	[GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
+	[GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.10.0.0")]
 	internal sealed partial class Settings : ApplicationSettingsBase
 	{
-		// Token: 0x17000003 RID: 3
-		// (get) Token: 0x0600002E RID: 46 RVA: 0x000059A6 File Offset: 0x00003BA6
+		// Token: 0x17000013 RID: 19
+		// (get) Token: 0x06000098 RID: 152 RVA: 0x0000D3E1 File Offset: 0x0000B5E1
 		public static Settings Default
 		{
 			get
@@ -20,7 +20,7 @@ namespace _2017Launcher.Properties
 			}
 		}
 
-		// Token: 0x04000035 RID: 53
+		// Token: 0x04000084 RID: 132
 		private static Settings defaultInstance = (Settings)SettingsBase.Synchronized(new Settings());
 	}
 }

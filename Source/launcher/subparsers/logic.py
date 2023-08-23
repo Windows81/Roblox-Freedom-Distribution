@@ -9,9 +9,9 @@ import enum
 
 
 class launch_mode(enum.Enum):
-    STUDIO = studio.studio
-    SERVER = server.server
-    PLAYER = player.player
+    STUDIO = 0
+    SERVER = 1
+    PLAYER = 2
 
 
 VERSION_ROUTINES = {

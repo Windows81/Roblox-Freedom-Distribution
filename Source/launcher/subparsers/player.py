@@ -8,7 +8,7 @@ def subparse(
     parser: argparse.ArgumentParser,
     sub_parser: argparse.ArgumentParser,
     use_ssl: bool = False,
-) -> player.argtype:
+):
     sub_parser.add_argument(
         '--rcc_host', '-rh', type=str,
         default=None, required=True,
@@ -31,16 +31,18 @@ def subparse(
         default='VisualPlugin'
     )
     args = parser.parse_args()
-    return player.argtype(
-        rcc_host=args.rcc_host,
-        rcc_port_num=args.rcc_port,
-        web_host=args.web_host,
-        web_port=webserver.port(
-            port_num=args.web_port,
-            is_ssl=use_ssl,
+    return [
+        player.argtype(
+            rcc_host=args.rcc_host,
+            rcc_port_num=args.rcc_port,
+            web_host=args.web_host,
+            web_port=webserver.port(
+                port_num=args.web_port,
+                is_ssl=use_ssl,
+            ),
+            username=args.username,
         ),
-        username=args.username,
-    )
+    ]
 
 
 @logic.launch_command(logic.launch_mode.PLAYER)
@@ -55,5 +57,5 @@ def _(*a):
 def _(*a):
     return subparse(
         *a,
-        use_ssl=False,
+        use_ssl=True,
     )

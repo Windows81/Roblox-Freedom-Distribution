@@ -3,7 +3,8 @@
 	"robloxLsp.workspace.ignoreDir": [],
 	"robloxLsp.diagnostics.workspaceDelay": -1,
 	"python.analysis.autoSearchPaths": false,
-	"python.analysis.extraPaths": [
-		"./Source"
-	]
+	"python.analysis.include": [
+		"${workspaceFolder}/Source",
+	],
+	"python.linting.enabled": false,
 }

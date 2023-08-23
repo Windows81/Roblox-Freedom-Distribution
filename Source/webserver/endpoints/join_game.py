@@ -56,7 +56,7 @@ def _(self: webserver_handler) -> bool:
         "CountryCode": "US",
         "RandomSeed1": "7HOfysTid4XsV/3mBPPPhKHIykE4GXSBBBzd93rplbDQ3bNSgPFcR9auB780LjNYg+4mbNQPOqTmJ2o3hUefmw==",
         "ClientPublicKeyData": "{\"creationTime\":\"19:56 11/23/2021\",\"applications\":{\"RakNetEarlyPublicKey\":{\"versions\":[{\"id\":2,\"value\":\"HwatfCnkndvyKCMPSa0VAl2M2c0GQv9+0z0kENhcj2w=\",\"allowed\":true}],\"send\":2,\"revert\":2}}}"
-    })
+    }, sign=True)
     return True
     self.send_json({
         'ClientPort': 0,
@@ -105,7 +105,7 @@ def _(self: webserver_handler) -> bool:
         'authenticationUrl': 'http://localhost/login/negotiate.ashx',
         'authenticationTicket': '1',
         'message': None,
-    })
+    }, sign=True)
     return True
 
 
@@ -155,6 +155,7 @@ def _(self: webserver_handler) -> bool:
 
 
 @server_path("/login/negotiate.ashx")
+@server_path("/universes/validate-place-join")
 def _(self: webserver_handler) -> bool:
     self.send_json(True)
     return True
@@ -166,9 +167,38 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
+@server_path("/asset-thumbnail/json")
+def _(self: webserver_handler) -> bool:
+    self.send_json({
+        "Url": "",
+        "Final": True,
+        "SubstitutionType": 0,
+    })
+    return True
+
+
+@server_path("/Thumbs/GameIcon.ashx")
+def _(self: webserver_handler) -> bool:
+    with open('C:/Users/USERNAME/Documents/Projects/FilteringDisabled/OldRFD/Webserver/www/Thumbs/gameicon.ashx/img.png', 'rb') as f:
+        self.send_data(f.read())
+    return True
+
+
 @server_path("/v1/settings/application")
 def _(self: webserver_handler) -> bool:
     self.send_json({"applicationSettings": {}})
+    return True
+
+
+@server_path("/v1/player-policies-client/")
+def _(self: webserver_handler) -> bool:
+    self.send_json({
+        "isSubjectToChinaPolicies": False,
+        "arePaidRandomItemsRestricted": False,
+        "isPaidItemTradingAllowed": True,
+        "areAdsAllowed": True,
+        "allowedExternalLinkReferences": ["Discord", "YouTube", "Twitch", "Facebook"]
+    })
     return True
 
 
@@ -183,4 +213,10 @@ def _(self: webserver_handler) -> bool:
     self.send_json({
         "data": self.server.roblox_version.security_versions(),
     })
+    return True
+
+
+@server_path("/v1.1/Counters/BatchIncrement")
+def _(self: webserver_handler) -> bool:
+    self.send_json({})
     return True

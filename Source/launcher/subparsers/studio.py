@@ -9,6 +9,8 @@ def _(parser: argparse.ArgumentParser, sub_parser: argparse.ArgumentParser):
         dest='args', nargs='*',
     )
     args = parser.parse_args()
-    return studio.argtype(
-        cmd_args=args.args,
-    )
+    return [
+        studio.argtype(
+            cmd_args=args.args,
+        )
+    ]

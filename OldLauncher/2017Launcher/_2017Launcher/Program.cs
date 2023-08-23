@@ -3,10 +3,10 @@ using System.Windows.Forms;
 
 namespace _2017Launcher
 {
-	// Token: 0x02000004 RID: 4
+	// Token: 0x0200000F RID: 15
 	internal static class Program
 	{
-		// Token: 0x06000029 RID: 41 RVA: 0x0000594C File Offset: 0x00003B4C
+		// Token: 0x06000086 RID: 134 RVA: 0x0000D228 File Offset: 0x0000B428
 		[STAThread]
 		private static void Main()
 		{
