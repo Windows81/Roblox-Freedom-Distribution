@@ -1,84 +1,60 @@
-from .logic import LaunchMode, min_version
-import launcher.player
-import argparse
+import launcher.routines.webserver as webserver
+import launcher.routines.logic as logic
+import util.versions as versions
+import util.const as const
+import urllib.parse
+import dataclasses
+import subprocess
+import functools
+import os
 
 
-@min_version(LaunchMode.PLAYER)
-def _(parser: argparse.ArgumentParser, sub_parser: argparse.ArgumentParser):
-    sub_parser.add_argument(
-        '--rcc_host', '-rh', type=str,
-        default=None, required=True,
-    )
-    sub_parser.add_argument(
-        '--rcc_port', '-rp', type=int,
-        default=2005, nargs=1,
-    )
-    sub_parser.add_argument(
-        '--web_host', '-wh', type=str,
-        default=None, nargs='?',
-    )
-    sub_parser.add_argument(
-        '--web_port', '-wp', type=int,
-        default=80, nargs=1,
-    )
-    sub_parser.add_argument(
-        '--username', '-u',
-        type=str, nargs='?',
-        default='VisualPlugin'
-    )
-    args = parser.parse_args()
-    instance = launcher.player.Player(
-        version=args.version,
-        rcc_host=args.rcc_host,
-        rcc_port=args.rcc_port,
-        web_host=args.web_host,
-        web_port=args.web_port,
-        username=args.username,
-    )
-    try:
-        instance.communicate()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        del instance
+@functools.cache
+def app_setting(base_url: str) -> str:
+    return '\n'.join([
+        """<?xml version="1.0" encoding="UTF-8"?>\n<Settings>""",
+        """<ContentFolder>content</ContentFolder>""",
+        f"""<BaseUrl>{base_url}</BaseUrl>""",
+        """</Settings>""",
+    ])
 
 
-@min_version(LaunchMode.PLAYER, version_num=400)
-def _(parser: argparse.ArgumentParser, sub_parser: argparse.ArgumentParser):
-    raise NotImplementedError("This version hasn't been properly configured yet.")
-    sub_parser.add_argument(
-        '--rcc_host', '-rh', type=str,
-        default=None, required=True,
-    )
-    sub_parser.add_argument(
-        '--rcc_port', '-rp',
-        type=int, nargs='?',
-    )
-    sub_parser.add_argument(
-        '--web_host', '-wh', type=str,
-        default=None, nargs='?',
-    )
-    sub_parser.add_argument(
-        '--web_port', '-wp', type=int,
-        default=80, nargs='?',
-    )
-    sub_parser.add_argument(
-        '--username', '-u',
-        type=str, nargs='?',
-        default='VisualPlugin'
-    )
-    args = parser.parse_args()
-    instance = launcher.player.Player(
-        version=args.version,
-        rcc_host=args.rcc_host,
-        rcc_port=args.rcc_port,
-        web_host=args.web_host,
-        web_port=args.web_port,
-        username=args.username,
-    )
-    try:
-        instance.communicate()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        del instance
+@dataclasses.dataclass
+class argtype(logic.subparser_argtype):
+    rcc_host: str = 'localhost'
+    rcc_port_num: int = 2005
+    web_host: str = None
+    web_port: webserver.port = webserver.port(
+        port_num=80,
+        is_ssl=False,
+    ),
+    username: str = 'Byfron\'s Bad Byrother'
+    appearance: str = const.DEFAULT_APPEARANCE
+
+
+class player(logic.routine):
+    def __init__(self, args: argtype) -> None:
+        web_host, rcc_host = args.web_host or args.rcc_host, args.rcc_host or args.web_host
+        base_url = f'http{"s" if args.web_port.is_ssl else""}://{web_host}:{args.web_port.port_num}'
+        player_path = os.path.join(args.global_args.roblox_version.binary_folder(), 'Player')
+        print(base_url)
+
+        # Modifies settings to point to correct host name
+        with open(f'{player_path}/AppSettings.xml', 'w') as f:
+            f.write(app_setting(base_url))
+
+        qs = urllib.parse.urlencode({
+            'placeid': const.PLACE_ID,
+            'ip': rcc_host,
+            'port': args.rcc_port_num,
+            'id': 1630228,
+            'app': args.appearance,
+            'user': args.username,
+        })
+
+        super().__init__([
+            f'{player_path}/RobloxPlayerBeta.exe',
+            '-a', f'{base_url}/login/negotiate.ashx',
+            '-j', f'{base_url}/game/placelauncher.ashx?{qs}',
+            '-t', '1',
+        ])

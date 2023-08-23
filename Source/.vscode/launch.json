@@ -1,0 +1,65 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Python: Current File",
+			"type": "python",
+			"request": "launch",
+			"program": "${file}",
+			"cwd": "${workspaceFolder}/..",
+			"console": "integratedTerminal",
+			"justMyCode": true,
+		},
+		{
+			"name": "Python: Launch Server 2021E",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/_main.py",
+			"cwd": "${workspaceFolder}/..",
+			"args": [
+				"-v",
+				"2021E",
+				"server",
+				"-p",
+				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true,
+		},
+		{
+			"name": "Python: Launch Server 2018M",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/_main.py",
+			"cwd": "${workspaceFolder}/..",
+			"args": [
+				"-v",
+				"2018M",
+				"server",
+				"-p",
+				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl"
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true,
+		},
+		{
+			"name": "Python: Launch Local Client",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/_main.py",
+			"cwd": "${workspaceFolder}/..",
+			"args": [
+				"-v",
+				"2021E",
+				"client",
+				"-wh",
+				"localhost"
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true,
+		}
+	]
+}

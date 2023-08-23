@@ -1,20 +1,14 @@
-from .logic import LaunchMode, min_version
-import launcher.studio
-import argparse
+import launcher.routines.logic as logic
+import launcher.routines.webserver
+import dataclasses
 
 
-@min_version(LaunchMode.STUDIO)
-def _(parser: argparse.ArgumentParser, sub_parser: argparse.ArgumentParser):
-    sub_parser.add_argument(
-        dest='args', nargs='*',
-    )
-    args = parser.parse_args()
-    instance = launcher.studio.Studio(
-        **{i: v for i, v in args.__dict__.items() if v}
-    )
-    try:
-        instance.communicate()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        del instance
+@dataclasses.dataclass
+class argtype(logic.subparser_argtype):
+    cmd_args: list[str] = dataclasses.field(default_factory=list)
+
+
+class studio(launcher.routines.webserver.webserver_wrap):
+    def __init__(self, args: argtype) -> None:
+        folder = args.global_args.roblox_version.binary_folder()
+        super().__init__([f'{folder}/Studio/RobloxStudioBeta.exe', *args.cmd_args])

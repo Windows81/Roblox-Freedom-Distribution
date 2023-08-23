@@ -1,3 +1,4 @@
+import typing
 import enum
 
 
@@ -34,3 +35,20 @@ VERSION_ROUTINES = {
     Version.v348: [],
     Version.v547: [],
 }
+
+T = typing.TypeVar('T')
+
+
+class version_holder(dict[Version, T]):
+    def __add_pred(self, func: typing.Callable[[int], bool], obj: T) -> T:
+        for v in Version:
+            if not func(v.get_number()):
+                continue
+            super().__setitem__(v, obj)
+        return obj
+
+    def add_min(self, obj: T, min_version: int) -> T:
+        return self.__add_pred(lambda n: n >= min_version, obj)
+
+    def add_all(self, obj: T) -> T:
+        return self.__add_pred(lambda n: True, obj)

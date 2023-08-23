@@ -1,23 +1,29 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from OpenSSL.crypto import sign, load_privatekey, FILETYPE_PEM
 from typing import Callable, Optional
+import util.versions as versions
+import util.const as const
 from urllib import parse
+import OpenSSL.crypto
 import mimetypes
-import versions
 import base64
-import const
+import enum
 import json
 import re
 import os
 
 
-REGEX_FUNCS = {}
-STATIC_FUNCS = {}
+class FunctionMode(enum.Enum):
+    STATIC = 0
+    REGEX = 1
 
 
-def server_path(path: str, regex: bool = False):
+SERVER_FUNCS = {m: dict[str, versions.version_holder]() for m in FunctionMode}
+
+
+def server_path(path: str, regex: bool = False, min_version: int = 0):
     def inner(f: Callable[[BaseHTTPRequestHandler, Optional[re.Match]], bool]):
-        (REGEX_FUNCS if regex else STATIC_FUNCS)[path] = f
+        dict_mode: dict = FunctionMode.REGEX if regex else FunctionMode.STATIC
+        SERVER_FUNCS[dict_mode].setdefault(path, versions.version_holder()).add_min(f, min_version)
         return f
     return inner
 
@@ -25,7 +31,14 @@ def server_path(path: str, regex: bool = False):
 def rbx_sign(data: bytes, key: bytes) -> bytes:
     data = b'\r\n' + data
     key = f"-----BEGIN RSA PRIVATE KEY-----\n{key}\n-----END RSA PRIVATE KEY-----"
-    signature = sign(load_privatekey(FILETYPE_PEM, key), data, 'sha1')
+    signature = OpenSSL.crypto.sign(
+        OpenSSL.crypto.load_privatekey(
+            OpenSSL.crypto.FILETYPE_PEM,
+            key,
+        ),
+        data,
+        'sha1',
+    )
     return b"--rbxsig%" + base64.b64encode(signature) + b'%' + data
 
 
@@ -33,20 +46,22 @@ class webserver(ThreadingHTTPServer):
     def __init__(
         self,
         server_address,
-        version: versions.Version = versions.Version.v348,
+        roblox_version: versions.Version = versions.Version.v348,
         bind_and_activate=True,
     ) -> None:
         super().__init__(server_address, webserver_handler, bind_and_activate)
-        self.version = version
+        self.roblox_version = roblox_version
 
 
 class webserver_handler(BaseHTTPRequestHandler):
     default_request_version = "HTTP/1.1"
+    is_valid_request: bool = False
     server: webserver
 
     def parse_request(self) -> bool:
         if not super().parse_request():
             return False
+        self.is_valid_request = True
         self.urlsplit = parse.urlsplit(self.path)
         self.query = {i: v[0] for i, v in parse.parse_qs(self.urlsplit.query).items()}
         sockname = self.request.getsockname()
@@ -54,20 +69,20 @@ class webserver_handler(BaseHTTPRequestHandler):
         return True
 
     def do_GET(self) -> None:
-        if self._open_from_static():
+        if self.__open_from_static():
             return
-        if self._open_from_regex():
+        if self.__open_from_regex():
             return
-        if self._open_from_file():
+        if self.__open_from_file():
             return
         self.send_error(404)
 
     def do_POST(self) -> None:
-        if self._open_from_static():
+        if self.__open_from_static():
             return
-        if self._open_from_regex():
+        if self.__open_from_regex():
             return
-        if self._open_from_file():
+        if self.__open_from_file():
             return
         self.send_error(404)
 
@@ -85,25 +100,30 @@ class webserver_handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
-    def _open_from_static(self) -> bool:
-        func = STATIC_FUNCS.get(self.urlsplit.path, None)
-        return func and func(self) or False
+    def __process_func(self, func, *a, **kwa):
+        if not func:
+            return False
+        return func[self.server.roblox_version](self, *a, **kwa)
 
-    def _open_from_regex(self) -> bool:
-        for pattern, func in REGEX_FUNCS.items():
+    def __open_from_static(self) -> bool:
+        func = SERVER_FUNCS[FunctionMode.STATIC].get(self.urlsplit.path, None)
+        return self.__process_func(func)
+
+    def __open_from_regex(self) -> bool:
+        for pattern, func in SERVER_FUNCS[FunctionMode.REGEX].items():
             match = re.search(pattern, self.urlsplit.path)
             if not match:
                 continue
-            return func(self, match)
+            return self.__process_func(func)
 
-    def _open_from_file(self) -> bool:
+    def __open_from_file(self) -> bool:
         fn = os.path.realpath(os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             '../www', self.urlsplit.path,
         ))
 
         if "." not in fn.split(os.path.sep)[-1]:
-            fn = os.path.join(fn, "index.php")
+            fn = os.path.join(fn, 'index.php')
         mime_type = mimetypes.guess_type(fn)[0]
 
         if os.path.exists(fn):
@@ -114,5 +134,8 @@ class webserver_handler(BaseHTTPRequestHandler):
     def log_message(self, format, *args) -> None:
         if not const.HTTPD_SHOW_LOGS:
             return
-        if not self.requestline.startswith('\x16\x03'):
-            super().log_message(format, *args)
+        if not self.is_valid_request:
+            return
+        # if not self.requestline.startswith('\x16\x03'):
+            # super().log_message(format, *args)
+        print(self.host, self.path)

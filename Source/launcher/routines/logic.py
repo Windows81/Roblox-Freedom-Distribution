@@ -1,30 +1,25 @@
-
-import argparse
-import enum
-import launcher.studio
-import launcher.server
-import launcher.player
-import versions
+import util.versions as versions
+import dataclasses
+import subprocess
 
 
-class LaunchMode(enum.Enum):
-    STUDIO = launcher.studio.Studio
-    SERVER = launcher.server.Server
-    PLAYER = launcher.player.Player
+class routine(subprocess.Popen):
+    @classmethod
+    def run(cls, argtype_obj):
+        instance = cls(argtype_obj)
+        try:
+            instance.communicate()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            del instance
 
 
-VERSION_ROUTINES = {
-    i: {} for i in LaunchMode
-}
+@dataclasses.dataclass
+class global_argtype:
+    roblox_version: versions.Version
+    parser_class: type[routine]
 
 
-def min_version(launch_mode: LaunchMode, version_num: int = 0):
-    def inner(f):
-        mode_arr = VERSION_ROUTINES[launch_mode]
-        for v in versions.Version:
-            n: int = v.get_number()
-            if n < version_num:
-                continue
-            mode_arr[v] = f
-        return f
-    return inner
+class subparser_argtype:
+    global_args: global_argtype = None

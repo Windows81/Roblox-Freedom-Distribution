@@ -1,27 +1,33 @@
-from webserver._main import make_server
+from webserver.main import make_server
+import util.versions as versions
+import dataclasses
 import subprocess
 import threading
-import versions
 import time
 
 
-class WebserverWrap(subprocess.Popen):
+@dataclasses.dataclass
+class port:
+    def __hash__(self) -> int:
+        return self.port_num
+    port_num: int
+    is_ssl: bool
+
+
+class webserver_wrap(subprocess.Popen):
     httpds = []
     threads = []
 
-    def __make_httpd(self, port: int, *args, **kwargs) -> None:
-        self.httpds.append(ht := make_server(port, *args, **kwargs))
+    def __make_server(self, *args, **kwargs) -> None:
+        self.httpds.append(ht := make_server(*args, **kwargs))
         self.threads.append(th := threading.Thread(target=ht.serve_forever))
         th.start()
 
-    def __init__(self, *args, version: versions.Version, **kwargs) -> None:
+    def __init__(self, *args, ports: set[port], roblox_version: versions.Version, **kwargs) -> None:
         self.server_running = True
         try:
-            config = {
-                'version': version,
-            }
-            self.__make_httpd(80, is_ssl=False, **config)
-            self.__make_httpd(443, is_ssl=True, **config)
+            for d in ports:
+                self.__make_server(**d.__dict__, roblox_version=roblox_version)
             time.sleep(1)
         except PermissionError:
             print('WARNING: webserver was unable to start.')
