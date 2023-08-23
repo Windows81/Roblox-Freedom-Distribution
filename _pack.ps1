@@ -1,12 +1,17 @@
-$date = Get-Date -Format "yyyy-MM-ddTHH`u{a789}mmZ"
-$root = "$PSScriptRoot/Roblox"
-$dirs = Get-ChildItem "$root/*/*" -Directory
+# Packs Rōblox executables into GitHub releases that can be downloaded.
 
-$zips = $dirs | ForEach-Object {
+$release_name = Get-Date -Format "yyyy-MM-ddTHH`u{a789}mmZ"
+$root = "$PSScriptRoot/Roblox"
+$zips = Get-ChildItem "$root/*/*" -Directory | ForEach-Object {
+
 	$zip = "$root/$($_.Parent.Name).$($_.Name).7z"
-	Remove-Item $zip* -Force
-	7z a $zip $_.FullName
+
+	# Do not overwrite.
+	if (-not (Test-Path $zip*)) {
+		Remove-Item $zip* -Force
+		7z a $zip $_.FullName
+	}
 	return Get-ChildItem $zip*
 }
 
-gh release create "$date" --notes "" $zips
+gh release create "$release_name" --notes "" $zips
