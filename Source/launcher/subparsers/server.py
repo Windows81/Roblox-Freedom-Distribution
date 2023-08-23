@@ -32,33 +32,54 @@ def subparse(
         action='store_true',
     )
 
+    skip_mutex = sub_parser.add_mutually_exclusive_group()
+    skip_mutex.add_argument(
+        '--skip_rcc',
+        action='store_true',
+    )
+    skip_mutex.add_argument(
+        '--skip_web',
+        action='store_true',
+    )
+
     args = parser.parse_args()
-    return [
-        webserver.argtype(
-            port=webserver.port(
-                port_num=args.web_port,
-                is_ssl=use_ssl,
+    routine_args = []
+
+    if not args.skip_rcc:
+        routine_args.extend([
+            webserver.argtype(
+                port=webserver.port(
+                    port_num=args.web_port,
+                    is_ssl=use_ssl,
+                ),
             ),
-        ),
-        server.argtype(
-            place_path=args.place,
-            rcc_port_num=args.rcc_port,
-            web_port=webserver.port(
-                port_num=args.web_port,
-                is_ssl=use_ssl,
+        ])
+
+    if not args.skip_web:
+        routine_args.extend([
+            server.argtype(
+                place_path=args.place,
+                rcc_port_num=args.rcc_port,
+                web_port=webserver.port(
+                    port_num=args.web_port,
+                    is_ssl=use_ssl,
+                ),
+                **kwargs,
             ),
-            **kwargs,
-        ),
-    ] + [
-        player.argtype(
-            rcc_host='localhost',
-            rcc_port_num=args.rcc_port,
-            web_port=webserver.port(
-                port_num=args.web_port,
-                is_ssl=use_ssl,
+        ])
+
+    if args.run_client:
+        routine_args.extend([
+            player.argtype(
+                rcc_host='localhost',
+                rcc_port_num=args.rcc_port,
+                web_port=webserver.port(
+                    port_num=args.web_port,
+                    is_ssl=use_ssl,
+                ),
             ),
-        ),
-    ] if args.run_client else []
+        ])
+    return routine_args
 
 
 @logic.launch_command(logic.launch_mode.SERVER)

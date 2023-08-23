@@ -24,17 +24,21 @@ class entry:
     def make(self, global_args: global_argtype, args: subparser_argtype):
         raise NotImplementedError()
 
-    def join(self):
+    def wait(self):
         for t in self.threads:
-            t.join()
+            while t.is_alive():
+                t.join(1)
 
 
 class popen_entry(subprocess.Popen, entry):
     def make_popen(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def join(self):
+    def wait(self):
         self.communicate()
+
+    def __del__(self):
+        self.terminate()
 
 
 class routine:
@@ -46,12 +50,10 @@ class routine:
             for args in args_list
         ]
 
+    def wait(self):
+        for e in self.entries:
+            e.wait()
+
     def __del__(self):
-        try:
-            for e in self.entries:
-                e.join()
-        except KeyboardInterrupt:
-            pass
-        finally:
-            for e in self.entries:
-                del e
+        for e in self.entries:
+            del e

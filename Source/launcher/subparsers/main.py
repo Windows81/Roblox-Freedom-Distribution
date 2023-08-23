@@ -45,4 +45,10 @@ def parse_args(parser: argparse.ArgumentParser):
 
 
 def process(parser: argparse.ArgumentParser):
-    argtype_obj = parse_args(parser)
+    routine = parse_args(parser)
+    try:
+        routine.wait()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        del routine

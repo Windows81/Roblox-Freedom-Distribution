@@ -1,3 +1,4 @@
+import subprocess
 import launcher.routines.webserver as webserver
 import launcher.routines.logic as logic
 import webserver.assets as assets
@@ -65,7 +66,7 @@ class server(logic.popen_entry):
             '-localtest', gameserver_path,
             '-settingsfile', f'{folder}/DevSettingsFile.json',
             '-port 64989',
-        ])
+        ], stdin=subprocess.PIPE)
 
 
 class argtype(_argtype):
