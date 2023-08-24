@@ -43,7 +43,8 @@
 				"2018M",
 				"server",
 				"-p",
-				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl"
+				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl",
+				"--run_client"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true,

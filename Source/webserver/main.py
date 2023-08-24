@@ -6,7 +6,7 @@ from .endpoints._main import _
 
 
 def make_server(port_num=80, is_ssl=False, *args, **kwargs) -> webserver:
-    httpd = webserver(('', port_num), *args, **kwargs)
+    httpd = webserver(('localhost', port_num), *args, **kwargs)
     if is_ssl:
         httpd.socket = SSL_CONTEXT.wrap_socket(
             httpd.socket,

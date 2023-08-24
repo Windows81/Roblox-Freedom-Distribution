@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import ssl
 from typing import Callable, Optional
 import util.versions as versions
 import util.const as const
@@ -28,7 +29,7 @@ def server_path(path: str, regex: bool = False, min_version: int = 0):
     return inner
 
 
-def rbx_sign(data: bytes, key: bytes) -> bytes:
+def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
     data = b'\r\n' + data
     key = f"-----BEGIN RSA PRIVATE KEY-----\n{key}\n-----END RSA PRIVATE KEY-----"
     signature = OpenSSL.crypto.sign(
@@ -39,7 +40,7 @@ def rbx_sign(data: bytes, key: bytes) -> bytes:
         data,
         'sha1',
     )
-    return b"--rbxsig%" + base64.b64encode(signature) + b'%' + data
+    return prefix + b"%" + base64.b64encode(signature) + b'%' + data
 
 
 class webserver(ThreadingHTTPServer):
@@ -61,11 +62,19 @@ class webserver_handler(BaseHTTPRequestHandler):
     def parse_request(self) -> bool:
         if not super().parse_request():
             return False
+
         self.is_valid_request = True
-        self.urlsplit = parse.urlsplit(self.path)
+        self.sockname = self.request.getsockname()
+        self.is_ssl = isinstance(self.connection, ssl.SSLSocket)
+        self.domain = \
+            'localhost'\
+            if self.sockname[0] == '127.0.0.1'\
+            else self.sockname[0]
+
+        self.host = f'http{"s" if self.is_ssl else ""}://{self.domain}:{self.sockname[1]}'
+        self.url = f'{self.host}{self.path}'
+        self.urlsplit = parse.urlsplit(self.url)
         self.query = {i: v[0] for i, v in parse.parse_qs(self.urlsplit.query).items()}
-        sockname = self.request.getsockname()
-        self.host = f'{sockname[0]}:{sockname[1]}'
         return True
 
     def do_GET(self) -> None:
@@ -86,12 +95,31 @@ class webserver_handler(BaseHTTPRequestHandler):
             return
         self.send_error(404)
 
-    def send_json(self, j, sign=False) -> None:
-        byts = json.dumps(j).encode('utf-8')
-        self.send_data(byts, content_type='application/json', sign=sign)
+    def send_json(
+        self,
+        json_data,
+        sign_prefix: bytes | None = None,
+    ) -> None:
+        byts = json.dumps(json_data).encode('utf-8')
+        self.send_data(
+            byts,
+            content_type='application/json',
+            sign_prefix=sign_prefix,
+        )
 
-    def send_data(self, byts: bytes, status: int = 200, content_type: str | None = None, sign=False) -> None:
-        data = sign and rbx_sign(byts, const.JOIN_GAME_PRIVATE_KEY) or byts
+    def send_data(
+        self,
+        byts: bytes,
+        status: int = 200,
+        content_type: str | None = None,
+        sign_prefix: bytes | None = None,
+    ) -> None:
+
+        data = sign_prefix and rbx_sign(
+            key=const.JOIN_GAME_PRIVATE_KEY,
+            prefix=sign_prefix,
+            data=byts,
+        ) or byts
 
         self.send_response(status)
         if content_type:
@@ -138,4 +166,4 @@ class webserver_handler(BaseHTTPRequestHandler):
             return
         # if not self.requestline.startswith('\x16\x03'):
             # super().log_message(format, *args)
-        print(self.host, self.path)
+        print(self.url)

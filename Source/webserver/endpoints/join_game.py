@@ -56,7 +56,7 @@ def _(self: webserver_handler) -> bool:
         "CountryCode": "US",
         "RandomSeed1": "7HOfysTid4XsV/3mBPPPhKHIykE4GXSBBBzd93rplbDQ3bNSgPFcR9auB780LjNYg+4mbNQPOqTmJ2o3hUefmw==",
         "ClientPublicKeyData": "{\"creationTime\":\"19:56 11/23/2021\",\"applications\":{\"RakNetEarlyPublicKey\":{\"versions\":[{\"id\":2,\"value\":\"HwatfCnkndvyKCMPSa0VAl2M2c0GQv9+0z0kENhcj2w=\",\"allowed\":true}],\"send\":2,\"revert\":2}}}"
-    }, sign=True)
+    }, sign_prefix=b'--rbxsig2')
     return True
     self.send_json({
         'ClientPort': 0,
@@ -92,7 +92,7 @@ def _(self: webserver_handler) -> bool:
         'FollowUserId': 0,
         'CharacterAppearanceId': int(uid),
         'UniverseId': 0,
-    }, sign=True)
+    }, sign_prefix=b'--rbxsig')
     return True
 
 
@@ -101,11 +101,11 @@ def _(self: webserver_handler) -> bool:
     self.send_json({
         'jobId': 'Test',
         'status': 2,
-        'joinScriptUrl': f"http://localhost/game/join.ashx?{self.urlsplit.query}",
-        'authenticationUrl': 'http://localhost/login/negotiate.ashx',
+        'joinScriptUrl': f'{self.host}/game/join.ashx?{self.urlsplit.query}',
+        'authenticationUrl': f'{self.host}/login/negotiate.ashx',
         'authenticationTicket': '1',
         'message': None,
-    }, sign=True)
+    })
     return True
 
 
@@ -187,18 +187,6 @@ def _(self: webserver_handler) -> bool:
 @server_path("/v1/settings/application")
 def _(self: webserver_handler) -> bool:
     self.send_json({"applicationSettings": {}})
-    return True
-
-
-@server_path("/v1/player-policies-client/")
-def _(self: webserver_handler) -> bool:
-    self.send_json({
-        "isSubjectToChinaPolicies": False,
-        "arePaidRandomItemsRestricted": False,
-        "isPaidItemTradingAllowed": True,
-        "areAdsAllowed": True,
-        "allowedExternalLinkReferences": ["Discord", "YouTube", "Twitch", "Facebook"]
-    })
     return True
 
 
