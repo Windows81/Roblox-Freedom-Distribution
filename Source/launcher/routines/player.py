@@ -4,7 +4,6 @@ import util.const as const
 import urllib.parse
 import dataclasses
 import functools
-import os
 
 
 @functools.cache
@@ -35,7 +34,7 @@ class player(logic.popen_entry):
     def __init__(self, global_args: logic.global_argtype, args: _argtype) -> None:
         web_host, rcc_host = args.web_host or args.rcc_host, args.rcc_host or args.web_host
         base_url = f'http{"s" if args.web_port.is_ssl else""}://{web_host}:{args.web_port.port_num}'
-        player_path = os.path.join(global_args.roblox_version.binary_folder(), 'Player')
+        player_path = global_args.roblox_version.binary_full_path('Player')
         print(base_url)
 
         # Modifies settings to point to correct host name

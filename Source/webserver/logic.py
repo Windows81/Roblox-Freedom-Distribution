@@ -47,7 +47,7 @@ class webserver(ThreadingHTTPServer):
     def __init__(
         self,
         server_address,
-        roblox_version: versions.Version = versions.Version.v348,
+        roblox_version: versions.roblox = versions.roblox.v348,
         bind_and_activate=True,
     ) -> None:
         super().__init__(server_address, webserver_handler, bind_and_activate)
@@ -145,6 +145,8 @@ class webserver_handler(BaseHTTPRequestHandler):
             return self.__process_func(func)
 
     def __open_from_file(self) -> bool:
+        return False
+        # TODO: remove completely or find a new use for this piece of code.
         fn = os.path.realpath(os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             '../www', self.urlsplit.path,

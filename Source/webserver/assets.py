@@ -1,9 +1,10 @@
-import os.path
+import util.resource
 import urllib3
+import os
 
 
 def get_asset_path(aid: int) -> str:
-    return f'./AssetCaché/{aid}'
+    return util.resource.get_full_path(util.resource.dir_type.ASSET, f'{aid:011d}')
 
 
 def load_asset(aid: int) -> bytes | None:

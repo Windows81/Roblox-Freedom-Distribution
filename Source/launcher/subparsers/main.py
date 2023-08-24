@@ -26,7 +26,7 @@ def parse_args(parser: argparse.ArgumentParser):
 
     parser.add_argument(
         '--version', '-v',
-        choices=list(versions.Version),
+        choices=list(versions.roblox),
         type=lambda v: versions.VERSION_MAP[v],
     )
 

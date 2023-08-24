@@ -1,14 +1,15 @@
+import util.resource
 import typing
 import enum
 
 
-class Version(enum.Enum):
+class roblox(enum.Enum):
     v348 = '2018M'
     v463 = '2021E'
     v547 = '2022L'
 
-    def binary_folder(self) -> str:
-        return f'./Roblox/{self.name}'
+    def binary_full_path(self, *paths: str) -> str:
+        return util.resource.get_full_path(util.resource.dir_type.RŌBLOX, self.name, *paths)
 
     def get_number(self) -> int:
         return int(self.name[1:])
@@ -23,7 +24,7 @@ class Version(enum.Enum):
 
 VERSION_MAP = dict(
     (k, e)
-    for e in Version
+    for e in roblox
     for k in
     [
         e.value,
@@ -32,16 +33,16 @@ VERSION_MAP = dict(
 )
 
 VERSION_ROUTINES = {
-    Version.v348: [],
-    Version.v547: [],
+    roblox.v348: [],
+    roblox.v547: [],
 }
 
 T = typing.TypeVar('T')
 
 
-class version_holder(dict[Version, T]):
+class version_holder(dict[roblox, T]):
     def __add_pred(self, func: typing.Callable[[int], bool], obj: T) -> T:
-        for v in Version:
+        for v in roblox:
             if not func(v.get_number()):
                 continue
             super().__setitem__(v, obj)

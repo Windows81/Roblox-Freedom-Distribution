@@ -22,7 +22,7 @@ class _argtype(logic.subparser_argtype):
 
 class server(logic.popen_entry):
     def __init__(self, global_args: logic.global_argtype, args: _argtype) -> None:
-        folder = f'{global_args.roblox_version.binary_folder()}/Server'
+        folder = global_args.roblox_version.binary_full_path('Server')
 
         place_path = assets.get_asset_path(const.PLACE_ID)
         shutil.copyfile(args.place_path, place_path)

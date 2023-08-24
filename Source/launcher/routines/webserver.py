@@ -2,7 +2,6 @@ import launcher.routines.logic as logic
 import webserver.main as main
 import dataclasses
 import threading
-import time
 
 
 @dataclasses.dataclass
@@ -19,7 +18,7 @@ class _argtype(logic.subparser_argtype):
 
 
 class webserver(logic.entry):
-    httpds = list[main.webserver]()
+    httpds = list[main.webserver.logic.webserver]()
 
     def __make_server(self, *args, **kwargs) -> None:
         self.httpds.append(ht := main.make_server(*args, **kwargs))

@@ -10,8 +10,8 @@ class _argtype(logic.subparser_argtype):
 
 class studio(logic.popen_entry):
     def __init__(self, global_args: logic.global_argtype, args: _argtype) -> None:
-        folder = global_args.roblox_version.binary_folder()
-        self.make_popen([f'{folder}/Studio/RobloxStudioBeta.exe', *args.cmd_args])
+        folder = global_args.roblox_version.binary_full_path('Studio')
+        self.make_popen([f'{folder}/RobloxStudioBeta.exe', *args.cmd_args])
 
 
 class argtype(_argtype):

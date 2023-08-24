@@ -7,7 +7,7 @@ import time
 
 @dataclasses.dataclass
 class global_argtype:
-    roblox_version: versions.Version
+    roblox_version: versions.roblox
 
 
 class _entry:
