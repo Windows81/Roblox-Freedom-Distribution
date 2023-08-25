@@ -4,7 +4,6 @@ import os
 
 MADE_WITH_PYINSTALLER = hasattr(sys, '_MEIPASS')
 # TODO: don't make things depend on parent directories.
-MEIPASS = sys._MEIPASS
 TOP_DIR = \
     os.path.dirname(sys.executable) \
     if MADE_WITH_PYINSTALLER else \
@@ -33,7 +32,7 @@ def get_paths(d: dir_type) -> str:
             return [TOP_DIR, 'AssetCaché']
 
         case (True, dir_type.SSL):
-            return [MEIPASS]
+            return [sys._MEIPASS]
 
         case (False, dir_type.SSL):
             return [TOP_DIR, 'Source', 'ssl']

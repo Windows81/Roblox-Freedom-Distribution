@@ -96,7 +96,7 @@ def _(*a):
     )
 
 
-@logic.launch_command(logic.launch_mode.SERVER, min_version=400)
+@logic.launch_command(logic.launch_mode.SERVER, min_version=401)
 def _(*a):
     return subparse(
         *a,
