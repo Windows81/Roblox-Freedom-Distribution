@@ -1,3 +1,4 @@
+import util.versions
 import enum
 import sys
 import os
@@ -32,7 +33,7 @@ def get_paths(d: dir_type) -> str:
             return [TOP_DIR, 'AssetCaché']
 
         case (True, dir_type.SSL):
-            return [sys._MEIPASS]
+            return [TOP_DIR]
 
         case (False, dir_type.SSL):
             return [TOP_DIR, 'Source', 'ssl']
@@ -40,3 +41,7 @@ def get_paths(d: dir_type) -> str:
 
 def get_full_path(d: dir_type, *paths: str) -> str:
     return os.path.join(*get_paths(d), *paths)
+
+
+def rōblox_full_path(version: util.versions.roblox, *paths: str) -> str:
+    return get_full_path(util.resource.dir_type.RŌBLOX, version.name, *paths)

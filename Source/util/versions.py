@@ -1,4 +1,3 @@
-import util.resource
 import typing
 import enum
 
@@ -7,9 +6,6 @@ class roblox(enum.Enum):
     v348 = '2018M'
     v463 = '2021E'
     v547 = '2022L'
-
-    def binary_full_path(self, *paths: str) -> str:
-        return util.resource.get_full_path(util.resource.dir_type.RŌBLOX, self.name, *paths)
 
     def get_number(self) -> int:
         return int(self.name[1:])

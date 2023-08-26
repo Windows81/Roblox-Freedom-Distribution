@@ -1,9 +1,10 @@
-import subprocess
 import launcher.routines.webserver as webserver
 import launcher.routines.logic as logic
 import webserver.assets as assets
 import util.const as const
+import util.resource
 import dataclasses
+import subprocess
 import shutil
 import json
 
@@ -20,15 +21,38 @@ class _argtype(logic.subparser_argtype):
     additional_web_ports: set[webserver.port] = dataclasses.field(default_factory=set)
 
 
+def get_base_url(global_args: logic.global_argtype, args: _argtype):
+    return f'http{"s" if args.web_port.is_ssl else""}://localhost:{args.web_port.port_num}'
+
+
+def gen_app_setting(global_args: logic.global_argtype, args: _argtype) -> str:
+    return '\n'.join([
+        """<?xml version="1.0" encoding="UTF-8"?>""",
+        """<Settings>""",
+        """\t<ContentFolder>content</ContentFolder>""",
+        f"""\t<BaseUrl>{get_base_url(global_args, args)}/.</BaseUrl>""",
+        """</Settings>""",
+    ])
+
+
 class server(logic.popen_entry):
     def __init__(self, global_args: logic.global_argtype, args: _argtype) -> None:
-        folder = global_args.roblox_version.binary_full_path('Server')
+
+        prefix_args = (global_args.roblox_version, 'Server')
+        settings_path = util.resource.rōblox_full_path(*prefix_args, 'RCCSettings.xml')
+        gameserver_path = util.resource.rōblox_full_path(*prefix_args, 'gameserver.json')
+        devsettings_path = util.resource.rōblox_full_path(*prefix_args, 'DevSettingsFile.json')
+        exe_path = util.resource.rōblox_full_path(*prefix_args, 'RCC.exe')
 
         place_path = assets.get_asset_path(const.PLACE_ID)
         shutil.copyfile(args.place_path, place_path)
         web_port_num = args.web_port.port_num
 
-        gameserver_path = f'{folder}/gameserver.json'
+        # Modifies settings to point to correct host name.
+        with open(settings_path, 'w') as f:
+            f.write(gen_app_setting(global_args, args))
+
+        base_url = get_base_url(global_args, args)
         with open(gameserver_path, 'w') as f:
             json.dump({
                 "Mode": "GameServer",
@@ -37,8 +61,8 @@ class server(logic.popen_entry):
                     "Type": "Avatar",
                     "PlaceId": const.PLACE_ID,
                     "GameId": "Test",
-                    "MachineAddress": f"https://localhost:{web_port_num}",
-                    "PlaceFetchUrl": f"https://localhost:{web_port_num}/asset/?id={const.PLACE_ID}",
+                    "MachineAddress": base_url,
+                    "PlaceFetchUrl": f"{base_url}/asset/?id={const.PLACE_ID}",
                     "GsmInterval": 5,
                     "MaxPlayers": 4096,
                     "MaxGameInstances": 1,
@@ -51,7 +75,7 @@ class server(logic.popen_entry):
                     "CreatorId": 1,
                     "CreatorType": "User",
                     "PlaceVersion": 1,
-                    "BaseUrl": f"https://localhost:{web_port_num}/.127.0.0.1",
+                    "BaseUrl": f"{base_url}/.127.0.0.1",
                     "JobId": "Test",
                     "script": "print('Initializing NetworkServer.')",
                     "PreferredPort": args.rcc_port_num,
@@ -60,11 +84,11 @@ class server(logic.popen_entry):
             }, f)
 
         self.make_popen([
-            f'{folder}/RCC.exe',
+            exe_path,
             '-verbose',
             f'-placeid:{const.PLACE_ID}',
             '-localtest', gameserver_path,
-            '-settingsfile', f'{folder}/DevSettingsFile.json',
+            '-settingsfile', devsettings_path,
             '-port 64989',
         ], stdin=subprocess.PIPE)
 

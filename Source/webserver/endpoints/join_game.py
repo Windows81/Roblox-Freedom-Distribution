@@ -1,6 +1,13 @@
+from webserver.logic import webserver_handler, server_path
+import util.ssl_context
+import util.const
 import json
-from ..logic import webserver_handler, server_path
-import util.const as const
+
+
+@server_path("/retrieve_ssl")
+def _(self: webserver_handler) -> bool:
+    with open(util.ssl_context.SERVER_PEM_PATH, 'rb') as f:
+        self.send_data(f.read())
 
 
 @server_path("/game/join.ashx")
@@ -150,7 +157,7 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/game/placelauncher.ashx")
+@server_path("/game/placelauncher.ashx")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         'jobId': 'Test',
@@ -163,7 +170,7 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/marketplace/productinfo")
+@server_path("/marketplace/productinfo")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         'AssetId': 93722443,
@@ -195,8 +202,8 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/.127.0.0.1/game/load-place-info")
-@ server_path("/.127.0.0.1/game/load-place-info/")
+@server_path("/.127.0.0.1/game/load-place-info")
+@server_path("/.127.0.0.1/game/load-place-info/")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         'CreatorId': 1,
@@ -208,20 +215,20 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/login/negotiate.ashx")
-@ server_path("/universes/validate-place-join")
+@server_path("/login/negotiate.ashx")
+@server_path("/universes/validate-place-join")
 def _(self: webserver_handler) -> bool:
     self.send_json(True)
     return True
 
 
-@ server_path("/Setting/QuietGet/ClientAppSettings/")
+@server_path("/Setting/QuietGet/ClientAppSettings/")
 def _(self: webserver_handler) -> bool:
-    self.send_json(const.CLIENT_SETTINGS)
+    self.send_json(util.const.CLIENT_SETTINGS)
     return True
 
 
-@ server_path("/asset-thumbnail/json")
+@server_path("/asset-thumbnail/json")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         "Url": "",
@@ -231,26 +238,26 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/Thumbs/GameIcon.ashx")
+@server_path("/Thumbs/GameIcon.ashx")
 def _(self: webserver_handler) -> bool:
     with open('C:/Users/USERNAME/Documents/Projects/FilteringDisabled/OldRFD/Webserver/www/Thumbs/gameicon.ashx/img.png', 'rb') as f:
         self.send_data(f.read())
     return True
 
 
-@ server_path("/v1/settings/application")
+@server_path("/v1/settings/application")
 def _(self: webserver_handler) -> bool:
     self.send_json({"applicationSettings": {}})
     return True
 
 
-@ server_path("/api.GetAllowedMD5Hashes/")
+@server_path("/api.GetAllowedMD5Hashes/")
 def _(self: webserver_handler) -> bool:
-    self.send_json(const.ALLOWED_MD5_HASHES)
+    self.send_json(util.const.ALLOWED_MD5_HASHES)
     return True
 
 
-@ server_path("/api.GetAllowedSecurityVersions/")
+@server_path("/api.GetAllowedSecurityVersions/")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         "data": self.server.roblox_version.security_versions(),
@@ -258,7 +265,7 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/v1.1/Counters/BatchIncrement")
+@server_path("/v1.1/Counters/BatchIncrement")
 def _(self: webserver_handler) -> bool:
     self.send_json({})
     return True

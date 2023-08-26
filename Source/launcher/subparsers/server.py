@@ -71,7 +71,8 @@ def subparse(
     if args.run_client:
         routine_args.extend([
             player.argtype(
-                rcc_host='localhost',
+                rcc_host='127.0.0.1',
+                web_host='127.0.0.1',
                 rcc_port_num=args.rcc_port,
                 web_port=webserver.port(
                     port_num=args.web_port,

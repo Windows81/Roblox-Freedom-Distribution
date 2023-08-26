@@ -34,11 +34,8 @@ class popen_entry(subprocess.Popen, entry):
     def make_popen(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def wait(self):
-        self.communicate()
-
     def __del__(self):
-        self.terminate()
+        super().terminate()
 
 
 class routine:

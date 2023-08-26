@@ -28,9 +28,11 @@ def subparse(
     sub_parser.add_argument(
         '--username', '-u',
         type=str, nargs='?',
-        default='VisualPlugin'
     )
     args = parser.parse_args()
+    args.web_host, args.rcc_host = \
+        args.web_host or args.rcc_host, \
+        args.rcc_host or args.web_host
     return [
         player.argtype(
             rcc_host=args.rcc_host,
