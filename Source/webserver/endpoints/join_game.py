@@ -6,7 +6,7 @@ import json
 
 @server_path("/retrieve_ssl")
 def _(self: webserver_handler) -> bool:
-    with open(util.ssl_context.SERVER_PEM_PATH, 'rb') as f:
+    with open(util.ssl_context.CLIENT_PEM_PATH, 'rb') as f:
         self.send_data(f.read())
 
 
@@ -34,7 +34,7 @@ def _(self: webserver_handler) -> bool:
         'PlaceId': int(placeid),
         'MeasurementUrl': '',
         'WaitingForCharacterGuid': 'e01c22e4-a428-45f8-ae40-5058b4a1dafc',
-        'BaseUrl': self.host,
+        'BaseUrl': self.hostname,
         'ChatStyle': 'ClassicAndBubble',
         'VendorId': 0,
         'ScreenShotInfo': '',
@@ -92,7 +92,7 @@ def _(self: webserver_handler) -> bool:
         "ClientTicket": "2022-03-26T05:13:05.7649319Z;dj09X5iTmYtOPwh0hbEC8yvSO1t99oB3Yh5qD/sinDFszq3hPPaL6hH16TvtCen6cABIycyDv3tghW7k8W+xuqW0/xWvs0XJeiIWstmChYnORzM1yCAVnAh3puyxgaiIbg41WJSMALRSh1hoRiVFOXw4BKjSKk7DrTTcL9nOG1V5YwVnmAJKY7/m0yZ81xE99QL8UVdKz2ycK8l8JFvfkMvgpqLNBv0APRNykGDauEhAx283vARJFF0D9UuSV69q6htLJ1CN2kXL0Saxtt/kRdoP3p3Nhj2VgycZnGEo2NaG25vwc/KzOYEFUV0QdQPC8Vs2iFuq8oK+fXRc3v6dnQ==;BO8oP7rzmnIky5ethym6yRECd6H14ojfHP3nHxSzfTs=;XsuKZL4TBjh8STukr1AgkmDSo5LGgQKQbvymZYi/80TYPM5/MXNr5HKoF3MOT3Nfm0MrubracyAtg5O3slIKBg==;6",
         "GameId": "29fd9df4-4c59-4d8c-8cee-8f187b09709b",
         'PlaceId': int(placeid),
-        'BaseUrl': self.host,
+        'BaseUrl': self.hostname,
         "ChatStyle": "ClassicAndBubble",
         "CreatorId": 4372130,
         "CreatorTypeEnum": "Group",
@@ -162,8 +162,8 @@ def _(self: webserver_handler) -> bool:
     self.send_json({
         'jobId': 'Test',
         'status': 2,
-        'joinScriptUrl': f'{self.host}/game/join.ashx?{self.urlsplit.query}',
-        'authenticationUrl': f'{self.host}/login/negotiate.ashx',
+        'joinScriptUrl': f'{self.hostname}/game/join.ashx?{self.urlsplit.query}',
+        'authenticationUrl': f'{self.hostname}/login/negotiate.ashx',
         'authenticationTicket': '1',
         'message': None,
     })

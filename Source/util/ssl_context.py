@@ -1,4 +1,6 @@
 # Much of this script is from https://github.com/begleysm/ipwatch/blob/master/ipgetter.py.
+import functools
+import time
 import urllib.request
 import http.cookiejar
 import util.resource
@@ -41,11 +43,6 @@ IP_SERVER_LIST = [
     "https://api.ipify.org",
     "https://v4.ident.me",
 ]
-
-prefix_args = (util.resource.dir_type.SSL,)
-CLIENT_PEM_PATH = util.resource.get_full_path(*prefix_args, 'client.pem')
-SERVER_PEM_PATH = util.resource.get_full_path(*prefix_args, 'server.pem')
-SERVER_KEY_PATH = util.resource.get_full_path(*prefix_args, 'server.key')
 
 
 def fetch(server) -> str | None:
@@ -113,16 +110,26 @@ def get_local_ips() -> list[str]:
         try:
             # Doesn't even have to be reachable
             s.connect(('10.255.255.255', 1))
-            return ['127.0.0.1', s.getsockname()[0]]
+            return [s.getsockname()[0]]
         except Exception:
-            return ['127.0.0.1']
+            return []
 
 
-def make_cert():
+prefix_args = (util.resource.dir_type.SSL,)
+CLIENT_PEM_PATH = util.resource.get_full_path(*prefix_args, 'client.pem')
+SERVER_PEM_PATH = util.resource.get_full_path(*prefix_args, 'server.pem')
+SERVER_KEY_PATH = util.resource.get_full_path(*prefix_args, 'server.key')
+
+
+@functools.cache
+def get_ssl_context() -> ssl.SSLContext:
+
     ca = trustme.CA()
     cert: trustme.LeafCert = ca.issue_cert(
         *get_external_ips(),
         *get_local_ips(),
+        '127.0.0.1',
+        'localhost',
     )
 
     # Write the certificate and private key the server should use.
@@ -135,10 +142,9 @@ def make_cert():
     # Write the certificate the client should trust.
     ca.cert_pem.write_to_path(path=CLIENT_PEM_PATH)
 
-
-make_cert()
-SSL_CONTEXT = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-SSL_CONTEXT.load_cert_chain(
-    certfile=SERVER_PEM_PATH,
-    keyfile=SERVER_KEY_PATH,
-)
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_context.load_cert_chain(
+        certfile=SERVER_PEM_PATH,
+        keyfile=SERVER_KEY_PATH,
+    )
+    return ssl_context

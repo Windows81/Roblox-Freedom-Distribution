@@ -1,12 +1,13 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-import ssl
 from typing import Callable, Optional
 import util.versions as versions
 import util.const as const
 from urllib import parse
+import util.ssl_context
 import OpenSSL.crypto
 import mimetypes
 import base64
+import socket
 import enum
 import json
 import re
@@ -46,33 +47,50 @@ def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
 class webserver(ThreadingHTTPServer):
     def __init__(
         self,
-        server_address,
+        server_address: tuple[str, int],
         roblox_version: versions.roblox = versions.roblox.v348,
         bind_and_activate=True,
+        is_ssl: bool = False,
     ) -> None:
-        super().__init__(server_address, webserver_handler, bind_and_activate)
+        super().__init__(
+            server_address,
+            webserver_handler,
+            bind_and_activate,
+        )
         self.roblox_version = roblox_version
+        self.is_ssl = is_ssl
+
+        if is_ssl:
+            ssl_context = util.ssl_context.get_ssl_context()
+            self.socket = ssl_context.wrap_socket(
+                self.socket,
+                server_side=True,
+            )
 
 
 class webserver_handler(BaseHTTPRequestHandler):
     default_request_version = "HTTP/1.1"
-    is_valid_request: bool = False
+    sockname: tuple[str, int]
+    request: socket.socket
     server: webserver
 
     def parse_request(self) -> bool:
+        self.is_valid_request = False
         if not super().parse_request():
             return False
 
         self.is_valid_request = True
         self.sockname = self.request.getsockname()
-        self.is_ssl = isinstance(self.connection, ssl.SSLSocket)
         self.domain = \
             'localhost'\
             if self.sockname[0] == '127.0.0.1'\
             else self.sockname[0]
 
-        self.host = f'http{"s" if self.is_ssl else ""}://{self.domain}:{self.sockname[1]}'
-        self.url = f'{self.host}{self.path}'
+        self.hostname = \
+            f'http{"s" if self.server.is_ssl else ""}://' + \
+            f'{self.domain}:{self.sockname[1]}'
+
+        self.url = f'{self.hostname}{self.path}'
         self.urlsplit = parse.urlsplit(self.url)
         self.query = {i: v[0] for i, v in parse.parse_qs(self.urlsplit.query).items()}
         return True

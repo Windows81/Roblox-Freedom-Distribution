@@ -19,22 +19,29 @@ class subparser_argtype:
 
 
 class entry:
+    global_args: global_argtype
+    local_args: subparser_argtype
     threads = list[threading.Thread]()
 
-    def make(self, global_args: global_argtype, args: subparser_argtype):
+    def __init__(self, global_args: global_argtype, local_args: subparser_argtype) -> None:
+        self.global_args = global_args
+        self.local_args = local_args
+        self.make()
+
+    def make(self):
         raise NotImplementedError()
 
-    def wait(self):
+    def wait(self) -> None:
         for t in self.threads:
             while t.is_alive():
                 t.join(1)
 
 
-class popen_entry(subprocess.Popen, entry):
+class popen_entry(entry, subprocess.Popen):
     def make_popen(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+        subprocess.Popen.__init__(self, *args, **kwargs)
 
-    def __del__(self):
+    def __del__(self) -> None:
         super().terminate()
 
 
