@@ -5,5 +5,5 @@ instances.count = 1
 
 [place_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E", etc.
-roblox_version = "2018M"
+roblox_version = "v463"
 path = "C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl"

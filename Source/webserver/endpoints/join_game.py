@@ -19,7 +19,7 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/game/join.ashx")
+@server_path("/game/join.ashx")
 def _(self: webserver_handler) -> bool:
     placeid = self.query.get('placeid', None)
     ip = self.query.get('ip', None)
@@ -66,7 +66,7 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/game/join.ashx", min_version=401)
+@server_path("/game/join.ashx", min_version=401)
 def _(self: webserver_handler) -> bool:
     placeid = self.query.get('placeid', None)
     ip = self.query.get('ip', None)
@@ -100,19 +100,19 @@ def _(self: webserver_handler) -> bool:
         "GameId": "29fd9df4-4c59-4d8c-8cee-8f187b09709b",
         'PlaceId': int(placeid),
         'BaseUrl': self.hostname,
-        "ChatStyle": self.server.roblox_version,
-        "CreatorId": 4372130,
-        "CreatorTypeEnum": "Group",
-        "MembershipType": "None",
-        "AccountAge": 1859,
-        "CookieStoreFirstTimePlayKey": "rbx_evt_ftp",
-        "CookieStoreFiveMinutePlayKey": "rbx_evt_fmp",
-        "CookieStoreEnabled": True,
-        "IsUnknownOrUnder13": False,
-        "GameChatType": "AllUsers",
-        "SessionId": json.dumps({
-            "SessionId": "c89589f1-d1de-46e3-80e0-2703d1159409",
-            "GameId": "29fd9df4-4c59-4d8c-8cee-8f187b09709b",
+        'ChatStyle': 'ClassicAndBubble',
+        'CreatorId': 4372130,
+        'CreatorTypeEnum': "Group",
+        'MembershipType': "None",
+        'AccountAge': 1859,
+        'CookieStoreFirstTimePlayKey': "rbx_evt_ftp",
+        'CookieStoreFiveMinutePlayKey': "rbx_evt_fmp',
+        'CookieStoreEnabled': True,
+        'IsUnknownOrUnder13': False,
+        'GameChatType': 'AllUsers',
+        'SessionId': json.dumps({
+            'SessionId': 'c89589f1-d1de-46e3-80e0-2703d1159409',
+            'GameId': "29fd9df4-4c59-4d8c-8cee-8f187b09709b",
             "PlaceId": int(placeid),
             "ClientIpAddress": "207.241.232.186",
             "PlatformTypeId": 5,
@@ -164,7 +164,7 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/game/placelauncher.ashx")
+@server_path("/game/placelauncher.ashx")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         'jobId': 'Test',
@@ -177,7 +177,7 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/marketplace/productinfo")
+@server_path("/marketplace/productinfo")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         'AssetId': 93722443,
@@ -209,9 +209,9 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/game/load-place-info")
-@ server_path("/.127.0.0.1/game/load-place-info")
-@ server_path("/.127.0.0.1/game/load-place-info/")
+@server_path("/game/load-place-info")
+@server_path("/.127.0.0.1/game/load-place-info")
+@server_path("/.127.0.0.1/game/load-place-info/")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         'CreatorId': 1,
@@ -223,20 +223,20 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/login/negotiate.ashx")
-@ server_path("/universes/validate-place-join")
+@server_path("/login/negotiate.ashx")
+@server_path("/universes/validate-place-join")
 def _(self: webserver_handler) -> bool:
     self.send_json(True)
     return True
 
 
-@ server_path("/Setting/QuietGet/ClientAppSettings/")
+@server_path("/Setting/QuietGet/ClientAppSettings/")
 def _(self: webserver_handler) -> bool:
     self.send_json(util.const.CLIENT_SETTINGS)
     return True
 
 
-@ server_path("/asset-thumbnail/json")
+@server_path("/asset-thumbnail/json")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         "Url": "",
@@ -246,26 +246,26 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/Thumbs/GameIcon.ashx")
+@server_path("/Thumbs/GameIcon.ashx")
 def _(self: webserver_handler) -> bool:
     with open('C:/Users/USERNAME/Documents/Projects/FilteringDisabled/OldRFD/Webserver/www/Thumbs/gameicon.ashx/img.png', 'rb') as f:
         self.send_data(f.read())
     return True
 
 
-@ server_path("/v1/settings/application")
+@server_path("/v1/settings/application")
 def _(self: webserver_handler) -> bool:
     self.send_json({"applicationSettings": {}})
     return True
 
 
-@ server_path("/api.GetAllowedMD5Hashes/")
+@server_path("/api.GetAllowedMD5Hashes/")
 def _(self: webserver_handler) -> bool:
     self.send_json(util.const.ALLOWED_MD5_HASHES)
     return True
 
 
-@ server_path("/api.GetAllowedSecurityVersions/")
+@server_path("/api.GetAllowedSecurityVersions/")
 def _(self: webserver_handler) -> bool:
     self.send_json({
         "data": self.server.roblox_version.security_versions(),
@@ -273,7 +273,7 @@ def _(self: webserver_handler) -> bool:
     return True
 
 
-@ server_path("/v1.1/Counters/BatchIncrement")
+@server_path("/v1.1/Counters/BatchIncrement")
 def _(self: webserver_handler) -> bool:
     self.send_json({})
     return True
