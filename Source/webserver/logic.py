@@ -48,7 +48,7 @@ class webserver(ThreadingHTTPServer):
     def __init__(
         self,
         server_address: tuple[str, int],
-        roblox_version: versions.roblox = versions.roblox.v348,
+        roblox_version: versions.rōblox = versions.rōblox.v348,
         bind_and_activate=True,
         is_ssl: bool = False,
     ) -> None:

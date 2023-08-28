@@ -4,7 +4,6 @@ from .studio import _
 
 import launcher.routines.logic as routine_logic
 import launcher.subparsers.logic as logic
-import util.versions as versions
 import argparse
 
 
@@ -24,24 +23,12 @@ def parse_args(parser: argparse.ArgumentParser):
         for n, m in mode_aliases.items()
     }
 
-    parser.add_argument(
-        '--version', '-v',
-        choices=list(versions.roblox),
-        type=lambda v: versions.VERSION_MAP[v],
-    )
-
     args = parser.parse_known_args()[0]
     mode_val = mode_aliases[args.mode]
-    sub_func = logic.VERSION_ROUTINES[mode_val][args.version]
+    sub_func = logic.LAUNCH_ROUTINES[mode_val]
     sub_parser = sub_parsers[mode_val]
     args_list = sub_func(parser, sub_parser)
-
-    return routine_logic.routine(
-        routine_logic.global_argtype(
-            roblox_version=args.version,
-        ),
-        *args_list,
-    )
+    return routine_logic.routine(*args_list)
 
 
 def process(parser: argparse.ArgumentParser):

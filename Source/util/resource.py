@@ -13,8 +13,12 @@ TOP_DIR = \
 
 class dir_type(enum.Enum):
     RŌBLOX = 0
-    ASSET = 1
-    SSL = 2
+    CONFIG = 1
+    ASSET = 2
+    SSL = 3
+
+
+DEFAULT_CONFIG_PATH = './GameConfig.toml'
 
 
 def get_paths(d: dir_type) -> str:
@@ -22,19 +26,22 @@ def get_paths(d: dir_type) -> str:
 
         case (True, dir_type.RŌBLOX):
             return [TOP_DIR, 'Roblox']
-
         case (False, dir_type.RŌBLOX):
             return [TOP_DIR, 'Roblox']
 
+        case (True, dir_type.CONFIG):
+            return [TOP_DIR]
+        case (False, dir_type.CONFIG):
+            return [TOP_DIR]
+
         case (True, dir_type.ASSET):
             return [TOP_DIR, 'AssetCaché']
-
         case (False, dir_type.ASSET):
             return [TOP_DIR, 'AssetCaché']
 
+        # We're storing TLS certiifcates in temporary directory "_MEIPASS".
         case (True, dir_type.SSL):
-            return [TOP_DIR]
-
+            return [sys._MEIPASS]
         case (False, dir_type.SSL):
             return [TOP_DIR, 'Source', 'ssl']
 
@@ -43,5 +50,14 @@ def get_full_path(d: dir_type, *paths: str) -> str:
     return os.path.join(*get_paths(d), *paths)
 
 
-def rōblox_full_path(version: util.versions.roblox, *paths: str) -> str:
-    return get_full_path(util.resource.dir_type.RŌBLOX, version.name, *paths)
+def get_rōblox_full_path(version: util.versions.rōblox, *paths: str) -> str:
+    return get_full_path(dir_type.RŌBLOX, version.name, *paths)
+
+
+def get_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:
+    if not os.path.isabs(path):
+        path = os.path.join(
+            get_full_path(dir_type.CONFIG),
+            path,
+        )
+    return os.path.normpath(path)

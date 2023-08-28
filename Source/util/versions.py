@@ -2,7 +2,7 @@ import typing
 import enum
 
 
-class roblox(enum.Enum):
+class rōblox(enum.Enum):
     v348 = '2018M'
     v463 = '2021E'
     v547 = '2022L'
@@ -17,28 +17,29 @@ class roblox(enum.Enum):
             f"2.{num}.0androidapp",
         ]
 
+    @staticmethod
+    def from_name(value: str | int):
+        return VERSION_MAP[str(value)]
+
 
 VERSION_MAP = dict(
     (k, e)
-    for e in roblox
+    for e in rōblox
     for k in
     [
+        e.name,
         e.value,
         e.name[1:],
     ]
 )
 
-VERSION_ROUTINES = {
-    roblox.v348: [],
-    roblox.v547: [],
-}
 
 T = typing.TypeVar('T')
 
 
-class version_holder(dict[roblox, T]):
+class version_holder(dict[rōblox, T]):
     def __add_pred(self, func: typing.Callable[[int], bool], obj: T) -> T:
-        for v in roblox:
+        for v in rōblox:
             if not func(v.get_number()):
                 continue
             super().__setitem__(v, obj)

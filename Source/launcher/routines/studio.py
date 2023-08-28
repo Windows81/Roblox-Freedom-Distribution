@@ -1,5 +1,4 @@
 import launcher.routines.logic as logic
-import util.resource
 import dataclasses
 
 
@@ -8,14 +7,9 @@ class _argtype(logic.subparser_argtype):
     cmd_args: list[str] = dataclasses.field(default_factory=list)
 
 
-class studio(logic.popen_entry):
+class studio(logic.bin_entry):
     local_args: _argtype
-
-    def get_path(self, *paths: str) -> str:
-        return util.resource.rōblox_full_path(
-            self.global_args.roblox_version,
-            'Studio', *paths,
-        )
+    DIR_NAME = 'Studio'
 
     def get_base_url(self) -> str:
         return \
@@ -26,7 +20,7 @@ class studio(logic.popen_entry):
         '''
         Modifies settings to point to correct host name.
         '''
-        path = self.get_path('AppSettings.xml')
+        path = self.get_versioned_path('AppSettings.xml')
         with open(path, 'w') as f:
             f.writelines([
                 """<?xml version="1.0" encoding="UTF-8"?>""",
@@ -37,9 +31,9 @@ class studio(logic.popen_entry):
             ])
         return path
 
-    def make(self) -> None:
+    def initialise(self) -> None:
         self.make_popen([
-            self.get_path('RobloxStudioBeta.exe'),
+            self.get_versioned_path('RobloxStudioBeta.exe'),
             *self.local_args.cmd_args
         ])
 

@@ -115,15 +115,17 @@ def get_local_ips() -> list[str]:
             return []
 
 
-prefix_args = (util.resource.dir_type.SSL,)
-CLIENT_PEM_PATH = util.resource.get_full_path(*prefix_args, 'client.pem')
-SERVER_PEM_PATH = util.resource.get_full_path(*prefix_args, 'server.pem')
-SERVER_KEY_PATH = util.resource.get_full_path(*prefix_args, 'server.key')
+def get_path(*paths: str):
+    return util.resource.get_full_path(util.resource.dir_type.SSL, *paths)
+
+
+CLIENT_PEM_PATH = get_path('client.pem')
+SERVER_PEM_PATH = get_path('server.pem')
+SERVER_KEY_PATH = get_path('server.key')
 
 
 @functools.cache
-def get_ssl_context() -> ssl.SSLContext:
-
+def init_cert_auth() -> trustme.CA:
     ca = trustme.CA()
     cert: trustme.LeafCert = ca.issue_cert(
         *get_external_ips(),
@@ -141,10 +143,22 @@ def get_ssl_context() -> ssl.SSLContext:
 
     # Write the certificate the client should trust.
     ca.cert_pem.write_to_path(path=CLIENT_PEM_PATH)
+    return ca
 
+
+@functools.cache
+def get_ssl_context() -> ssl.SSLContext:
+    init_cert_auth()
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     ssl_context.load_cert_chain(
         certfile=SERVER_PEM_PATH,
         keyfile=SERVER_KEY_PATH,
     )
     return ssl_context
+
+
+@functools.cache
+def get_client_cert() -> bytes:
+    init_cert_auth()
+    with open(util.ssl_context.CLIENT_PEM_PATH, 'rb') as f:
+        return f.read()

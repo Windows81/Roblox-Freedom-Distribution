@@ -14,36 +14,13 @@
 			"justMyCode": true,
 		},
 		{
-			"name": "Python: Launch Server 2021E",
+			"name": "Python: Launch Server",
 			"type": "python",
 			"request": "launch",
 			"program": "${workspaceFolder}/_main.py",
 			"cwd": "${workspaceFolder}/..",
 			"args": [
-				"-v",
-				"2021E",
 				"server",
-				"-p",
-				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl",
-				"-wp",
-				"443",
-				"--run_client"
-			],
-			"console": "integratedTerminal",
-			"justMyCode": true,
-		},
-		{
-			"name": "Python: Launch Server 2018M",
-			"type": "python",
-			"request": "launch",
-			"program": "${workspaceFolder}/_main.py",
-			"cwd": "${workspaceFolder}/..",
-			"args": [
-				"-v",
-				"2018M",
-				"server",
-				"-p",
-				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl",
 				"--run_client"
 			],
 			"console": "integratedTerminal",
@@ -56,11 +33,9 @@
 			"program": "${workspaceFolder}/_main.py",
 			"cwd": "${workspaceFolder}/..",
 			"args": [
-				"-v",
-				"2021E",
-				"client",
+				"player",
 				"-wh",
-				"localhost"
+				"192.168.50.69"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true,

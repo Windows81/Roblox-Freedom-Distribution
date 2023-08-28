@@ -11,28 +11,37 @@ def subparse(
 ):
     sub_parser.add_argument(
         '--rcc_host', '-rh', type=str,
-        default=None, required=True,
+        default=None, nargs='?',
+        help='Hostname or IP address to connect this program to the RCC server.',
     )
     sub_parser.add_argument(
         '--rcc_port', '-rp', type=int,
         default=2005, nargs='?',
+        help='Port number to connect this program to the RCC server.',
     )
     sub_parser.add_argument(
         '--web_host', '-wh', type=str,
         default=None, nargs='?',
+        help='Hostname or IP address to connect this program to the web server.',
     )
     sub_parser.add_argument(
         '--web_port', '-wp', type=int,
-        default=80, nargs='?',
+        default=2006, nargs='?',
+        help='Port number to connect this program to the web server.',
     )
     sub_parser.add_argument(
         '--username', '-u',
         type=str, nargs='?',
+        default=player.argtype.username,
     )
     args = parser.parse_args()
+
+    if not (args.web_host or args.rcc_host):
+        parser.error('No hostname requested; add --web_host or --rcc_host.')
     args.web_host, args.rcc_host = \
         args.web_host or args.rcc_host, \
         args.rcc_host or args.web_host
+
     return [
         player.argtype(
             rcc_host=args.rcc_host,
@@ -48,14 +57,6 @@ def subparse(
 
 
 @logic.launch_command(logic.launch_mode.PLAYER)
-def _(*a):
-    return subparse(
-        *a,
-        use_ssl=False,
-    )
-
-
-@logic.launch_command(logic.launch_mode.PLAYER, min_version=401)
 def _(*a):
     return subparse(
         *a,

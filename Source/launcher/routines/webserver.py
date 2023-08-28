@@ -1,5 +1,6 @@
 import launcher.routines.logic as logic
 import webserver.main as main
+import launcher.gameconfig
 import dataclasses
 import threading
 
@@ -14,29 +15,31 @@ class port:
 
 @dataclasses.dataclass
 class _argtype(logic.subparser_argtype):
-    port: port
+    server_config: launcher.gameconfig.configtype
+    web_ports: set[port] = dataclasses.field(default_factory=set)
 
 
-class webserver(logic.entry):
+class webserver(logic.server_entry):
+    server_config: launcher.gameconfig.configtype
     httpds = list[main.webserver.logic.webserver]()
+    local_args: _argtype
 
-    def __make_server(self, *args, **kwargs) -> None:
-        self.httpds.append(ht := main.make_server(*args, **kwargs))
-        self.threads.append(th := threading.Thread(target=ht.serve_forever))
-        th.start()
-
-    def __init__(self, global_args: logic.global_argtype, args: _argtype) -> None:
-        self.server_running = True
+    def __make_server(self, port_num: int = 80, *args, **kwargs) -> None:
         try:
-            self.__make_server(
-                **args.port.__dict__,
-                roblox_version=global_args.roblox_version,
-            )
+            self.httpds.append(ht := main.make_server(port_num, *args, **kwargs))
+            self.threads.append(th := threading.Thread(target=ht.serve_forever))
+            th.start()
         except PermissionError:
-            print('WARNING: webserver was unable to start.')
+            print(f'WARNING: webserver was unable to start at port {port_num}.')
             self.server_running = False
-        except Exception as e:
-            pass
+
+    def initialise(self) -> None:
+        self.server_running = True
+        for p in self.local_args.web_ports:
+            self.__make_server(
+                **p.__dict__,
+                roblox_version=self.config.place_setup.roblox_version,
+            )
 
     def __del__(self) -> None:
         if not self.server_running:

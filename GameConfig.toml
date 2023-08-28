@@ -1,0 +1,9 @@
+[server_assignment]
+players.maximum = 4096
+players.preferred = 666
+instances.count = 1
+
+[place_setup]
+# Aliases for "v348" is "2018M", "v463" is "2021E", etc.
+roblox_version = "2018M"
+path = "C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl"
