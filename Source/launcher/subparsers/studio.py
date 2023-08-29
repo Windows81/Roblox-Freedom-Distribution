@@ -10,7 +10,7 @@ def _(parser: argparse.ArgumentParser, sub_parser: argparse.ArgumentParser):
     )
     args = parser.parse_args()
     return [
-        studio.argtype(
+        studio.arg_type(
             cmd_args=args.args,
         )
     ]

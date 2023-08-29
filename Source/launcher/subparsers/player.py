@@ -1,6 +1,7 @@
-import launcher.routines.webserver as webserver
+import launcher.routines.web_server as web_server
 import launcher.routines.player as player
 import launcher.subparsers.logic as logic
+import util.const
 import argparse
 
 
@@ -30,9 +31,8 @@ def subparse(
         help='Port number to connect this program to the web server.',
     )
     sub_parser.add_argument(
-        '--username', '-u',
+        '--user_code', '-u',
         type=str, nargs='?',
-        default=player.argtype.username,
     )
     args = parser.parse_args()
 
@@ -43,15 +43,15 @@ def subparse(
         args.rcc_host or args.web_host
 
     return [
-        player.argtype(
+        player.arg_type(
             rcc_host=args.rcc_host,
             rcc_port_num=args.rcc_port,
             web_host=args.web_host,
-            web_port=webserver.port(
+            web_port=web_server.port(
                 port_num=args.web_port,
                 is_ssl=use_ssl,
             ),
-            username=args.username,
+            user_code=args.user_code,
         ),
     ]
 

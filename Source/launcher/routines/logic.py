@@ -1,4 +1,4 @@
-import launcher.gameconfig
+import game_config._main
 import util.versions
 import util.resource
 import subprocess
@@ -11,19 +11,19 @@ class _entry:
         raise NotImplementedError()
 
 
-class subparser_argtype:
+class subparser_arg_type:
     obj_type: type[_entry]
 
 
-class server_argtype:
-    server_config: launcher.gameconfig.configtype
+class server_arg_type:
+    server_config: game_config._main.obj_type
 
 
 class entry:
-    local_args: subparser_argtype
+    local_args: subparser_arg_type
     threads: list[threading.Thread]
 
-    def __init__(self, local_args: subparser_argtype) -> None:
+    def __init__(self, local_args: subparser_arg_type) -> None:
         self.local_args = local_args
         self.threads = []
 
@@ -34,6 +34,10 @@ class entry:
 
 
 class popen_entry(entry, subprocess.Popen):
+    '''
+    Routine entry class that corresponds to a Popen subprocess object.
+    '''
+
     def make_popen(self, *args, **kwargs) -> None:
         subprocess.Popen.__init__(self, *args, **kwargs)
 
@@ -46,8 +50,10 @@ class popen_entry(entry, subprocess.Popen):
 
 
 class bin_entry(popen_entry):
+    '''
+    Routine entry class that corresponds to a versioned binary of Rōblox.
+    '''
     rōblox_version: util.versions.rōblox
-    local_args: server_argtype
     DIR_NAME: str
 
     def retrieve_version(self) -> util.versions.rōblox:
@@ -67,11 +73,15 @@ class bin_entry(popen_entry):
 
 
 class server_entry(entry):
-    config: launcher.gameconfig.configtype
+    '''
+    Routine entry class that corresponds to a server-sided component.
+    '''
+    server_config: game_config._main.obj_type
+    local_args: server_arg_type
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.config = launcher.gameconfig.configtype(
+        self.server_config = game_config._main.obj_type(
             self.local_args.server_config,
         )
 
@@ -79,7 +89,7 @@ class server_entry(entry):
 class routine:
     entries: list[entry]
 
-    def __init__(self, *args_list: subparser_argtype) -> None:
+    def __init__(self, *args_list: subparser_arg_type) -> None:
         self.entries = []
         for args in args_list:
             e = args.obj_type(args)

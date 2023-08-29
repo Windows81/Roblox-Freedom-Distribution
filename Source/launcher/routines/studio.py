@@ -3,12 +3,12 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class _argtype(logic.subparser_argtype):
+class _arg_type(logic.subparser_arg_type):
     cmd_args: list[str] = dataclasses.field(default_factory=list)
 
 
-class studio(logic.bin_entry):
-    local_args: _argtype
+class obj_type(logic.bin_entry):
+    local_args: _arg_type
     DIR_NAME = 'Studio'
 
     def get_base_url(self) -> str:
@@ -38,5 +38,5 @@ class studio(logic.bin_entry):
         ])
 
 
-class argtype(_argtype):
-    obj_type = studio
+class arg_type(_arg_type):
+    obj_type = obj_type

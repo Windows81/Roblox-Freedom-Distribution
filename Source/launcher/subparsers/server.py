@@ -1,5 +1,5 @@
-import launcher.routines.webserver as webserver
-import launcher.routines.server as server
+import launcher.routines.web_server as web_server
+import launcher.routines.rcc_server as rcc_server
 import launcher.routines.player as player
 import launcher.subparsers.logic as logic
 import util.resource
@@ -9,7 +9,7 @@ import argparse
 def subparse(
     parser: argparse.ArgumentParser,
     sub_parser: argparse.ArgumentParser,
-    additional_web_ports: set[webserver.port],
+    additional_web_ports: set[web_server.port],
     use_ssl: bool = False,
     **kwargs,
 ):
@@ -47,9 +47,9 @@ def subparse(
 
     if not args.skip_web:
         routine_args.extend([
-            webserver.argtype(
+            web_server.arg_type(
                 web_ports=set([
-                    webserver.port(
+                    web_server.port(
                         port_num=args.web_port,
                         is_ssl=use_ssl,
                     ),
@@ -62,9 +62,9 @@ def subparse(
 
     if not args.skip_rcc:
         routine_args.extend([
-            server.argtype(
+            rcc_server.arg_type(
                 rcc_port_num=args.rcc_port,
-                web_port=webserver.port(
+                web_port=web_server.port(
                     port_num=args.web_port,
                     is_ssl=use_ssl,
                 ),
@@ -75,11 +75,11 @@ def subparse(
 
     if args.run_client:
         routine_args.extend([
-            player.argtype(
+            player.arg_type(
                 rcc_host='127.0.0.1',
                 web_host='127.0.0.1',
                 rcc_port_num=args.rcc_port,
-                web_port=webserver.port(
+                web_port=web_server.port(
                     port_num=args.web_port,
                     is_ssl=use_ssl,
                 ),

@@ -21,7 +21,6 @@
 			"cwd": "${workspaceFolder}/..",
 			"args": [
 				"server",
-				"--run_client"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true,

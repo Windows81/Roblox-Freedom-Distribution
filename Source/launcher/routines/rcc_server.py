@@ -1,9 +1,8 @@
-import launcher.routines.webserver as webserver
+import launcher.routines.web_server as web_server
 import launcher.routines.logic as logic
-import webserver.assets as assets
-import launcher.gameconfig
+import web_server.assets as assets
 import util.const as const
-import launcher.gameconfig
+import game_config._main
 import util.ssl_context
 import util.versions
 import dataclasses
@@ -13,22 +12,22 @@ import json
 
 
 @dataclasses.dataclass
-class _argtype(logic.subparser_argtype):
-    server_config: launcher.gameconfig.configtype
+class _arg_type(logic.subparser_arg_type):
+    server_config: game_config._main.obj_type
     rcc_port_num: int = 2005
-    web_port: webserver.port = \
-        webserver.port(
+    web_port: web_server.port = \
+        web_server.port(
             port_num=80,
             is_ssl=False,
         ),
 
 
-class server(logic.bin_entry, logic.server_entry):
-    local_args: _argtype
+class obj_type(logic.bin_entry, logic.server_entry):
+    local_args: _arg_type
     DIR_NAME = 'Server'
 
     def retrieve_version(self) -> util.versions.rōblox:
-        return self.config.place_setup.roblox_version
+        return self.server_config.game_setup.roblox_version
 
     def get_base_url(self) -> str:
         return \
@@ -58,13 +57,13 @@ class server(logic.bin_entry, logic.server_entry):
                 "GameId": 13058,
                 "Settings": {
                     "Type": "Avatar",
-                    "PlaceId": const.PLACE_ID,
+                    "PlaceId": const.DEFAULT_PLACE_ID,
                     "GameId": "Test",
                     "MachineAddress": base_url,
-                    "PlaceFetchUrl": f"{base_url}/asset/?id={const.PLACE_ID}",
-                    "MaxPlayers": self.config.server_assignment.players.maximum,
-                    "PreferredPlayerCapacity": self.config.server_assignment.players.preferred,
-                    "MaxGameInstances": self.config.server_assignment.instances.count,
+                    "PlaceFetchUrl": f"{base_url}/asset/?id={const.DEFAULT_PLACE_ID}",
+                    "MaxPlayers": self.server_config.server_assignment.players.maximum,
+                    "PreferredPlayerCapacity": self.server_config.server_assignment.players.preferred,
+                    "MaxGameInstances": self.server_config.server_assignment.instances.count,
                     "GsmInterval": 5,
                     "ApiKey": "",
                     "DataCenterId": "69420",
@@ -91,21 +90,21 @@ class server(logic.bin_entry, logic.server_entry):
             f.write(util.ssl_context.get_client_cert())
 
     def initialise(self) -> None:
-        place_path = assets.get_asset_path(const.PLACE_ID)
+        place_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
 
-        shutil.copyfile(self.config.place_setup.path, place_path)
+        shutil.copyfile(self.server_config.game_setup.place_path, place_path)
         self.save_app_setting()
         self.save_ssl()
 
         self.make_popen([
             self.get_versioned_path('RCC.exe'),
             '-verbose',
-            f'-placeid:{const.PLACE_ID}',
+            f'-placeid:{const.DEFAULT_PLACE_ID}',
             '-localtest', self.save_gameserver(),
             '-settingsfile', self.get_versioned_path('DevSettingsFile.json'),
             '-port 64989',
         ], stdin=subprocess.PIPE)
 
 
-class argtype(_argtype):
-    obj_type = server
+class arg_type(_arg_type):
+    obj_type = obj_type

@@ -1,43 +1,46 @@
-import launcher.routines.webserver as webserver
+import launcher.routines.web_server as web_server
 import launcher.routines.logic as logic
-from random import randrange
-import util.const as const
 import urllib.request
 import util.versions
 import urllib.parse
 import urllib.error
 import dataclasses
+import util.const
+import functools
 import ctypes
 import ssl
 
 
+@functools.cache
+def get_none_ssl() -> ssl.SSLContext:
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    return ctx
+
+
 @dataclasses.dataclass
-class _argtype(logic.subparser_argtype):
+class _arg_type(logic.subparser_arg_type):
     rcc_host: str = 'localhost'
     rcc_port_num: int = 2005
     web_host: str = None
-    web_port: webserver.port = webserver.port(
+    web_port: web_server.port = web_server.port(
         port_num=80,
         is_ssl=False,
     ),
-    username: str = 'Byfron\'s Bad Byrother'
-    appearance: str = const.DEFAULT_APPEARANCE
+    user_code: str | None = None
     delay: int = 0
 
 
-class player(logic.bin_entry):
-    local_args: _argtype
+class obj_type(logic.bin_entry):
+    local_args: _arg_type
     DIR_NAME = 'Player'
 
     def retrieve_version(self) -> util.versions.rōblox:
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-
         try:
             res = urllib.request.urlopen(
                 f'{self.get_base_url()}/roblox_version',
-                context=ctx,
+                context=get_none_ssl(),
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(
@@ -76,14 +79,10 @@ class player(logic.bin_entry):
         if not self.local_args.web_port.is_ssl:
             return
 
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-
         try:
             res = urllib.request.urlopen(
                 f'{self.get_base_url()}/retrieve_ssl',
-                context=ctx,
+                context=get_none_ssl(),
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(
@@ -105,17 +104,17 @@ class player(logic.bin_entry):
             self.get_versioned_path('RobloxPlayerBeta.exe'),
             '-a', f'{base_url}/login/negotiate.ashx',
             '-j', f'{base_url}/game/placelauncher.ashx?' +
-            urllib.parse.urlencode({
-                'placeid': const.PLACE_ID,
-                'ip': self.local_args.rcc_host,
-                'id': randrange(1, 666),
-                'port': self.local_args.rcc_port_num,
-                'app': self.local_args.appearance,
-                'user': self.local_args.username,
-            }),
+            urllib.parse.urlencode({k: v for k, v in {
+                'ip':
+                    self.local_args.rcc_host,
+                'port':
+                    self.local_args.rcc_port_num,
+                'user':
+                    self.local_args.user_code,
+            }.items() if v}),
             '-t', '1',
         ])
 
 
-class argtype(_argtype):
-    obj_type = player
+class arg_type(_arg_type):
+    obj_type = obj_type

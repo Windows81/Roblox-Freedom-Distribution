@@ -3,7 +3,31 @@ players.maximum = 4096
 players.preferred = 666
 instances.count = 1
 
-[place_setup]
+[game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E", etc.
-roblox_version = "v463"
-path = "C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl"
+roblox_version = '2021E'
+place_path = 'C:\Users\USERNAME\Documents\Baseplate.rbxl'
+icon_path = 'C:\Users\USERNAME\Pictures\Roblox\RobloxScreenShot20230701_095145128.png'
+
+[server_core]
+chat_style = 'ClassicAndBubble'
+
+retrieve_default_user_code = '''
+def RESULT(tick: float) -> str:
+    return f'Tick {tick}'
+'''
+
+retrieve_username = '''
+def RESULT(user_code: str) -> str:
+    return user_code
+'''
+
+retrieve_user_id = '''
+def RESULT(user_code: str) -> int:
+    return int(float(user_code[5:]) % 1e3)
+'''
+
+retrieve_account_age = '''
+def RESULT(user_code: str) -> int:
+    return 6969
+'''

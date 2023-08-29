@@ -1,16 +1,16 @@
-from ..logic import webserver_handler, server_path
+from web_server.logic import web_server_handler, server_path
 import urllib.parse
 import re
 
 
 @server_path("/.127.0.0.1/game/players/[0-9]+/", regex=True)
-def _(self: webserver_handler, match: re.Match[str]) -> bool:
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
     self.send_json({"ChatFilter": "blacklist"})
     return True
 
 
 @server_path("/moderation/v2/filtertext")
-def _(self: webserver_handler) -> bool:
+def _(self: web_server_handler) -> bool:
     length = int(self.headers.get('content-length'))
     field_data = self.rfile.read(length)
     qs = urllib.parse.parse_qs(field_data)

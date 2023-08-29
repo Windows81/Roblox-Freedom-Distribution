@@ -2,6 +2,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Callable, Optional
 import util.versions as versions
 import util.const as const
+import game_config._main
 from urllib import parse
 import util.ssl_context
 import OpenSSL.crypto
@@ -14,17 +15,17 @@ import re
 import os
 
 
-class FunctionMode(enum.Enum):
+class func_mode(enum.Enum):
     STATIC = 0
     REGEX = 1
 
 
-SERVER_FUNCS = {m: dict[str, versions.version_holder]() for m in FunctionMode}
+SERVER_FUNCS = {m: dict[str, versions.version_holder]() for m in func_mode}
 
 
 def server_path(path: str, regex: bool = False, min_version: int = 0):
     def inner(f: Callable[[BaseHTTPRequestHandler, Optional[re.Match]], bool]):
-        dict_mode: dict = FunctionMode.REGEX if regex else FunctionMode.STATIC
+        dict_mode: dict = func_mode.REGEX if regex else func_mode.STATIC
         SERVER_FUNCS[dict_mode].setdefault(path, versions.version_holder()).add_min(f, min_version)
         return f
     return inner
@@ -44,20 +45,20 @@ def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
     return prefix + b"%" + base64.b64encode(signature) + b'%' + data
 
 
-class webserver(ThreadingHTTPServer):
+class web_server(ThreadingHTTPServer):
     def __init__(
         self,
         server_address: tuple[str, int],
-        roblox_version: versions.rōblox = versions.rōblox.v348,
+        server_config: game_config._main.obj_type,
         bind_and_activate=True,
         is_ssl: bool = False,
     ) -> None:
         super().__init__(
             server_address,
-            webserver_handler,
+            web_server_handler,
             bind_and_activate,
         )
-        self.roblox_version = roblox_version
+        self.game_config = server_config
         self.is_ssl = is_ssl
 
         if is_ssl:
@@ -68,18 +69,19 @@ class webserver(ThreadingHTTPServer):
             )
 
 
-class webserver_handler(BaseHTTPRequestHandler):
+class web_server_handler(BaseHTTPRequestHandler):
     default_request_version = "HTTP/1.1"
     sockname: tuple[str, int]
     request: socket.socket
-    server: webserver
+    server: web_server
 
     def parse_request(self) -> bool:
         self.is_valid_request = False
         if not super().parse_request():
             return False
-
         self.is_valid_request = True
+        self.game_config = self.server.game_config
+
         self.sockname = self.request.getsockname()
         self.domain = \
             'localhost'\
@@ -149,14 +151,14 @@ class webserver_handler(BaseHTTPRequestHandler):
     def __process_func(self, func, *a, **kwa):
         if not func:
             return False
-        return func[self.server.roblox_version](self, *a, **kwa)
+        return func[self.game_config.game_setup.roblox_version](self, *a, **kwa)
 
     def __open_from_static(self) -> bool:
-        func = SERVER_FUNCS[FunctionMode.STATIC].get(self.urlsplit.path, None)
+        func = SERVER_FUNCS[func_mode.STATIC].get(self.urlsplit.path, None)
         return self.__process_func(func)
 
     def __open_from_regex(self) -> bool:
-        for pattern, func in SERVER_FUNCS[FunctionMode.REGEX].items():
+        for pattern, func in SERVER_FUNCS[func_mode.REGEX].items():
             match = re.search(pattern, self.urlsplit.path)
             if not match:
                 continue
