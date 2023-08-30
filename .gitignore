@@ -5,3 +5,5 @@ Roblox/
 PyInstallerWork/
 Binaries/
 *.spec
+Source/ssl/?*.*
+__pycache__/
