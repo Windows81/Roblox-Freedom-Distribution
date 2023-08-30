@@ -1,16 +1,16 @@
-from .player import _
-from .server import _
-from .studio import _
+from .subparsers.player import _
+from .subparsers.server import _
+from .subparsers.studio import _
 
-import launcher.routines.logic as routine_logic
-import launcher.subparsers.logic as logic
+import launcher.routines._logic as routine_logic
+import launcher.subparsers._logic as sub_logic
 import argparse
 
 
-def parse_args(parser: argparse.ArgumentParser):
+def parse_args(parser: argparse.ArgumentParser) -> routine_logic.routine:
     mode_aliases = {
         n: m
-        for m in logic.launch_mode
+        for m in sub_logic.launch_mode
         for n in [
             m.name.lower(),
         ]
@@ -25,7 +25,7 @@ def parse_args(parser: argparse.ArgumentParser):
 
     args = parser.parse_known_args()[0]
     mode_val = mode_aliases[args.mode]
-    sub_func = logic.LAUNCH_ROUTINES[mode_val]
+    sub_func = sub_logic.LAUNCH_ROUTINES[mode_val]
     sub_parser = sub_parsers[mode_val]
     args_list = sub_func(parser, sub_parser)
     return routine_logic.routine(*args_list)

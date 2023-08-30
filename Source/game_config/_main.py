@@ -1,6 +1,6 @@
 
-from game_config.logic import allocateable as A
-import game_config.logic
+from game_config._logic import allocateable as A
+import game_config._logic
 import util.versions
 import util.resource
 import functools
@@ -14,7 +14,7 @@ class chat_style(enum.Enum):
     CLASSIC_AND_BUBBLE_CHAT = "ClassicAndBubble"
 
 
-class obj_type(game_config.logic._configtype):
+class obj_type(game_config._logic._configtype):
     '''
     Configuration specification, according by default to "GameConfig.toml".
     '''
@@ -27,8 +27,8 @@ class obj_type(game_config.logic._configtype):
             count: int
 
     class game_setup(A):
-        place_path: game_config.logic.path
-        icon_path: game_config.logic.path
+        place_path: game_config._logic.path
+        icon_path: game_config._logic.path
         roblox_version: util.versions.rōblox
 
     class server_core(A):

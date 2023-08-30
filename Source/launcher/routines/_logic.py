@@ -1,6 +1,7 @@
 import game_config._main
 import util.versions
 import util.resource
+import dataclasses
 import subprocess
 import threading
 import os
@@ -11,7 +12,7 @@ class _entry:
         raise NotImplementedError()
 
 
-class subparser_arg_type:
+class arg_type:
     obj_type: type[_entry]
 
 
@@ -20,10 +21,10 @@ class server_arg_type:
 
 
 class entry:
-    local_args: subparser_arg_type
+    local_args: arg_type
     threads: list[threading.Thread]
 
-    def __init__(self, local_args: subparser_arg_type) -> None:
+    def __init__(self, local_args: arg_type) -> None:
         self.local_args = local_args
         self.threads = []
 
@@ -49,15 +50,26 @@ class popen_entry(entry, subprocess.Popen):
         subprocess.Popen.wait(self)
 
 
-class bin_entry(popen_entry):
+class ver_entry(entry):
     '''
-    Routine entry class that corresponds to a versioned binary of Rōblox.
+    Routine entry abstract class that corresponds to a versioned directory of Rōblox.
     '''
     rōblox_version: util.versions.rōblox
-    DIR_NAME: str
 
     def retrieve_version(self) -> util.versions.rōblox:
         raise NotImplementedError()
+
+    def get_versioned_path(self, *paths: str) -> str:
+        return util.resource.get_rōblox_full_path(
+            self.rōblox_version, *paths,
+        )
+
+
+class bin_entry(ver_entry, popen_entry):
+    '''
+    Routine entry abstract class that corresponds to a versioned binary of Rōblox.
+    '''
+    DIR_NAME: str
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -66,8 +78,7 @@ class bin_entry(popen_entry):
             raise FileNotFoundError(f'"{self.DIR_NAME}" not found for Rōblox version {self.rōblox_version}.')
 
     def get_versioned_path(self, *paths: str) -> str:
-        return util.resource.get_rōblox_full_path(
-            self.rōblox_version,
+        return super().get_versioned_path(
             self.DIR_NAME, *paths,
         )
 
@@ -89,7 +100,7 @@ class server_entry(entry):
 class routine:
     entries: list[entry]
 
-    def __init__(self, *args_list: subparser_arg_type) -> None:
+    def __init__(self, *args_list: arg_type) -> None:
         self.entries = []
         for args in args_list:
             e = args.obj_type(args)
@@ -103,3 +114,11 @@ class routine:
     def __del__(self):
         for e in self.entries:
             del e
+
+
+@dataclasses.dataclass
+class port:
+    def __hash__(self) -> int:
+        return self.port_num
+    port_num: int
+    is_ssl: bool

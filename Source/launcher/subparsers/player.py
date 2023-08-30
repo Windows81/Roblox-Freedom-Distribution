@@ -1,7 +1,6 @@
 import launcher.routines.web_server as web_server
+import launcher.subparsers._logic as sub_logic
 import launcher.routines.player as player
-import launcher.subparsers.logic as logic
-import util.const
 import argparse
 
 
@@ -56,7 +55,7 @@ def subparse(
     ]
 
 
-@logic.launch_command(logic.launch_mode.PLAYER)
+@sub_logic.launch_command(sub_logic.launch_mode.PLAYER)
 def _(*a):
     return subparse(
         *a,

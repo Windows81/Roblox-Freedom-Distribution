@@ -1,4 +1,4 @@
-import launcher.routines.logic as logic
+import launcher.routines._logic as sub_logic
 import web_server._main as _main
 import game_config._main
 import game_config._main
@@ -7,25 +7,17 @@ import threading
 
 
 @dataclasses.dataclass
-class port:
-    def __hash__(self) -> int:
-        return self.port_num
-    port_num: int
-    is_ssl: bool
-
-
-@dataclasses.dataclass
-class _arg_type(logic.subparser_arg_type):
+class _arg_type(sub_logic.arg_type):
     server_config: game_config._main.obj_type
-    web_ports: set[port] = dataclasses.field(default_factory=set)
+    web_ports: set[sub_logic.port] = dataclasses.field(default_factory=set)
 
 
-class obj_type(logic.server_entry):
+class obj_type(sub_logic.server_entry):
     server_config: game_config._main.obj_type
-    httpds = list[_main.web_server.logic.web_server]()
+    httpds = list[_main.web_server._logic.web_server]()
     local_args: _arg_type
 
-    def __make_server(self, web_port: port, *args, **kwargs) -> None:
+    def __make_server(self, web_port: sub_logic.port, *args, **kwargs) -> None:
         try:
             # We unpack the 'port' struct here because its usefulness is only in the 'launcher' supermodule.
             self.httpds.append(ht := _main.make_server(*args, **web_port.__dict__, **kwargs))

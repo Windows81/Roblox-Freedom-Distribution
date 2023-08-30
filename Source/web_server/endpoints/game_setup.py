@@ -1,4 +1,4 @@
-from web_server.logic import web_server_handler, server_path
+from web_server._logic import web_server_handler, server_path
 import util.ssl_context
 import util.const
 

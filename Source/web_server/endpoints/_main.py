@@ -1,4 +1,4 @@
-from web_server.logic import server_path, web_server_handler
+from web_server._logic import server_path, web_server_handler
 from .text_filter import _
 from .load_assets import _
 from .game_setup import _

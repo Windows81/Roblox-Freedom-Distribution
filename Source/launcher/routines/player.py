@@ -1,5 +1,5 @@
 import launcher.routines.web_server as web_server
-import launcher.routines.logic as logic
+import launcher.routines._logic as sub_logic
 import urllib.request
 import util.versions
 import urllib.parse
@@ -8,6 +8,7 @@ import dataclasses
 import util.const
 import functools
 import ctypes
+import time
 import ssl
 
 
@@ -20,19 +21,19 @@ def get_none_ssl() -> ssl.SSLContext:
 
 
 @dataclasses.dataclass
-class _arg_type(logic.subparser_arg_type):
+class _arg_type(sub_logic.arg_type):
     rcc_host: str = 'localhost'
     rcc_port_num: int = 2005
     web_host: str = None
-    web_port: web_server.port = web_server.port(
+    web_port: sub_logic.port = sub_logic.port(
         port_num=80,
         is_ssl=False,
     ),
     user_code: str | None = None
-    delay: int = 0
+    delay: float = 1
 
 
-class obj_type(logic.bin_entry):
+class obj_type(sub_logic.bin_entry):
     local_args: _arg_type
     DIR_NAME = 'Player'
 
@@ -64,7 +65,7 @@ class obj_type(logic.bin_entry):
             f.write('\n'.join([
                 """<?xml version="1.0" encoding="UTF-8"?>""",
                 """<Settings>""",
-                f"""\t<BaseUrl>{self.get_base_url()}/.</BaseUrl>""",
+                f"""\t<BaseUrl>{self.get_base_url()}</BaseUrl>""",
                 """</Settings>""",
             ]))
         return path
@@ -99,6 +100,7 @@ class obj_type(logic.bin_entry):
         self.enable_mutex()
         self.save_ssl()
 
+        time.sleep(self.local_args.delay)
         base_url = self.get_base_url()
         self.make_popen([
             self.get_versioned_path('RobloxPlayerBeta.exe'),

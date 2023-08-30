@@ -1,7 +1,8 @@
 import launcher.routines.web_server as web_server
 import launcher.routines.rcc_server as rcc_server
+import launcher.subparsers._logic as sub_logic
 import launcher.routines.player as player
-import launcher.subparsers.logic as logic
+import launcher.routines._logic as logic
 import util.resource
 import argparse
 
@@ -9,7 +10,7 @@ import argparse
 def subparse(
     parser: argparse.ArgumentParser,
     sub_parser: argparse.ArgumentParser,
-    additional_web_ports: set[web_server.port],
+    additional_web_ports: set[logic.port],
     use_ssl: bool = False,
     **kwargs,
 ):
@@ -49,7 +50,7 @@ def subparse(
         routine_args.extend([
             web_server.arg_type(
                 web_ports=set([
-                    web_server.port(
+                    logic.port(
                         port_num=args.web_port,
                         is_ssl=use_ssl,
                     ),
@@ -64,7 +65,7 @@ def subparse(
         routine_args.extend([
             rcc_server.arg_type(
                 rcc_port_num=args.rcc_port,
-                web_port=web_server.port(
+                web_port=logic.port(
                     port_num=args.web_port,
                     is_ssl=use_ssl,
                 ),
@@ -79,7 +80,7 @@ def subparse(
                 rcc_host='127.0.0.1',
                 web_host='127.0.0.1',
                 rcc_port_num=args.rcc_port,
-                web_port=web_server.port(
+                web_port=logic.port(
                     port_num=args.web_port,
                     is_ssl=use_ssl,
                 ),
@@ -88,7 +89,7 @@ def subparse(
     return routine_args
 
 
-@logic.launch_command(logic.launch_mode.SERVER)
+@sub_logic.launch_command(sub_logic.launch_mode.SERVER)
 def _(*a):
     return subparse(
         *a,

@@ -26,6 +26,19 @@
 			"justMyCode": true,
 		},
 		{
+			"name": "Python: Launch Server & Player",
+			"type": "python",
+			"request": "launch",
+			"program": "${workspaceFolder}/_main.py",
+			"cwd": "${workspaceFolder}/..",
+			"args": [
+				"server",
+				"--run_client",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true,
+		},
+		{
 			"name": "Python: Launch Local Client",
 			"type": "python",
 			"request": "launch",
