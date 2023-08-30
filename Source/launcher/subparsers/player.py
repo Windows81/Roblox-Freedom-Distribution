@@ -1,6 +1,7 @@
 import launcher.routines.web_server as web_server
 import launcher.subparsers._logic as sub_logic
 import launcher.routines.player as player
+import launcher.routines._logic as logic
 import argparse
 
 
@@ -46,7 +47,7 @@ def subparse(
             rcc_host=args.rcc_host,
             rcc_port_num=args.rcc_port,
             web_host=args.web_host,
-            web_port=web_server.port(
+            web_port=logic.port(
                 port_num=args.web_port,
                 is_ssl=use_ssl,
             ),
