@@ -6,7 +6,7 @@ instances.count = 1
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E", etc.
 roblox_version = '2021E'
-place_path = 'C:\Users\USERNAME\Documents\Atlanta-hotels-FULLSCRIPTED.rbxl'
+place_path = 'C:\Users\USERNAME\Documents\AmusementPark.rbxl'
 icon_path = 'C:\Users\USERNAME\Pictures\Roblox\RobloxScreenShot20230701_095145128.png'
 
 [server_core]

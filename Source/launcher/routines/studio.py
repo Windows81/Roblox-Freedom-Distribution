@@ -1,13 +1,13 @@
-import launcher.routines._logic as sub_logic
+import launcher.routines._logic as logic
 import dataclasses
 
 
 @dataclasses.dataclass
-class _arg_type(sub_logic.arg_type):
+class _arg_type(logic.arg_type):
     cmd_args: list[str] = dataclasses.field(default_factory=list)
 
 
-class obj_type(sub_logic.bin_entry):
+class obj_type(logic.bin_entry):
     local_args: _arg_type
     DIR_NAME = 'Studio'
 

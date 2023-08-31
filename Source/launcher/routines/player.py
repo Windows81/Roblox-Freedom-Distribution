@@ -1,5 +1,5 @@
 import launcher.routines.web_server as web_server
-import launcher.routines._logic as sub_logic
+import launcher.routines._logic as logic
 import urllib.request
 import util.versions
 import urllib.parse
@@ -21,19 +21,26 @@ def get_none_ssl() -> ssl.SSLContext:
 
 
 @dataclasses.dataclass
-class _arg_type(sub_logic.arg_type):
+class _arg_type(logic.arg_type):
     rcc_host: str = 'localhost'
     rcc_port_num: int = 2005
     web_host: str = None
-    web_port: sub_logic.port = sub_logic.port(
+    web_port: logic.port = logic.port(
         port_num=80,
         is_ssl=False,
     ),
     user_code: str | None = None
     delay: float = 1
 
+    def sanitise(self):
+        super().sanitise()
+        if self.rcc_host == 'localhost':
+            self.rcc_host = '127.0.0.1'
+        if self.web_host == 'localhost':
+            self.web_host = '127.0.0.1'
 
-class obj_type(sub_logic.bin_entry):
+
+class obj_type(logic.bin_entry):
     local_args: _arg_type
     DIR_NAME = 'Player'
 

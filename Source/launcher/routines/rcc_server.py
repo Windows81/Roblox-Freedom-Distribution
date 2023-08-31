@@ -1,5 +1,4 @@
-import launcher.routines.web_server as web_server
-import launcher.routines._logic as sub_logic
+import launcher.routines._logic as logic
 import web_server.assets as assets
 import util.const as const
 import game_config._main
@@ -12,17 +11,17 @@ import json
 
 
 @dataclasses.dataclass
-class _arg_type(sub_logic.arg_type):
+class _arg_type(logic.arg_type):
     server_config: game_config._main.obj_type
     rcc_port_num: int = 2005
-    web_port: sub_logic.port = \
-        sub_logic.port(
+    web_port: logic.port = \
+        logic.port(
             port_num=80,
             is_ssl=False,
         ),
 
 
-class obj_type(sub_logic.bin_entry, sub_logic.server_entry):
+class obj_type(logic.bin_entry, logic.server_entry):
     local_args: _arg_type
     DIR_NAME = 'Server'
 

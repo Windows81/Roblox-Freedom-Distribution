@@ -1,3 +1,4 @@
+import re
 from web_server._logic import web_server_handler, server_path
 import util.ssl_context
 import util.const
@@ -65,7 +66,7 @@ def _(self: web_server_handler) -> bool:
         'PingUrl': '',
         'PingInterval': 0,
         'SeleniumTestMode': False,
-        'SuperSafeChat': False,
+        'SuperSafeChat': True,
         'MeasurementUrl': '',
         'WaitingForCharacterGuid': 'e01c22e4-a428-45f8-ae40-5058b4a1dafc',
         'VendorId': 0,
@@ -79,7 +80,7 @@ def _(self: web_server_handler) -> bool:
         'CookieStoreEnabled': False,
         'IsRobloxPlace': True,
         'GenerateTeleportJoin': False,
-        'IsUnknownOrUnder13': False,
+        'IsUnknownOrUnder13': True,
         'SessionId': '',
         'DataCenterId': 0,
         'FollowUserId': 0,
@@ -98,7 +99,7 @@ def _(self: web_server_handler) -> bool:
         'SeleniumTestMode': False,
         'RobloxLocale': 'en_us',
         'GameLocale': 'en_us#RobloxTranslateAbTest2',
-        'SuperSafeChat': False,
+        'SuperSafeChat': True,
         'ClientTicket': '2022-03-26T05:13:05.7649319Z;dj09X5iTmYtOPwh0hbEC8yvSO1t99oB3Yh5qD/sinDFszq3hPPaL6hH16TvtCen6cABIycyDv3tghW7k8W+xuqW0/xWvs0XJeiIWstmChYnORzM1yCAVnAh3puyxgaiIbg41WJSMALRSh1hoRiVFOXw4BKjSKk7DrTTcL9nOG1V5YwVnmAJKY7/m0yZ81xE99QL8UVdKz2ycK8l8JFvfkMvgpqLNBv0APRNykGDauEhAx283vARJFF0D9UuSV69q6htLJ1CN2kXL0Saxtt/kRdoP3p3Nhj2VgycZnGEo2NaG25vwc/KzOYEFUV0QdQPC8Vs2iFuq8oK+fXRc3v6dnQ==;BO8oP7rzmnIky5ethym6yRECd6H14ojfHP3nHxSzfTs=;XsuKZL4TBjh8STukr1AgkmDSo5LGgQKQbvymZYi/80TYPM5/MXNr5HKoF3MOT3Nfm0MrubracyAtg5O3slIKBg==;6',
         'GameId': '29fd9df4-4c59-4d8c-8cee-8f187b09709b',
         'CreatorId': 4372130,
@@ -107,7 +108,7 @@ def _(self: web_server_handler) -> bool:
         'CookieStoreFirstTimePlayKey': 'rbx_evt_ftp',
         'CookieStoreFiveMinutePlayKey': 'rbx_evt_fmp',
         'CookieStoreEnabled': True,
-        'IsUnknownOrUnder13': False,
+        'IsUnknownOrUnder13': True,
         'GameChatType': 'AllUsers',
         'SessionId': json.dumps({
             'SessionId': 'c89589f1-d1de-46e3-80e0-2703d1159409',
@@ -122,7 +123,7 @@ def _(self: web_server_handler) -> bool:
             'Latitude': 37.78,
             'Longitude': -122.465,
             'CountryId': 1,
-            'PolicyCountryId': None,
+            'PolicyCountryId': 'US',
             'LanguageId': 41,
             'BlockedPlayerIds': [],
             'JoinType': 'MatchMade',
@@ -230,7 +231,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/Setting/QuietGet/ClientAppSettings/')
 def _(self: web_server_handler) -> bool:
-    self.send_json(util.const.CLIENT_SETTINGS)
+    self.send_json({})
     return True
 
 
@@ -253,5 +254,22 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/v1/settings/application')
 def _(self: web_server_handler) -> bool:
+    self.send_json({'applicationSettings': {}})
+    return True
+
+
+@server_path('/v1/player-policies-client')
+def _(self: web_server_handler) -> bool:
+    self.send_json({
+        'isSubjectToChinaPolicies': False,
+        'arePaidRandomItemsRestricted': False,
+        'isPaidItemTradingAllowed': True,
+        'areAdsAllowed': True,
+    })
+    return True
+
+
+@server_path('/users/([0-9]+)/canmanage/([0-9]+)', regex=True)
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
     self.send_json({'applicationSettings': {}})
     return True

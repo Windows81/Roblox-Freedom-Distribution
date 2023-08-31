@@ -1,3 +1,4 @@
+import launcher.aux_tasks.download
 import game_config._main
 import util.versions
 import util.resource
@@ -5,6 +6,14 @@ import dataclasses
 import subprocess
 import threading
 import os
+
+
+@dataclasses.dataclass
+class port:
+    def __hash__(self) -> int:
+        return self.port_num
+    port_num: int
+    is_ssl: bool
 
 
 class _entry:
@@ -15,12 +24,15 @@ class _entry:
 class arg_type:
     obj_type: type[_entry]
 
+    def sanitise(self) -> None:
+        pass
+
 
 class server_arg_type:
     server_config: game_config._main.obj_type
 
 
-class entry:
+class entry(_entry):
     local_args: arg_type
     threads: list[threading.Thread]
 
@@ -75,12 +87,17 @@ class bin_entry(ver_entry, popen_entry):
         super().__init__(*args, **kwargs)
         self.rōblox_version = self.retrieve_version()
         if not os.path.isdir(self.get_versioned_path()):
-            raise FileNotFoundError(f'"{self.DIR_NAME}" not found for Rōblox version {self.rōblox_version}.')
+            # raise FileNotFoundError(f'"{self.DIR_NAME}" not found for Rōblox version {self.rōblox_version}.')
+            dl = launcher.aux_tasks.download.obj_type(self.rōblox_version, self.DIR_NAME)
+            dl.perform()
 
     def get_versioned_path(self, *paths: str) -> str:
         return super().get_versioned_path(
             self.DIR_NAME, *paths,
         )
+
+    def get_base_url(self) -> str:
+        raise NotImplementedError()
 
 
 class server_entry(entry):
@@ -103,6 +120,7 @@ class routine:
     def __init__(self, *args_list: arg_type) -> None:
         self.entries = []
         for args in args_list:
+            args.sanitise()
             e = args.obj_type(args)
             self.entries.append(e)
             e.initialise()
@@ -114,11 +132,3 @@ class routine:
     def __del__(self):
         for e in self.entries:
             del e
-
-
-@dataclasses.dataclass
-class port:
-    def __hash__(self) -> int:
-        return self.port_num
-    port_num: int
-    is_ssl: bool

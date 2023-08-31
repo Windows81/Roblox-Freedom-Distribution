@@ -1,6 +1,6 @@
 import launcher.routines.rcc_server as rcc_server
-import launcher.routines.download as download
 import launcher.subparsers._logic as sub_logic
+import launcher.routines.download as download
 import launcher.routines.player as player
 import util.versions
 import argparse
@@ -36,7 +36,7 @@ def subparse(
     ]
 
 
-@sub_logic.launch_command(sub_logic.launch_mode.PLAYER)
+@sub_logic.add_args(sub_logic.launch_mode.PLAYER)
 def _(*a):
     return subparse(
         *a,

@@ -1,40 +1,46 @@
-import launcher.routines.web_server as web_server
 import launcher.subparsers._logic as sub_logic
 import launcher.routines.player as player
 import launcher.routines._logic as logic
 import argparse
 
 
-def subparse(
+@sub_logic.add_args(sub_logic.launch_mode.PLAYER)
+def _(
     parser: argparse.ArgumentParser,
-    sub_parser: argparse.ArgumentParser,
-    use_ssl: bool = False,
-):
-    sub_parser.add_argument(
+    subparser: argparse.ArgumentParser,
+) -> None:
+
+    subparser.add_argument(
         '--rcc_host', '-rh', type=str,
         default=None, nargs='?',
         help='Hostname or IP address to connect this program to the RCC server.',
     )
-    sub_parser.add_argument(
+    subparser.add_argument(
         '--rcc_port', '-rp', type=int,
         default=2005, nargs='?',
         help='Port number to connect this program to the RCC server.',
     )
-    sub_parser.add_argument(
+    subparser.add_argument(
         '--web_host', '-wh', type=str,
         default=None, nargs='?',
         help='Hostname or IP address to connect this program to the web server.',
     )
-    sub_parser.add_argument(
+    subparser.add_argument(
         '--web_port', '-wp', type=int,
         default=2006, nargs='?',
         help='Port number to connect this program to the web server.',
     )
-    sub_parser.add_argument(
+    subparser.add_argument(
         '--user_code', '-u',
         type=str, nargs='?',
     )
-    args = parser.parse_args()
+
+
+@sub_logic.serialise_args(sub_logic.launch_mode.PLAYER)
+def _(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+) -> list[logic.arg_type]:
 
     if not (args.web_host or args.rcc_host):
         parser.error('No hostname requested; add --web_host or --rcc_host.')
@@ -49,16 +55,8 @@ def subparse(
             web_host=args.web_host,
             web_port=logic.port(
                 port_num=args.web_port,
-                is_ssl=use_ssl,
+                is_ssl=True,
             ),
             user_code=args.user_code,
         ),
     ]
-
-
-@sub_logic.launch_command(sub_logic.launch_mode.PLAYER)
-def _(*a):
-    return subparse(
-        *a,
-        use_ssl=True,
-    )

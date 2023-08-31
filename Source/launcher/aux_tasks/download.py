@@ -1,4 +1,4 @@
-import launcher.aux_tasks._logic
+import launcher.subparsers.aux_tasks._logic
 import urllib.request
 import util.resource
 import util.versions
@@ -7,10 +7,10 @@ import py7zr
 import io
 
 
-class obj_type(launcher.aux_tasks._logic.action):
-    def __init__(self, version: util.versions.rōblox, dir_name: str):
+class obj_type(launcher.subparsers.aux_tasks._logic.action):
+    def __init__(self, rōblox_version: util.versions.rōblox, dir_name: str):
         super().__init__()
-        self.rōblox_version = version
+        self.rōblox_version = rōblox_version
         self.dir_name = dir_name
 
     def retrieve_version(self) -> util.versions.rōblox:

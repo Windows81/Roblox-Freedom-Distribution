@@ -82,7 +82,7 @@ class web_server_handler(BaseHTTPRequestHandler):
         self.is_valid_request = True
         self.game_config = self.server.game_config
 
-        self.sockname = self.request.getsockname()
+        self.sockname = self.headers.get('Host').split(':')
         self.domain = \
             'localhost'\
             if self.sockname[0] == '127.0.0.1'\
@@ -162,7 +162,7 @@ class web_server_handler(BaseHTTPRequestHandler):
             match = re.search(pattern, self.urlsplit.path)
             if not match:
                 continue
-            return self.__process_func(func)
+            return self.__process_func(func, match)
 
     def __open_from_file(self) -> bool:
         return False

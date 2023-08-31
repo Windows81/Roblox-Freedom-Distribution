@@ -1,17 +1,58 @@
+import typing
 import enum
 
 
 class launch_mode(enum.Enum):
-    STUDIO = 0
+    ALWAYS = 0
     SERVER = 1
     PLAYER = 2
+    STUDIO = 3
 
 
-LAUNCH_ROUTINES = {}
+class callable_list(list[typing.Callable]):
+    def call(self, *args, **kwargs) -> list:
+        return [
+            r
+            for f in self
+            for r in f(*args, **kwargs) or []
+        ]
 
 
-def launch_command(launch_mode: launch_mode):
+T = typing.TypeVar('T')
+
+
+class callable_dict(dict[T, callable_list]):
+    def add(self, k: T, *f: typing.Callable):
+        self.setdefault(k, callable_list()).extend(f)
+
+    def call(self, k: T, *args, **kwargs) -> list:
+        l = self.get(k, None)
+        return \
+            l.call(*args, **kwargs) \
+            if l else []
+
+
+class mode_dict(callable_dict[launch_mode]):
+    def call_auxs(self, mode: launch_mode, *args, **kwargs) -> list:
+        return super().call(launch_mode.ALWAYS, mode, *args, **kwargs)
+
+    def call_subparser(self, mode: launch_mode, *args, **kwargs) -> list:
+        return super().call(mode, *args, **kwargs)
+
+
+ADD_MODE_ARGS = mode_dict()
+SERIALISE_ARGS = mode_dict()
+
+
+def add_args(launch_mode: launch_mode):
     def inner(f):
-        LAUNCH_ROUTINES[launch_mode] = f
+        ADD_MODE_ARGS.add(launch_mode, f)
+        return f
+    return inner
+
+
+def serialise_args(launch_mode: launch_mode):
+    def inner(f):
+        SERIALISE_ARGS.add(launch_mode, f)
         return f
     return inner

@@ -1,14 +1,26 @@
 import launcher.subparsers._logic as sub_logic
 import launcher.routines.studio as studio
+import launcher.routines._logic as logic
 import argparse
 
 
-@sub_logic.launch_command(sub_logic.launch_mode.STUDIO)
-def _(parser: argparse.ArgumentParser, sub_parser: argparse.ArgumentParser):
-    sub_parser.add_argument(
+@sub_logic.add_args(sub_logic.launch_mode.STUDIO)
+def subparse(
+    parser: argparse.ArgumentParser,
+    subparser: argparse.ArgumentParser,
+) -> None:
+
+    subparser.add_argument(
         dest='args', nargs='*',
     )
-    args = parser.parse_args()
+
+
+@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO)
+def _(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+) -> list[logic.arg_type]:
+
     return [
         studio.arg_type(
             cmd_args=args.args,
