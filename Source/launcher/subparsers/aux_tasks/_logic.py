@@ -2,7 +2,7 @@ import argparse
 
 
 class action:
-    def perform(self) -> None:
+    def initialise(self) -> None:
         raise NotImplementedError()
 
     @staticmethod

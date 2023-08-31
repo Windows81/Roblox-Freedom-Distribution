@@ -116,7 +116,7 @@ def get_local_ips() -> list[str]:
 
 
 def get_path(*paths: str):
-    return util.resource.get_full_path(util.resource.dir_type.SSL, *paths)
+    return util.resource.retr_full_path(util.resource.dir_type.SSL, *paths)
 
 
 CLIENT_PEM_PATH = get_path('client.pem')

@@ -28,8 +28,8 @@ def parse_args(parser: argparse.ArgumentParser) -> routine_logic.routine:
         for n, m in MODE_ALIASES.items()
     }
 
-    args = parser.parse_known_args()[0]
-    mode = MODE_ALIASES[args.mode]
+    args_ns = parser.parse_known_args()[0]
+    mode = MODE_ALIASES[args_ns.mode]
     chosen_sub_parser = sub_parsers[mode]
 
     sub_logic.ADD_MODE_ARGS.call_subparser(
@@ -42,20 +42,19 @@ def parse_args(parser: argparse.ArgumentParser) -> routine_logic.routine:
         parser,
         chosen_sub_parser,
     )
-    args = parser.parse_args()
-    routine = routine_logic.routine(
-        *sub_logic.SERIALISE_ARGS.call_subparser(
-            mode,
-            parser,
-            args,
-        )
+    args_ns = parser.parse_args()
+    args_list = sub_logic.SERIALISE_ARGS.call_subparser(
+        mode,
+        parser,
+        args_ns,
     )
     sub_logic.SERIALISE_ARGS.call_auxs(
         mode,
         parser,
-        args,
-        routine,
+        args_ns,
+        args_list,
     )
+    routine = routine_logic.routine(*args_list)
     return routine
 
 

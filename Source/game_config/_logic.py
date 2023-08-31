@@ -7,7 +7,7 @@ import tomllib
 
 class path(str):
     def __new__(cls, val: str) -> None:
-        return str.__new__(cls, util.resource.get_full_path(util.resource.dir_type.CONFIG, val))
+        return str.__new__(cls, util.resource.retr_full_path(util.resource.dir_type.CONFIG, val))
 
 
 class allocateable:
@@ -50,6 +50,6 @@ class allocateable:
 
 class _configtype(allocateable):
     def __init__(self, path: str = util.resource.DEFAULT_CONFIG_PATH) -> None:
-        with open(util.resource.get_config_full_path(path), 'rb') as f:
+        with open(util.resource.retr_config_full_path(path), 'rb') as f:
             self.data_dict: dict = tomllib.load(f)
         super().__init__(**self.data_dict)

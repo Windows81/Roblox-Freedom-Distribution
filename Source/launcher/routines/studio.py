@@ -3,18 +3,23 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class _arg_type(logic.arg_type):
+class _arg_type(logic.bin_arg_type):
     cmd_args: list[str] = dataclasses.field(default_factory=list)
+    web_port: logic.port = \
+        logic.port(
+            port_num=80,
+            is_ssl=False,
+        ),
+
+    def get_base_url(self) -> str:
+        return \
+            f'http{"s" if self.web_port.is_ssl else""}://' + \
+            f'{self.web_host}:{self.web_port.port_num}'
 
 
 class obj_type(logic.bin_entry):
     local_args: _arg_type
     DIR_NAME = 'Studio'
-
-    def get_base_url(self) -> str:
-        return \
-            f'http{"s" if self.local_args.web_port.is_ssl else""}://' + \
-            f'{self.local_args.web_host}:{self.local_args.web_port.port_num}'
 
     def save_app_setting(self) -> str:
         '''
@@ -26,7 +31,7 @@ class obj_type(logic.bin_entry):
                 """<?xml version="1.0" encoding="UTF-8"?>""",
                 """<Settings>""",
                 """\t<ContentFolder>content</ContentFolder>""",
-                f"""\t<BaseUrl>{self.get_base_url()}/.</BaseUrl>""",
+                f"""\t<BaseUrl>{self.local_args.get_base_url()}/.</BaseUrl>""",
                 """</Settings>""",
             ])
         return path

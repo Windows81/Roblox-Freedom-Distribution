@@ -8,10 +8,13 @@ import io
 
 
 class obj_type(launcher.subparsers.aux_tasks._logic.action):
-    def __init__(self, rōblox_version: util.versions.rōblox, dir_name: str):
+    def __init__(self, version: util.versions.rōblox, dir_name: str):
         super().__init__()
-        self.rōblox_version = rōblox_version
+        self.rōblox_version = version
         self.dir_name = dir_name
+
+    def retrieve_version(self) -> util.versions.rōblox:
+        return self.local_args.rōblox_version
 
     def get_link(self) -> str:
         return \

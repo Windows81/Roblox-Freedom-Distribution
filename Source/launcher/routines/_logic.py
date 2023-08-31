@@ -28,8 +28,15 @@ class arg_type:
         pass
 
 
-class server_arg_type:
+class server_arg_type(arg_type):
     server_config: game_config._main.obj_type
+
+
+class bin_arg_type(arg_type):
+    auto_download: bool
+
+    def get_base_url(self) -> str:
+        raise NotImplementedError()
 
 
 class entry(_entry):
@@ -68,11 +75,11 @@ class ver_entry(entry):
     '''
     rōblox_version: util.versions.rōblox
 
-    def retrieve_version(self) -> util.versions.rōblox:
+    def retr_version(self) -> util.versions.rōblox:
         raise NotImplementedError()
 
     def get_versioned_path(self, *paths: str) -> str:
-        return util.resource.get_rōblox_full_path(
+        return util.resource.retr_rōblox_full_path(
             self.rōblox_version, *paths,
         )
 
@@ -81,23 +88,23 @@ class bin_entry(ver_entry, popen_entry):
     '''
     Routine entry abstract class that corresponds to a versioned binary of Rōblox.
     '''
+    local_args: bin_arg_type
     DIR_NAME: str
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.rōblox_version = self.retrieve_version()
+        self.rōblox_version = self.retr_version()
         if not os.path.isdir(self.get_versioned_path()):
-            # raise FileNotFoundError(f'"{self.DIR_NAME}" not found for Rōblox version {self.rōblox_version}.')
-            dl = launcher.aux_tasks.download.obj_type(self.rōblox_version, self.DIR_NAME)
-            dl.perform()
+            if self.local_args.auto_download:
+                dl = launcher.aux_tasks.download.obj_type(self.rōblox_version, self.DIR_NAME)
+                dl.initialise()
+            else:
+                raise FileNotFoundError(f'"{self.DIR_NAME}" not found for Rōblox version {self.rōblox_version}.')
 
     def get_versioned_path(self, *paths: str) -> str:
         return super().get_versioned_path(
             self.DIR_NAME, *paths,
         )
-
-    def get_base_url(self) -> str:
-        raise NotImplementedError()
 
 
 class server_entry(entry):

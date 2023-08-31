@@ -31,6 +31,11 @@ class obj_type(game_config._logic._configtype):
         icon_path: game_config._logic.path
         roblox_version: util.versions.rōblox
 
+        class creator(A):
+            name: str
+        name: str
+        description: str
+
     class server_core(A):
         chat_style: chat_style
         retrieve_default_user_code: typing.Callable[[float], str]

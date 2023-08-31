@@ -17,7 +17,7 @@ class obj_type(launcher.subparsers.aux_tasks._logic.action):
             b = f.read(l)
         return b == self.base_url
 
-    def perform(self):
+    def initialise(self):
         for fn in os.listdir(self.HTTP_FOLDER):
             full_path = os.path.join(self.HTTP_FOLDER, fn)
             if not self.check_host(full_path):

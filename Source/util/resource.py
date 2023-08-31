@@ -1,4 +1,5 @@
 import util.versions
+import functools
 import enum
 import sys
 import os
@@ -46,18 +47,34 @@ def get_paths(d: dir_type) -> str:
             return [TOP_DIR, 'Source', 'ssl']
 
 
-def get_full_path(d: dir_type, *paths: str) -> str:
-    return os.path.join(*get_paths(d), *paths)
+@functools.cache
+def make_dirs(full_path: str):
+    pieces = []
+    head = os.path.abspath(full_path)
+    tail = True
+    while tail:
+        (head, tail) = os.path.split(head)
+        pieces.append(head)
+
+    for head in reversed(pieces):
+        if not os.path.exists(head):
+            os.mkdir(head)
 
 
-def get_rōblox_full_path(version: util.versions.rōblox, *paths: str) -> str:
-    return get_full_path(dir_type.RŌBLOX, version.name, *paths)
+def retr_full_path(d: dir_type, *paths: str) -> str:
+    full_path = os.path.join(*get_paths(d), *paths)
+    make_dirs(full_path)
+    return full_path
 
 
-def get_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:
+def retr_rōblox_full_path(version: util.versions.rōblox, *paths: str) -> str:
+    return retr_full_path(dir_type.RŌBLOX, version.name, *paths)
+
+
+def retr_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:
     if not os.path.isabs(path):
         path = os.path.join(
-            get_full_path(dir_type.CONFIG),
+            retr_full_path(dir_type.CONFIG),
             path,
         )
     return os.path.normpath(path)

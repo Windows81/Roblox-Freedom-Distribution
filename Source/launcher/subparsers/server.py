@@ -46,7 +46,7 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
-    server_config = util.resource.get_config_full_path(args.config_path)
+    server_config = util.resource.retr_config_full_path(args.config_path)
     routine_args = []
 
     if not args.skip_web:

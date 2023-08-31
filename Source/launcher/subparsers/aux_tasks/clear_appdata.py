@@ -21,17 +21,17 @@ def _(
 def _(
     mode: sub_logic.launch_mode,
     parser: argparse.ArgumentParser,
-    args: argparse.Namespace,
-    routine: logic.routine,
+    args_ns: argparse.Namespace,
+    args_list: list[logic.arg_type],
 ) -> None:
 
-    if args.keep_cache:
+    if args_ns.keep_cache:
         return
     base_urls = set(
-        e.get_base_url()
-        for e in routine.entries
-        if isinstance(e, logic.bin_entry)
+        a.get_base_url()
+        for a in args_list
+        if isinstance(a, logic.bin_arg_type)
     )
     for base in base_urls:
         obj = clear_appdata.obj_type(base)
-        obj.perform()
+        obj.initialise()

@@ -44,7 +44,7 @@ def basic_join(self: web_server_handler):
     }
 
 
-@server_path('/retrieve_ssl')
+@server_path('/retrieve_certs')
 def _(self: web_server_handler) -> bool:
     self.send_data(util.ssl_context.get_client_cert())
     return True
@@ -181,12 +181,12 @@ def _(self: web_server_handler) -> bool:
     self.send_json({
         'AssetId': 93722443,
         'ProductId': 13831621,
-        'Name': 'place.rbxl',
-        'Description': ':) everything will be ok friend',
+        'Name': self.game_config.game_setup.name,
+        'Description': self.game_config.game_setup.description,
         'AssetTypeId': 19,
         'Creator': {
             'Id': 1,
-            'Name': 'Jetray#4509',
+            'Name': self.game_config.game_setup.creator.name,
             'CreatorType': 'User',
             'CreatorTargetId': 1
         },
@@ -203,7 +203,7 @@ def _(self: web_server_handler) -> bool:
         'IsLimitedUnique': False,
         'Remaining': None,
         'MinimumMembershipLevel': 0,
-        'ContentRatingTypeId': 0
+        'ContentRatingTypeId': 0,
     })
     return True
 
@@ -271,5 +271,19 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/users/([0-9]+)/canmanage/([0-9]+)', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
-    self.send_json({'applicationSettings': {}})
+    self.send_json({"Success": True, "CanManage": True})
+    return True
+
+
+@server_path('/v1/user/([0-9]+)/is-admin-developer-console-enabled', regex=True)
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    self.send_json({"isAdminDeveloperConsoleEnabled": True})
+    return True
+
+
+@server_path('/v1/avatar-fetch')
+@server_path('/v1/avatar-fetch/')
+def _(self: web_server_handler) -> bool:
+    self.send_json({"scales": {"height": 1.0, "width": 1.0, "head": 1.0, "depth": 1.00, "proportion": 0.0, "bodyType": 0.0}, "playerAvatarType": "R6", "bodyColors": {"headColorId": 1002, "torsoColorId": 1002, "rightArmColorId": 1002, "leftArmColorId": 1002, "rightLegColorId": 1002, "leftLegColorId": 1002}, "assets": [{"id": 63690008, "name": "Pal Hair", "assetType": {"id": 41, "name": "HairAccessory"}, "currentVersionId": 8443736161, "meta": {"order": 11, "version": 1}}, {"id": 86498048, "name": "Man Head", "assetType": {"id": 17, "name": "Head"}, "currentVersionId": 11008778043}, {"id": 86500008, "name": "Man Torso", "assetType": {"id": 27, "name": "Torso"}, "currentVersionId": 11837972128}, {"id": 86500036, "name": "Man Right Arm", "assetType": {"id": 28, "name": "RightArm"}, "currentVersionId": 11837973329}, {"id": 86500054, "name": "Man Left Arm", "assetType": {"id": 29, "name": "LeftArm"}, "currentVersionId": 11837974431}, {
+                   "id": 86500064, "name": "Man Left Leg", "assetType": {"id": 30, "name": "LeftLeg"}, "currentVersionId": 11837975410}, {"id": 86500078, "name": "Man Right Leg", "assetType": {"id": 31, "name": "RightLeg"}, "currentVersionId": 11837976476}, {"id": 144076358, "name": "Blue and Black Motorcycle Shirt", "assetType": {"id": 11, "name": "Shirt"}, "currentVersionId": 339950145}, {"id": 144076760, "name": "Dark Green Jeans", "assetType": {"id": 12, "name": "Pants"}, "currentVersionId": 339951177}, {"id": 453479994, "name": "roblox compute cloud", "assetType": {"id": 2, "name": "TShirt"}, "currentVersionId": 765412475}, {"id": 2510235063, "name": "Rthro Idle", "assetType": {"id": 51, "name": "IdleAnimation"}, "currentVersionId": 13806699932}], "defaultShirtApplied": False, "defaultPantsApplied": False, "emotes": [{"assetId": 3360689775, "assetName": "Salute", "position": 1}, {"assetId": 3576968026, "assetName": "Shrug", "position": 2}]})
     return True

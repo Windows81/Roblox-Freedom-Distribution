@@ -39,15 +39,20 @@ class _arg_type(logic.arg_type):
         if self.web_host == 'localhost':
             self.web_host = '127.0.0.1'
 
+    def get_base_url(self) -> str:
+        return \
+            f'http{"s" if self.web_port.is_ssl else""}://' + \
+            f'{self.web_host}:{self.web_port.port_num}'
+
 
 class obj_type(logic.bin_entry):
     local_args: _arg_type
     DIR_NAME = 'Player'
 
-    def retrieve_version(self) -> util.versions.rōblox:
+    def retr_version(self) -> util.versions.rōblox:
         try:
             res = urllib.request.urlopen(
-                f'{self.get_base_url()}/roblox_version',
+                f'{self.local_args.get_base_url()}/roblox_version',
                 context=get_none_ssl(),
             )
         except urllib.error.URLError:
@@ -58,11 +63,6 @@ class obj_type(logic.bin_entry):
 
         return util.versions.rōblox.from_name(str(res.read(), encoding='utf-8'))
 
-    def get_base_url(self) -> str:
-        return \
-            f'http{"s" if self.local_args.web_port.is_ssl else""}://' + \
-            f'{self.local_args.web_host}:{self.local_args.web_port.port_num}'
-
     def save_app_setting(self) -> str:
         '''
         Modifies settings to point to correct host name.
@@ -72,7 +72,7 @@ class obj_type(logic.bin_entry):
             f.write('\n'.join([
                 """<?xml version="1.0" encoding="UTF-8"?>""",
                 """<Settings>""",
-                f"""\t<BaseUrl>{self.get_base_url()}</BaseUrl>""",
+                f"""\t<BaseUrl>{self.local_args.get_base_url()}</BaseUrl>""",
                 """</Settings>""",
             ]))
         return path
@@ -89,7 +89,7 @@ class obj_type(logic.bin_entry):
 
         try:
             res = urllib.request.urlopen(
-                f'{self.get_base_url()}/retrieve_ssl',
+                f'{self.local_args.get_base_url()}/retrieve_certs',
                 context=get_none_ssl(),
             )
         except urllib.error.URLError:
@@ -108,7 +108,7 @@ class obj_type(logic.bin_entry):
         self.save_ssl()
 
         time.sleep(self.local_args.delay)
-        base_url = self.get_base_url()
+        base_url = self.local_args.get_base_url()
         self.make_popen([
             self.get_versioned_path('RobloxPlayerBeta.exe'),
             '-a', f'{base_url}/login/negotiate.ashx',

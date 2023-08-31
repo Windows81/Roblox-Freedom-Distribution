@@ -4,7 +4,7 @@ import os
 
 
 def get_asset_path(aid: int) -> str:
-    return util.resource.get_full_path(util.resource.dir_type.ASSET, f'{aid:011d}')
+    return util.resource.retr_full_path(util.resource.dir_type.ASSET, f'{aid:011d}')
 
 
 def load_asset(aid: int) -> bytes | None:
