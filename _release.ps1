@@ -6,6 +6,9 @@ $const = "$root/Source/util/const.py"
 $const_txt = (Get-Content $const) -replace 'GIT_RELEASE_VERSION =.+', "GIT_RELEASE_VERSION = '''$release_name'''"
 $const_txt | Set-Content $const
 
+git add .
+git commit -m $release_name
+git push
 
 pyinstaller `
 	--name "RFD" `
@@ -13,19 +16,14 @@ pyinstaller `
 	-p "$root/Source/" `
 	--workpath "$root/PyInstallerWork" `
 	--distpath "$root/Binaries" `
-	--clean `
 	--icon "$root/Source/Icon.ico"
 $bins = Get-ChildItem "$root/Binaries/*"
 
 $zips = Get-ChildItem "$root/Roblox/*/*" -Directory | ForEach-Object {
 	$zip = "$root/Roblox/$($_.Parent.Name).$($_.Name).7z"
-	#Remove-Item $zip* -Force
-	#7z a $zip $_.FullName
+	Remove-Item $zip* -Force
+	7z a $zip $_.FullName
 	return $zip
 }
 
-git add .
-git commit -m $release_name
-git push
-
-gh release create "$release_name" --notes "" $zips $bins
+gh release create "$release_name" --notes "" $zips $bins -p

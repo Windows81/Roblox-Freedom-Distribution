@@ -7,7 +7,10 @@ instances.count = 1
 # Aliases for "v348" is "2018M", "v463" is "2021E", etc.
 roblox_version = '2021E'
 place_path = 'C:\Users\USERNAME\Documents\AmusementPark.rbxl'
-icon_path = 'C:\Users\USERNAME\Pictures\Roblox\RobloxScreenShot20230701_095145128.png'
+icon_path = 'C:\Users\USERNAME\Pictures\097050bd37142a4080975bb8e415d2b8.jpg'
+name = ''
+description = ''
+creator.name = 'ÒÓ'
 
 [server_core]
 chat_style = 'ClassicAndBubble'
