@@ -21,7 +21,7 @@ def get_none_ssl() -> ssl.SSLContext:
 
 
 @dataclasses.dataclass
-class _arg_type(logic.arg_type):
+class _arg_type(logic.bin_arg_type):
     rcc_host: str = 'localhost'
     rcc_port_num: int = 2005
     web_host: str = None
