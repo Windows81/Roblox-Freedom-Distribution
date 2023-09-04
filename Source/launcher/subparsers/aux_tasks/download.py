@@ -20,7 +20,6 @@ def _(
 @sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS)
 def _(
     mode: sub_logic.launch_mode,
-    parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
     args_list: list[logic.arg_type],
 ) -> None:

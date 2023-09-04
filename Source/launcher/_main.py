@@ -50,7 +50,6 @@ def parse_args(parser: argparse.ArgumentParser) -> routine_logic.routine:
     )
     sub_logic.SERIALISE_ARGS.call_auxs(
         mode,
-        parser,
         args_ns,
         args_list,
     )

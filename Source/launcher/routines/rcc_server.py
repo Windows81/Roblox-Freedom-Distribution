@@ -1,7 +1,7 @@
 import launcher.routines._logic as logic
-import web_server.assets as assets
+import game.assets as assets
 import util.const as const
-import game_config._main
+import config._main
 import util.ssl_context
 import util.versions
 import dataclasses
@@ -13,7 +13,7 @@ import json
 
 @dataclasses.dataclass
 class _arg_type(logic.bin_arg_type):
-    server_config: game_config._main.obj_type
+    server_config: config._main.obj_type
     rcc_port_num: int = 2005
     web_port: logic.port = \
         logic.port(

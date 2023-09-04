@@ -1,12 +1,13 @@
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Callable, Optional
 import util.versions as versions
 import util.const as const
-import game_config._main
 from urllib import parse
 import util.ssl_context
 import OpenSSL.crypto
+import config._main
+import http.server
 import mimetypes
+import game.user
 import base64
 import socket
 import enum
@@ -24,7 +25,7 @@ SERVER_FUNCS = {m: dict[str, versions.version_holder]() for m in func_mode}
 
 
 def server_path(path: str, regex: bool = False, min_version: int = 0):
-    def inner(f: Callable[[BaseHTTPRequestHandler, Optional[re.Match]], bool]):
+    def inner(f: Callable[[http.server.BaseHTTPRequestHandler, Optional[re.Match]], bool]):
         dict_mode: dict = func_mode.REGEX if regex else func_mode.STATIC
         SERVER_FUNCS[dict_mode].setdefault(path, versions.version_holder()).add_min(f, min_version)
         return f
@@ -45,11 +46,11 @@ def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
     return prefix + b"%" + base64.b64encode(signature) + b'%' + data
 
 
-class web_server(ThreadingHTTPServer):
+class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
         server_address: tuple[str, int],
-        server_config: game_config._main.obj_type,
+        server_config: config._main.obj_type,
         bind_and_activate=True,
         is_ssl: bool = False,
     ) -> None:
@@ -59,6 +60,7 @@ class web_server(ThreadingHTTPServer):
             bind_and_activate,
         )
         self.game_config = server_config
+        self.users = game.user.user_dict(self.game_config)
         self.is_ssl = is_ssl
 
         if is_ssl:
@@ -69,7 +71,7 @@ class web_server(ThreadingHTTPServer):
             )
 
 
-class web_server_handler(BaseHTTPRequestHandler):
+class web_server_handler(http.server.BaseHTTPRequestHandler):
     default_request_version = "HTTP/1.1"
     sockname: tuple[str, int]
     request: socket.socket

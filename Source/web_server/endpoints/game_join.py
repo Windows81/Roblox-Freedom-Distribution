@@ -9,9 +9,15 @@ import time
 def basic_join(self: web_server_handler):
     ip_addr = self.query.get('ip', None)
     port_num = self.query.get('port', None)
+
     user_code = self.query.get('user', None)
     if not user_code:
-        user_code = self.game_config.server_core.retrieve_default_user_code(time.time())
+        user_code = self.game_config.server_core. \
+            retrieve_default_user_code(time.time())
+
+    self.server.users.add_user(user_code)
+    user_id = self.server.users.get_id_from_code(user_code)
+
     return {
         'ServerConnections': [
             {
@@ -19,6 +25,8 @@ def basic_join(self: web_server_handler):
                 'Port': port_num,
             }
         ],
+        'UserId':
+            user_id,
         'MachineAddress':
             ip_addr,
         'ServerPort':
@@ -31,16 +39,12 @@ def basic_join(self: web_server_handler):
             self.game_config.server_core.retrieve_username(user_code),
         'DisplayName':
             self.game_config.server_core.retrieve_username(user_code),
-        'UserId':
-            self.game_config.server_core.retrieve_user_id(user_code),
         'AccountAge':
             self.game_config.server_core.retrieve_account_age(user_code),
         'ChatStyle':
             self.game_config.server_core.chat_style.value,
         'CharacterAppearanceId':
-            self.game_config.server_core.retrieve_user_id(user_code),
-        'CharacterAppearance':
-            '',
+            user_id,
     }
 
 
@@ -284,6 +288,25 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 @server_path('/v1/avatar-fetch')
 @server_path('/v1/avatar-fetch/')
 def _(self: web_server_handler) -> bool:
-    self.send_json({"scales": {"height": 1.0, "width": 1.0, "head": 1.0, "depth": 1.00, "proportion": 0.0, "bodyType": 0.0}, "playerAvatarType": "R6", "bodyColors": {"headColorId": 1002, "torsoColorId": 1002, "rightArmColorId": 1002, "leftArmColorId": 1002, "rightLegColorId": 1002, "leftLegColorId": 1002}, "assets": [{"id": 63690008, "name": "Pal Hair", "assetType": {"id": 41, "name": "HairAccessory"}, "currentVersionId": 8443736161, "meta": {"order": 11, "version": 1}}, {"id": 86498048, "name": "Man Head", "assetType": {"id": 17, "name": "Head"}, "currentVersionId": 11008778043}, {"id": 86500008, "name": "Man Torso", "assetType": {"id": 27, "name": "Torso"}, "currentVersionId": 11837972128}, {"id": 86500036, "name": "Man Right Arm", "assetType": {"id": 28, "name": "RightArm"}, "currentVersionId": 11837973329}, {"id": 86500054, "name": "Man Left Arm", "assetType": {"id": 29, "name": "LeftArm"}, "currentVersionId": 11837974431}, {
-                   "id": 86500064, "name": "Man Left Leg", "assetType": {"id": 30, "name": "LeftLeg"}, "currentVersionId": 11837975410}, {"id": 86500078, "name": "Man Right Leg", "assetType": {"id": 31, "name": "RightLeg"}, "currentVersionId": 11837976476}, {"id": 144076358, "name": "Blue and Black Motorcycle Shirt", "assetType": {"id": 11, "name": "Shirt"}, "currentVersionId": 339950145}, {"id": 144076760, "name": "Dark Green Jeans", "assetType": {"id": 12, "name": "Pants"}, "currentVersionId": 339951177}, {"id": 453479994, "name": "roblox compute cloud", "assetType": {"id": 2, "name": "TShirt"}, "currentVersionId": 765412475}, {"id": 2510235063, "name": "Rthro Idle", "assetType": {"id": 51, "name": "IdleAnimation"}, "currentVersionId": 13806699932}], "defaultShirtApplied": False, "defaultPantsApplied": False, "emotes": [{"assetId": 3360689775, "assetName": "Salute", "position": 1}, {"assetId": 3576968026, "assetName": "Shrug", "position": 2}]})
+    self.send_json({
+        "scales": {"height": 1.0, "width": 1.0, "head": 1.0, "depth": 1.00, "proportion": 0.0, "bodyType": 0.0}, "playerAvatarType": "R6", "bodyColors": {"headColorId": 1002, "torsoColorId": 1002, "rightArmColorId": 1002, "leftArmColorId": 1002, "rightLegColorId": 1002, "leftLegColorId": 1002}, "assets": [{"id": 63690008, "name": "Pal Hair", "assetType": {"id": 41, "name": "HairAccessory"}, "currentVersionId": 8443736161, "meta": {"order": 11, "version": 1}}, {"id": 86498048, "name": "Man Head", "assetType": {"id": 17, "name": "Head"}, "currentVersionId": 11008778043}, {"id": 86500008, "name": "Man Torso", "assetType": {"id": 27, "name": "Torso"}, "currentVersionId": 11837972128}, {"id": 86500036, "name": "Man Right Arm", "assetType": {"id": 28, "name": "RightArm"}, "currentVersionId": 11837973329}, {"id": 86500054, "name": "Man Left Arm", "assetType": {"id": 29, "name": "LeftArm"}, "currentVersionId": 11837974431}, {
+            "id": 86500064, "name": "Man Left Leg", "assetType": {"id": 30, "name": "LeftLeg"}, "currentVersionId": 11837975410}, {"id": 86500078, "name": "Man Right Leg", "assetType": {"id": 31, "name": "RightLeg"}, "currentVersionId": 11837976476}, {"id": 144076358, "name": "Blue and Black Motorcycle Shirt", "assetType": {"id": 11, "name": "Shirt"}, "currentVersionId": 339950145}, {"id": 144076760, "name": "Dark Green Jeans", "assetType": {"id": 12, "name": "Pants"}, "currentVersionId": 339951177}, {"id": 453479994, "name": "roblox compute cloud", "assetType": {"id": 2, "name": "TShirt"}, "currentVersionId": 765412475}, {"id": 2510235063, "name": "Rthro Idle", "assetType": {"id": 51, "name": "IdleAnimation"}, "currentVersionId": 13806699932}], "defaultShirtApplied": False, "defaultPantsApplied": False, "emotes": [{"assetId": 3360689775, "assetName": "Salute", "position": 1}, {"assetId": 3576968026, "assetName": "Shrug", "position": 2}]
+    })
+    return True
+
+
+@server_path('/avatar-thumbnail/json')
+def _(self: web_server_handler) -> bool:
+    '''
+    To simplify the server program, let's not there be avatar thumbnail storage.
+    '''
+    self.send_json({})
+    return True
+
+
+@server_path('/avatar-thumbnail/image')
+def _(self: web_server_handler) -> bool:
+    '''
+    To simplify the server program, let's not there be avatar thumbnail images.
+    '''
     return True

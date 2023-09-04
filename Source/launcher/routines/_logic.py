@@ -1,5 +1,5 @@
 import launcher.aux_tasks.download
-import game_config._main
+import config._main
 import util.versions
 import util.resource
 import dataclasses
@@ -29,7 +29,7 @@ class arg_type:
 
 
 class server_arg_type(arg_type):
-    server_config: game_config._main.obj_type
+    server_config: config._main.obj_type
 
 
 class bin_arg_type(arg_type):
@@ -111,12 +111,12 @@ class server_entry(entry):
     '''
     Routine entry class that corresponds to a server-sided component.
     '''
-    server_config: game_config._main.obj_type
+    server_config: config._main.obj_type
     local_args: server_arg_type
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.server_config = game_config._main.obj_type(
+        self.server_config = config._main.obj_type(
             self.local_args.server_config,
         )
 

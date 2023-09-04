@@ -1,5 +1,5 @@
 from web_server._logic import web_server_handler, server_path
-from web_server.assets import load_asset
+from game.assets import load_asset
 
 
 @server_path("/asset")
@@ -10,6 +10,8 @@ def _(self: web_server_handler) -> bool:
     try:
         aid = int(self.query['id'])
     except ValueError:
+        return
+    except KeyError:
         return
 
     asset = load_asset(aid)

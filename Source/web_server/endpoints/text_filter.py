@@ -13,12 +13,12 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 @server_path("/moderation/v2/filtertext")
 def _(self: web_server_handler) -> bool:
     length = int(self.headers.get('content-length'))
-    field_data = self.rfile.read(length)
+    field_data = str(self.rfile.read(length), encoding='utf-8')
     qs = urllib.parse.parse_qs(field_data)
 
-    orig_text = str(qs[b'text'][0], encoding='utf-8')
-    mod_text = "".join(reversed(orig_text))
-    uid = int(qs[b'userId'][0])
+    orig_text = qs['text'][0]
+    user_code = self.server.users.get_code_from_id(int(qs['userId'][0]))
+    mod_text = self.game_config.server_core.filter_text(user_code, orig_text)
 
     self.send_json({
         "success": True,

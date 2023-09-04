@@ -36,9 +36,9 @@ def get_paths(d: dir_type) -> str:
             return [TOP_DIR]
 
         case (True, dir_type.ASSET):
-            return [TOP_DIR, 'AssetCaché']
+            return [TOP_DIR, 'AssetCache']
         case (False, dir_type.ASSET):
-            return [TOP_DIR, 'AssetCaché']
+            return [TOP_DIR, 'AssetCache']
 
         # We're storing TLS certiifcates in temporary directory "_MEIPASS".
         case (True, dir_type.SSL):

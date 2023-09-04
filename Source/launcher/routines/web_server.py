@@ -1,19 +1,19 @@
 import launcher.routines._logic as logic
 import web_server._main as _main
-import game_config._main
-import game_config._main
+import config._main
+import config._main
 import dataclasses
 import threading
 
 
 @dataclasses.dataclass
 class _arg_type(logic.arg_type):
-    server_config: game_config._main.obj_type
+    server_config: config._main.obj_type
     web_ports: set[logic.port] = dataclasses.field(default_factory=set)
 
 
 class obj_type(logic.server_entry):
-    server_config: game_config._main.obj_type
+    server_config: config._main.obj_type
     httpds = list[_main.web_server._logic.web_server]()
     local_args: _arg_type
 
