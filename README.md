@@ -12,7 +12,7 @@ Clients must connect to a server of the same version.
 
 Anyone can host a server and must leave **two** network ports of their choice accessible:
 
-## RCC (both TCP & UDP)
+## RCC (UDP & A bit of HTTP for RCC Jobs.)
 
 RCC is an acronym for 'Rōblox Cloud Compute', which is the server-side program we use to run the Rōblox physics engine.
 
