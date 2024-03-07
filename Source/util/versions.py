@@ -3,9 +3,12 @@ import enum
 
 
 class rōblox(enum.Enum):
+    # v271 = '2016L'
     v348 = '2018M'
     v463 = '2021E'
-    v547 = '2022L'
+
+    # TODO: get 2022L Studio to work with this program.
+    # v547 = '2022L'
 
     def get_number(self) -> int:
         return int(self.name[1:])

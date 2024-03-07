@@ -36,6 +36,10 @@ def subparse(
         action='store_true',
     )
     skip_mutex.add_argument(
+        '--skip_rcc_popen',
+        action='store_true',
+    )
+    skip_mutex.add_argument(
         '--skip_web',
         action='store_true',
     )
@@ -48,15 +52,16 @@ def _(
 ) -> list[logic.arg_type]:
     server_config = util.resource.retr_config_full_path(args.config_path)
     routine_args = []
+    web_port = logic.port(
+        port_num=args.web_port,
+        is_ssl=True,
+    )
 
     if not args.skip_web:
         routine_args.extend([
             web_server.arg_type(
                 web_ports=set([
-                    logic.port(
-                        port_num=args.web_port,
-                        is_ssl=True,
-                    ),
+                    web_port,
                 ]),
                 server_config=server_config,
             ),
@@ -66,11 +71,9 @@ def _(
         routine_args.extend([
             rcc_server.arg_type(
                 rcc_port_num=args.rcc_port,
-                web_port=logic.port(
-                    port_num=args.web_port,
-                    is_ssl=True,
-                ),
+                web_port=web_port,
                 server_config=server_config,
+                skip_popen=args.skip_rcc_popen,
             ),
         ])
 
@@ -80,10 +83,7 @@ def _(
                 rcc_host='127.0.0.1',
                 web_host='127.0.0.1',
                 rcc_port_num=args.rcc_port,
-                web_port=logic.port(
-                    port_num=args.web_port,
-                    is_ssl=True,
-                ),
+                web_port=web_port,
             ),
         ])
     return routine_args

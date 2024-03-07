@@ -10,13 +10,13 @@ def _(self: web_server_handler) -> bool:
     try:
         aid = int(self.query['id'])
     except ValueError:
-        return
+        return False
     except KeyError:
-        return
+        return False
 
     asset = load_asset(aid)
     if not asset:
-        return
+        return False
 
     self.send_data(asset)
     return True

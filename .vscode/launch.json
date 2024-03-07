@@ -6,47 +6,28 @@
 	"configurations": [
 		{
 			"name": "Python: Current File",
-			"type": "python",
+			"type": "debugpy",
 			"request": "launch",
 			"program": "${file}",
 			"console": "integratedTerminal",
 			"justMyCode": true
 		},
 		{
-			"name": "Python: Launch Server 2021E",
-			"type": "python",
+			"name": "Python: Launch Server",
+			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}/Source/_main.py",
 			"cwd": "${workspaceFolder}",
 			"args": [
-				"-v",
-				"2021E",
 				"server",
-				"-p",
-				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl"
-			],
-			"console": "integratedTerminal",
-			"justMyCode": true
-		},
-		{
-			"name": "Python: Launch Server 2018M",
-			"type": "python",
-			"request": "launch",
-			"program": "${workspaceFolder}/Source/_main.py",
-			"cwd": "${workspaceFolder}",
-			"args": [
-				"-v",
-				"2018M",
-				"server",
-				"-p",
-				"C:\\Users\\USERNAME\\Documents\\Baseplate.rbxl"
+				"--run_client",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
 		},
 		{
 			"name": "Python: Launch Local Client",
-			"type": "python",
+			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}/Source/_main.py",
 			"cwd": "${workspaceFolder}",

@@ -25,16 +25,17 @@ SERVER_FUNCS = {m: dict[str, versions.version_holder]() for m in func_mode}
 
 
 def server_path(path: str, regex: bool = False, min_version: int = 0):
-    def inner(f: Callable[[http.server.BaseHTTPRequestHandler, Optional[re.Match]], bool]):
-        dict_mode: dict = func_mode.REGEX if regex else func_mode.STATIC
-        SERVER_FUNCS[dict_mode].setdefault(path, versions.version_holder()).add_min(f, min_version)
+    def inner(f):
+        dict_mode = func_mode.REGEX if regex else func_mode.STATIC
+        SERVER_FUNCS[dict_mode].setdefault(
+            path, versions.version_holder()).add_min(f, min_version)
         return f
     return inner
 
 
 def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
     data = b'\r\n' + data
-    key = f"-----BEGIN RSA PRIVATE KEY-----\n{key}\n-----END RSA PRIVATE KEY-----"
+    key = b"-----BEGIN RSA PRIVATE KEY-----\n%s\n-----END RSA PRIVATE KEY-----" % key
     signature = OpenSSL.crypto.sign(
         OpenSSL.crypto.load_privatekey(
             OpenSSL.crypto.FILETYPE_PEM,
@@ -51,24 +52,35 @@ class web_server(http.server.ThreadingHTTPServer):
         self,
         server_address: tuple[str, int],
         server_config: config._main.obj_type,
-        bind_and_activate=True,
-        is_ssl: bool = False,
+        *args, **kwargs,
     ) -> None:
         super().__init__(
             server_address,
             web_server_handler,
-            bind_and_activate,
+            *args, **kwargs,
         )
         self.game_config = server_config
         self.users = game.user.user_dict(self.game_config)
-        self.is_ssl = is_ssl
 
-        if is_ssl:
-            ssl_context = util.ssl_context.get_ssl_context()
-            self.socket = ssl_context.wrap_socket(
-                self.socket,
-                server_side=True,
-            )
+
+class web_server_ssl(web_server):
+    def __init__(
+        self,
+        server_address: tuple[str, int],
+        server_config: config._main.obj_type,
+        *args, **kwargs,
+    ) -> None:
+        super().__init__(
+            server_address,
+            server_config,
+            *args, **kwargs,
+        )
+
+        ssl_context = util.ssl_context.get_ssl_context()
+        self.socket = ssl_context.wrap_socket(
+            self.socket,
+            server_side=True,
+        )
 
 
 class web_server_handler(http.server.BaseHTTPRequestHandler):
@@ -81,22 +93,28 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.is_valid_request = False
         if not super().parse_request():
             return False
+
+        host: Optional[str] = self.headers.get('Host')
+        if not host:
+            return False
+
         self.is_valid_request = True
         self.game_config = self.server.game_config
 
-        self.sockname = self.headers.get('Host').split(':')
+        self.sockname = host.split(':')  # type: ignore
         self.domain = \
             'localhost'\
             if self.sockname[0] == '127.0.0.1'\
             else self.sockname[0]
 
         self.hostname = \
-            f'http{"s" if self.server.is_ssl else ""}://' + \
+            f'http{"s" if isinstance(self.server, web_server_ssl) else ""}://' + \
             f'{self.domain}:{self.sockname[1]}'
 
         self.url = f'{self.hostname}{self.path}'
         self.urlsplit = parse.urlsplit(self.url)
-        self.query = {i: v[0] for i, v in parse.parse_qs(self.urlsplit.query).items()}
+        self.query = {i: v[0]
+                      for i, v in parse.parse_qs(self.urlsplit.query).items()}
         return True
 
     def do_GET(self) -> None:
@@ -146,11 +164,11 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.send_response(status)
         if content_type:
             self.send_header('content-type', content_type)
-        self.send_header('content-length', len(data))
+        self.send_header('content-length', str(len(data)))
         self.end_headers()
         self.wfile.write(data)
 
-    def __process_func(self, func, *a, **kwa):
+    def __process_func(self, func, *a, **kwa) -> bool:
         if not func:
             return False
         return func[self.game_config.game_setup.roblox_version](self, *a, **kwa)
@@ -165,6 +183,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             if not match:
                 continue
             return self.__process_func(func, match)
+        return False
 
     def __open_from_file(self) -> bool:
         return False

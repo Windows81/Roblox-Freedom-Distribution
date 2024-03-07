@@ -6,9 +6,9 @@ instances.count = 1
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E", etc.
 roblox_version = '2021E'
-place_path = 'C:\Users\USERNAME\Documents\AmusementPark.rbxl'
+place_path = 'C:\Users\USERNAME\Documents\Roblox Files\Unraavel.rbxl'
 icon_path = 'C:\Users\USERNAME\Pictures\097050bd37142a4080975bb8e415d2b8.jpg'
-name = ''
+name = '666'
 description = ''
 creator.name = 'ÒÓ'
 
@@ -34,4 +34,9 @@ def RESULT(user_code: str) -> int:
 retrieve_account_age = '''
 def RESULT(user_code: str) -> int:
     return 6969
+'''
+
+filter_text = '''
+def RESULT(user_code: str, text: str) -> str:
+    return f'"{text.upper()}" (user {user_code} said that by the way).'
 '''

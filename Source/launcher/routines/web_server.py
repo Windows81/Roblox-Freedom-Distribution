@@ -19,12 +19,15 @@ class obj_type(logic.server_entry):
 
     def __make_server(self, web_port: logic.port, *args, **kwargs) -> None:
         try:
-            # We unpack the 'port' struct here because its usefulness is only in the 'launcher' supermodule.
-            self.httpds.append(ht := _main.make_server(*args, **web_port.__dict__, **kwargs))
-            self.threads.append(th := threading.Thread(target=ht.serve_forever))
+            # Unpacks the 'port' struct here because its usefulness is only in the 'launcher' supermodule.
+            self.httpds.append(ht := _main.make_server(
+                *args, **web_port.__dict__, **kwargs))
+            self.threads.append(
+                th := threading.Thread(target=ht.serve_forever))
             th.start()
         except PermissionError:
-            print(f'WARNING: web server was unable to start at port {web_port.port_num}.')
+            print(f'WARNING: web server was unable to start at port {
+                  web_port.port_num}.')
             self.server_running = False
 
     def initialise(self) -> None:

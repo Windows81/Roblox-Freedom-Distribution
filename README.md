@@ -12,7 +12,7 @@ Clients must connect to a server of the same version.
 
 Anyone can host a server and must leave **two** network ports of their choice accessible:
 
-## RCC (UDP & A bit of HTTP for RCC Jobs.)
+## RCC (UDP + TCP)
 
 RCC is an acronym for 'Rōblox Cloud Compute', which is the server-side program we use to run the Rōblox physics engine.
 
@@ -20,7 +20,7 @@ Host is specified by the `--rcc_host` or `-rh` option.
 
 Port is specified by the `--rcc_port` or `-rp` option **(defaults to 2005)**.
 
-## Webserver (HTTP or HTTPS)
+## Webserver (HTTPS)
 
 The webserver is responsible for facilitating player connections and loading in-game assets.
 
@@ -31,7 +31,9 @@ Port is specified by the `--webserver_port` or `-wp` option **(defaults to 2006)
 # Credits:
 
 _iknowidontexistbutwhatifwin_ for patching the v463 (early 2021) binaries.
+
 _Jetray_ for engineering the original [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) server in PHP.
+
 **More to come...**
 
 # Examples

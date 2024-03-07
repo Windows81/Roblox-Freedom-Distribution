@@ -15,15 +15,16 @@ import json
 class _arg_type(logic.bin_arg_type):
     server_config: config._main.obj_type
     rcc_port_num: int = 2005
+    skip_popen: bool = False
     web_port: logic.port = \
         logic.port(
             port_num=80,
             is_ssl=False,
-        ),
+        ),  # type: ignore
 
     def get_base_url(self) -> str:
         return \
-            f'http{"s" if self.web_port.is_ssl else""}://' + \
+            f'http{"s" if self.web_port.is_ssl else ""}://' + \
             f'localhost:{self.web_port.port_num}'
 
 
@@ -39,7 +40,7 @@ class obj_type(logic.bin_entry, logic.server_entry):
         '''
         Modifies settings to point to correct host name.
         '''
-        path = self.get_versioned_path('RCCSettings.xml')
+        path = self.get_versioned_path('AppSettings.xml')
         with open(path, 'w') as f:
             f.write('\n'.join([
                 """<?xml version="1.0" encoding="UTF-8"?>""",
@@ -51,7 +52,7 @@ class obj_type(logic.bin_entry, logic.server_entry):
 
     def save_gameserver(self) -> str:
         base_url = self.local_args.get_base_url()
-        path = self.get_versioned_path('gameserver.json')
+        path = self.get_versioned_path('GameServer.json')
         with open(path, 'w') as f:
             json.dump({
                 "Mode": "GameServer",
@@ -90,6 +91,21 @@ class obj_type(logic.bin_entry, logic.server_entry):
         with open(path, 'wb') as f:
             f.write(util.ssl_context.get_client_cert())
 
+    def make_rcc_popen(self):
+        return self.make_popen(
+            [
+                self.get_versioned_path('RCCService.exe'),
+                '-verbose',
+                f'-placeid:{const.DEFAULT_PLACE_ID}',
+                '-localtest', self.gameserver_path,
+                '-settingsfile', self.get_versioned_path(
+                    'DevSettingsFile.json'),
+                '-port 64989',
+            ],
+            stdin=subprocess.PIPE,
+            cwd=self.get_versioned_path(),
+        )
+
     def initialise(self) -> None:
         place_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
 
@@ -97,14 +113,9 @@ class obj_type(logic.bin_entry, logic.server_entry):
         self.save_app_setting()
         self.save_ssl()
 
-        self.make_popen([
-            self.get_versioned_path('RCC.exe'),
-            '-verbose',
-            f'-placeid:{const.DEFAULT_PLACE_ID}',
-            '-localtest', self.save_gameserver(),
-            '-settingsfile', self.get_versioned_path('DevSettingsFile.json'),
-            '-port 64989',
-        ], stdin=subprocess.PIPE)
+        self.gameserver_path = self.save_gameserver()
+        if not self.local_args.skip_popen:
+            self.make_rcc_popen()
 
 
 class arg_type(_arg_type):

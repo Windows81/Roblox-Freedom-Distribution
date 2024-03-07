@@ -1,9 +1,9 @@
-import re
 from web_server._logic import web_server_handler, server_path
 import util.ssl_context
 import util.const
 import json
 import time
+import re
 
 
 def basic_join(self: web_server_handler):
@@ -43,6 +43,8 @@ def basic_join(self: web_server_handler):
             self.game_config.server_core.retrieve_account_age(user_code),
         'ChatStyle':
             self.game_config.server_core.chat_style.value,
+        'characterAppearanceId':
+            user_id,
         'CharacterAppearanceId':
             user_id,
     }
@@ -59,7 +61,8 @@ def _(self: web_server_handler) -> bool:
     '''
     Used by clients to automatically detect which version to run.
     '''
-    self.send_data(bytes(self.server.game_config.game_setup.roblox_version.name, encoding='utf-8'))
+    self.send_data(
+        bytes(self.server.game_config.game_setup.roblox_version.name, encoding='utf-8'))
     return True
 
 
@@ -285,12 +288,205 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     return True
 
 
+@server_path('/v1.1/avatar-fetch/')
+def _(self: web_server_handler) -> bool:
+    '''
+    Character appearance for v348.
+    '''
+    self.query
+    userid = self.query['userId']
+    placeId = self.query['placeId']
+    json = {
+        "resolvedAvatarType": "R15",
+        "accessoryVersionIds": [],
+        "equippedGearVersionIds": [],
+        "backpackGearVersionIds": [],
+        "bodyColors": {
+            "HeadColor": 1013,
+            "TorsoColor": 1013,
+            "RightArmColor": 1013,
+            "LeftArmColor": 1013,
+            "RightLegColor": 1013,
+            "LeftLegColor": 1013,
+        },
+        "animations": {},
+        "scales": {"Width": 1.0000, "Height": 1.0000, "Head": 1.0000, "Depth": 1.00, "Proportion": 0.0000, "BodyType": 0.0000}
+    }
+    self.send_json(json)
+    return True
+
+
 @server_path('/v1/avatar-fetch')
 @server_path('/v1/avatar-fetch/')
 def _(self: web_server_handler) -> bool:
+    '''
+    Character appearance for v463.
+    '''
     self.send_json({
-        "scales": {"height": 1.0, "width": 1.0, "head": 1.0, "depth": 1.00, "proportion": 0.0, "bodyType": 0.0}, "playerAvatarType": "R6", "bodyColors": {"headColorId": 1002, "torsoColorId": 1002, "rightArmColorId": 1002, "leftArmColorId": 1002, "rightLegColorId": 1002, "leftLegColorId": 1002}, "assets": [{"id": 63690008, "name": "Pal Hair", "assetType": {"id": 41, "name": "HairAccessory"}, "currentVersionId": 8443736161, "meta": {"order": 11, "version": 1}}, {"id": 86498048, "name": "Man Head", "assetType": {"id": 17, "name": "Head"}, "currentVersionId": 11008778043}, {"id": 86500008, "name": "Man Torso", "assetType": {"id": 27, "name": "Torso"}, "currentVersionId": 11837972128}, {"id": 86500036, "name": "Man Right Arm", "assetType": {"id": 28, "name": "RightArm"}, "currentVersionId": 11837973329}, {"id": 86500054, "name": "Man Left Arm", "assetType": {"id": 29, "name": "LeftArm"}, "currentVersionId": 11837974431}, {
-            "id": 86500064, "name": "Man Left Leg", "assetType": {"id": 30, "name": "LeftLeg"}, "currentVersionId": 11837975410}, {"id": 86500078, "name": "Man Right Leg", "assetType": {"id": 31, "name": "RightLeg"}, "currentVersionId": 11837976476}, {"id": 144076358, "name": "Blue and Black Motorcycle Shirt", "assetType": {"id": 11, "name": "Shirt"}, "currentVersionId": 339950145}, {"id": 144076760, "name": "Dark Green Jeans", "assetType": {"id": 12, "name": "Pants"}, "currentVersionId": 339951177}, {"id": 453479994, "name": "roblox compute cloud", "assetType": {"id": 2, "name": "TShirt"}, "currentVersionId": 765412475}, {"id": 2510235063, "name": "Rthro Idle", "assetType": {"id": 51, "name": "IdleAnimation"}, "currentVersionId": 13806699932}], "defaultShirtApplied": False, "defaultPantsApplied": False, "emotes": [{"assetId": 3360689775, "assetName": "Salute", "position": 1}, {"assetId": 3576968026, "assetName": "Shrug", "position": 2}]
+        "resolvedAvatarType": "R15",
+        "equippedGearVersionIds": [],
+        "backpackGearVersionIds": [],
+        "assetAndAssetTypeIds": [
+            {
+                "assetId": 10726856854,
+                "assetTypeId": 28
+            },
+            {
+                "assetId": 9482991343,
+                "assetTypeId": 71,
+                "meta": {
+                    "order": 3,
+                    "version": 1
+                }
+            },
+            {
+                "assetId": 9481782649,
+                "assetTypeId": 70,
+                "meta": {
+                    "order": 3,
+                    "version": 1
+                }
+            },
+            {
+                "assetId": 9120251003,
+                "assetTypeId": 66,
+                "meta": {
+                    "order": 4,
+                    "version": 1
+                }
+            },
+            {
+                "assetId": 6445262286,
+                "assetTypeId": 30
+            },
+            {
+                "assetId": 6969309778,
+                "assetTypeId": 11
+            },
+            {
+                "assetId": 5731052645,
+                "assetTypeId": 8
+            },
+            {
+                "assetId": 2846257298,
+                "assetTypeId": 8
+            },
+            {
+                "assetId": 121390054,
+                "assetTypeId": 42
+            },
+            {
+                "assetId": 261826995,
+                "assetTypeId": 42
+            },
+            {
+                "assetId": 154386348,
+                "assetTypeId": 12
+            },
+            {
+                "assetId": 201733574,
+                "assetTypeId": 47
+            },
+            {
+                "assetId": 48474294,
+                "assetTypeId": 41,
+                "meta": {
+                    "order": 11,
+                    "version": 1
+                }
+            },
+            {
+                "assetId": 6340101,
+                "assetTypeId": 17
+            },
+            {
+                "assetId": 192483960,
+                "assetTypeId": 47
+            },
+            {
+                "assetId": 190245296,
+                "assetTypeId": 43
+            },
+            {
+                "assetId": 183808364,
+                "assetTypeId": 8
+            },
+            {
+                "assetId": 34247191,
+                "assetTypeId": 8
+            }
+        ],
+        "animationAssetIds": {
+            "run": 2510238627,
+            "jump": 2510236649,
+            "fall": 2510233257,
+            "climb": 2510230574
+        },
+        "bodyColors": {
+            "headColorId": 105,
+            "torsoColorId": 105,
+            "rightArmColorId": 105,
+            "leftArmColorId": 105,
+            "rightLegColorId": 105,
+            "leftLegColorId": 105,
+
+            "HeadColor": 1013,
+            "TorsoColor": 1013,
+            "RightUpperArm": 1013,
+            "LeftArmColor": 1013,
+            "RightLegColor": 1013,
+            "LeftLegColor": 1013,
+        },
+        "scales": {
+            "height": 1.05,
+            "width": 1,
+            "head": 1,
+            "depth": 1,
+            "proportion": 1,
+            "bodyType": 0.8
+        },
+        "emotes": [
+            {
+                "assetId": 3696763549,
+                "assetName": "Heisman Pose",
+                "position": 1
+            },
+            {
+                "assetId": 3360692915,
+                "assetName": "Tilt",
+                "position": 2
+            },
+            {
+                "assetId": 3696761354,
+                "assetName": "Air Guitar",
+                "position": 3
+            },
+            {
+                "assetId": 3576968026,
+                "assetName": "Shrug",
+                "position": 4
+            },
+            {
+                "assetId": 3576686446,
+                "assetName": "Hello",
+                "position": 5
+            },
+            {
+                "assetId": 3696759798,
+                "assetName": "Superhero Reveal",
+                "position": 6
+            },
+            {
+                "assetId": 3360689775,
+                "assetName": "Salute",
+                "position": 7
+            },
+            {
+                "assetId": 3360686498,
+                "assetName": "Stadium",
+                "position": 8
+            }
+        ]
     })
     return True
 

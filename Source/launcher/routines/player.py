@@ -24,7 +24,7 @@ def get_none_ssl() -> ssl.SSLContext:
 class _arg_type(logic.bin_arg_type):
     rcc_host: str = 'localhost'
     rcc_port_num: int = 2005
-    web_host: str = None
+    web_host: str | None = None
     web_port: logic.port = logic.port(
         port_num=80,
         is_ssl=False,
@@ -41,7 +41,7 @@ class _arg_type(logic.bin_arg_type):
 
     def get_base_url(self) -> str:
         return \
-            f'http{"s" if self.web_port.is_ssl else""}://' + \
+            f'http{"s" if self.web_port.is_ssl else ""}://' + \
             f'{self.web_host}:{self.web_port.port_num}'
 
 
@@ -58,7 +58,8 @@ class obj_type(logic.bin_entry):
         except urllib.error.URLError:
             raise urllib.error.URLError(
                 'No server is currently running on ' +
-                f'"{self.local_args.web_host}:{self.local_args.web_port.port_num}".',
+                f'"{self.local_args.web_host}:{
+                    self.local_args.web_port.port_num}".',
             )
 
         return util.versions.rōblox.from_name(str(res.read(), encoding='utf-8'))
@@ -77,11 +78,11 @@ class obj_type(logic.bin_entry):
             ]))
         return path
 
-    def enable_mutex(self) -> str:
+    def enable_mutex(self) -> None:
         '''
         Enables multiple instances of Rōblox to run concurrently.
         '''
-        ctypes.windll.kernel32.CreateSemaphoreW(0, 1000, "ROBLOX_singletonEvent")
+        ctypes.windll.kernel32.CreateMutexW(0, 1, "ROBLOX_singletonEvent")
 
     def save_ssl(self) -> None:
         if not self.local_args.web_port.is_ssl:
@@ -95,7 +96,8 @@ class obj_type(logic.bin_entry):
         except urllib.error.URLError:
             raise urllib.error.URLError(
                 'No server is currently running on ' +
-                f'"{self.local_args.web_host}:{self.local_args.web_port.port_num}".',
+                f'"{self.local_args.web_host}:{
+                    self.local_args.web_port.port_num}".',
             )
 
         path = self.get_versioned_path('SSL', 'cacert.pem')
