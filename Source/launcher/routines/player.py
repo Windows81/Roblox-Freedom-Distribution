@@ -28,7 +28,8 @@ class _arg_type(logic.bin_arg_type):
     web_port: logic.port = logic.port(
         port_num=80,
         is_ssl=False,
-    ),
+        is_ipv6=False,
+    ),  # type: ignore
     user_code: str | None = None
     delay: float = 1
 

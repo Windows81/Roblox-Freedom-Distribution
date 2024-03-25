@@ -22,7 +22,7 @@ class dir_type(enum.Enum):
 DEFAULT_CONFIG_PATH = './GameConfig.toml'
 
 
-def get_paths(d: dir_type) -> str:
+def get_paths(d: dir_type) -> list[str]:
     match (MADE_WITH_PYINSTALLER, d):
 
         case (True, dir_type.RŌBLOX):
@@ -45,6 +45,7 @@ def get_paths(d: dir_type) -> str:
             return [sys._MEIPASS]
         case (False, dir_type.SSL):
             return [TOP_DIR, 'Source', 'ssl']
+    return []
 
 
 @functools.cache

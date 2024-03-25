@@ -13,7 +13,8 @@ class port:
     def __hash__(self) -> int:
         return self.port_num
     port_num: int
-    is_ssl: bool
+    is_ssl: bool = True
+    is_ipv6: bool = False
 
 
 class _entry:
@@ -96,10 +97,12 @@ class bin_entry(ver_entry, popen_entry):
         self.rōblox_version = self.retr_version()
         if not os.path.isdir(self.get_versioned_path()):
             if self.local_args.auto_download:
-                dl = launcher.aux_tasks.download.obj_type(self.rōblox_version, self.DIR_NAME)
+                dl = launcher.aux_tasks.download.obj_type(
+                    self.rōblox_version, self.DIR_NAME)
                 dl.initialise()
             else:
-                raise FileNotFoundError(f'"{self.DIR_NAME}" not found for Rōblox version {self.rōblox_version}.')
+                raise FileNotFoundError(f'"{self.DIR_NAME}" not found for Rōblox version {
+                                        self.rōblox_version}.')
 
     def get_versioned_path(self, *paths: str) -> str:
         return super().get_versioned_path(
@@ -116,9 +119,7 @@ class server_entry(entry):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.server_config = config._main.obj_type(
-            self.local_args.server_config,
-        )
+        self.server_config = self.local_args.server_config
 
 
 class routine:

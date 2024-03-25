@@ -1,3 +1,4 @@
+from typing import Self, Callable
 import collections.abc
 import util.resource
 import util.versions
@@ -6,7 +7,7 @@ import tomllib
 
 
 class path(str):
-    def __new__(cls, val: str) -> None:
+    def __new__(cls, val: str) -> Self:
         return str.__new__(cls, util.resource.retr_full_path(util.resource.dir_type.CONFIG, val))
 
 
@@ -20,7 +21,7 @@ class allocateable:
 
     @classmethod
     @functools.cache
-    def get_type_call(cls, typ: type) -> callable:
+    def get_type_call(cls, typ: type) -> Callable:
         for k in [
             typ,
             getattr(typ, '__origin__', None),

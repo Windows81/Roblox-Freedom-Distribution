@@ -5,15 +5,17 @@ import dataclasses
 @dataclasses.dataclass
 class _arg_type(logic.bin_arg_type):
     cmd_args: list[str] = dataclasses.field(default_factory=list)
+    web_host: str | None = None
     web_port: logic.port = \
         logic.port(
             port_num=80,
             is_ssl=False,
-        ),
+            is_ipv6=False,
+        ),  # type: ignore
 
     def get_base_url(self) -> str:
         return \
-            f'http{"s" if self.web_port.is_ssl else""}://' + \
+            f'http{"s" if self.web_port.is_ssl else ""}://' + \
             f'{self.web_host}:{self.web_port.port_num}'
 
 

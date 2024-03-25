@@ -20,6 +20,9 @@ MODE_ALIASES = {
 
 
 def parse_args(parser: argparse.ArgumentParser) -> routine_logic.routine:
+    '''
+    Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
+    '''
     mode_parser = parser.add_subparsers(
         dest='mode',
     )
@@ -28,32 +31,41 @@ def parse_args(parser: argparse.ArgumentParser) -> routine_logic.routine:
         for n, m in MODE_ALIASES.items()
     }
 
-    args_ns = parser.parse_known_args()[0]
-    mode = MODE_ALIASES[args_ns.mode]
+    # Begins populating the argument namespace; errors aren't thrown because the subparser arguments aren't added yet.
+    args_namespace = parser.parse_known_args()[0]
+    mode = MODE_ALIASES[args_namespace.mode]
     chosen_sub_parser = sub_parsers[mode]
 
+    # Develops arguments for `chosen_sub_parser` which exist only under the current launch mode.
     sub_logic.ADD_MODE_ARGS.call_subparser(
         mode,
         parser,
         chosen_sub_parser,
     )
+
+    # Develops arguments for `chosen_sub_parser` which exist under all launch modes.
     sub_logic.ADD_MODE_ARGS.call_auxs(
         mode,
         parser,
         chosen_sub_parser,
     )
-    args_ns = parser.parse_args()
-    args_list = sub_logic.SERIALISE_ARGS.call_subparser(
+
+    # Completes populating the argument namespace, with errors being thrown if an argument is invalid.
+    args_namespace = parser.parse_args()
+
+    routine_args_list = sub_logic.SERIALISE_ARGS.call_subparser(
         mode,
         parser,
-        args_ns,
+        args_namespace,
     )
+
     sub_logic.SERIALISE_ARGS.call_auxs(
         mode,
-        args_ns,
-        args_list,
+        args_namespace,
+        routine_args_list,
     )
-    routine = routine_logic.routine(*args_list)
+
+    routine = routine_logic.routine(*routine_args_list)
     return routine
 
 

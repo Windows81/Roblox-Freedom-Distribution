@@ -1,3 +1,4 @@
+import launcher.routines._logic as logic
 from typing import Callable, Optional
 import util.versions as versions
 import util.const as const
@@ -50,34 +51,35 @@ def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
 class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
-        server_address: tuple[str, int],
+        port: logic.port,
         server_config: config._main.obj_type,
         *args, **kwargs,
     ) -> None:
+        self.game_config = server_config
+        self.users = game.user.user_dict(self.game_config)
+        self.address_family = socket.AF_INET6 if port.is_ipv6 else socket.AF_INET
+
         super().__init__(
-            server_address,
+            ('', port.port_num),
             web_server_handler,
             *args, **kwargs,
         )
-        self.game_config = server_config
-        self.users = game.user.user_dict(self.game_config)
 
 
 class web_server_ssl(web_server):
     def __init__(
         self,
-        server_address: tuple[str, int],
-        server_config: config._main.obj_type,
+        port: logic.port,
         *args, **kwargs,
     ) -> None:
+
         super().__init__(
-            server_address,
-            server_config,
+            port,
             *args, **kwargs,
         )
 
-        ssl_context = util.ssl_context.get_ssl_context()
-        self.socket = ssl_context.wrap_socket(
+        self.ssl_context = util.ssl_context.get_ssl_context()
+        self.socket = self.ssl_context.wrap_socket(
             self.socket,
             server_side=True,
         )
@@ -101,7 +103,8 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.is_valid_request = True
         self.game_config = self.server.game_config
 
-        self.sockname = host.split(':')  # type: ignore
+        host_part, port_part = host.rsplit(':', 1)
+        self.sockname = (host_part, int(port_part))
         self.domain = \
             'localhost'\
             if self.sockname[0] == '127.0.0.1'\
@@ -113,8 +116,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
 
         self.url = f'{self.hostname}{self.path}'
         self.urlsplit = parse.urlsplit(self.url)
-        self.query = {i: v[0]
-                      for i, v in parse.parse_qs(self.urlsplit.query).items()}
+        self.query = {
+            i: v[0]
+            for i, v in parse.parse_qs(self.urlsplit.query).items()
+        }
         return True
 
     def do_GET(self) -> None:

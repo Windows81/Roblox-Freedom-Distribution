@@ -3,6 +3,7 @@ import launcher.routines.rcc_server as rcc_server
 import launcher.subparsers._logic as sub_logic
 import launcher.routines.player as player
 import launcher.routines._logic as logic
+import config._main as config
 import util.resource
 import argparse
 
@@ -50,19 +51,26 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
-    server_config = util.resource.retr_config_full_path(args.config_path)
+
+    server_config = config.get_config(args.config_path)
     routine_args = []
-    web_port = logic.port(
+
+    web_port_ipv4 = logic.port(
         port_num=args.web_port,
         is_ssl=True,
+        is_ipv6=False,
+    )
+
+    web_port_ipv6 = logic.port(
+        port_num=args.web_port,
+        is_ssl=True,
+        is_ipv6=True,
     )
 
     if not args.skip_web:
         routine_args.extend([
             web_server.arg_type(
-                web_ports=set([
-                    web_port,
-                ]),
+                web_ports=set([web_port_ipv4, web_port_ipv6]),
                 server_config=server_config,
             ),
         ])
@@ -71,7 +79,7 @@ def _(
         routine_args.extend([
             rcc_server.arg_type(
                 rcc_port_num=args.rcc_port,
-                web_port=web_port,
+                web_port=web_port_ipv4,
                 server_config=server_config,
                 skip_popen=args.skip_rcc_popen,
             ),
@@ -83,7 +91,7 @@ def _(
                 rcc_host='127.0.0.1',
                 web_host='127.0.0.1',
                 rcc_port_num=args.rcc_port,
-                web_port=web_port,
+                web_port=web_port_ipv4,
             ),
         ])
     return routine_args

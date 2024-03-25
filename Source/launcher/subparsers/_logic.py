@@ -36,8 +36,8 @@ class mode_dict(callable_dict[launch_mode]):
     def call_auxs(self, mode: launch_mode, *args, **kwargs) -> list:
         return super().call(launch_mode.ALWAYS, mode, *args, **kwargs)
 
-    def call_subparser(self, mode: launch_mode, *args, **kwargs) -> list:
-        return super().call(mode, *args, **kwargs)
+    def call_subparser(self, l_mode: launch_mode, *args, **kwargs) -> list:
+        return super().call(l_mode, *args, **kwargs)
 
 
 ADD_MODE_ARGS = mode_dict()

@@ -9,37 +9,8 @@ import socket
 import ssl
 import re
 
-# https://raw.githubusercontent.com/begleysm/ipwatch/master/servers.json [2023-08-26]
 IPV4_SERVER_LIST = [
-    "http://ip.dnsexit.com",
-    "http://ifconfig.me/ip",
-    "https://ipecho.net/plain",
-    "http://checkip.dyndns.org/plain",
-    "https://www.ipanywhere.com/",
-    "https://www.my-ip-address.co/",
-    "https://myexternalip.com/raw",
-    "https://canyouseeme.org/",
-    "http://www.trackip.net/",
     "http://ipv4.icanhazip.com/",
-    "https://www.ipchicken.com/",
-    "http://whatsmyip.net/",
-    "http://www.lawrencegoetz.com/programs/ipinfo/",
-    "https://ip-lookup.net/",
-    "http://ipgoat.com/",
-    "http://www.myipnumber.com/my-ip-address.asp",
-    "http://formyip.com/",
-    "https://check.torproject.org/",
-    "http://www.displaymyip.com/",
-    "https://www.geodatatool.com/",
-    "https://www.whatsmydns.net/whats-my-ip-address.html",
-    "http://checkip.dyndns.com/",
-    "http://www.ip-adress.eu/",
-    "https://www.infosniper.net/",
-    "https://wtfismyip.com/text",
-    "http://httpbin.org/ip",
-    "https://diagnostic.opendns.com/myip",
-    "http://checkip.amazonaws.com",
-    "https://api.ipify.org",
     "https://v4.ident.me",
 ]
 
@@ -51,8 +22,8 @@ IPV6_SERVER_LIST = [
 
 def fetch(server) -> str | None:
     '''
-        This function gets your IP address from a specific server.
-        '''
+    This function gets your IP address from a specific server.
+    '''
     url = None
     cj = http.cookiejar.CookieJar()
     ctx = ssl.create_default_context()
@@ -76,6 +47,7 @@ def fetch(server) -> str | None:
         except UnicodeDecodeError:
             content = content.decode('ISO-8859-1')
 
+        return content
         match = re.search(
             r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.' +
             r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.' +
@@ -104,7 +76,7 @@ def get_external_ips(server_list: list[str]) -> list[str]:
         server = random.choice(server_list)
         address = fetch(server)
         if address != None:
-            return [address]
+            return [address.rstrip()]
     return []
 
 
@@ -137,6 +109,7 @@ def init_cert_auth() -> trustme.CA:
         *get_local_ips(socket.AF_INET, ('10.255.255.255', 1)),
         *get_local_ips(socket.AF_INET6, ('2001:db8::', 1)),
         '127.0.0.1',
+        '::1',
         'localhost',
     )
 

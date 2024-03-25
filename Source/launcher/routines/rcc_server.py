@@ -20,6 +20,7 @@ class _arg_type(logic.bin_arg_type):
         logic.port(
             port_num=80,
             is_ssl=False,
+            is_ipv6=False,
         ),  # type: ignore
 
     def get_base_url(self) -> str:

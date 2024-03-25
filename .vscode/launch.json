@@ -5,15 +5,7 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Python: Current File",
-			"type": "debugpy",
-			"request": "launch",
-			"program": "${file}",
-			"console": "integratedTerminal",
-			"justMyCode": true
-		},
-		{
-			"name": "Python: Launch Server",
+			"name": "Python: Launch Server with Local Client",
 			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}/Source/_main.py",
@@ -26,17 +18,43 @@
 			"justMyCode": true
 		},
 		{
-			"name": "Python: Launch Local Client",
+			"name": "Python: Launch Server Only",
 			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}/Source/_main.py",
 			"cwd": "${workspaceFolder}",
 			"args": [
-				"-v",
-				"2021E",
-				"client",
+				"server",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "Python: Launch Client from Localhost",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"player",
 				"-wh",
 				"localhost"
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "Python: Launch Client from IPv6 Address",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"player",
+				"-wh",
+				"[2603:8000:1:3a97::18ce]",
+				"-rh",
+				"[2603:8000:1:3a97::18ce]"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
