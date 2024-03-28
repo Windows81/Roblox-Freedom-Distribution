@@ -2,12 +2,25 @@
 import functools
 import urllib.request
 import http.cookiejar
+
+import cryptography
+import cryptography.x509.oid
 import util.resource
 import trustme
 import random
 import socket
 import ssl
 import re
+
+from cryptography import x509
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import rsa, ec
+from cryptography.hazmat.primitives.serialization import (
+    PrivateFormat, NoEncryption
+)
+from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
+from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 IPV4_SERVER_LIST = [
     "http://ipv4.icanhazip.com/",
@@ -18,6 +31,10 @@ IPV6_SERVER_LIST = [
     "http://ipv6.icanhazip.com/",
     "https://v6.ident.me",
 ]
+
+CERTIFICATE_AUTHORITY = trustme.CA()
+PRIVATE_KEY: ec.EllipticCurvePrivateKey = ec.generate_private_key(
+    ec.SECP256R1()),  # type: ignore
 
 
 def fetch(server) -> str | None:
@@ -100,8 +117,74 @@ SERVER_PEM_PATH = get_path('server.pem')
 SERVER_KEY_PATH = get_path('server.key')
 
 
-@functools.cache
-def init_cert_auth() -> trustme.CA:
+def issue_cert(
+    *identities: str,
+) -> trustme.LeafCert:
+
+    ski_ext = CERTIFICATE_AUTHORITY._certificate.extensions.get_extension_for_class(
+        x509.SubjectKeyIdentifier)
+    aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(
+        ski_ext.value)
+
+    cert = (
+        trustme._cert_builder_common(
+            trustme._name(
+                "Testing cert #" + trustme.random_text(),
+            ),
+            CERTIFICATE_AUTHORITY._certificate.subject,
+            PRIVATE_KEY.public_key(),
+        )
+        .add_extension(
+            x509.BasicConstraints(ca=False, path_length=None),
+            critical=True,
+        )
+        .add_extension(aki, critical=False)
+        .add_extension(
+            x509.SubjectAlternativeName(
+                [trustme._identity_string_to_x509(
+                    ident) for ident in identities]
+            ),
+            critical=True,
+        )
+        .add_extension(
+            x509.KeyUsage(
+                digital_signature=True,
+                content_commitment=False,
+                key_encipherment=True,
+                data_encipherment=False,
+                key_agreement=False,
+                key_cert_sign=False,
+                crl_sign=False,
+                encipher_only=False,
+                decipher_only=False),
+            critical=True
+        )
+        .add_extension(
+            x509.ExtendedKeyUsage([
+                cryptography.x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH,
+                cryptography.x509.oid.ExtendedKeyUsageOID.SERVER_AUTH,
+                cryptography.x509.oid.ExtendedKeyUsageOID.CODE_SIGNING,
+            ]),
+            critical=True
+        )
+        .sign(
+            private_key=CERTIFICATE_AUTHORITY._private_key,
+            algorithm=hashes.SHA256(),
+        )
+    )
+
+    return trustme.LeafCert(
+        PRIVATE_KEY.private_bytes(
+            Encoding.PEM,
+            PrivateFormat.TraditionalOpenSSL,
+            NoEncryption(),
+        ),
+        cert.public_bytes(Encoding.PEM),
+        [],
+    )
+
+
+def init_cert_auth(identities) -> trustme.CA:
     ca = trustme.CA()
     cert: trustme.LeafCert = ca.issue_cert(
         *get_external_ips(IPV4_SERVER_LIST),
@@ -136,8 +219,7 @@ def get_ssl_context() -> ssl.SSLContext:
     return ssl_context
 
 
-@functools.cache
-def get_client_cert() -> bytes:
+def get_client_cert(web_server_handler) -> bytes:
     init_cert_auth()
     with open(CLIENT_PEM_PATH, 'rb') as f:
         return f.read()
