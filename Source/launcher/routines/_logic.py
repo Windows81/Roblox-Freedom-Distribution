@@ -39,6 +39,9 @@ class bin_arg_type(arg_type):
     def get_base_url(self) -> str:
         raise NotImplementedError()
 
+    def get_app_base_url(self) -> str:
+        raise NotImplementedError()
+
 
 class entry(_entry):
     local_args: arg_type
@@ -130,7 +133,7 @@ class routine:
         for args in args_list:
             args.sanitise()
             e = args.obj_type(args)
-            self.entries.append(e)
+            self.entries.append(e)  # type: ignore
             e.initialise()
 
     def wait(self):

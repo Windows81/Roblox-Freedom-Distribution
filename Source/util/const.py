@@ -673,7 +673,7 @@ CLIENT_SETTINGS = {
     "FFlagQuantumGuiEnabledInGame4": "True",
     "FFlagQuantumGuiEnabledInGame4_PlaceFilter": "False;1748877807;137877687;755776245;691884101;1447501408;406773301;258258996;651474220;936754492;1122507250;654732683",
     "FFlagRCCSupportTeamTest": "True",
-    "FFlagRakNetSupportIpV6": "False",
+    "FFlagRakNetSupportIpV6": "True",
     "FFlagRandomType": "True",
     "FFlagRapidJson110_2": "False",
     "FFlagRccUseNewSharedDynamicFlagReloader": "True",

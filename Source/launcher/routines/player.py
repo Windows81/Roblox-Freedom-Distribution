@@ -37,13 +37,25 @@ class _arg_type(logic.bin_arg_type):
         super().sanitise()
         if self.rcc_host == 'localhost':
             self.rcc_host = '127.0.0.1'
+        elif ':' in self.rcc_host:
+            self.rcc_host = f'[{self.rcc_host}]'
+
+        self.app_host = self.web_host
         if self.web_host == 'localhost':
             self.web_host = '127.0.0.1'
+        elif self.web_host and ':' in self.web_host:
+            self.app_host = f'[{self.web_host}%pvc1.3]'
+            self.web_host = f'[{self.web_host}]'
 
     def get_base_url(self) -> str:
         return \
             f'http{"s" if self.web_port.is_ssl else ""}://' + \
             f'{self.web_host}:{self.web_port.port_num}'
+
+    def get_app_base_url(self) -> str:
+        return \
+            f'http{"s" if self.web_port.is_ssl else ""}://' + \
+            f'{self.app_host}:{self.web_port.port_num}'
 
 
 class obj_type(logic.bin_entry):
@@ -53,7 +65,7 @@ class obj_type(logic.bin_entry):
     def retr_version(self) -> util.versions.rōblox:
         try:
             res = urllib.request.urlopen(
-                f'{self.local_args.get_base_url()}/roblox_version',
+                f'{self.local_args.get_base_url()}/rfd/rbxver',
                 context=get_none_ssl(),
             )
         except urllib.error.URLError:
@@ -70,11 +82,12 @@ class obj_type(logic.bin_entry):
         Modifies settings to point to correct host name.
         '''
         path = self.get_versioned_path('AppSettings.xml')
+        app_base_url = self.local_args.get_app_base_url()
         with open(path, 'w') as f:
             f.write('\n'.join([
                 """<?xml version="1.0" encoding="UTF-8"?>""",
                 """<Settings>""",
-                f"""\t<BaseUrl>{self.local_args.get_base_url()}</BaseUrl>""",
+                f"""\t<BaseUrl>{app_base_url}</BaseUrl>""",
                 """</Settings>""",
             ]))
         return path
@@ -91,7 +104,7 @@ class obj_type(logic.bin_entry):
 
         try:
             res = urllib.request.urlopen(
-                f'{self.local_args.get_base_url()}/retrieve_certs',
+                f'{self.local_args.get_base_url()}/rfd/cert',
                 context=get_none_ssl(),
             )
         except urllib.error.URLError:

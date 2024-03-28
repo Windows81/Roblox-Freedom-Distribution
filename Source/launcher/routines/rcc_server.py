@@ -28,6 +28,9 @@ class _arg_type(logic.bin_arg_type):
             f'http{"s" if self.web_port.is_ssl else ""}://' + \
             f'localhost:{self.web_port.port_num}'
 
+    def get_app_base_url(self) -> str:
+        return f'{self.get_base_url()}/'
+
 
 class obj_type(logic.bin_entry, logic.server_entry):
     local_args: _arg_type
@@ -42,11 +45,12 @@ class obj_type(logic.bin_entry, logic.server_entry):
         Modifies settings to point to correct host name.
         '''
         path = self.get_versioned_path('AppSettings.xml')
+        app_base_url = self.local_args.get_app_base_url()
         with open(path, 'w') as f:
             f.write('\n'.join([
                 """<?xml version="1.0" encoding="UTF-8"?>""",
                 """<Settings>""",
-                f"""\t<BaseUrl>{self.local_args.get_base_url()}/</BaseUrl>""",
+                f"""\t<BaseUrl>{app_base_url}</BaseUrl>""",
                 """</Settings>""",
             ]))
         return path

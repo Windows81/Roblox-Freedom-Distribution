@@ -50,13 +50,13 @@ def basic_join(self: web_server_handler):
     }
 
 
-@server_path('/retrieve_certs')
+@server_path('/rfd/cert')
 def _(self: web_server_handler) -> bool:
-    self.send_data(util.ssl_context.get_client_cert())
+    self.send_data(util.ssl_context.get_client_cert(self))
     return True
 
 
-@server_path('/roblox_version')
+@server_path('/rfd/rbxver')
 def _(self: web_server_handler) -> bool:
     '''
     Used by clients to automatically detect which version to run.
