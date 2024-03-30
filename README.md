@@ -12,6 +12,8 @@ Clients will automatically connect to a server of the same version.
 
 ### `server`
 
+Game-specific options are specified in the `--config_path` argument, which defaults to `./GameConfig.toml`. **Please review each option before starting your server up.**
+
 | Option                 | Type         | Default             |
 | ---------------------- | ------------ | ------------------- |
 | `--config_path`, `-cp` | `int`        | `./GameConfig.toml` |
@@ -24,19 +26,19 @@ Clients will automatically connect to a server of the same version.
 
 ### `player`
 
-| Option              | Type  | Default          |
-| ------------------- | ----- | ---------------- |
-| `--rcc_host`, `-rh` | `str` | None, nargs=`?`, |
-| `--rcc_port`, `-rp` | `int` | 2005, nargs=`?`, |
-| `--web_host`, `-wh` | `str` | N/A, nargs=`?`,  |
-| `--web_port`, `-wp` | `int` | 2006, nargs=`?`, |
-| `--user_code`, `-u` | `str` | N/A              |
+| Option              | Type  | Default |
+| ------------------- | ----- | ------- |
+| `--rcc_host`, `-rh` | `str` | None    |
+| `--rcc_port`, `-rp` | `int` | 2005    |
+| `--web_host`, `-wh` | `str` | N/A     |
+| `--web_port`, `-wp` | `int` | 2006    |
+| `--user_code`, `-u` | `str` | N/A     |
 
 ### Misc.
 
 Command syntaxes for `studio` and `download` also exists, but haven't been adequately documented yet.
 
-## Protocols in Use:
+## Protocols in Use
 
 Anyone can host a server and must leave **two** network ports of their choice accessible.
 
@@ -56,7 +58,7 @@ Host is optionally specified by the `--webserver_host` or `-wh` option, in case 
 
 Port is specified by the `--webserver_port` or `-wp` option **(defaults to 2006)**.
 
-## Credits:
+## Credits
 
 _iknowidontexistbutwhatifwin_ for patching the v463 (early 2021) binaries.
 
@@ -75,5 +77,5 @@ py Source/_main.py server -rp 2005 -wp 2006
 ### Player
 
 ```shell
-py Source/_main.py player -rh localhost -rp 2005 -wp 2006
+py Source/_main.py player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
 ```
