@@ -1,18 +1,20 @@
 import launcher.routines._logic as logic
 import game.assets as assets
 import util.const as const
-import config._main
-import util.ssl_context
+import urllib.request
 import util.versions
+import config._main
+import urllib.error
 import dataclasses
 import subprocess
 import functools
+import util.ssl
 import shutil
 import json
 
 
 @dataclasses.dataclass
-class _arg_type(logic.bin_arg_type):
+class _arg_type(logic.bin_ssl_arg_type):
     server_config: config._main.obj_type
     rcc_port_num: int = 2005
     skip_popen: bool = False
@@ -32,7 +34,7 @@ class _arg_type(logic.bin_arg_type):
         return f'{self.get_base_url()}/'
 
 
-class obj_type(logic.bin_entry, logic.server_entry):
+class obj_type(logic.bin_ssl_entry, logic.server_entry):
     local_args: _arg_type
     DIR_NAME = 'Server'
 
@@ -89,13 +91,6 @@ class obj_type(logic.bin_entry, logic.server_entry):
             }, f)
         return path
 
-    def save_ssl(self) -> None:
-        if not self.local_args.web_port.is_ssl:
-            return
-        path = self.get_versioned_path('SSL', 'cacert.pem')
-        with open(path, 'wb') as f:
-            f.write(util.ssl_context.get_client_cert())
-
     def make_rcc_popen(self):
         return self.make_popen(
             [
@@ -116,7 +111,7 @@ class obj_type(logic.bin_entry, logic.server_entry):
 
         shutil.copyfile(self.server_config.game_setup.place_path, place_path)
         self.save_app_setting()
-        self.save_ssl()
+        self.save_ssl_cert()
 
         self.gameserver_path = self.save_gameserver()
         if not self.local_args.skip_popen:

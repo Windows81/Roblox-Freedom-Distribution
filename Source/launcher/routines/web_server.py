@@ -9,7 +9,7 @@ import threading
 @dataclasses.dataclass
 class _arg_type(logic.arg_type):
     server_config: config._main.obj_type
-    web_ports: set[logic.port] = dataclasses.field(default_factory=set)
+    web_ports: list[logic.port] = dataclasses.field(default_factory=list)
 
 
 class obj_type(logic.server_entry):
@@ -30,7 +30,7 @@ class obj_type(logic.server_entry):
                   web_port.port_num}.')
             self.server_running = False
 
-    def __add_servers(self, web_ports: set[logic.port], *args, **kwargs) -> None:
+    def __add_servers(self, web_ports: list[logic.port], *args, **kwargs) -> None:
         hts = [
             _main.make_server(*args, port, **kwargs)
             for port in web_ports

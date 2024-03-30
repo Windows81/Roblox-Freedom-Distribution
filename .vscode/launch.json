@@ -52,9 +52,7 @@
 			"args": [
 				"player",
 				"-wh",
-				"127.0.0.1",
-				"-rh",
-				"127.0.0.1"
+				"192.168.50.69",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
@@ -68,12 +66,11 @@
 			"args": [
 				"player",
 				"-wh",
-				"::1",
-				"-rh",
-				"::1"
+				"2603:8000:1:3a97:81ec:e544:bb42:6975",
+				//"2603-8000-1-3a97-d421-214a-2471-ac0c.ipv6-literal.net",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
-		}
+		},
 	]
 }

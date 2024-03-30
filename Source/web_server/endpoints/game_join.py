@@ -1,6 +1,6 @@
-from web_server._logic import web_server_handler, server_path
-import util.ssl_context
+from web_server._logic import web_server_handler, server_path, web_server_ssl
 import util.const
+import util.ssl
 import json
 import time
 import re
@@ -15,8 +15,8 @@ def basic_join(self: web_server_handler):
         user_code = self.game_config.server_core. \
             retrieve_default_user_code(time.time())
 
-    self.server.users.add_user(user_code)
-    user_id = self.server.users.get_id_from_code(user_code)
+    self.server.game_users.add_user(user_code)
+    user_id = self.server.game_users.get_id_from_code(user_code)
 
     return {
         'ServerConnections': [
@@ -52,7 +52,10 @@ def basic_join(self: web_server_handler):
 
 @server_path('/rfd/cert')
 def _(self: web_server_handler) -> bool:
-    self.send_data(util.ssl_context.get_client_cert(self))
+    if not isinstance(self.server, web_server_ssl):
+        return False
+    self.server.add_identities(self.ip_addr)
+    self.send_data(self.server.ssl_mutable.get_client_cert())
     return True
 
 

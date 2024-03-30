@@ -1,4 +1,8 @@
+import functools
+import ssl
 import launcher.aux_tasks.download
+import urllib.request
+import urllib.error
 import config._main
 import util.versions
 import util.resource
@@ -41,6 +45,15 @@ class bin_arg_type(arg_type):
 
     def get_app_base_url(self) -> str:
         raise NotImplementedError()
+
+
+class bin_ssl_arg_type(bin_arg_type):
+    web_host: str | None = None
+    web_port: port = port(
+        port_num=80,
+        is_ssl=True,
+        is_ipv6=False,
+    )
 
 
 class entry(_entry):
@@ -111,6 +124,42 @@ class bin_entry(ver_entry, popen_entry):
         return super().get_versioned_path(
             self.DIR_NAME, *paths,
         )
+
+
+class bin_ssl_entry(bin_entry):
+    '''
+    Routine entry abstract class that corresponds to a binary with a special `./SSL` directory.
+    '''
+    local_args: bin_ssl_arg_type
+    DIR_NAME: str
+
+    @staticmethod
+    @functools.cache
+    def get_none_ssl() -> ssl.SSLContext:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        return ctx
+
+    def save_ssl_cert(self) -> None:
+        if not self.local_args.web_port.is_ssl:
+            return
+
+        try:
+            res = urllib.request.urlopen(
+                f'{self.local_args.get_base_url()}/rfd/cert',
+                context=bin_ssl_entry.get_none_ssl(),
+            )
+        except urllib.error.URLError:
+            raise urllib.error.URLError(
+                'No server is currently running on ' +
+                f'"{self.local_args.web_host}:{
+                    self.local_args.web_port.port_num}".',
+            )
+
+        path = self.get_versioned_path('SSL', 'cacert.pem')
+        with open(path, 'wb') as f:
+            f.write(res.read())
 
 
 class server_entry(entry):

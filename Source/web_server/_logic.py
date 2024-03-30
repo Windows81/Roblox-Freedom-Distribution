@@ -1,14 +1,13 @@
 import launcher.routines._logic as logic
-from typing import Callable, Optional
 import util.versions as versions
 import util.const as const
 from urllib import parse
-import util.ssl_context
 import OpenSSL.crypto
 import config._main
 import http.server
 import mimetypes
 import game.user
+import util.ssl
 import base64
 import socket
 import enum
@@ -56,8 +55,10 @@ class web_server(http.server.ThreadingHTTPServer):
         *args, **kwargs,
     ) -> None:
         self.game_config = server_config
-        self.users = game.user.user_dict(self.game_config)
-        self.address_family = socket.AF_INET6 if port.is_ipv6 else socket.AF_INET
+        self.game_users = game.user.user_dict(self.game_config)
+
+        self.is_ipv6 = port.is_ipv6
+        self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
 
         super().__init__(
             ('', port.port_num),
@@ -67,6 +68,9 @@ class web_server(http.server.ThreadingHTTPServer):
 
 
 class web_server_ssl(web_server):
+    ssl_mutable: util.ssl.ssl_mutable
+    identities: set[str]
+
     def __init__(
         self,
         port: logic.port,
@@ -77,9 +81,21 @@ class web_server_ssl(web_server):
             port,
             *args, **kwargs,
         )
+        self.identities = {'::1', '127.0.0.1', 'localhost'}
+        self.ssl_mutable = util.ssl.ssl_mutable()
+        self.update_socket()
 
-        self.ssl_context = util.ssl_context.get_ssl_context()
-        self.socket = self.ssl_context.wrap_socket(
+    def add_identities(self, *new_identities: str) -> None:
+        old_len = len(self.identities)
+        self.identities.update(new_identities)
+        new_len = len(self.identities)
+        if old_len == new_len:
+            return
+        self.update_socket()
+
+    def update_socket(self) -> None:
+        self.ssl_mutable.issue_cert(*self.identities)
+        self.socket = self.ssl_mutable.get_ssl_context().wrap_socket(
             self.socket,
             server_side=True,
         )
@@ -96,7 +112,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         if not super().parse_request():
             return False
 
-        host: Optional[str] = self.headers.get('Host')
+        host: str | None = self.headers.get('Host')
         if not host:
             return False
 
@@ -105,10 +121,16 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
 
         host_part, port_part = host.rsplit(':', 1)
         self.sockname = (host_part, int(port_part))
-        self.domain = \
-            'localhost'\
-            if self.sockname[0] == '127.0.0.1'\
-            else self.sockname[0]
+
+        if host_part == '127.0.0.1':
+            self.domain = 'localhost'
+        else:
+            self.domain = host_part
+
+        if host_part.startswith('['):
+            self.ip_addr = host_part[1:-1]
+        else:
+            self.ip_addr = host_part
 
         self.hostname = \
             f'http{"s" if isinstance(self.server, web_server_ssl) else ""}://' + \

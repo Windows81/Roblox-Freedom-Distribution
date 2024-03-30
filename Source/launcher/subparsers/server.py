@@ -70,7 +70,8 @@ def _(
     if not args.skip_web:
         routine_args.extend([
             web_server.arg_type(
-                web_ports=set([web_port_ipv4, web_port_ipv6]),
+                # IPv6 goes first since `localhost` resolves fist to [::1] on the client.
+                web_ports=[web_port_ipv6, web_port_ipv4],
                 server_config=server_config,
             ),
         ])

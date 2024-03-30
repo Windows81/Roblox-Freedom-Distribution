@@ -12,16 +12,8 @@ import time
 import ssl
 
 
-@functools.cache
-def get_none_ssl() -> ssl.SSLContext:
-    ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
-    return ctx
-
-
 @dataclasses.dataclass
-class _arg_type(logic.bin_arg_type):
+class _arg_type(logic.bin_ssl_arg_type):
     rcc_host: str = 'localhost'
     rcc_port_num: int = 2005
     web_host: str | None = None
@@ -42,6 +34,7 @@ class _arg_type(logic.bin_arg_type):
 
         self.app_host = self.web_host
         if self.web_host == 'localhost':
+            self.app_host = '127.0.0.1'
             self.web_host = '127.0.0.1'
         elif self.web_host and ':' in self.web_host:
             self.app_host = f'[{self.web_host}%pvc1.3]'
@@ -58,7 +51,7 @@ class _arg_type(logic.bin_arg_type):
             f'{self.app_host}:{self.web_port.port_num}'
 
 
-class obj_type(logic.bin_entry):
+class obj_type(logic.bin_ssl_entry):
     local_args: _arg_type
     DIR_NAME = 'Player'
 
@@ -66,7 +59,7 @@ class obj_type(logic.bin_entry):
         try:
             res = urllib.request.urlopen(
                 f'{self.local_args.get_base_url()}/rfd/rbxver',
-                context=get_none_ssl(),
+                context=obj_type.get_none_ssl(),
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(
@@ -98,30 +91,10 @@ class obj_type(logic.bin_entry):
         '''
         ctypes.windll.kernel32.CreateMutexW(0, 1, "ROBLOX_singletonEvent")
 
-    def save_ssl(self) -> None:
-        if not self.local_args.web_port.is_ssl:
-            return
-
-        try:
-            res = urllib.request.urlopen(
-                f'{self.local_args.get_base_url()}/rfd/cert',
-                context=get_none_ssl(),
-            )
-        except urllib.error.URLError:
-            raise urllib.error.URLError(
-                'No server is currently running on ' +
-                f'"{self.local_args.web_host}:{
-                    self.local_args.web_port.port_num}".',
-            )
-
-        path = self.get_versioned_path('SSL', 'cacert.pem')
-        with open(path, 'wb') as f:
-            f.write(res.read())
-
     def initialise(self) -> None:
         self.save_app_setting()
         self.enable_mutex()
-        self.save_ssl()
+        self.save_ssl_cert()
 
         time.sleep(self.local_args.delay)
         base_url = self.local_args.get_base_url()
