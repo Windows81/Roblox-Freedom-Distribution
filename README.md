@@ -1,18 +1,46 @@
-# Rōblox Filtering Disabled
+# Rōblox: Freedom Distribution
 
 Adapted from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
 
-Users can host their own server instances of Rōblox using binaries from a selection of versions.
+Users can host their own server instances of Rōblox using binaries from a variety of versions throughout their history.
 
-Players can join an existing server
+Players can join an existing server.
 
-Clients must connect to a server of the same version.
+Clients will automatically connect to a server of the same version.
 
-# Command Syntax
+## Command Syntax
 
-Anyone can host a server and must leave **two** network ports of their choice accessible:
+### `server`
 
-## RCC (UDP + TCP)
+| Option                 | Type         | Default             |
+| ---------------------- | ------------ | ------------------- |
+| `--config_path`, `-cp` | `int`        | `./GameConfig.toml` |
+| `--rcc_port`, `-rp`    | `int`        | 2005                |
+| `--web_port`, `-wp`    | `int`        | 2006                |
+| `--run_client`, `-rc`  | `store_true` | N/A                 |
+| `--skip_rcc`           | `store_true` | N/A                 |
+| `--skip_rcc_popen`     | `store_true` | N/A                 |
+| `--skip_web`           | `store_true` | N/A                 |
+
+### `player`
+
+| Option              | Type  | Default          |
+| ------------------- | ----- | ---------------- |
+| `--rcc_host`, `-rh` | `str` | None, nargs=`?`, |
+| `--rcc_port`, `-rp` | `int` | 2005, nargs=`?`, |
+| `--web_host`, `-wh` | `str` | N/A, nargs=`?`,  |
+| `--web_port`, `-wp` | `int` | 2006, nargs=`?`, |
+| `--user_code`, `-u` | `str` | N/A              |
+
+### Misc.
+
+Command syntaxes for `studio` and `download` also exists, but haven't been adequately documented yet.
+
+## Protocols in Use:
+
+Anyone can host a server and must leave **two** network ports of their choice accessible.
+
+### RCC (UDP + TCP)
 
 RCC is an acronym for 'Rōblox Cloud Compute', which is the server-side program we use to run the Rōblox physics engine.
 
@@ -20,7 +48,7 @@ Host is specified by the `--rcc_host` or `-rh` option.
 
 Port is specified by the `--rcc_port` or `-rp` option **(defaults to 2005)**.
 
-## Webserver (HTTPS)
+### Webserver (HTTPS)
 
 The webserver is responsible for facilitating player connections and loading in-game assets.
 
@@ -28,7 +56,7 @@ Host is optionally specified by the `--webserver_host` or `-wh` option, in case 
 
 Port is specified by the `--webserver_port` or `-wp` option **(defaults to 2006)**.
 
-# Credits:
+## Credits:
 
 _iknowidontexistbutwhatifwin_ for patching the v463 (early 2021) binaries.
 
@@ -36,16 +64,16 @@ _Jetray_ for engineering the original [Rōblox Filtering Disabled](https://jetra
 
 **More to come...**
 
-# Examples
+## Examples
 
-## Server
+### Server
 
 ```shell
-py launcher/main.py server -rp 2005 -wp 2006 -p "C:\Users\USERNAME\Documents\Baseplate.rbxl"
+py Source/_main.py server -rp 2005 -wp 2006
 ```
 
-## Player
+### Player
 
 ```shell
-py launcher/main.py player -rh localhost -rp 2005 -wp 2006
+py Source/_main.py player -rh localhost -rp 2005 -wp 2006
 ```

@@ -107,37 +107,22 @@ class ssl_mutable:
         self.server_pem_path = get_path(f'server{suffix}.pem')
         self.server_key_path = get_path(f'server{suffix}.key')
 
+        # Writes the certificate that the client should trust.
+        self.ca.cert_pem.write_to_path(
+            path=self.client_pem_path)
+
         ssl_mutable.CONTEXT_COUNT += 1
 
     def issue_cert(self, *identities: str) -> trustme.LeafCert:
         cert: trustme.LeafCert = self.ca.issue_cert(*identities)
 
-        try:
-            os.remove(self.server_pem_path)
-        except Exception:
-            pass
-
         # Writes the certificate that the server should use.
-        for blob in cert.cert_chain_pems:
-            blob.write_to_path(path=self.server_pem_path, append=True)
-
-        try:
-            os.remove(self.server_key_path)
-        except Exception:
-            pass
+        for i, blob in enumerate(cert.cert_chain_pems):
+            blob.write_to_path(path=self.server_pem_path, append=(i == 0))
 
         # Writes the private key that the server should use.
         cert.private_key_pem.write_to_path(
             path=self.server_key_path, append=True)
-
-        try:
-            os.remove(self.client_pem_path)
-        except Exception:
-            pass
-
-        # Writes the certificate that the client should trust.
-        self.ca.cert_pem.write_to_path(
-            path=self.client_pem_path)
 
         return cert
 

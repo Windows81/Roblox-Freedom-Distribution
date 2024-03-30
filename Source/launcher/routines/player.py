@@ -34,11 +34,14 @@ class _arg_type(logic.bin_ssl_arg_type):
 
         self.app_host = self.web_host
         if self.web_host == 'localhost':
-            self.app_host = '127.0.0.1'
-            self.web_host = '127.0.0.1'
+            self.web_host = self.app_host = '127.0.0.1'
+
         elif self.web_host and ':' in self.web_host:
-            self.app_host = f'[{self.web_host}%pvc1.3]'
-            self.web_host = f'[{self.web_host}]'
+
+            # The ".ipv6-literal.net" replacement only works on Windows and might not translate well on Wine.
+            # It's strictly necessary for 2021E because some CoreGUI stuff crash if the BaseUrl doesn't have a dot in it.
+            unc_ip_str = self.web_host.replace(':', '-')
+            self.web_host = self.app_host = f'{unc_ip_str}.ipv6-literal.net'
 
     def get_base_url(self) -> str:
         return \
