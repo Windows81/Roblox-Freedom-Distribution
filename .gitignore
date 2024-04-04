@@ -4,6 +4,7 @@ AssetCache/
 Roblox/
 PyInstallerWork/
 Binaries/
+TestFolder/
 *.spec
 Source/ssl/?*.*
 __pycache__/
