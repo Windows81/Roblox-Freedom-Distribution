@@ -19,8 +19,7 @@ class obj_type(launcher.subparsers.aux_tasks._logic.action):
             f'{util.const.GIT_RELEASE_VERSION}/{self.rōblox_version.name}.{self.dir_name}.7z'
 
     def initialise(self) -> None:
-        res = urllib.request.urlopen(
-            self.get_link().encode('utf-8').decode()).read()
+        res = urllib.request.urlopen(self.get_link()).read()
         full_dir = util.resource.retr_rōblox_full_path(
             self.rōblox_version, self.dir_name)
         py7zr.unpack_7zarchive(io.BytesIO(res), full_dir)
