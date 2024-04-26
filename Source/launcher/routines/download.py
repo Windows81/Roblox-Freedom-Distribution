@@ -15,7 +15,7 @@ class _arg_type(logic.arg_type):
 class obj_type(logic.bin_entry):
     local_args: _arg_type
 
-    def initialise(self):
+    def initialise(self) -> None:
         launcher.aux_tasks.download.obj_type(
             rōblox_version=self.local_args.rōblox_version,
             dir_name=self.local_args.dir_name,

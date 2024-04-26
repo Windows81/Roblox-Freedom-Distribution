@@ -20,6 +20,5 @@ class obj_type(launcher.subparsers.aux_tasks._logic.action):
 
     def initialise(self) -> None:
         res = urllib.request.urlopen(self.get_link()).read()
-        full_dir = util.resource.retr_rōblox_full_path(
-            self.rōblox_version, self.dir_name)
+        full_dir = util.resource.retr_rōblox_full_path(self.rōblox_version)
         py7zr.unpack_7zarchive(io.BytesIO(res), full_dir)

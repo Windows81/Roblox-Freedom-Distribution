@@ -1,3 +1,6 @@
+# EXAMPLE GAME CONFIGURATION FILE.
+# PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
+
 [server_assignment]
 players.maximum = 4096
 players.preferred = 666
@@ -16,27 +19,37 @@ creator.name = 'ÒÓ'
 [server_core]
 chat_style = 'ClassicAndBubble'
 
+# Python function `RESULT` which generates an RFD-specific user code if one isn't provided.
+# Server maintainers should review the code because it's used by 'eval'.
 retrieve_default_user_code = '''
 def RESULT(tick: float) -> str:
     return f'Tick {tick}'
 '''
 
+# Python function `RESULT` which evaluates the player's `Name` value from their RFD-specific user code.
+# Server maintainers should review the code because it's used by 'eval'.
 retrieve_username = '''
 def RESULT(user_code: str) -> str:
     import datetime
     return datetime.datetime.fromtimestamp(float(user_code[5:])).strftime('%H:%M:%S')
 '''
 
+# Python function `RESULT` which evaluates the player's `UserId` value from their RFD-specific user code.
+# Server maintainers should review the code because it's used by 'eval'.
 retrieve_user_id = '''
 def RESULT(user_code: str) -> int:
     return int(float(user_code[5:]) % 1e3)
 '''
 
+# Python function `RESULT` which evaluates the player's `AccountAge` value from their RFD-specific user code.
+# Server maintainers should review the code because it's used by 'eval'.
 retrieve_account_age = '''
 def RESULT(user_code: str) -> int:
     return 6969
 '''
 
+# Python function `RESULT` which filters text.
+# Server maintainers should review the code because it's used by 'eval'.
 filter_text = '''
 def RESULT(user_code: str, text: str) -> str:
     return f'"{text.upper()}" (user {user_code} said that by the way).'

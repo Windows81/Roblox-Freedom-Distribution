@@ -10,7 +10,7 @@ def subparse(
     parser: argparse.ArgumentParser,
     sub_parser: argparse.ArgumentParser,
     use_ssl: bool = False,
-):
+) -> list[download.arg_type]:
     sub_parser.add_argument(
         '--version', '-v',
         type=util.versions.rōblox.from_name,

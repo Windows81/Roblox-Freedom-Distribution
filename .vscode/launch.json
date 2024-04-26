@@ -5,6 +5,13 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "PowerShell: Package Release",
+			"type": "PowerShell",
+			"request": "launch",
+			"script": "${workspaceFolder}/_release.ps1",
+			"cwd": "${workspaceFolder}"
+		},
+		{
 			"name": "Python: Launch Server with Local Client",
 			"type": "debugpy",
 			"request": "launch",
