@@ -99,13 +99,18 @@ def get_path(*paths: str) -> str:
 class ssl_mutable:
     CONTEXT_COUNT = 0
 
+    def prepare_file_path(self, prefix: str, ext: str) -> str:
+        suffix = f'{ssl_mutable.CONTEXT_COUNT:03d}'
+        path = get_path(f'{prefix}{suffix}.{ext}')
+        if os.path.exists(path):
+            os.remove(path)
+        return path
+
     def __init__(self) -> None:
         self.ca = trustme.CA()
-
-        suffix = f'{ssl_mutable.CONTEXT_COUNT:03d}'
-        self.client_pem_path = get_path(f'client{suffix}.pem')
-        self.server_pem_path = get_path(f'server{suffix}.pem')
-        self.server_key_path = get_path(f'server{suffix}.key')
+        self.client_pem_path = self.prepare_file_path('client', 'pem')
+        self.server_pem_path = self.prepare_file_path('server', 'pem')
+        self.server_key_path = self.prepare_file_path('server', 'key')
 
         # Writes the certificate that the client should trust.
         self.ca.cert_pem.write_to_path(
@@ -118,11 +123,11 @@ class ssl_mutable:
 
         # Writes the certificate that the server should use.
         for i, blob in enumerate(cert.cert_chain_pems):
-            blob.write_to_path(path=self.server_pem_path, append=(i == 0))
+            blob.write_to_path(path=self.server_pem_path, append=(i > 0))
 
         # Writes the private key that the server should use.
         cert.private_key_pem.write_to_path(
-            path=self.server_key_path, append=True)
+            path=self.server_key_path, append=False)
 
         return cert
 

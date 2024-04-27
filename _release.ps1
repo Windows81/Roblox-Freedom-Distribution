@@ -22,7 +22,8 @@ $bins = Get-ChildItem "$root/Binaries/*"
 $zips = Get-ChildItem "$root/Roblox/*/*" -Directory | ForEach-Object {
 	$zip = "$root/Roblox/$($_.Parent.Name).$($_.Name).7z"
 	Remove-Item $zip* -Force
-	7z a $zip $_.FullName/*
+	7z a $zip "$($_.FullName)/*"
+	Start-Sleep 1
 	return $zip
 }
 
