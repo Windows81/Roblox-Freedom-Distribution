@@ -22,7 +22,8 @@ $bins = Get-ChildItem "$root/Binaries/*"
 $zips = New-Object System.Collections.Generic.List[System.Object]
 Get-ChildItem "$root/Roblox/*/*" -Directory | ForEach-Object {
 	$zip = "$root/Roblox/$($_.Parent.Name).$($_.Name).7z"
-	Remove-Item $zip* -Force -Confirm && 7z a $zip "$($_.FullName)/*"
+	Remove-Item $zip -Force -Confirm
+	Test-Path $zip || 7z a $zip "$($_.FullName)/*"
 	$zips.Add($zip)
 }
 
