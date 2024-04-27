@@ -1,5 +1,5 @@
 # Packs Rōblox executables into GitHub releases that can be downloaded.
-$release_name = $args[1] ?? (Get-Date -Format "yyyyMMddTHHmmZ")
+$release_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ")
 $root = "$PSScriptRoot"
 
 $const = "$root/Source/util/const.py"
@@ -19,12 +19,11 @@ pyinstaller `
 	--icon "$root/Source/Icon.ico"
 $bins = Get-ChildItem "$root/Binaries/*"
 
-$zips = Get-ChildItem "$root/Roblox/*/*" -Directory | ForEach-Object {
+$zips = New-Object System.Collections.Generic.List[System.Object]
+Get-ChildItem "$root/Roblox/*/*" -Directory | ForEach-Object {
 	$zip = "$root/Roblox/$($_.Parent.Name).$($_.Name).7z"
-	Remove-Item $zip* -Force
-	7z a $zip "$($_.FullName)/*"
-	Start-Sleep 1
-	return $zip
+	Remove-Item $zip* -Force -Confirm && 7z a $zip "$($_.FullName)/*"
+	$zips.Add($zip)
 }
 
-gh release create "$release_name" --notes "" $zips $bins -p
+gh release create "$release_name" --notes "" $bins $zips -p
