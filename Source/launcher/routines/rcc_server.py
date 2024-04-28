@@ -94,6 +94,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def make_rcc_popen(self):
         return self.make_popen(
             [
+                'wine',
                 self.get_versioned_path('RCCService.exe'),
                 '-verbose',
                 f'-placeid:{const.DEFAULT_PLACE_ID}',
