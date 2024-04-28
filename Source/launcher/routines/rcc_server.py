@@ -1,16 +1,15 @@
 import launcher.routines._logic as logic
 import game.assets as assets
 import util.const as const
-import urllib.request
 import util.versions
 import config._main
-import urllib.error
 import dataclasses
 import subprocess
 import functools
 import util.ssl
 import shutil
 import json
+import os
 
 
 @dataclasses.dataclass
@@ -94,7 +93,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def make_rcc_popen(self):
         return self.make_popen(
             [
-                'wine',
+                *(() if os.name == 'nt' else ('wine',)),
                 self.get_versioned_path('RCCService.exe'),
                 '-verbose',
                 f'-placeid:{const.DEFAULT_PLACE_ID}',

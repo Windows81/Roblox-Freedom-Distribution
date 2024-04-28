@@ -299,7 +299,7 @@ def _(self: web_server_handler) -> bool:
     userid = self.query['userId']
     placeId = self.query['placeId']
     json = {
-        "resolvedAvatarType": self.game_config.server_core.avatar_type,
+        "resolvedAvatarType": self.game_config.server_core.avatar_type.value,
         "accessoryVersionIds": [],
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
@@ -325,7 +325,7 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     '''
     self.send_json({
-        "resolvedAvatarType": self.game_config.server_core.avatar_type,
+        "resolvedAvatarType": self.game_config.server_core.avatar_type.value,
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
         "assetAndAssetTypeIds": [
