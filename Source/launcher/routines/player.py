@@ -39,7 +39,7 @@ class _arg_type(logic.bin_ssl_arg_type):
         elif self.web_host and ':' in self.web_host:
 
             # The ".ipv6-literal.net" replacement only works on Windows and might not translate well on Wine.
-            # It's strictly necessary for 2021E because some CoreGUI stuff crash if the BaseUrl doesn't have a dot in it.
+            # It's strictly necessary for 2021E because some CoreGUI stuff will crash if the BaseUrl doesn't have a dot in it.
             unc_ip_str = self.web_host.replace(':', '-')
             self.web_host = self.app_host = f'{unc_ip_str}.ipv6-literal.net'
 
