@@ -17,7 +17,8 @@ def _(self: web_server_handler) -> bool:
     qs = urllib.parse.parse_qs(field_data)
 
     orig_text = qs['text'][0]
-    user_code = self.server.users.get_code_from_id(int(qs['userId'][0])) or ''
+    user_code = self.server.game_users.get_code_from_id(
+        int(qs['userId'][0])) or ''
     mod_text = self.game_config.server_core.filter_text(user_code, orig_text)
 
     self.send_json({

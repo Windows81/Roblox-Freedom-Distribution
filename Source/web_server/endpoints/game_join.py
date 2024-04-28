@@ -14,9 +14,7 @@ def basic_join(self: web_server_handler):
     if not user_code:
         user_code = self.game_config.server_core. \
             retrieve_default_user_code(time.time())
-
-    self.server.game_users.add_user(user_code)
-    user_id = self.server.game_users.get_id_from_code(user_code)
+    user_id = self.server.game_users.add_user(user_code)
 
     return {
         'ServerConnections': [
@@ -76,7 +74,7 @@ def _(self: web_server_handler) -> bool:
         'PingUrl': '',
         'PingInterval': 0,
         'SeleniumTestMode': False,
-        'SuperSafeChat': False,
+        'SuperSafeChat': True,
         'MeasurementUrl': '',
         'WaitingForCharacterGuid': 'e01c22e4-a428-45f8-ae40-5058b4a1dafc',
         'VendorId': 0,
@@ -91,7 +89,6 @@ def _(self: web_server_handler) -> bool:
         'IsRobloxPlace': True,
         'GenerateTeleportJoin': False,
         'IsUnknownOrUnder13': False,
-        'GameChatType': 'AllUsers',
         'SessionId': '',
         'DataCenterId': 0,
         'FollowUserId': 0,
@@ -110,7 +107,7 @@ def _(self: web_server_handler) -> bool:
         'SeleniumTestMode': False,
         'RobloxLocale': 'en_us',
         'GameLocale': 'en_us#RobloxTranslateAbTest2',
-        'SuperSafeChat': False,
+        'SuperSafeChat': True,
         'ClientTicket': '2022-03-26T05:13:05.7649319Z;dj09X5iTmYtOPwh0hbEC8yvSO1t99oB3Yh5qD/sinDFszq3hPPaL6hH16TvtCen6cABIycyDv3tghW7k8W+xuqW0/xWvs0XJeiIWstmChYnORzM1yCAVnAh3puyxgaiIbg41WJSMALRSh1hoRiVFOXw4BKjSKk7DrTTcL9nOG1V5YwVnmAJKY7/m0yZ81xE99QL8UVdKz2ycK8l8JFvfkMvgpqLNBv0APRNykGDauEhAx283vARJFF0D9UuSV69q6htLJ1CN2kXL0Saxtt/kRdoP3p3Nhj2VgycZnGEo2NaG25vwc/KzOYEFUV0QdQPC8Vs2iFuq8oK+fXRc3v6dnQ==;BO8oP7rzmnIky5ethym6yRECd6H14ojfHP3nHxSzfTs=;XsuKZL4TBjh8STukr1AgkmDSo5LGgQKQbvymZYi/80TYPM5/MXNr5HKoF3MOT3Nfm0MrubracyAtg5O3slIKBg==;6',
         'GameId': '29fd9df4-4c59-4d8c-8cee-8f187b09709b',
         'CreatorId': 4372130,
@@ -174,7 +171,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/game/placelauncher.ashx')
+@server_path('/Game/PlaceLauncher.ashx')
 def _(self: web_server_handler) -> bool:
     self.send_json({
         'jobId': 'Test',
@@ -301,7 +298,7 @@ def _(self: web_server_handler) -> bool:
     userid = self.query['userId']
     placeId = self.query['placeId']
     json = {
-        "resolvedAvatarType": "R15",
+        "resolvedAvatarType": self.game_config.server_core.avatar_type,
         "accessoryVersionIds": [],
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
@@ -327,7 +324,7 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     '''
     self.send_json({
-        "resolvedAvatarType": "R15",
+        "resolvedAvatarType": self.game_config.server_core.avatar_type,
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
         "assetAndAssetTypeIds": [

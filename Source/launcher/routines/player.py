@@ -104,7 +104,7 @@ class obj_type(logic.bin_ssl_entry):
         self.make_popen([
             self.get_versioned_path('RobloxPlayerBeta.exe'),
             '-a', f'{base_url}/login/negotiate.ashx',
-            '-j', f'{base_url}/game/placelauncher.ashx?' +
+            '-j', f'{base_url}/Game/PlaceLauncher.ashx?' +
             urllib.parse.urlencode({k: v for k, v in {
                 'ip':
                     self.local_args.rcc_host,

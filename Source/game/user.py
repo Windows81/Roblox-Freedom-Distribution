@@ -6,12 +6,15 @@ class user_dict(dict[int, str]):
         super().__init__()
         self.game_config = game_config
 
-    def add_user(self, user_code: str):
+    def add_user(self, user_code: str) -> int | None:
         '''
-        Silently adds a user code to the ID-to-user-code index.
+        Adds a user code to the ID-to-user-code index.
         '''
         user_id = self.get_id_from_code(user_code)
+        if not user_id:
+            return None
         self[user_id] = user_code
+        return user_id
 
     def get_code_from_id(self, user_id: int) -> str | None:
         return self.get(user_id, None)

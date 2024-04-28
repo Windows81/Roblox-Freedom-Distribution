@@ -14,6 +14,11 @@ class chat_style(enum.Enum):
     CLASSIC_AND_BUBBLE_CHAT = "ClassicAndBubble"
 
 
+class avatar_type(enum.Enum):
+    R6 = "R6"
+    R15 = "R15"
+
+
 class obj_type(config._logic._configtype):
     '''
     Configuration specification, according by default to "GameConfig.toml".
@@ -38,6 +43,7 @@ class obj_type(config._logic._configtype):
 
     class server_core(𝕏):
         chat_style: chat_style
+        avatar_type: avatar_type
         retrieve_default_user_code: typing.Callable[[float], str]
         retrieve_username: typing.Callable[[str], str]
         retrieve_user_id: typing.Callable[[str], int]
