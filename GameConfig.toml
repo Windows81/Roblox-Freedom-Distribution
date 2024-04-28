@@ -53,7 +53,5 @@ def RESULT(user_code: str) -> int:
 # Server maintainers should review the code because it's used by 'eval'.
 filter_text = '''
 def RESULT(user_code: str, text: str) -> str:
-    return text
-      .replace('oo','òó')
-      .replace('OO','ÒÓ')
+    return text.replace('oo','òó').replace('OO','ÒÓ').replace('ee','èé').replace('EE','ÈÉ').replace('Roblox','Rōblox').replace('ROBLOX','RŌBLOX')
 '''
