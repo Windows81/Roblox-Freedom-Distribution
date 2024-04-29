@@ -3,10 +3,21 @@ import enum
 
 
 class launch_mode(enum.Enum):
-    ALWAYS = 0
-    SERVER = 1
-    PLAYER = 2
-    STUDIO = 3
+    ALWAYS = None
+    SERVER = 'server'
+    PLAYER = 'player'
+    STUDIO = 'studio'
+
+
+MODE_ALIASES = {
+    n: m
+    for m in launch_mode
+    if m != launch_mode.ALWAYS
+    for n in [
+        m.value
+    ]
+    if n != None
+}
 
 
 class callable_list(list[typing.Callable]):

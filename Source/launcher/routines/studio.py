@@ -1,5 +1,6 @@
 import launcher.routines._logic as logic
 import dataclasses
+import os
 
 
 @dataclasses.dataclass
@@ -40,6 +41,7 @@ class obj_type(logic.bin_entry):
 
     def initialise(self) -> None:
         self.make_popen([
+            *(() if os.name == 'nt' else ('wine',)),
             self.get_versioned_path('RobloxStudioBeta.exe'),
             *self.local_args.cmd_args
         ])

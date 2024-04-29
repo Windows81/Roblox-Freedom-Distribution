@@ -44,6 +44,7 @@ def _(
 
     if not (args.web_host or args.rcc_host):
         parser.error('No hostname requested; add --web_host or --rcc_host.')
+
     args.web_host, args.rcc_host = \
         args.web_host or args.rcc_host, \
         args.rcc_host or args.web_host

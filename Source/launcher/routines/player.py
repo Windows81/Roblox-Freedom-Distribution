@@ -6,10 +6,9 @@ import urllib.parse
 import urllib.error
 import dataclasses
 import util.const
-import functools
 import ctypes
 import time
-import ssl
+import os
 
 
 @dataclasses.dataclass
@@ -102,6 +101,7 @@ class obj_type(logic.bin_ssl_entry):
         time.sleep(self.local_args.delay)
         base_url = self.local_args.get_base_url()
         self.make_popen([
+            *(() if os.name == 'nt' else ('wine',)),
             self.get_versioned_path('RobloxPlayerBeta.exe'),
             '-a', f'{base_url}/login/negotiate.ashx',
             '-j', f'{base_url}/Game/PlaceLauncher.ashx?' +
