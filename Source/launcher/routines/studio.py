@@ -39,7 +39,7 @@ class obj_type(logic.bin_entry):
             ])
         return path
 
-    def initialise(self) -> None:
+    def process(self) -> None:
         self.make_popen([
             *(() if os.name == 'nt' else ('wine',)),
             self.get_versioned_path('RobloxStudioBeta.exe'),

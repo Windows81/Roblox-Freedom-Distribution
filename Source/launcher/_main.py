@@ -1,9 +1,5 @@
-from .subparsers.player import _
-from .subparsers.server import _
-from .subparsers.studio import _
-
-from .subparsers.aux_tasks.clear_appdata import _
-from .subparsers.aux_tasks.download import _
+from .subparsers.args_launch_mode import download, player, server, studio
+from .subparsers.args_aux import clear_appdata, download
 
 import launcher.routines._logic as routine_logic
 import launcher.subparsers._logic as sub_logic
@@ -21,7 +17,6 @@ def parse_args(args: list[str] | None) -> routine_logic.routine:
     sub_parsers = {
         m: mode_parser.add_parser(n, add_help=False)
         for n, m in sub_logic.MODE_ALIASES.items()
-        if n != None
     }
 
     # Begins populating the argument namespace; errors aren't thrown because the subparser arguments aren't added yet.

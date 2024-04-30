@@ -1,5 +1,4 @@
-import launcher.routines.web_server as web_server
-import launcher.routines._logic as logic
+from . import _logic as logic
 import urllib.request
 import util.versions
 import urllib.parse
@@ -22,7 +21,7 @@ class _arg_type(logic.bin_ssl_arg_type):
         is_ipv6=False,
     ),  # type: ignore
     user_code: str | None = None
-    delay: float = 1
+    launch_delay: float = 0
 
     def sanitise(self):
         super().sanitise()
@@ -93,12 +92,12 @@ class obj_type(logic.bin_ssl_entry):
         '''
         ctypes.windll.kernel32.CreateMutexW(0, 1, "ROBLOX_singletonEvent")
 
-    def initialise(self) -> None:
+    def process(self) -> None:
         self.save_app_setting()
         self.enable_mutex()
         self.save_ssl_cert()
 
-        time.sleep(self.local_args.delay)
+        time.sleep(self.local_args.launch_delay)
         base_url = self.local_args.get_base_url()
         self.make_popen([
             *(() if os.name == 'nt' else ('wine',)),

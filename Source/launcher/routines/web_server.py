@@ -42,7 +42,7 @@ class obj_type(logic.server_entry):
             self.threads.append(th)
             th.start()
 
-    def initialise(self) -> None:
+    def process(self) -> None:
         self.server_running = True
         self.__add_servers(
             web_ports=self.local_args.web_ports,

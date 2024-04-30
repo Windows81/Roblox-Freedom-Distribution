@@ -106,7 +106,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             cwd=self.get_versioned_path(),
         )
 
-    def initialise(self) -> None:
+    def process(self) -> None:
         place_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
 
         shutil.copyfile(self.server_config.game_setup.place_path, place_path)

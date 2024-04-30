@@ -1,5 +1,6 @@
 # EXAMPLE GAME CONFIGURATION FILE.
 # PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
+# Some arguments are provided as absolute paths and only work on my machine.
 
 [server_assignment]
 players.maximum = 4096

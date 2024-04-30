@@ -3,20 +3,27 @@ import enum
 
 
 class launch_mode(enum.Enum):
-    ALWAYS = None
+    ALWAYS = 'always'
     SERVER = 'server'
     PLAYER = 'player'
     STUDIO = 'studio'
+    DOWNLOAD = 'download'
+
+
+ENABLED_LAUNCH_MODES = [
+    launch_mode.SERVER,
+    launch_mode.PLAYER,
+    # launch_mode.STUDIO, TODO: get some Studio binaries.
+    launch_mode.DOWNLOAD,
+]
 
 
 MODE_ALIASES = {
     n: m
-    for m in launch_mode
-    if m != launch_mode.ALWAYS
+    for m in ENABLED_LAUNCH_MODES
     for n in [
         m.value
     ]
-    if n != None
 }
 
 

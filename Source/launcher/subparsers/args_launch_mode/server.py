@@ -1,11 +1,13 @@
-import launcher.routines.web_server as web_server
-import launcher.routines.rcc_server as rcc_server
 import launcher.subparsers._logic as sub_logic
-import launcher.routines.player as player
 import launcher.routines._logic as logic
 import config._main as config
 import util.resource
 import argparse
+
+import launcher.routines.download as download
+import launcher.routines.web_server as web_server
+import launcher.routines.rcc_server as rcc_server
+import launcher.routines.player as player
 
 
 @sub_logic.add_args(sub_logic.launch_mode.SERVER)
@@ -17,32 +19,39 @@ def subparse(
     subparser.add_argument(
         '--config_path', '-cp', type=str, nargs='?',
         default=util.resource.DEFAULT_CONFIG_PATH,
+        help='Game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up.',
     )
     subparser.add_argument(
         '--rcc_port', '-rp', type=int,
         default=2005, nargs='?',
+        help='Hostname or IP address to connect this program to the web server.',
     )
     subparser.add_argument(
         '--web_port', '-wp', type=int,
         default=2006, nargs='?',
+        help='Port number to connect this program to the web server.',
     )
     subparser.add_argument(
         '--run_client', '-rc',
         action='store_true',
+        help='Runs an instance of the player immediately after starting the server.',
     )
 
     skip_mutex = subparser.add_mutually_exclusive_group()
     skip_mutex.add_argument(
         '--skip_rcc',
         action='store_true',
+        help='Only runs the webserver, skipping the RCC binary completely.',
     )
     skip_mutex.add_argument(
         '--skip_rcc_popen',
         action='store_true',
+        help='Runs the webserver and initialises RCC configuration, but doesn\'t execute RCCService.exe.',
     )
     skip_mutex.add_argument(
         '--skip_web',
         action='store_true',
+        help='Only runs the RCC binary, skipping hosting the webserver.',
     )
 
 
@@ -93,6 +102,8 @@ def _(
                 web_host='127.0.0.1',
                 rcc_port_num=args.rcc_port,
                 web_port=web_port_ipv4,
+                # Some CoreGUI elements don't render properly if we join too early.
+                launch_delay=3,
             ),
         ])
     return routine_args

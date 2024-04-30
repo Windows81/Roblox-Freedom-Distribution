@@ -1,14 +1,14 @@
-import functools
-import ssl
-import launcher.aux_tasks.download
+from ..downloader import _main as downloader
 import urllib.request
-import urllib.error
-import config._main
 import util.versions
 import util.resource
+import urllib.error
+import config._main
 import dataclasses
 import subprocess
+import functools
 import threading
+import ssl
 import os
 
 
@@ -22,7 +22,7 @@ class port:
 
 
 class _entry:
-    def initialise(self):
+    def process(self):
         raise NotImplementedError()
 
 
@@ -111,19 +111,30 @@ class bin_entry(ver_entry, popen_entry):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.rōblox_version = self.retr_version()
-        if not os.path.isdir(self.get_versioned_path()):
-            if self.local_args.auto_download:
-                dl = launcher.aux_tasks.download.obj_type(
-                    self.rōblox_version, self.DIR_NAME)
-                dl.initialise()
-            else:
-                raise FileNotFoundError(f'"{self.DIR_NAME}" not found for Rōblox version {
-                                        self.rōblox_version}.')
+        self.maybe_download_binary()
 
     def get_versioned_path(self, *paths: str) -> str:
         return super().get_versioned_path(
             self.DIR_NAME, *paths,
         )
+
+    def maybe_download_binary(self) -> None:
+        '''
+        Check if Rōblox is not downloaded; else skip.
+        '''
+        if os.path.isdir(self.get_versioned_path()):
+            return
+        elif self.local_args.auto_download:
+            print(
+                'Downloading "%s" for Rōblox version %s' %
+                (self.DIR_NAME, self.rōblox_version)
+            )
+            downloader.download_binary(self.rōblox_version, self.DIR_NAME)
+        else:
+            raise FileNotFoundError(
+                '"%s" not found for Rōblox version %s.' %
+                (self.DIR_NAME, self.rōblox_version)
+            )
 
 
 class bin_ssl_entry(bin_entry):
@@ -183,7 +194,7 @@ class routine:
             args.sanitise()
             e = args.obj_type(args)
             self.entries.append(e)  # type: ignore
-            e.initialise()
+            e.process()
 
     def wait(self):
         for e in self.entries:

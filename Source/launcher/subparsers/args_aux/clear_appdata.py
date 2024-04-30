@@ -1,4 +1,4 @@
-import launcher.aux_tasks.clear_appdata as clear_appdata
+import launcher.routines.clear_appdata as clear_appdata
 import launcher.subparsers._logic as sub_logic
 import launcher.routines._logic as logic
 import argparse
@@ -14,6 +14,7 @@ def _(
     sub_parser.add_argument(
         '--keep_cache',
         action='store_true',
+        help='Skips deleting host-specific cached content from the %%LocalAppData%%\\Temp\\Roblox\\http directory.',
     )
 
 
@@ -22,7 +23,7 @@ def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
     args_list: list[logic.arg_type],
-) -> None:
+) -> list[logic.arg_type]:
 
     if args_ns.keep_cache:
         return
@@ -31,6 +32,10 @@ def _(
         for a in args_list
         if isinstance(a, logic.bin_arg_type)
     )
-    for base in base_urls:
-        obj = clear_appdata.obj_type(base)
-        obj.initialise()
+
+    return [
+        clear_appdata.arg_type(
+            base_url=base,
+        )
+        for base in base_urls
+    ]
