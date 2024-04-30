@@ -3,7 +3,7 @@ import collections.abc
 import util.resource
 import util.versions
 import functools
-import tomllib
+import tomli
 
 
 class path(str):
@@ -52,5 +52,5 @@ class allocateable:
 class _configtype(allocateable):
     def __init__(self, path: str = util.resource.DEFAULT_CONFIG_PATH) -> None:
         with open(util.resource.retr_config_full_path(path), 'rb') as f:
-            self.data_dict: dict = tomllib.load(f)
+            self.data_dict: dict = tomli.load(f)
         super().__init__(**self.data_dict)

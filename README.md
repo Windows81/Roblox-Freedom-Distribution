@@ -15,7 +15,7 @@ To install from source, run:
 ```
 git clone https://github.com/Windows81/Roblox-Freedom-Distribution rfd
 cd rfd
-pip install -r requirements.txt
+pip install -r ./Source/requirements.txt
 ```
 
 ## Command Syntax
