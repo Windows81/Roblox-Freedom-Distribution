@@ -163,9 +163,8 @@ class bin_ssl_entry(bin_entry):
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(
-                'No server is currently running on ' +
-                f'"{self.local_args.web_host}:{
-                    self.local_args.web_port.port_num}".',
+                'No server is currently running on %s:%d.' %
+                (self.local_args.web_host, self.local_args.web_port.port_num),
             )
 
         path = self.get_versioned_path('SSL', 'cacert.pem')
