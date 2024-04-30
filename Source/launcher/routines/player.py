@@ -89,6 +89,8 @@ class obj_type(logic.bin_ssl_entry):
         '''
         Enables multiple instances of Rōblox to run concurrently.
         '''
+        if self.rōblox_version.get_number() > 400:
+            return
         ctypes.windll.kernel32.CreateMutexW(0, 1, "ROBLOX_singletonEvent")
 
     def process(self) -> None:
