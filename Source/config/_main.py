@@ -1,10 +1,10 @@
 
 from config._logic import allocateable as 𝕏
+import typing_extensions
 import config._logic
 import util.versions
 import util.resource
 import functools
-import typing
 import enum
 
 
@@ -44,11 +44,11 @@ class obj_type(config._logic._configtype):
     class server_core(𝕏):
         chat_style: chat_style
         avatar_type: avatar_type
-        retrieve_default_user_code: typing.Callable[[float], str]
-        retrieve_username: typing.Callable[[str], str]
-        retrieve_user_id: typing.Callable[[str], int]
-        retrieve_account_age: typing.Callable[[str], int]
-        filter_text: typing.Callable[[str, str], str]
+        retrieve_default_user_code: typing_extensions.Callable[[float], str]
+        retrieve_username: typing_extensions.Callable[[str], str]
+        retrieve_user_id: typing_extensions.Callable[[str], int]
+        retrieve_account_age: typing_extensions.Callable[[str], int]
+        filter_text: typing_extensions.Callable[[str, str], str]
 
 
 @functools.cache

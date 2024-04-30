@@ -1,4 +1,4 @@
-import typing
+import typing_extensions
 import enum
 
 
@@ -27,7 +27,7 @@ MODE_ALIASES = {
 }
 
 
-class callable_list(list[typing.Callable]):
+class callable_list(list[typing_extensions.Callable]):
     def call(self, *args, **kwargs) -> list:
         return [
             r
@@ -36,11 +36,11 @@ class callable_list(list[typing.Callable]):
         ]
 
 
-T = typing.TypeVar('T')
+T = typing_extensions.TypeVar('T')
 
 
 class callable_dict(dict[T, callable_list]):
-    def add(self, k: T, *f: typing.Callable):
+    def add(self, k: T, *f: typing_extensions.Callable):
         self.setdefault(k, callable_list()).extend(f)
 
     def call(self, k: T, *args, **kwargs) -> list:

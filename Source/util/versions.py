@@ -1,4 +1,4 @@
-import typing
+import typing_extensions
 import enum
 
 
@@ -37,11 +37,11 @@ VERSION_MAP = dict(
 )
 
 
-T = typing.TypeVar('T')
+T = typing_extensions.TypeVar('T')
 
 
 class version_holder(dict[rōblox, T]):
-    def __add_pred(self, func: typing.Callable[[int], bool], obj: T) -> T:
+    def __add_pred(self, func: typing_extensions.Callable[[int], bool], obj: T) -> T:
         for v in rōblox:
             if not func(v.get_number()):
                 continue

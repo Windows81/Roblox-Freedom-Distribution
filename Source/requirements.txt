@@ -1,3 +1,4 @@
+typing_extensions
 pyOpenSSL
 trustme
 py7zr

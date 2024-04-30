@@ -8,11 +8,21 @@ Players can join an existing server.
 
 Clients will automatically connect to a server of the same version.
 
+## Installation
+
+To install from source, run:
+
+```
+git clone https://github.com/Windows81/Roblox-Freedom-Distribution rfd
+cd rfd
+pip install -r requirements.txt
+```
+
 ## Command Syntax
 
 ### `server`
 
-Game-specific options are specified in the `--config_path` argument, which defaults to `./GameConfig.toml`. **Please review each option before starting your server up.**
+Game-specific options are specified in the `--config_path` argument, which defaults to `./GameConfig.toml`. **Please review each option in the config file before starting your server up.**
 
 | Option                 | Type         | Default             |
 | ---------------------- | ------------ | ------------------- |

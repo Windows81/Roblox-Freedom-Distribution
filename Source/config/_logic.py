@@ -1,4 +1,4 @@
-from typing import Self, Callable
+from typing_extensions import Self, Callable
 import collections.abc
 import util.resource
 import util.versions
