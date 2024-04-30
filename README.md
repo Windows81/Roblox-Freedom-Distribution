@@ -10,7 +10,7 @@ Clients will automatically connect to a server of the same version.
 
 ## Installation
 
-To install from source, run:
+To install _from source_, run:
 
 ```
 git clone https://github.com/Windows81/Roblox-Freedom-Distribution rfd

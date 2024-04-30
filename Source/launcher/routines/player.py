@@ -64,9 +64,8 @@ class obj_type(logic.bin_ssl_entry):
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(
-                'No server is currently running on ' +
-                f'"{self.local_args.web_host}:{
-                    self.local_args.web_port.port_num}".',
+                'No server is currently running on %s:%d.' %
+                (self.local_args.web_host, self.local_args.web_port.port_num),
             )
 
         return util.versions.rōblox.from_name(str(res.read(), encoding='utf-8'))
