@@ -1,5 +1,6 @@
 typing_extensions
 pyOpenSSL
 trustme
+urllib3
 tomli
 py7zr

@@ -26,8 +26,10 @@ class obj_type(logic.server_entry):
             th.start()
 
         except PermissionError:
-            print(f'WARNING: web servers were unable to start at port {
-                  web_port.port_num}.')
+            print(
+                'WARNING: web servers were unable to start at port %d.' %
+                (web_port.port_num)
+            )
             self.server_running = False
 
     def __add_servers(self, web_ports: list[logic.port], *args, **kwargs) -> None:

@@ -18,6 +18,16 @@ cd rfd
 pip install -r ./Source/requirements.txt
 ```
 
+---
+
+To install _as a binary_, run:
+
+```
+git clone https://github.com/Windows81/Roblox-Freedom-Distribution rfd
+cd rfd
+pip install -r ./Source/requirements.txt
+```
+
 ## Command Syntax
 
 ### `server`
