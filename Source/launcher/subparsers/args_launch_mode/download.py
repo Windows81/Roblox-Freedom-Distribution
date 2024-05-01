@@ -3,6 +3,7 @@ import launcher.routines.download as download
 import launcher.routines.rcc_server as rcc_server
 import launcher.routines.player as player
 import launcher.routines._logic as logic
+import util.resource
 import util.versions
 import argparse
 
@@ -13,15 +14,16 @@ def _(
     subparser: argparse.ArgumentParser,
 ) -> None:
     subparser.add_argument(
-        '--version', '-v',
+        '--rbx_version', '-v',
         type=util.versions.rōblox.from_name,
         help='Version to download.',
     )
     subparser.add_argument(
-        '--dir_name', '-d',
-        type=str, choices=[
-            player.obj_type.DIR_NAME,
-            rcc_server.obj_type.DIR_NAME,
+        '--bin_subtype', '-b',
+        type=util.resource.bin_subtype,
+        choices=[
+            player.obj_type.BIN_SUBTYPE.value,
+            rcc_server.obj_type.BIN_SUBTYPE.value,
         ],
         help='Directories to download.',
         nargs='+',
@@ -36,8 +38,8 @@ def _(
 
     return [
         download.arg_type(
-            rōblox_version=args.version,
-            dir_name=d
+            rōblox_version=args.rbx_version,
+            bin_subtype=b,
         )
-        for d in args.dir_name
+        for b in args.bin_subtype
     ]

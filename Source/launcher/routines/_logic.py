@@ -95,10 +95,8 @@ class ver_entry(entry):
     def retr_version(self) -> util.versions.rōblox:
         raise NotImplementedError()
 
-    def get_versioned_path(self, *paths: str) -> str:
-        return util.resource.retr_rōblox_full_path(
-            self.rōblox_version, *paths,
-        )
+    def get_versioned_path(self, bin_type: util.resource.bin_subtype, *paths: str) -> str:
+        return util.resource.retr_rōblox_full_path(self.rōblox_version, bin_type, *paths)
 
 
 class bin_entry(ver_entry, popen_entry):
@@ -106,7 +104,7 @@ class bin_entry(ver_entry, popen_entry):
     Routine entry abstract class that corresponds to a versioned binary of Rōblox.
     '''
     local_args: bin_arg_type
-    DIR_NAME: str
+    BIN_SUBTYPE: util.resource.bin_subtype
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -115,7 +113,7 @@ class bin_entry(ver_entry, popen_entry):
 
     def get_versioned_path(self, *paths: str) -> str:
         return super().get_versioned_path(
-            self.DIR_NAME, *paths,
+            self.BIN_SUBTYPE, *paths,
         )
 
     def maybe_download_binary(self) -> None:
@@ -127,13 +125,13 @@ class bin_entry(ver_entry, popen_entry):
         elif self.local_args.auto_download:
             print(
                 'Downloading "%s" for Rōblox version %s' %
-                (self.DIR_NAME, self.rōblox_version)
+                (self.BIN_SUBTYPE, self.rōblox_version)
             )
-            downloader.download_binary(self.rōblox_version, self.DIR_NAME)
+            downloader.download_binary(self.rōblox_version, self.BIN_SUBTYPE)
         else:
             raise FileNotFoundError(
                 '"%s" not found for Rōblox version %s.' %
-                (self.DIR_NAME, self.rōblox_version)
+                (self.BIN_SUBTYPE, self.rōblox_version)
             )
 
 
@@ -142,10 +140,8 @@ class bin_ssl_entry(bin_entry):
     Routine entry abstract class that corresponds to a binary with a special `./SSL` directory.
     '''
     local_args: bin_ssl_arg_type
-    DIR_NAME: str
 
     @staticmethod
-    @functools.cache
     def get_none_ssl() -> ssl.SSLContext:
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
@@ -160,6 +156,7 @@ class bin_ssl_entry(bin_entry):
             res = urllib.request.urlopen(
                 f'{self.local_args.get_base_url()}/rfd/cert',
                 context=bin_ssl_entry.get_none_ssl(),
+                timeout=3,
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(

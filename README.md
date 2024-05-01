@@ -1,12 +1,18 @@
 # Rōblox: Freedom Distribution
 
+A Rōblox 'revival' framework built with Python; tested on Python 3.10 and 3.12.
+
 Adapted from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
 
 Users can host their own server instances of Rōblox using binaries from a variety of versions throughout their history.
 
-Players can join an existing server.
+Players can join existing servers.
 
 Clients will automatically connect to a server of the same version.
+
+Everything here is free-as-in-freedom software.
+
+My use of Rōblox's binaries are unlikely to fall into fair use. Be wary of any potential copyright takedowns.
 
 ## Installation
 
@@ -77,6 +83,14 @@ The webserver is responsible for facilitating player connections and loading in-
 Host is optionally specified by the `--webserver_host` or `-wh` option, in case RCC is hosted elsewhere.
 
 Port is specified by the `--webserver_port` or `-wp` option **(defaults to 2006)**.
+
+## Studio?
+
+Rōblox Filtering Disabled have a working Studio build from 2022.
+
+You can also use [this 2018M build](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2023-08-31T09%EA%9E%8910Z/v348.Studio.7z) whilst running the Rōblox Filtering Disabled webserver.
+
+If you need any help, please shoot me an issue on GitHub or a message to an account with some form of 'VisualPlugin' elsewhere.
 
 ## Credits
 

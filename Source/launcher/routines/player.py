@@ -1,5 +1,6 @@
 from . import _logic as logic
 import urllib.request
+import util.resource
 import util.versions
 import urllib.parse
 import urllib.error
@@ -54,13 +55,14 @@ class _arg_type(logic.bin_ssl_arg_type):
 
 class obj_type(logic.bin_ssl_entry):
     local_args: _arg_type
-    DIR_NAME = 'Player'
+    BIN_SUBTYPE = util.resource.bin_subtype.PLAYER
 
     def retr_version(self) -> util.versions.rōblox:
         try:
             res = urllib.request.urlopen(
                 f'{self.local_args.get_base_url()}/rfd/rbxver',
                 context=obj_type.get_none_ssl(),
+                timeout=3,
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(

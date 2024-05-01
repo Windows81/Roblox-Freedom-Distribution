@@ -1,4 +1,5 @@
 from web_server._logic import web_server_handler, server_path, web_server_ssl
+import util.resource
 import util.const
 import util.ssl
 import json
@@ -318,12 +319,175 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
+@server_path('/v1/avatar')
+@server_path('/v1/avatar/')
 @server_path('/v1/avatar-fetch')
 @server_path('/v1/avatar-fetch/')
 def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v463.
     '''
+    self.send_json({
+        "resolvedAvatarType": "R6",
+        "equippedGearVersionIds": [],
+        "backpackGearVersionIds": [],
+        "assetAndAssetTypeIds": [
+            {
+                "assetId": 6340101,
+                "assetTypeId": 17
+            },
+            {
+                "assetId": 34247191,
+                "assetTypeId": 8
+            },
+            {
+                "assetId": 48474294,
+                "assetTypeId": 41,
+                "meta": {
+                    "order": 11,
+                    "version": 1
+                }
+            },
+            {
+                "assetId": 121390054,
+                "assetTypeId": 42
+            },
+            {
+                "assetId": 154386348,
+                "assetTypeId": 12
+            },
+            {
+                "assetId": 183808364,
+                "assetTypeId": 8
+            },
+            {
+                "assetId": 190245296,
+                "assetTypeId": 43
+            },
+            {
+                "assetId": 192483960,
+                "assetTypeId": 47
+            },
+            {
+                "assetId": 201733574,
+                "assetTypeId": 47
+            },
+            {
+                "assetId": 261826995,
+                "assetTypeId": 42
+            },
+            {
+                "assetId": 2846257298,
+                "assetTypeId": 8
+            },
+            {
+                "assetId": 5731052645,
+                "assetTypeId": 8
+            },
+            {
+                "assetId": 6445262286,
+                "assetTypeId": 30
+            },
+            {
+                "assetId": 6969309778,
+                "assetTypeId": 11
+            },
+            {
+                "assetId": 9120251003,
+                "assetTypeId": 66,
+                "meta": {
+                    "order": 4,
+                    "version": 1
+                }
+            },
+            {
+                "assetId": 9481782649,
+                "assetTypeId": 70,
+                "meta": {
+                    "order": 3,
+                    "version": 1
+                }
+            },
+            {
+                "assetId": 9482991343,
+                "assetTypeId": 71,
+                "meta": {
+                    "order": 3,
+                    "version": 1
+                }
+            },
+            {
+                "assetId": 10726856854,
+                "assetTypeId": 28
+            }
+        ],
+        "animationAssetIds": {
+            "climb": 2510230574,
+            "fall": 2510233257,
+            "jump": 2510236649,
+            "run": 2510238627
+        },
+        "bodyColors": {
+            "headColorId": 1013,
+            "torsoColorId": 1013,
+            "rightArmColorId": 1013,
+            "leftArmColorId": 1013,
+            "rightLegColorId": 1013,
+            "leftLegColorId": 1013
+        },
+        "scales": {
+            "height": 1.05,
+            "width": 1,
+            "head": 1,
+            "depth": 1,
+            "proportion": 1,
+            "bodyType": 0.8
+        },
+        "emotes": [
+            {
+                "assetId": 3696763549,
+                "assetName": "Heisman Pose",
+                "position": 1
+            },
+            {
+                "assetId": 3360692915,
+                "assetName": "Tilt",
+                "position": 2
+            },
+            {
+                "assetId": 3696761354,
+                "assetName": "Air Guitar",
+                "position": 3
+            },
+            {
+                "assetId": 3576968026,
+                "assetName": "Shrug",
+                "position": 4
+            },
+            {
+                "assetId": 3576686446,
+                "assetName": "Hello",
+                "position": 5
+            },
+            {
+                "assetId": 3696759798,
+                "assetName": "Superhero Reveal",
+                "position": 6
+            },
+            {
+                "assetId": 3360689775,
+                "assetName": "Salute",
+                "position": 7
+            },
+            {
+                "assetId": 3360686498,
+                "assetName": "Stadium",
+                "position": 8
+            }
+        ]
+    })
+    return True
+
     self.send_json({
         "resolvedAvatarType": self.game_config.server_core.avatar_type.value,
         "equippedGearVersionIds": [],

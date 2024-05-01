@@ -1,6 +1,7 @@
 import launcher.routines._logic as logic
 import game.assets as assets
 import util.const as const
+import util.resource
 import util.versions
 import config._main
 import dataclasses
@@ -35,7 +36,7 @@ class _arg_type(logic.bin_ssl_arg_type):
 
 class obj_type(logic.bin_ssl_entry, logic.server_entry):
     local_args: _arg_type
-    DIR_NAME = 'Server'
+    BIN_SUBTYPE = util.resource.bin_subtype.SERVER
 
     @functools.cache
     def retr_version(self) -> util.versions.rōblox:

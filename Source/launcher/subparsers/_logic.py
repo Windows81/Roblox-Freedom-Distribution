@@ -22,7 +22,7 @@ MODE_ALIASES = {
     n: m
     for m in ENABLED_LAUNCH_MODES
     for n in [
-        m.value
+        m.value,
     ]
 }
 

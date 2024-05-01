@@ -19,6 +19,12 @@ class dir_type(enum.Enum):
     SSL = 3
 
 
+class bin_subtype(enum.Enum):
+    SERVER = 'Server'
+    PLAYER = 'Player'
+    STUDIO = 'Studio'
+
+
 DEFAULT_CONFIG_PATH = './GameConfig.toml'
 
 
@@ -68,8 +74,8 @@ def retr_full_path(d: dir_type, *paths: str) -> str:
     return full_path
 
 
-def retr_rōblox_full_path(version: util.versions.rōblox, *paths: str) -> str:
-    return retr_full_path(dir_type.RŌBLOX, version.name, *paths)
+def retr_rōblox_full_path(version: util.versions.rōblox, bin_type: bin_subtype, *paths: str) -> str:
+    return retr_full_path(dir_type.RŌBLOX, version.name, bin_type.value, *paths)
 
 
 def retr_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:

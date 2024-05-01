@@ -26,6 +26,7 @@ def _(
     args_list: list[logic.arg_type],
 ) -> list[logic.arg_type]:
 
+    # Enables the `auto_download` flag for every routine, but adds no new routines of its own.
     auto_download = not args_ns.skip_download
     for a in args_list:
         if not isinstance(a, logic.bin_arg_type):

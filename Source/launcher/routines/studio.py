@@ -1,4 +1,5 @@
 import launcher.routines._logic as logic
+import util.resource
 import dataclasses
 import os
 
@@ -22,7 +23,7 @@ class _arg_type(logic.bin_arg_type):
 
 class obj_type(logic.bin_entry):
     local_args: _arg_type
-    DIR_NAME = 'Studio'
+    BIN_SUBTYPE = util.resource.bin_subtype.STUDIO
 
     def save_app_setting(self) -> str:
         '''
