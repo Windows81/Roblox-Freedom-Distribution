@@ -12,6 +12,7 @@ import base64
 import socket
 import enum
 import json
+import ssl
 import re
 import os
 
@@ -151,7 +152,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return
         if self.__open_from_file():
             return
-        self.send_error(404)
+        try:
+            self.send_error(404)
+        except ssl.SSLEOFError:
+            pass
 
     def do_POST(self) -> None:
         if self.__open_from_static():
@@ -160,7 +164,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return
         if self.__open_from_file():
             return
-        self.send_error(404)
+        try:
+            self.send_error(404)
+        except ssl.SSLEOFError:
+            pass
 
     def send_json(
         self,

@@ -86,7 +86,9 @@ Port is specified by the `--webserver_port` or `-wp` option **(defaults to 2006)
 
 ## Studio?
 
-Rōblox Filtering Disabled have a working Studio build from 2022.
+Rōblox Filtering Disabled has a working Studio build from 2022.
+
+[Sodikm](https://archive.org/details/full-sodikm_202308) has a working Studio build from 2018.
 
 You can also use [this 2018M build](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2023-08-31T09%EA%9E%8910Z/v348.Studio.7z) whilst running the Rōblox Filtering Disabled webserver.
 

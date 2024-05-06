@@ -300,20 +300,27 @@ def _(self: web_server_handler) -> bool:
     userid = self.query['userId']
     placeId = self.query['placeId']
     json = {
+        "animations": {},
         "resolvedAvatarType": self.game_config.server_core.avatar_type.value,
         "accessoryVersionIds": [],
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
         "bodyColors": {
             "HeadColor": 1013,
-            "TorsoColor": 1013,
-            "RightArmColor": 1013,
             "LeftArmColor": 1013,
-            "RightLegColor": 1013,
             "LeftLegColor": 1013,
+            "RightArmColor": 1013,
+            "RightLegColor": 1013,
+            "TorsoColor": 1013,
         },
-        "animations": {},
-        "scales": {"Width": 1.0000, "Height": 1.0000, "Head": 1.0000, "Depth": 1.00, "Proportion": 0.0000, "BodyType": 0.0000}
+        "scales": {
+            "Height": 2,
+            "Width": 2,
+            "Head": 2,
+            "Depth": 2,
+            "Proportion": 1,
+            "BodyType": 1,
+        },
     }
     self.send_json(json)
     return True

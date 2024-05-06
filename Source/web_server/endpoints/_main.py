@@ -1,8 +1,9 @@
 from web_server._logic import server_path, web_server_handler
+from .setup_player import _
+from .setup_rcc import _
+
 from .text_filter import _
 from .load_assets import _
-from .game_setup import _
-from .game_join import _
 
 
 @server_path("/")
