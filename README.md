@@ -16,17 +16,23 @@ My use of Rōblox's binaries are unlikely to fall into fair use. Be wary of any 
 
 ## Installation
 
-To install _from source_, run:
+### As a Binary
 
-```
-git clone https://github.com/Windows81/Roblox-Freedom-Distribution rfd
-cd rfd
-pip install -r ./Source/requirements.txt
-```
-
----
+This is good for if you want to deploy quickly on any machine with connection to the internet.
 
 To install _as a binary_, run:
+
+```
+mkdir rfd
+cd rfd
+wget https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe
+```
+
+### From Source
+
+This is good for if you already have Python installed on your machine. Do you want to help contribute to RFD? Use this.
+
+To install _from source_, run:
 
 ```
 git clone https://github.com/Windows81/Roblox-Freedom-Distribution rfd
