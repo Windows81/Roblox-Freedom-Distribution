@@ -291,6 +291,12 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     return True
 
 
+@server_path('/game/validate-machine')
+def _(self: web_server_handler) -> bool:
+    self.send_json({"success": True})
+    return True
+
+
 @server_path('/v1.1/avatar-fetch/')
 def _(self: web_server_handler) -> bool:
     '''
@@ -314,12 +320,12 @@ def _(self: web_server_handler) -> bool:
             "TorsoColor": 1013,
         },
         "scales": {
-            "Height": 2,
-            "Width": 2,
-            "Head": 2,
-            "Depth": 2,
-            "Proportion": 1,
-            "BodyType": 1,
+            "Height": 2.0000,
+            "Width": 2.0000,
+            "Head": 2.0000,
+            "Depth": 2.0000,
+            "Proportion": 0.0000,
+            "BodyType": 0.0000,
         },
     }
     self.send_json(json)

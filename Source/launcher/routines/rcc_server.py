@@ -42,6 +42,14 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def retr_version(self) -> util.versions.rōblox:
         return self.server_config.game_setup.roblox_version
 
+    def save_place_file(self) -> None:
+        from_path = self.server_config.game_setup.place_path
+        if not from_path:
+            return
+
+        to_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
+        shutil.copyfile(from_path, to_path)
+
     def save_app_setting(self) -> str:
         '''
         Modifies settings to point to correct host name.
@@ -98,7 +106,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                 self.get_versioned_path('RCCService.exe'),
                 '-verbose',
                 f'-placeid:{const.DEFAULT_PLACE_ID}',
-                '-localtest', self.gameserver_path,
+                '-localtest', self.get_versioned_path('GameServer.json'),
                 '-settingsfile', self.get_versioned_path(
                     'DevSettingsFile.json'),
                 '-port 64989',
@@ -108,13 +116,11 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         )
 
     def process(self) -> None:
-        place_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
-
-        shutil.copyfile(self.server_config.game_setup.place_path, place_path)
+        self.save_place_file()
         self.save_app_setting()
         self.save_ssl_cert()
 
-        self.gameserver_path = self.save_gameserver()
+        self.save_gameserver()
         if not self.local_args.skip_popen:
             self.make_rcc_popen()
 
