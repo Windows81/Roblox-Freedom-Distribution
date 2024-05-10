@@ -4,7 +4,7 @@ A Rōblox 'revival' framework built with Python; tested on Python 3.10 and 3.12.
 
 Adapted from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
 
-Users can host their own server instances of Rōblox using binaries from a variety of versions throughout their history.
+Users can host their own server instances of Rōblox using binaries from 2018-07-25 or 2021-01-25.
 
 Players can join existing servers.
 
