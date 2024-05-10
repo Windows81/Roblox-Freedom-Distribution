@@ -2,10 +2,9 @@
 $release_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ")
 $root = "$PSScriptRoot"
 
-# Not needed, script automatically pulls.
-# $const = "$root/Source/util/const.py"
-# $const_txt = (Get-Content $const) -replace 'GIT_RELEASE_VERSION =.+', "GIT_RELEASE_VERSION = '''$release_name'''"
-# $const_txt | Set-Content $const
+$const = "$root/Source/util/const.py"
+$const_txt = (Get-Content $const) -replace 'GIT_RELEASE_VERSION =.+', "GIT_RELEASE_VERSION = '''$release_name'''"
+$const_txt | Set-Content $const
 
 git add .
 git commit -m $release_name

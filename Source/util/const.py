@@ -1,32 +1,4 @@
-import requests
-
-MIRROR_ENABLED = False
-MIRROR_OWNER = ""
-MIRROR_REPO = ""
-
-def pull_latest_rel():
-    if MIRROR_ENABLED != True:
-        url = "https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest"
-    else:
-        url = f"https://api.github.com/repos/{MIRROR_OWNER}/{MIRROR_REPO}/releases/latest"
-
-    response = requests.get(url)
-    
-    if response.status_code == 200:
-        release_info = response.json()
-        latest_ver = release_info['tag_name']
-        return latest_ver
-    else:
-        print(f"Failed to fetch latest version! Status code: {response.status_code}")
-        return None
-    
-latest_ver = pull_latest_rel()
-if latest_ver:
-    GIT_RELEASE_VERSION = latest_ver
-else:
-    print("Failed to retrieve the latest version!")
-
-
+GIT_RELEASE_VERSION = '''2024-05-06T2053Z'''
 GIT_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Filtering-Disabled/releases/download/%s/%s.%s.7z'
 
 DEFAULT_PLACE_ID = 1818
