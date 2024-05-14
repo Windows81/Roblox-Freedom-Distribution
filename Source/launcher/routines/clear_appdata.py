@@ -19,12 +19,17 @@ class obj_type(logic.entry):
             b = f.read(l)
         return b == self.base_url_bytes
 
-    def process(self):
+    def process(self) -> None:
         self.base_url_bytes = bytes(self.local_args.base_url, encoding='utf-8')
-        if os.getenv('LocalAppData') is None:
-            return
         http_folder = os.path.join(
-            os.getenv('LocalAppData', ''), 'Temp', 'Roblox', 'http')
+            os.getenv('LocalAppData', ''),
+            'Temp',
+            'Roblox',
+            'http',
+        )
+
+        if not os.path.isdir(http_folder):
+            return
 
         for fn in os.listdir(http_folder):
             full_path = os.path.join(http_folder, fn)

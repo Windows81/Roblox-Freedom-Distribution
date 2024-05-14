@@ -49,7 +49,7 @@ def basic_join(self: web_server_handler):
     }
 
 
-@server_path('/rfd/cert')
+@server_path('/rfd/certificate')
 def _(self: web_server_handler) -> bool:
     if not isinstance(self.server, web_server_ssl):
         return False
@@ -58,7 +58,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/rfd/rbxver')
+@server_path('/rfd/roblox-version')
 def _(self: web_server_handler) -> bool:
     '''
     Used by clients to automatically detect which version to run.

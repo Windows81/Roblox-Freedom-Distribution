@@ -6,7 +6,6 @@ import urllib.error
 import config._main
 import dataclasses
 import subprocess
-import functools
 import threading
 import ssl
 import os
@@ -34,7 +33,7 @@ class arg_type:
 
 
 class server_arg_type(arg_type):
-    server_config: config._main.obj_type
+    game_config: config._main.obj_type
 
 
 class bin_arg_type(arg_type):
@@ -154,7 +153,7 @@ class bin_ssl_entry(bin_entry):
 
         try:
             res = urllib.request.urlopen(
-                f'{self.local_args.get_base_url()}/rfd/cert',
+                f'{self.local_args.get_base_url()}/rfd/certificate',
                 context=bin_ssl_entry.get_none_ssl(),
                 timeout=3,
             )
@@ -173,12 +172,12 @@ class server_entry(entry):
     '''
     Routine entry class that corresponds to a server-sided component.
     '''
-    server_config: config._main.obj_type
+    game_config: config._main.obj_type
     local_args: server_arg_type
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.server_config = self.local_args.server_config
+        self.game_config = self.local_args.game_config
 
 
 class routine:

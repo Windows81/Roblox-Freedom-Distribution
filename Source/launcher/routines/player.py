@@ -60,7 +60,7 @@ class obj_type(logic.bin_ssl_entry):
     def retr_version(self) -> util.versions.rōblox:
         try:
             res = urllib.request.urlopen(
-                f'{self.local_args.get_base_url()}/rfd/rbxver',
+                f'{self.local_args.get_base_url()}/rfd/roblox-version',
                 context=obj_type.get_none_ssl(),
                 timeout=3,
             )
@@ -78,7 +78,7 @@ class obj_type(logic.bin_ssl_entry):
         '''
         path = self.get_versioned_path('AppSettings.xml')
         app_base_url = self.local_args.get_app_base_url()
-        with open(path, 'w') as f:
+        with open(path, 'w', encoding='utf-8') as f:
             f.write('\n'.join([
                 """<?xml version="1.0" encoding="UTF-8"?>""",
                 """<Settings>""",

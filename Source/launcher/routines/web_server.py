@@ -8,12 +8,12 @@ import threading
 
 @dataclasses.dataclass
 class _arg_type(logic.arg_type):
-    server_config: config._main.obj_type
+    game_config: config._main.obj_type
     web_ports: list[logic.port] = dataclasses.field(default_factory=list)
 
 
 class obj_type(logic.server_entry):
-    server_config: config._main.obj_type
+    game_config: config._main.obj_type
     httpds = list[_main.web_server._logic.web_server]()
     local_args: _arg_type
 
@@ -48,7 +48,7 @@ class obj_type(logic.server_entry):
         self.server_running = True
         self.__add_servers(
             web_ports=self.local_args.web_ports,
-            server_config=self.server_config,
+            game_config=self.game_config,
         )
 
     def __del__(self) -> None:

@@ -1,11 +1,13 @@
 import launcher.routines._logic as logic
 import util.versions as versions
+import data_transfer._main
 import util.const as const
 from urllib import parse
 import OpenSSL.crypto
 import config._main
 import http.server
 import mimetypes
+import functools
 import game.user
 import util.ssl
 import base64
@@ -52,11 +54,11 @@ class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
         port: logic.port,
-        server_config: config._main.obj_type,
+        game_config: config._main.obj_type,
         *args, **kwargs,
     ) -> None:
-        self.game_config = server_config
-        self.game_users = game.user.user_dict(self.game_config)
+        self.game_users = game.user.user_dict(game_config)
+        self.game_config = game_config
 
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
@@ -107,6 +109,11 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     sockname: tuple[str, int]
     request: socket.socket
     server: web_server
+
+    @functools.cache
+    def read_content(self) -> bytes:
+        length = int(self.headers.get('content-length', -1))
+        return self.rfile.read(length)
 
     def parse_request(self) -> bool:
         self.is_valid_request = False

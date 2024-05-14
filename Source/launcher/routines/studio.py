@@ -30,7 +30,7 @@ class obj_type(logic.bin_entry):
         Modifies settings to point to correct host name.
         '''
         path = self.get_versioned_path('AppSettings.xml')
-        with open(path, 'w') as f:
+        with open(path, 'w', encoding='utf-8') as f:
             f.writelines([
                 """<?xml version="1.0" encoding="UTF-8"?>""",
                 """<Settings>""",

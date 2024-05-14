@@ -61,7 +61,7 @@ def _(
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
 
-    server_config = config.get_config(args.config_path)
+    game_config = config.get_config(args.config_path)
     routine_args = []
 
     web_port_ipv4 = logic.port(
@@ -81,7 +81,7 @@ def _(
             web_server.arg_type(
                 # IPv6 goes first since `localhost` resolves fist to [::1] on the client.
                 web_ports=[web_port_ipv6, web_port_ipv4],
-                server_config=server_config,
+                game_config=game_config,
             ),
         ])
 
@@ -90,7 +90,7 @@ def _(
             rcc_server.arg_type(
                 rcc_port_num=args.rcc_port,
                 web_port=web_port_ipv4,
-                server_config=server_config,
+                game_config=game_config,
                 skip_popen=args.skip_rcc_popen,
             ),
         ])

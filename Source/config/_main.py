@@ -1,6 +1,6 @@
-
-from config._logic import allocateable as 𝕏
 from typing_extensions import Callable, Optional
+from config._logic import allocateable as 𝕏
+import data_transfer._main
 import config._logic
 import util.versions
 import util.resource
@@ -53,4 +53,6 @@ class obj_type(config._logic._configtype):
 
 @functools.cache
 def get_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
-    return obj_type(path)
+    obj = obj_type(path)
+    obj.set_data_transferer(data_transfer._main.transferer())
+    return obj
