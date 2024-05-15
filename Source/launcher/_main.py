@@ -21,6 +21,11 @@ def parse_args(args: list[str] | None) -> routine_logic.routine:
 
     # Begins populating the argument namespace; errors aren't thrown because the subparser arguments aren't added yet.
     args_namespace = parser.parse_known_args(args)[0]
+
+    if not args_namespace.mode:
+        parser.print_help()
+        parser.exit(1)
+
     mode = sub_logic.MODE_ALIASES[args_namespace.mode]
     chosen_sub_parser = sub_parsers[mode]
 
@@ -52,6 +57,7 @@ def parse_args(args: list[str] | None) -> routine_logic.routine:
     except argparse.ArgumentError as x:
         print(x)
         chosen_sub_parser.print_help()
+        parser.exit(1)
 
     routine_args_list = sub_logic.SERIALISE_ARGS.call_subparser(
         mode,

@@ -34,13 +34,16 @@ class _arg_type(logic.bin_ssl_arg_type):
     def get_app_base_url(self) -> str:
         return f'{self.get_base_url()}/'
 
+    def get_rcc_script(self) -> str:
+        return '\n\n'.join([
+            data_transfer._main.get_rcc_routine(self.game_config),
+            "print('Initialised RFD server scripts.')",
+        ])
+
 
 class obj_type(logic.bin_ssl_entry, logic.server_entry):
     local_args: _arg_type
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
-
-    def get_script(self) -> str:
-        return data_transfer._main.get_rcc_routine(self.game_config)
 
     @functools.cache
     def retr_version(self) -> util.versions.rōblox:
@@ -77,7 +80,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             'RFDStarterScript.lua',
         ))
         with open(path, 'w', encoding='utf-8') as f:
-            f.write(self.get_script())
+            f.write(self.local_args.get_rcc_script())
         return path
 
     def save_gameserver(self) -> str:
