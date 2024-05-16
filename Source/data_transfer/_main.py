@@ -7,7 +7,6 @@ import uuid
 import attr
 
 SCRIPT_FORMAT = """
-print('Initialised RFD server scripts.')
 _G.RFD = {%(functions)s}
 spawn(function()
     local BaseUrl = game:GetService("ContentProvider").BaseUrl:lower()

@@ -449,10 +449,10 @@ def _(self: web_server_handler) -> bool:
             "leftLegColorId": 1013
         },
         "scales": {
-            "height": 1.05,
-            "width": 1,
-            "head": 1,
-            "depth": 1,
+            "height": 2,
+            "width": 2,
+            "head": 2,
+            "depth": 2,
             "proportion": 1,
             "bodyType": 0.8
         },

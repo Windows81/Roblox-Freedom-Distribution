@@ -124,13 +124,13 @@ class bin_entry(ver_entry, popen_entry):
         elif self.local_args.auto_download:
             print(
                 'Downloading "%s" for Rōblox version %s' %
-                (self.BIN_SUBTYPE, self.rōblox_version)
+                (self.BIN_SUBTYPE, self.rōblox_version.name)
             )
             downloader.download_binary(self.rōblox_version, self.BIN_SUBTYPE)
         else:
             raise FileNotFoundError(
                 '"%s" not found for Rōblox version %s.' %
-                (self.BIN_SUBTYPE, self.rōblox_version)
+                (self.BIN_SUBTYPE, self.rōblox_version.name)
             )
 
 

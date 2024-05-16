@@ -4,6 +4,6 @@ Two types of threads access `obj`, a `transferer` object:
 
 ### Caller Threads
 
-They call `call
+They execute `obj.call` and block until the result is returned.
 
 1. Extractor threads
