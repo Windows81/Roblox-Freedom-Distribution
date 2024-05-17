@@ -1,5 +1,6 @@
 #Version 1.00
 echo "Make sure you have wget and wine installed!"
+sleep 3
 mkdir /home/$USER/RobloxFreedomDistribution
 mkdir /home/$USER/RobloxFreedomDistribution/settings
 wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/LinuxClient/joinnew.sh -O /home/$USER/RobloxFreedomDistribution
