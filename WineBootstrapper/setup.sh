@@ -10,3 +10,6 @@ wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/mai
 wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt -O /home/$USER/RobloxFreedomDistribution/settings/winebin.txt
 mkdir /home/$USER/.wine/drive_c/robloxmaps
 wget https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl -O /home/$USER/.wine/drive_c/robloxmaps/2007Crossroads.rbxl
+#Chmod 
+/home/$USER/RobloxFreedomDistribution/joinnew.sh
+/home/$USER/RobloxFreedomDistribution/hostnew.sh
