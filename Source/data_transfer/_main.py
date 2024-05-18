@@ -67,7 +67,7 @@ class transferer:
             try:
                 item = self.input_queue.get(
                     block=True,
-                    timeout=30 if i == 0 else 0.2,
+                    timeout=30 if i == 0 else 1/30,
                 )
             except queue.Empty:
                 break

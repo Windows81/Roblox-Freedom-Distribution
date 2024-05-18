@@ -30,8 +30,8 @@ winebin=$(cat /home/$USER/RobloxFreedomDistribution/settings/winebin.txt)
 # Perform actions based on the selected client version
 case $selected_version in
     "Join")
-    # Execute actions for Join
-    command="$winebin /home/$USER/RobloxFreedomDistribution/RFD.exe player -rh $ip_address -rp $port -wp $secondary_port -u $username"
-    eval "$command"
+        # Execute actions for Join
+        command="$winebin /home/$USER/RobloxFreedomDistribution/RFD.exe player -rh $ip_address -rp $port -wp $secondary_port -u $username"
+        eval "$command"
     ;;
 esac
