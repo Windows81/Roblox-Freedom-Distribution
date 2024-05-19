@@ -30,14 +30,16 @@ def parse_args(args: list[str] | None) -> routine_logic.routine:
     chosen_sub_parser = sub_parsers[mode]
 
     # Adds parseable arguments for `chosen_sub_parser` which exist only under the current launch mode.
-    sub_logic.ADD_MODE_ARGS.call_subparser(
+    sub_logic.call_subparser(
+        sub_logic.ADD_MODE_ARGS,
         mode,
         parser,
         chosen_sub_parser,
     )
 
     # Adds parseable arguments, which exist under all launch modes, into `chosen_sub_parser`.
-    sub_logic.ADD_MODE_ARGS.call_auxs(
+    sub_logic.call_auxs(
+        sub_logic.ADD_MODE_ARGS,
         mode,
         parser,
         chosen_sub_parser,
@@ -59,13 +61,15 @@ def parse_args(args: list[str] | None) -> routine_logic.routine:
         chosen_sub_parser.print_help()
         parser.exit(1)
 
-    routine_args_list = sub_logic.SERIALISE_ARGS.call_subparser(
+    routine_args_list = sub_logic.call_subparser(
+        sub_logic.SERIALISE_ARGS,
         mode,
         parser,
         args_namespace,
     )
 
-    sub_logic.SERIALISE_ARGS.call_auxs(
+    sub_logic.call_auxs(
+        sub_logic.SERIALISE_ARGS,
         mode,
         args_namespace,
         routine_args_list,

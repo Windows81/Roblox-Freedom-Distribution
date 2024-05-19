@@ -15,7 +15,7 @@ def subparse(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO)
+@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO, {studio.arg_type})
 def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,

@@ -32,7 +32,7 @@ def subparse(
         help='Port number to connect this program to the web server.',
     )
     subparser.add_argument(
-        '--run_client', '-rc',
+        '--run_client', '-rc', '--run_player',
         action='store_true',
         help='Runs an instance of the player immediately after starting the server.',
     )
@@ -55,7 +55,7 @@ def subparse(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.SERVER)
+@sub_logic.serialise_args(sub_logic.launch_mode.SERVER, {web_server.arg_type, rcc_server.arg_type, player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,

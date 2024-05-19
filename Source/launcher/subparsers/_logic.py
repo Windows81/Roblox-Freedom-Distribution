@@ -1,3 +1,4 @@
+from typing import Callable
 import typing_extensions
 import enum
 
@@ -10,12 +11,12 @@ class launch_mode(enum.Enum):
     DOWNLOAD = 'download'
 
 
-ENABLED_LAUNCH_MODES = [
+ENABLED_LAUNCH_MODES = {
     launch_mode.SERVER,
     launch_mode.PLAYER,
     # launch_mode.STUDIO, TODO: get some Studio binaries.
     launch_mode.DOWNLOAD,
-]
+}
 
 
 MODE_ALIASES = {
@@ -27,50 +28,45 @@ MODE_ALIASES = {
 }
 
 
-class callable_list(list[typing_extensions.Callable]):
-    def call(self, *args, **kwargs) -> list:
-        return [
-            r
-            for f in self
-            for r in f(*args, **kwargs) or []
-        ]
+ADD_MODE_ARGS: dict[launch_mode, list[Callable]] = {
+    m: [] for m in launch_mode
+}
+SERIALISE_ARGS: dict[launch_mode, list[Callable]] = {
+    m: [] for m in launch_mode
+}
+SERIALISE_TYPE_SETS: dict[launch_mode, set[type]] = {
+    m: set() for m in launch_mode
+}
 
 
-T = typing_extensions.TypeVar('T')
+def call_auxs(args_table: dict[launch_mode, list[Callable]], l_mode: launch_mode, *a, **kwa) -> list:
+    return [
+        result
+        for func in args_table[launch_mode.ALWAYS]
+        for result in (func(l_mode, *a, **kwa) or [])
+    ]
 
 
-class callable_dict(dict[T, callable_list]):
-    def add(self, k: T, *f: typing_extensions.Callable):
-        self.setdefault(k, callable_list()).extend(f)
-
-    def call(self, k: T, *args, **kwargs) -> list:
-        l = self.get(k, None)
-        return \
-            l.call(*args, **kwargs) \
-            if l else []
-
-
-class mode_dict(callable_dict[launch_mode]):
-    def call_auxs(self, mode: launch_mode, *args, **kwargs) -> list:
-        return super().call(launch_mode.ALWAYS, mode, *args, **kwargs)
-
-    def call_subparser(self, l_mode: launch_mode, *args, **kwargs) -> list:
-        return super().call(l_mode, *args, **kwargs)
-
-
-ADD_MODE_ARGS = mode_dict()
-SERIALISE_ARGS = mode_dict()
+def call_subparser(args_table: dict[launch_mode, list[Callable]], l_mode: launch_mode, *a, **kwa) -> list:
+    return [
+        result
+        for func in args_table[l_mode]
+        for result in (func(*a, **kwa) or [])
+    ]
 
 
 def add_args(launch_mode: launch_mode):
     def inner(f):
-        ADD_MODE_ARGS.add(launch_mode, f)
+        ADD_MODE_ARGS[launch_mode].append(f)
         return f
     return inner
 
 
-def serialise_args(launch_mode: launch_mode):
+def serialise_args(launch_mode: launch_mode, types: set[type]):
+    resolved_types = {t for typ in types for t in typ.mro()}
+
     def inner(f):
-        SERIALISE_ARGS.add(launch_mode, f)
+        SERIALISE_TYPE_SETS[launch_mode].update(resolved_types)
+        SERIALISE_ARGS[launch_mode].append(f)
         return f
     return inner

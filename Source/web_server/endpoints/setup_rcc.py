@@ -21,16 +21,3 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     self.send_json({})
     return True
-
-
-# TODO: handle social requests.
-@server_path('/Game/LuaWebService/HandleSocialRequest.ashx')
-def _(self: web_server_handler) -> bool:
-    match self.query['method']:
-        case 'GetGroupRank':
-            self.send_data(
-                bytes(f'<Value Type="integer">{255}</Value>', encoding='utf-8'))
-            return True
-
-    self.send_json({})
-    return True

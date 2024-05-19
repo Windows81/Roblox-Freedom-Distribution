@@ -105,6 +105,8 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                         self.game_config.server_assignment.players.maximum,
                     "PreferredPlayerCapacity":
                         self.game_config.server_assignment.players.preferred,
+                    "CharacterAppearance":
+                        f"{base_url}/v1.1/avatar-fetch",
                     "MaxGameInstances":
                         self.game_config.server_assignment.instances.count,
                     "GsmInterval":

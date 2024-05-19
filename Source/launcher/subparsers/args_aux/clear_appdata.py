@@ -18,7 +18,7 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS)
+@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS, {clear_appdata.arg_type})
 def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
@@ -26,7 +26,7 @@ def _(
 ) -> list[logic.arg_type]:
 
     if args_ns.keep_cache:
-        return
+        return []
     base_urls = set(
         a.get_base_url()
         for a in args_list

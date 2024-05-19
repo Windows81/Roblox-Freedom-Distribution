@@ -36,7 +36,7 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.PLAYER)
+@sub_logic.serialise_args(sub_logic.launch_mode.PLAYER, {player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,

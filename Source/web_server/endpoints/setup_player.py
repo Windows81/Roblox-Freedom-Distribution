@@ -46,6 +46,8 @@ def basic_join(self: web_server_handler):
             user_id,
         'CharacterAppearanceId':
             user_id,
+        'CharacterAppearance':
+            f'{self.hostname}/v1.1/avatar-fetch?userId={user_id}',
     }
 
 
@@ -332,171 +334,41 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/v1/avatar')
-@server_path('/v1/avatar/')
-@server_path('/v1/avatar-fetch')
-@server_path('/v1/avatar-fetch/')
+@server_path('/v1/avatar', min_version=400)
+@server_path('/v1/avatar/', min_version=400)
+@server_path('/v1/avatar-fetch', min_version=400)
+@server_path('/v1/avatar-fetch/', min_version=400)
 def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v463.
     '''
     self.send_json({
-        "resolvedAvatarType": "R6",
-        "equippedGearVersionIds": [],
-        "backpackGearVersionIds": [],
-        "assetAndAssetTypeIds": [
-            {
-                "assetId": 6340101,
-                "assetTypeId": 17
-            },
-            {
-                "assetId": 34247191,
-                "assetTypeId": 8
-            },
-            {
-                "assetId": 48474294,
-                "assetTypeId": 41,
-                "meta": {
-                    "order": 11,
-                    "version": 1
-                }
-            },
-            {
-                "assetId": 121390054,
-                "assetTypeId": 42
-            },
-            {
-                "assetId": 154386348,
-                "assetTypeId": 12
-            },
-            {
-                "assetId": 183808364,
-                "assetTypeId": 8
-            },
-            {
-                "assetId": 190245296,
-                "assetTypeId": 43
-            },
-            {
-                "assetId": 192483960,
-                "assetTypeId": 47
-            },
-            {
-                "assetId": 201733574,
-                "assetTypeId": 47
-            },
-            {
-                "assetId": 261826995,
-                "assetTypeId": 42
-            },
-            {
-                "assetId": 2846257298,
-                "assetTypeId": 8
-            },
-            {
-                "assetId": 5731052645,
-                "assetTypeId": 8
-            },
-            {
-                "assetId": 6445262286,
-                "assetTypeId": 30
-            },
-            {
-                "assetId": 6969309778,
-                "assetTypeId": 11
-            },
-            {
-                "assetId": 9120251003,
-                "assetTypeId": 66,
-                "meta": {
-                    "order": 4,
-                    "version": 1
-                }
-            },
-            {
-                "assetId": 9481782649,
-                "assetTypeId": 70,
-                "meta": {
-                    "order": 3,
-                    "version": 1
-                }
-            },
-            {
-                "assetId": 9482991343,
-                "assetTypeId": 71,
-                "meta": {
-                    "order": 3,
-                    "version": 1
-                }
-            },
-            {
-                "assetId": 10726856854,
-                "assetTypeId": 28
-            }
-        ],
-        "animationAssetIds": {
-            "climb": 2510230574,
-            "fall": 2510233257,
-            "jump": 2510236649,
-            "run": 2510238627
+        "playerAvatarType": "R15",
+        "scales": {
+            "height": 1.0,
+            "width": 1.0,
+            "head": 1.0,
+            "depth": 1.00,
+            "proportion": 0.0,
+            "bodyType": 0.0
         },
         "bodyColors": {
-            "headColorId": 1013,
-            "torsoColorId": 1013,
-            "rightArmColorId": 1013,
-            "leftArmColorId": 1013,
-            "rightLegColorId": 1013,
-            "leftLegColorId": 1013
+            "headColorId": 1002,
+            "torsoColorId": 1002,
+            "rightArmColorId": 1002,
+            "leftArmColorId": 1002,
+            "rightLegColorId": 1002,
+            "leftLegColorId": 1002
         },
-        "scales": {
-            "height": 2,
-            "width": 2,
-            "head": 2,
-            "depth": 2,
-            "proportion": 1,
-            "bodyType": 0.8
-        },
+        "assets": [
+            {"id": 63690008, "name": "Pal Hair", "assetType": {"id": 41, "name": "HairAccessory"},
+                "currentVersionId": 8443736161, "meta": {"order": 11, "version": 1}},
+        ],
+        "defaultShirtApplied": False,
+        "defaultPantsApplied": False,
         "emotes": [
-            {
-                "assetId": 3696763549,
-                "assetName": "Heisman Pose",
-                "position": 1
-            },
-            {
-                "assetId": 3360692915,
-                "assetName": "Tilt",
-                "position": 2
-            },
-            {
-                "assetId": 3696761354,
-                "assetName": "Air Guitar",
-                "position": 3
-            },
-            {
-                "assetId": 3576968026,
-                "assetName": "Shrug",
-                "position": 4
-            },
-            {
-                "assetId": 3576686446,
-                "assetName": "Hello",
-                "position": 5
-            },
-            {
-                "assetId": 3696759798,
-                "assetName": "Superhero Reveal",
-                "position": 6
-            },
-            {
-                "assetId": 3360689775,
-                "assetName": "Salute",
-                "position": 7
-            },
-            {
-                "assetId": 3360686498,
-                "assetName": "Stadium",
-                "position": 8
-            }
+            {"assetId": 3360689775, "assetName": "Salute", "position": 1},
+            {"assetId": 3576968026, "assetName": "Shrug", "position": 2},
         ]
     })
     return True
@@ -684,4 +556,55 @@ def _(self: web_server_handler) -> bool:
     '''
     To simplify the server program, let's not there be avatar thumbnail images.
     '''
+    return True
+
+
+# TODO: handle social requests.
+@server_path('/Game/LuaWebService/HandleSocialRequest.ashx')
+def _(self: web_server_handler) -> bool:
+    match self.query['method']:
+        case 'GetGroupRank':
+            self.send_data(
+                bytes(f'<Value Type="integer">{255}</Value>', encoding='utf-8'))
+            return True
+
+    self.send_json({})
+    return True
+
+
+@server_path('/v2/users/([0-9]+)/groups/roles', regex=True)
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    self.send_json({
+        "data": [
+            {
+                "group": {
+                    "id": group_id,
+                    "name": "string",
+                    "memberCount": 0,
+                    "hasVerifiedBadge": True,
+                },
+                "role": {
+                    "id": group_id,
+                    "name": "string",
+                    "rank": 255,
+                },
+                "isNotificationsEnabled": True,
+            }
+            for group_id in [
+                1200769,
+                2868472,
+                4199740,
+                4265462,
+                4265456,
+                4265443,
+                4265449,
+            ]
+        ]
+    })
+    return True
+
+
+@server_path('/gametransactions/getpendingtransactions/', min_version=400)
+def _(self: web_server_handler) -> bool:
+    self.send_json([])
     return True

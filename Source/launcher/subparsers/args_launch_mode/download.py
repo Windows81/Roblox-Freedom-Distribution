@@ -30,7 +30,7 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.DOWNLOAD)
+@sub_logic.serialise_args(sub_logic.launch_mode.DOWNLOAD, {download.arg_type})
 def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
