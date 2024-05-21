@@ -26,17 +26,21 @@ class _entry:
 
 
 class arg_type:
-    obj_type: type[_entry]
+    obj_type: type['entry']
 
     def sanitise(self) -> None:
         pass
+
+
+class popen_arg_type(arg_type):
+    debug_x96: bool
 
 
 class server_arg_type(arg_type):
     game_config: config._main.obj_type
 
 
-class bin_arg_type(arg_type):
+class bin_arg_type(popen_arg_type):
     auto_download: bool
 
     def get_base_url(self) -> str:
@@ -73,16 +77,38 @@ class popen_entry(entry, subprocess.Popen):
     '''
     Routine entry class that corresponds to a Popen subprocess object.
     '''
+    local_args: popen_arg_type
+    popen_mains: list[subprocess.Popen]
+    popen_daemons: list[subprocess.Popen]
+    debug_popen: subprocess.Popen
 
     def make_popen(self, *args, **kwargs) -> None:
-        subprocess.Popen.__init__(self, *args, **kwargs)
+        self.principal = subprocess.Popen(*args, **kwargs)
+        self.popen_mains = [
+            self.principal,
+        ]
+        self.popen_daemons = [
+            *(
+                [
+                    subprocess.Popen([
+                        'x96dbg',
+                        '-p', str(self.principal.pid),
+                    ])
+                ]
+                if self.local_args.debug_x96
+                else []
+            )
+        ]
 
     def __del__(self) -> None:
         if hasattr(self, '_handle'):
             subprocess.Popen.__del__(self)
 
     def wait(self) -> None:
-        subprocess.Popen.wait(self)
+        for p in self.popen_mains:
+            p.wait()
+        for p in self.popen_daemons:
+            p.terminate()
 
 
 class ver_entry(entry):
@@ -140,7 +166,7 @@ class bin_ssl_entry(bin_entry):
     '''
     local_args: bin_ssl_arg_type
 
-    @staticmethod
+    @ staticmethod
     def get_none_ssl() -> ssl.SSLContext:
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
@@ -181,6 +207,12 @@ class server_entry(entry):
 
 
 class routine:
+    '''
+    Contains a list of `entry` objects.
+    A routine is initialised with a list of argument data-class objects.
+    Each of these objects points to a class, whose `__init__` method is called with the data in that argument object.
+
+    '''
     entries: list[entry]
 
     def __init__(self, *args_list: arg_type) -> None:
@@ -188,7 +220,7 @@ class routine:
         for args in args_list:
             args.sanitise()
             e = args.obj_type(args)
-            self.entries.append(e)  # type: ignore
+            self.entries.append(e)
             e.process()
 
     def wait(self):

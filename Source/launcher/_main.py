@@ -1,5 +1,5 @@
 from .subparsers.args_launch_mode import download, player, server, studio
-from .subparsers.args_aux import clear_appdata, download
+from .subparsers.args_aux import clear_appdata, download, debug
 
 import launcher.routines._logic as routine_logic
 import launcher.subparsers._logic as sub_logic

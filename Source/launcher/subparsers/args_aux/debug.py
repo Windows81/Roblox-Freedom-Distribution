@@ -2,6 +2,8 @@ import launcher.subparsers._logic as sub_logic
 import launcher.routines._logic as logic
 import argparse
 
+DEBUGGABLE_ARG_SUPERTYPE = logic.popen_arg_type
+
 
 @sub_logic.add_args(sub_logic.launch_mode.ALWAYS)
 def _(
@@ -9,13 +11,20 @@ def _(
     parser: argparse.ArgumentParser,
     subparser: argparse.ArgumentParser,
 ) -> None:
-
-    if mode == sub_logic.launch_mode.DOWNLOAD:
+    if DEBUGGABLE_ARG_SUPERTYPE not in sub_logic.SERIALISE_TYPE_SETS[mode]:
         return
-    subparser.add_argument(
-        '--skip_download',
+    debug_mutex = subparser.add_mutually_exclusive_group()
+
+    debug_mutex.add_argument(
+        '--debug',
         action='store_true',
-        help='Disables auto-download of RFD binaries from the internet. '
+        help='Opens an instance of x96dbg and attaches it to the running "%s" binary.' % mode.value
+    )
+
+    debug_mutex.add_argument(
+        '--debug_all',
+        action='store_true',
+        help='Opens instances of x96dbg and attaches them to all running binaries.'
     )
 
 
@@ -26,10 +35,18 @@ def _(
     args_list: list[logic.arg_type],
 ) -> list[logic.arg_type]:
 
-    # Enables the `auto_download` flag for every routine, but adds no new routines of its own.
-    auto_download = not args_ns.skip_download
-    for a in args_list:
-        if not isinstance(a, logic.bin_arg_type):
-            continue
-        a.auto_download = auto_download
+    for i, a in enumerate(
+        a
+        for a in args_list
+        if isinstance(a, DEBUGGABLE_ARG_SUPERTYPE)
+    ):
+
+        a.debug_x96 = (
+            True
+            if args_ns.debug_all
+            else i == 1
+            if args_ns.debug
+            else False
+        )
+
     return []
