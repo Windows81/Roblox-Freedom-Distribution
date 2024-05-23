@@ -1,3 +1,5 @@
+# A Defence of Fair-Use for Revivals Under US Copyright Law
+
 I visited Chapman University's legal library and read through "Intellectual Property Law For Business Lawyers 2009-2010 Edition" to look for how well fair use defences can work here.
 
 Even if we engage in copyright infringement, courts will judge for fair use against a set of criteria.

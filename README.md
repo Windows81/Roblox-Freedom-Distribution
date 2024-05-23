@@ -14,7 +14,7 @@ Everything here is free-as-in-freedom software.
 
 My use of Rōblox's binaries are unlikely to fall into fair use. Be wary of any potential copyright takedowns.
 
-In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Consider using other means.
+In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Consider using other means.  Also consult this [document](./LEGAL.md) if you want to know why I think I'm protected under fair-use law.
 
 ## Installation
 
