@@ -44,7 +44,7 @@ def _(
         a.debug_x96 = (
             True
             if args_ns.debug_all
-            else i == 1
+            else i == 0
             if args_ns.debug
             else False
         )

@@ -360,9 +360,11 @@ def _(self: web_server_handler) -> bool:
             "rightLegColorId": 1002,
             "leftLegColorId": 1002
         },
-        "assets": [
-            {"id": 63690008, "name": "Pal Hair", "assetType": {"id": 41, "name": "HairAccessory"},
-                "currentVersionId": 8443736161, "meta": {"order": 11, "version": 1}},
+        "assetAndAssetTypeIds": [
+            {
+                "assetId": '63690008',
+                "assetTypeId": 28
+            },
         ],
         "defaultShirtApplied": False,
         "defaultPantsApplied": False,
