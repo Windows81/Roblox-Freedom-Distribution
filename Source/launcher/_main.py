@@ -68,7 +68,7 @@ def parse_args(args: list[str] | None) -> routine_logic.routine:
         args_namespace,
     )
 
-    sub_logic.call_auxs(
+    routine_args_list += sub_logic.call_auxs(
         sub_logic.SERIALISE_ARGS,
         mode,
         args_namespace,

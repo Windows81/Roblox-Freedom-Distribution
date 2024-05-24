@@ -310,7 +310,26 @@ def _(self: web_server_handler) -> bool:
     json = {
         "animations": {},
         "resolvedAvatarType": self.game_config.server_core.avatar_type.value,
-        "accessoryVersionIds": [],
+        "accessoryVersionIds": [
+            10726856854,
+            9482991343,
+            9481782649,
+            9120251003,
+            6445262286,
+            6969309778,
+            5731052645,
+            2846257298,
+            121390054,
+            261826995,
+            154386348,
+            201733574,
+            48474294,
+            6340101,
+            192483960,
+            190245296,
+            183808364,
+            34247191,
+        ],
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
         "bodyColors": {
@@ -322,12 +341,12 @@ def _(self: web_server_handler) -> bool:
             "TorsoColor": 1013,
         },
         "scales": {
-            "Height": 2.0000,
-            "Width": 2.0000,
-            "Head": 2.0000,
-            "Depth": 2.0000,
-            "Proportion": 0.0000,
-            "BodyType": 0.0000,
+            "Height": 1,
+            "Width": 1,
+            "Head": 1,
+            "Depth": 1,
+            "Proportion": 0,
+            "BodyType": 0,
         },
     }
     self.send_json(json)
@@ -341,40 +360,8 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v463.
+    TODO: properly implement avatars.
     '''
-    self.send_json({
-        "playerAvatarType": "R15",
-        "scales": {
-            "height": 1.0,
-            "width": 1.0,
-            "head": 1.0,
-            "depth": 1.00,
-            "proportion": 0.0,
-            "bodyType": 0.0
-        },
-        "bodyColors": {
-            "headColorId": 1002,
-            "torsoColorId": 1002,
-            "rightArmColorId": 1002,
-            "leftArmColorId": 1002,
-            "rightLegColorId": 1002,
-            "leftLegColorId": 1002
-        },
-        "assetAndAssetTypeIds": [
-            {
-                "assetId": '63690008',
-                "assetTypeId": 28
-            },
-        ],
-        "defaultShirtApplied": False,
-        "defaultPantsApplied": False,
-        "emotes": [
-            {"assetId": 3360689775, "assetName": "Salute", "position": 1},
-            {"assetId": 3576968026, "assetName": "Shrug", "position": 2},
-        ]
-    })
-    return True
-
     self.send_json({
         "resolvedAvatarType": self.game_config.server_core.avatar_type.value,
         "equippedGearVersionIds": [],
@@ -476,22 +463,15 @@ def _(self: web_server_handler) -> bool:
             "climb": 2510230574
         },
         "bodyColors": {
-            "headColorId": 105,
-            "torsoColorId": 105,
-            "rightArmColorId": 105,
-            "leftArmColorId": 105,
-            "rightLegColorId": 105,
-            "leftLegColorId": 105,
-
-            "HeadColor": 1013,
-            "TorsoColor": 1013,
-            "RightUpperArm": 1013,
-            "LeftArmColor": 1013,
-            "RightLegColor": 1013,
-            "LeftLegColor": 1013,
+            "headColorId": 1013,
+            "torsoColorId": 1013,
+            "rightArmColorId": 1013,
+            "leftArmColorId": 1013,
+            "rightLegColorId": 1013,
+            "leftLegColorId": 1013,
         },
         "scales": {
-            "height": 1.05,
+            "height": 1,
             "width": 1,
             "head": 1,
             "depth": 1,

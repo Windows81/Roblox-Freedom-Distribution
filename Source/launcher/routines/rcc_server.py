@@ -1,10 +1,10 @@
 import launcher.routines._logic as logic
-import game.assets as assets
 import util.const as const
 import data_transfer._main
 import util.resource
 import util.versions
 import config._main
+import assets._main
 import dataclasses
 import subprocess
 import functools
@@ -54,7 +54,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         if not from_path:
             return
 
-        to_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
+        to_path = assets._main.get_asset_path(const.DEFAULT_PLACE_ID)
         shutil.copyfile(from_path, to_path)
 
     def save_app_setting(self) -> str:

@@ -1,20 +1,26 @@
 from web_server._logic import web_server_handler, server_path
-from game.assets import load_asset
+import assets._main
 
 
 @server_path("/asset")
 @server_path("/asset/")
 @server_path("/v1/asset")
+@server_path("/v1/asset/")
 @server_path("/.127.0.0.1/asset/")
 def _(self: web_server_handler) -> bool:
-    try:
-        aid = int(self.query['id'])
-    except ValueError:
-        return False
-    except KeyError:
+    asset_id = next(
+        i for i in [
+            assets._main.resolve_asset_id(
+                self.query.get('id', None)),
+            assets._main.resolve_asset_version_id(
+                self.query.get('assetversionid', None)),
+        ]
+        if i != None
+    )
+    if not asset_id:
         return False
 
-    asset = load_asset(aid)
+    asset = assets._main.load_asset(asset_id)
     if not asset:
         return False
 

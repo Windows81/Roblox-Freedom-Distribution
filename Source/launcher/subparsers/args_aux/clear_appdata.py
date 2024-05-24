@@ -36,9 +36,11 @@ def _(
         if isinstance(a, logic.bin_arg_type)
     )
 
-    return [
+    args_list[:0] = [
         clear_appdata.arg_type(
             base_url=base,
         )
         for base in base_urls
     ]
+
+    return []
