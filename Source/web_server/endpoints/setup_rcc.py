@@ -21,3 +21,34 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     self.send_json({})
     return True
+
+
+@server_path('/v1.1/game-start-info', min_version=400)
+def _(self: web_server_handler) -> bool:
+    self.send_json({
+        "gameAvatarType": "PlayerChoice",
+        "allowCustomAnimations": "True",
+        "universeAvatarCollisionType": "OuterBox",
+        "universeAvatarBodyType": "Standard",
+        "jointPositioningType": "ArtistIntent",
+        "message": "",
+        "universeAvatarMinScales": {
+            "height": 0,
+            "width": 0,
+            "head": 0,
+            "depth": 0,
+            "proportion": 0,
+            "bodyType": 0,
+        },
+        "universeAvatarMaxScales": {
+            "height": 1e9,
+            "width": 1e9,
+            "head": 1e9,
+            "depth": 1e9,
+            "proportion": 1e9,
+            "bodyType": 1e9,
+        },
+        "universeAvatarAssetOverrides": [],
+        "moderationStatus": None,
+    })
+    return True

@@ -19,7 +19,7 @@ creator.name = 'ÒÓ'
 
 [server_core]
 chat_style = 'ClassicAndBubble'
-avatar_type = 'R15'
+avatar_type = 'R6'
 
 # Python function `RESULT` which generates an RFD-specific user code if one isn't provided.
 # Server maintainers should review the code because it's used by 'eval'.
