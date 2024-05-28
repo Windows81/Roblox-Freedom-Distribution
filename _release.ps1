@@ -1,5 +1,5 @@
 # Packs Rōblox executables into GitHub releases that can be downloaded.
-$release_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ")
+$release_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" (curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
 $root = "$PSScriptRoot"
 
 $const = "$root/Source/util/const.py"
