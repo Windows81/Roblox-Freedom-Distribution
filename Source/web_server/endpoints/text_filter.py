@@ -12,12 +12,27 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path("/moderation/v2/filtertext")
 def _(self: web_server_handler) -> bool:
-    field_data = str(self.read_content(), encoding='utf-8')
-    qs = urllib.parse.parse_qs(field_data)
 
-    orig_text, user_id = qs['text'][0], int(qs['userId'][0])
-    user_code = self.server.game_users.get_code_from_id(user_id) or ''
-    mod_text = self.game_config.server_core.filter_text(user_code, orig_text)
+    # Manually parsing here since `self.query` isn't automatically populated prior.
+    field_data = str(self.read_content(), encoding='utf-8')
+    self.query = dict(urllib.parse.parse_qsl(field_data))
+
+    orig_text = self.query.get('text', None)
+    if not orig_text:
+        return False
+
+    user_id = self.server.game_users.sanitise_id_num(self.query.get('userId'))
+    if not user_id:
+        return False
+
+    user_code = self.server.game_users.get_code_from_id_num(user_id)
+    if not user_code:
+        return False
+
+    mod_text = self.game_config.server_core.filter_text(
+        user_code,
+        orig_text,
+    )
 
     self.send_json({
         "success": True,

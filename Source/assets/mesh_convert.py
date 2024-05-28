@@ -1049,7 +1049,8 @@ def export_mesh_v3(meshData: FileMeshData) -> bytes:
         40,
         12,
         4,
-        len(meshData.LODs),
+        # There has to be at least two LODs ( [0, 1234] ) if not ROBLOX will complain about an empty mesh
+        max(len(meshData.LODs), 2),
         len(meshData.vnts),
         len(meshData.full_faces) if len(meshData.LODs) > 1 and len(
             meshData.full_faces) > len(meshData.faces) else len(meshData.faces),
@@ -1065,31 +1066,52 @@ def export_mesh_v3(meshData: FileMeshData) -> bytes:
         for i in range(0, len(meshData.faces)):
             finalmesh += meshData.faces[i].export_data()
 
-    for i in range(0, len(meshData.LODs)):
-        finalmesh += meshData.LODs[i].to_bytes(4, "little")
+    if len(meshData.LODs) > 1:
+        for i in range(0, len(meshData.LODs)):
+            finalmesh += meshData.LODs[i].to_bytes(4, "little")
+    else:
+        finalmesh += (0).to_bytes(4, "little")
+        finalmesh += (len(meshData.faces)).to_bytes(4, "little")
 
     return finalmesh
 
 
-def read_mesh_data(data: bytes) -> FileMeshData:
-    meshVersion = get_mesh_version(data)
+def read_mesh_data(data: bytes, meshVersion: float) -> FileMeshData:
     startingOffset = data.find(b"\n")
-    debug_print(f"meshVersion={meshVersion}, startingOffset={startingOffset}")
 
     if meshVersion == 1.0:
-        meshData: FileMeshData = read_mesh_v1(data, startingOffset + 1, 0.5)
+        meshData: FileMeshData = read_mesh_v1(
+            data, startingOffset + 1, 0.5)
+
     elif meshVersion == 1.1:
         meshData: FileMeshData = read_mesh_v1(
             data, startingOffset + 1, 1.0, False)
+
     elif meshVersion == 2.0:
-        meshData: FileMeshData = read_mesh_v2(data, startingOffset + 1)
+        meshData: FileMeshData = read_mesh_v2(
+            data, startingOffset + 1)
+
     elif meshVersion == 3.0 or meshVersion == 3.1:
-        meshData: FileMeshData = read_mesh_v3(data, startingOffset + 1)
-    elif meshVersion == 4.0 or meshVersion == 4.1:
-        meshData: FileMeshData = read_mesh_v4(data, startingOffset + 1)
+        meshData: FileMeshData = read_mesh_v3(
+            data, startingOffset + 1)
+
+    elif meshVersion == 4.0 or meshVersion == 4.01 or meshVersion == 4.1:
+        meshData: FileMeshData = read_mesh_v4(
+            data, startingOffset + 1)
+
     elif meshVersion == 5.0 or meshVersion == 5.1:
-        meshData: FileMeshData = read_mesh_v5(data, startingOffset + 1)
+        meshData: FileMeshData = read_mesh_v5(
+            data, startingOffset + 1)
     else:
         raise Exception(
             f"read_mesh_data: unsupported mesh version ({meshVersion})")
     return meshData
+
+
+def convert_mesh(originalData: bytes) -> bytes:
+    meshVersion = get_mesh_version(originalData)
+    if meshVersion < 4:
+        return originalData
+
+    meshData = read_mesh_data(originalData, meshVersion)
+    return export_mesh_v2(meshData)

@@ -23,11 +23,6 @@ def get_asset_path(aid: int) -> str:
     return util.resource.retr_full_path(util.resource.dir_type.ASSET, f'{aid:011d}')
 
 
-def convert_mesh(data: bytes) -> bytes:
-    mesh_data = assets.mesh_convert.read_mesh_data(data)
-    return assets.mesh_convert.export_mesh_v2(mesh_data)
-
-
 def load_online_asset(asset_id: int) -> bytes | None:
     url = f'https://assetdelivery.roblox.com/v1/asset/?id={asset_id}'
     http = urllib3.PoolManager()
@@ -37,7 +32,7 @@ def load_online_asset(asset_id: int) -> bytes | None:
 
     data = response.data
     try:
-        data = convert_mesh(data)
+        data = assets.mesh_convert.convert_mesh(data)
     except Exception:
         pass
     return data

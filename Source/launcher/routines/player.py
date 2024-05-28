@@ -24,8 +24,7 @@ class _arg_type(logic.bin_ssl_arg_type):
     user_code: str | None = None
     launch_delay: float = 0
 
-    def sanitise(self):
-        super().sanitise()
+    def sanitise_hosts(self):
         if self.rcc_host == 'localhost':
             self.rcc_host = '127.0.0.1'
         elif ':' in self.rcc_host:
@@ -41,6 +40,17 @@ class _arg_type(logic.bin_ssl_arg_type):
             # It's strictly necessary for 2021E because some CoreGUI stuff will crash if the BaseUrl doesn't have a dot in it.
             unc_ip_str = self.web_host.replace(':', '-')
             self.web_host = self.app_host = f'{unc_ip_str}.ipv6-literal.net'
+
+    def sanitise_user_code(self):
+        if self.user_code:
+            return
+        res = self.send_request('/rfd/default-user-code')
+        self.user_code = str(res.read(), encoding='utf-8')
+
+    def sanitise(self):
+        super().sanitise()
+        self.sanitise_hosts()
+        self.sanitise_user_code()
 
     def get_base_url(self) -> str:
         return \
@@ -58,18 +68,7 @@ class obj_type(logic.bin_ssl_entry):
     BIN_SUBTYPE = util.resource.bin_subtype.PLAYER
 
     def retr_version(self) -> util.versions.rōblox:
-        try:
-            res = urllib.request.urlopen(
-                f'{self.local_args.get_base_url()}/rfd/roblox-version',
-                context=obj_type.get_none_ssl(),
-                timeout=3,
-            )
-        except urllib.error.URLError:
-            raise urllib.error.URLError(
-                'No server is currently running on %s:%d.' %
-                (self.local_args.web_host, self.local_args.web_port.port_num),
-            )
-
+        res = self.local_args.send_request('/rfd/roblox-version')
         return util.versions.rōblox.from_name(str(res.read(), encoding='utf-8'))
 
     def save_app_setting(self) -> str:
@@ -86,6 +85,9 @@ class obj_type(logic.bin_ssl_entry):
                 """</Settings>""",
             ]))
         return path
+
+    def save_ssl_cert(self):
+        return super().save_ssl_cert({'user-code': self.local_args.user_code})
 
     def enable_mutex(self) -> None:
         '''
@@ -108,11 +110,11 @@ class obj_type(logic.bin_ssl_entry):
             '-a', f'{base_url}/login/negotiate.ashx',
             '-j', f'{base_url}/Game/PlaceLauncher.ashx?' +
             urllib.parse.urlencode({k: v for k, v in {
-                'ip':
+                'rcc-host-addr':
                     self.local_args.rcc_host,
-                'port':
+                'rcc-port':
                     self.local_args.rcc_port_num,
-                'user':
+                'user-code':
                     self.local_args.user_code,
             }.items() if v}),
             '-t', '1',

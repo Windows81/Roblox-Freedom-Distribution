@@ -4,6 +4,8 @@ import util.versions
 import util.resource
 import urllib.error
 import config._main
+import urllib.parse
+import http.client
 import dataclasses
 import subprocess
 import threading
@@ -57,6 +59,19 @@ class bin_ssl_arg_type(bin_arg_type):
         is_ssl=True,
         is_ipv6=False,
     )
+
+    def send_request(self, path: str) -> http.client.HTTPResponse:
+        try:
+            return urllib.request.urlopen(
+                f'{self.get_base_url()}{path}',
+                context=bin_ssl_entry.get_none_ssl(),
+                timeout=3,
+            )
+        except urllib.error.URLError:
+            raise urllib.error.URLError(
+                'No server is currently running on %s:%d.' %
+                (self.web_host, self.web_port.port_num),
+            )
 
 
 class entry(_entry):
@@ -166,29 +181,19 @@ class bin_ssl_entry(bin_entry):
     '''
     local_args: bin_ssl_arg_type
 
-    @ staticmethod
+    @staticmethod
     def get_none_ssl() -> ssl.SSLContext:
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
         return ctx
 
-    def save_ssl_cert(self) -> None:
+    def save_ssl_cert(self, query_args: dict = {}) -> None:
         if not self.local_args.web_port.is_ssl:
             return
 
-        try:
-            res = urllib.request.urlopen(
-                f'{self.local_args.get_base_url()}/rfd/certificate',
-                context=bin_ssl_entry.get_none_ssl(),
-                timeout=3,
-            )
-        except urllib.error.URLError:
-            raise urllib.error.URLError(
-                'No server is currently running on %s:%d.' %
-                (self.local_args.web_host, self.local_args.web_port.port_num),
-            )
-
+        qs = urllib.parse.urlencode(query_args)
+        res = self.local_args.send_request(f'/rfd/certificate?{qs}')
         path = self.get_versioned_path('SSL', 'cacert.pem')
         with open(path, 'wb') as f:
             f.write(res.read())

@@ -8,51 +8,76 @@ import re
 
 
 def basic_join(self: web_server_handler):
-    ip_addr = self.query.get('ip', None)
-    port_num = self.query.get('port', None)
+    rcc_host_addr = self.query.get('rcc-host-addr')
+    rcc_port = self.query.get('rcc-port')
 
-    user_code = self.query.get('user', None)
+    user_code = self.query.get('user-code')
     if not user_code:
-        user_code = self.game_config.server_core. \
-            retrieve_default_user_code(time.time())
-    user_id = self.server.game_users.add_user(user_code)
+        return {}
+
+    id_num = self.server.game_users.add_user(user_code)
+    user_name = self.game_config.server_core.retrieve_username(user_code)
 
     return {
         'ServerConnections': [
             {
-                'Address': ip_addr,
-                'Port': port_num,
+                'Address': rcc_host_addr,
+                'Port': rcc_port,
             }
         ],
         'UserId':
-            user_id,
+            id_num,
         'MachineAddress':
-            ip_addr,
+            rcc_host_addr,
         'ServerPort':
-            port_num,
+            rcc_port,
         'BaseUrl':
             self.hostname,
         'PlaceId':
             util.const.DEFAULT_PLACE_ID,
         'UserName':
-            self.game_config.server_core.retrieve_username(user_code),
+            user_name,
         'DisplayName':
-            self.game_config.server_core.retrieve_username(user_code),
+            user_name,
         'AccountAge':
             self.game_config.server_core.retrieve_account_age(user_code),
         'ChatStyle':
             self.game_config.server_core.chat_style.value,
         'characterAppearanceId':
-            user_id,
+            id_num,
         'CharacterAppearanceId':
-            user_id,
+            id_num,
         'CharacterAppearance':
-            f'{self.hostname}/v1.1/avatar-fetch?userId={user_id}',
+            f'{self.hostname}/v1.1/avatar-fetch?userId={id_num}',
     }
+
+
+@server_path('/rfd/default-user-code')
+def _(self: web_server_handler) -> bool:
+    result = self.game_config.server_core.retrieve_default_user_code(
+        time.time(),
+    )
+    self.send_data(bytes(result, encoding='utf-8'))
+    return True
 
 
 @server_path('/rfd/certificate')
 def _(self: web_server_handler) -> bool:
+    client_addr = self.address_string()
+
+    user_code = self.query.get('user-code', None)
+    is_user_allowed = (
+        self.game_config.server_core.check_user_allowed(
+            user_code,
+            client_addr,
+        )
+        if user_code else True
+    )
+
+    if not is_user_allowed:
+        self.send_error(403)
+        return True
+
     if not isinstance(self.server, web_server_ssl):
         return False
     self.server.add_identities(self.ip_addr)
@@ -304,12 +329,17 @@ def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
     '''
-    self.query
-    userid = self.query['userId']
-    placeId = self.query['placeId']
+    user_id = self.server.game_users.sanitise_id_num(self.query.get('userId'))
+    if not user_id:
+        return False
+
+    user_code = self.server.game_users.get_code_from_id_num(user_id)
+    if not user_code:
+        return False
+
     json = {
         "animations": {},
-        "resolvedAvatarType": self.game_config.server_core.avatar_type.value,
+        "resolvedAvatarType": self.game_config.server_core.retrieve_avatar_type(user_code),
         "accessoryVersionIds": [
             10726856854,
             9482991343,
@@ -362,8 +392,16 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     TODO: properly implement avatars.
     '''
+    user_id = self.server.game_users.sanitise_id_num(self.query.get('userId'))
+    if not user_id:
+        return False
+
+    user_code = self.server.game_users.get_code_from_id_num(user_id)
+    if not user_code:
+        return False
+
     self.send_json({
-        "resolvedAvatarType": self.game_config.server_core.avatar_type.value,
+        "resolvedAvatarType": self.game_config.server_core.retrieve_avatar_type(user_code),
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
         "assetAndAssetTypeIds": [

@@ -19,8 +19,8 @@ spawn(function()
     	Results = {}
     	for guid, data in next, HttpService:JSONDecode(Calls) do
     		local path, args = data.path, data.args
-            print(path, unpack(args))
     		Results[guid] = _G.RFD[path](unpack(args))
+            print(path, unpack(args), Results[guid])
     	end
     end
 end)

@@ -43,10 +43,11 @@ class obj_type(config._logic._configtype):
 
     class server_core(𝕏):
         chat_style: chat_style
-        avatar_type: avatar_type
         retrieve_default_user_code: Callable[[float], str]
+        check_user_allowed: Callable[[str, str], bool]
         retrieve_username: Callable[[str], str]
         retrieve_user_id: Callable[[str], int]
+        retrieve_avatar_type: Callable[[str], avatar_type]
         retrieve_account_age: Callable[[str], int]
         filter_text: Callable[[str, str], str]
 

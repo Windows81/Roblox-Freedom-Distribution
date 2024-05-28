@@ -18,21 +18,34 @@ creator.name = 'ÒÓ'
 
 
 [server_core]
-chat_style = 'ClassicAndBubble'
-avatar_type = 'R6'
-
 # Python function `RESULT` which generates an RFD-specific user code if one isn't provided.
 # Server maintainers should review the code because it's used by 'eval'.
 retrieve_default_user_code = '''
-function(tick) -- float -> str:
+function(tick) -- float -> str
     return string.format('Tick %d', tick)
+end
+'''
+
+check_user_allowed = '''
+function(user_code, ip_addr) -- string -> bool
+    print(user_code, 'joined from IP address', ip_addr)
+    return true
+end
+'''
+
+chat_style = 'ClassicAndBubble'
+retrieve_avatar_type = '''
+function(user_code) -- str -> str
+    if _G.avatar_spinner == nil then _G.avatar_spinner = 0 end
+    _G.avatar_spinner = _G.avatar_spinner % 2 + 1
+    return ({'R15', 'R6'})[_G.avatar_spinner]
 end
 '''
 
 # Python function `RESULT` which evaluates the player's `Name` value from their RFD-specific user code.
 # Server maintainers should review the code because it's used by 'eval'.
 retrieve_username = '''
-function(user_code) -- str -> str:
+function(user_code) -- str -> str
     return user_code
 end
 '''
@@ -40,7 +53,7 @@ end
 # Python function `RESULT` which evaluates the player's `UserId` value from their RFD-specific user code.
 # Server maintainers should review the code because it's used by 'eval'.
 retrieve_user_id = '''
-function(user_code) -- str -> int:
+function(user_code) -- str -> int
     return math.random(1, 16777216)
 end
 '''
