@@ -1,5 +1,4 @@
-
-from typing import Any, Callable
+from typing import Any
 import functools
 import itertools
 import queue
@@ -46,9 +45,9 @@ class transferer:
                 return guid
 
     def call(self, path: str, game_config, *a):
-        output_queue = queue.Queue()
+        temp_queue = queue.Queue()
         guid = self.generate_guid()
-        self.output_dict[guid] = output_queue
+        self.output_dict[guid] = temp_queue
 
         self.input_queue.put(_input_type(
             path=path,
@@ -57,7 +56,7 @@ class transferer:
         ))
 
         # Waits for the result to be passed in, then deletes the container to save memory.
-        result = output_queue.get(block=True)
+        result = temp_queue.get(block=True)
         del self.output_dict[guid]
         return result
 

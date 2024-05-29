@@ -1,21 +1,16 @@
 import launcher.routines._logic as logic
 import web_server._main as _main
+import config.structure
 import config._main
 import config._main
 import dataclasses
 import threading
 
 
-@dataclasses.dataclass
-class _arg_type(logic.arg_type):
-    game_config: config._main.obj_type
-    web_ports: list[logic.port] = dataclasses.field(default_factory=list)
-
-
 class obj_type(logic.server_entry):
     game_config: config._main.obj_type
     httpds = list[_main.web_server._logic.web_server]()
-    local_args: _arg_type
+    local_args: 'arg_type'
 
     def __add_server(self, web_port: logic.port, *args, **kwargs) -> None:
         try:
@@ -32,9 +27,15 @@ class obj_type(logic.server_entry):
             )
             self.server_running = False
 
-    def __add_servers(self, web_ports: list[logic.port], *args, **kwargs) -> None:
+    def __add_servers(
+        self,
+        web_ports: list[logic.port],
+        game_config: config._main.obj_type,
+        *args,
+        **kwargs,
+    ) -> None:
         hts = [
-            _main.make_server(*args, port, **kwargs)
+            _main.make_server(*args, port, game_config, **kwargs)
             for port in web_ports
         ]
         self.httpds.extend(hts)
@@ -58,5 +59,9 @@ class obj_type(logic.server_entry):
             ht.shutdown()
 
 
-class arg_type(_arg_type):
+@dataclasses.dataclass
+class arg_type(logic.arg_type):
     obj_type = obj_type
+
+    game_config: config._main.obj_type
+    web_ports: list[logic.port] = dataclasses.field(default_factory=list)

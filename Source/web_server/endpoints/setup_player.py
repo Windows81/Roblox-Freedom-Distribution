@@ -7,7 +7,7 @@ import time
 import re
 
 
-def basic_join(self: web_server_handler):
+def perform_basic_join(self: web_server_handler):
     rcc_host_addr = self.query.get('rcc-host-addr')
     rcc_port = self.query.get('rcc-port')
 
@@ -15,7 +15,7 @@ def basic_join(self: web_server_handler):
     if not user_code:
         return {}
 
-    id_num = self.server.game_users.add_user(user_code)
+    id_num = self.server.game_config.user_dict.add_user(user_code)
     user_name = self.game_config.server_core.retrieve_username(user_code)
 
     return {
@@ -97,7 +97,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/game/join.ashx')
 def _(self: web_server_handler) -> bool:
-    self.send_json(basic_join(self) | {
+    self.send_json(perform_basic_join(self) | {
         'ClientPort': 0,
         'PingUrl': '',
         'PingInterval': 0,
@@ -127,7 +127,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/game/join.ashx', min_version=401)
 def _(self: web_server_handler) -> bool:
-    self.send_json(basic_join(self) | {
+    self.send_json(perform_basic_join(self) | {
         'ClientPort': 0,
         'PingUrl': '',
         'PingInterval': 0,
@@ -329,11 +329,12 @@ def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
     '''
-    user_id = self.server.game_users.sanitise_id_num(self.query.get('userId'))
+    user_id = self.server.game_config.user_dict.sanitise_id_num(
+        self.query.get('userId'))
     if not user_id:
         return False
 
-    user_code = self.server.game_users.get_code_from_id_num(user_id)
+    user_code = self.server.game_config.user_dict.get_code_from_id_num(user_id)
     if not user_code:
         return False
 
@@ -392,11 +393,12 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     TODO: properly implement avatars.
     '''
-    user_id = self.server.game_users.sanitise_id_num(self.query.get('userId'))
+    user_id = self.server.game_config.user_dict.sanitise_id_num(
+        self.query.get('userId'))
     if not user_id:
         return False
 
-    user_code = self.server.game_users.get_code_from_id_num(user_id)
+    user_code = self.server.game_config.user_dict.get_code_from_id_num(user_id)
     if not user_code:
         return False
 

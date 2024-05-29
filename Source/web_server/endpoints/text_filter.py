@@ -21,11 +21,12 @@ def _(self: web_server_handler) -> bool:
     if not orig_text:
         return False
 
-    user_id = self.server.game_users.sanitise_id_num(self.query.get('userId'))
+    user_id = self.server.game_config.user_dict.sanitise_id_num(
+        self.query.get('userId'))
     if not user_id:
         return False
 
-    user_code = self.server.game_users.get_code_from_id_num(user_id)
+    user_code = self.server.game_config.user_dict.get_code_from_id_num(user_id)
     if not user_code:
         return False
 

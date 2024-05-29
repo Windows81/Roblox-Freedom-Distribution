@@ -4,13 +4,8 @@ import os.path
 import os
 
 
-@dataclasses.dataclass
-class _arg_type(logic.arg_type):
-    base_url: str
-
-
 class obj_type(logic.entry):
-    local_args: _arg_type
+    local_args: 'arg_type'
 
     def check_host(self, full_path: str) -> bool:
         l = len(self.base_url_bytes)
@@ -38,5 +33,8 @@ class obj_type(logic.entry):
             os.remove(full_path)
 
 
-class arg_type(_arg_type):
+@dataclasses.dataclass
+class arg_type(logic.arg_type):
     obj_type = obj_type
+
+    base_url: str

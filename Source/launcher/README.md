@@ -10,7 +10,7 @@ Each object `obj` of `T.obj_type` has a property `obj.local_args` of type `T.arg
 
 ```py
 @dataclasses.dataclass
-class _arg_type(logic.bin_ssl_arg_type):
+class arg_type(logic.bin_ssl_arg_type):
 ```
 
 The `logic.bin_ssl_arg_type` can be replaced with any other `arg_type` class (including `arg_type` itself) in `./routines/_logic`.
@@ -22,21 +22,17 @@ import launcher.routines._logic as logic
 import dataclasses
 {***} # Any other potential imports.
 
-
-@dataclasses.dataclass
-class _arg_type(logic.{***}arg_type):
-    {***} # Dataclass fields.
-
-
 class obj_type(logic.{***}entry):
-    local_args: _arg_type
+    local_args: 'arg_type'
 
     def process(self) -> None:
         {***} # The routine code.
 
 
-class arg_type(_arg_type):
+@dataclasses.dataclass
+class arg_type(logic.{***}arg_type):
     obj_type = obj_type
+    {***} # Dataclass fields.
 ```
 
 # What Claude 3 Sonnet Would Say

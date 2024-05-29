@@ -1,3 +1,4 @@
+import re
 import assets.mesh_convert
 import util.resource
 import urllib3
@@ -23,6 +24,31 @@ def get_asset_path(aid: int) -> str:
     return util.resource.retr_full_path(util.resource.dir_type.ASSET, f'{aid:011d}')
 
 
+def replace_rōblox_links(data: bytes) -> bytes:
+    '''
+    Redirects `assetdelivery.roblox.com` links within any `rbxm` data container to your local URL.
+    Solution was derived from trial, error, and hacky patching.
+    '''
+    def replace_func(m):
+        group = m.group(1)
+        pad_prefix = b'rbxhttp://asset'
+        pad_suffix = b''
+        # Having lots of slashes in your path apparently doesn't matter.
+        padding = b'/' * (len(group) - len(pad_prefix) - len(pad_suffix))
+        return b''.join([
+            pad_prefix,
+            padding,
+            pad_suffix,
+            b'\x10\x00',
+            m.group(3),
+        ])
+
+    return re.sub(
+        b'(https://assetdelivery.roblox.com(.{,35}))[\x10-\xff]\x00([\xf0-\xff][\x00-\x10])',
+        replace_func, data,
+    )
+
+
 def load_online_asset(asset_id: int) -> bytes | None:
     url = f'https://assetdelivery.roblox.com/v1/asset/?id={asset_id}'
     http = urllib3.PoolManager()
@@ -31,6 +57,7 @@ def load_online_asset(asset_id: int) -> bytes | None:
         return
 
     data = response.data
+    data = replace_rōblox_links(data)
     try:
         data = assets.mesh_convert.convert_mesh(data)
     except Exception:

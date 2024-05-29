@@ -61,7 +61,7 @@ def _(
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
 
-    game_config = config.get_config(args.config_path)
+    game_config = config.get_cached_config(args.config_path)
     routine_args = []
 
     web_port_ipv4 = logic.port(

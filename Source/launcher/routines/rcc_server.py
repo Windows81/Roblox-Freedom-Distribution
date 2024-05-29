@@ -1,6 +1,7 @@
 import launcher.routines._logic as logic
 import util.const as const
 import data_transfer._main
+import config.structure
 import util.resource
 import util.versions
 import config._main
@@ -14,35 +15,8 @@ import json
 import os
 
 
-@dataclasses.dataclass
-class _arg_type(logic.bin_ssl_arg_type):
-    game_config: config._main.obj_type
-    rcc_port_num: int = 2005
-    skip_popen: bool = False
-    web_port: logic.port = \
-        logic.port(
-            port_num=80,
-            is_ssl=False,
-            is_ipv6=False,
-        ),  # type: ignore
-
-    def get_base_url(self) -> str:
-        return \
-            f'http{"s" if self.web_port.is_ssl else ""}://' + \
-            f'localhost:{self.web_port.port_num}'
-
-    def get_app_base_url(self) -> str:
-        return f'{self.get_base_url()}/'
-
-    def get_rcc_script(self) -> str:
-        return '\n\n'.join([
-            data_transfer._main.get_rcc_routine(self.game_config),
-            "print('Initialised RFD server scripts.')",
-        ])
-
-
 class obj_type(logic.bin_ssl_entry, logic.server_entry):
-    local_args: _arg_type
+    local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
 
     @functools.cache
@@ -170,5 +144,30 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             self.make_rcc_popen()
 
 
-class arg_type(_arg_type):
+@dataclasses.dataclass
+class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
+
+    game_config: config._main.obj_type
+    rcc_port_num: int = 2005
+    skip_popen: bool = False
+    web_port: logic.port = \
+        logic.port(
+            port_num=80,
+            is_ssl=False,
+            is_ipv6=False,
+        ),  # type: ignore
+
+    def get_base_url(self) -> str:
+        return \
+            f'http{"s" if self.web_port.is_ssl else ""}://' + \
+            f'localhost:{self.web_port.port_num}'
+
+    def get_app_base_url(self) -> str:
+        return f'{self.get_base_url()}/'
+
+    def get_rcc_script(self) -> str:
+        return '\n\n'.join([
+            data_transfer._main.get_rcc_routine(self.game_config),
+            "print('Initialised RFD server scripts.')",
+        ])

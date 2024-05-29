@@ -1,4 +1,5 @@
 from ..downloader import _main as downloader
+import config.structure
 import urllib.request
 import util.versions
 import util.resource

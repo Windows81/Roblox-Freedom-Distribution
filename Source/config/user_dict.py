@@ -1,8 +1,5 @@
-import config._main
-
-
 class user_dict(dict[int, str]):
-    def __init__(self, game_config: config._main.obj_type):
+    def __init__(self, game_config) -> None:
         super().__init__()
         self.game_config = game_config
 

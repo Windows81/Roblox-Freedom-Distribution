@@ -1,14 +1,13 @@
 import launcher.routines._logic as logic
 import util.versions as versions
-import data_transfer._main
 import util.const as const
 from urllib import parse
+import config.structure
 import OpenSSL.crypto
 import config._main
 import http.server
 import mimetypes
 import functools
-import game.user
 import util.ssl
 import base64
 import socket
@@ -57,9 +56,7 @@ class web_server(http.server.ThreadingHTTPServer):
         game_config: config._main.obj_type,
         *args, **kwargs,
     ) -> None:
-        self.game_users = game.user.user_dict(game_config)
         self.game_config = game_config
-
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
 
@@ -77,11 +74,13 @@ class web_server_ssl(web_server):
     def __init__(
         self,
         port: logic.port,
+        game_config: config._main.obj_type,
         *args, **kwargs,
     ) -> None:
 
         super().__init__(
             port,
+            game_config,
             *args, **kwargs,
         )
         self.identities = {'::1', '127.0.0.1', 'localhost'}

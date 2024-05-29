@@ -1,25 +1,28 @@
-# This module is very convoluted and has one purpose: to serialise your `GameConfig.toml`.
-# The data structure is defined in `./_main.py`.
-# All you need to know is that the `_configtype` class will make your config file easier for your IDE's auto-complete to handle.
-
 from typing_extensions import Self, Callable, Union, Any
 import data_transfer._main
+from . import user_dict
 import util.resource
 import util.versions
 import functools
-import tomli
 import attr
 
 
-def _exec_type_call_default(config: '_configtype', typ: type, path: str, *a, **kwa) -> Any:
+class _base_type:
+    def __init__(self) -> None:
+        self.data_transferer = data_transfer._main.transferer()
+        self.user_dict = user_dict.user_dict(self)
+        super().__init__()
+
+
+def _exec_type_call_default(config: _base_type, typ: type, path: str, *a, **kwa) -> Any:
     return typ(*a, **kwa)
 
 
-def _exec_type_call_callable(config: '_configtype', typ: type, path: str, _) -> Callable:
+def _exec_type_call_callable(config: _base_type, typ: type, path: str, _) -> Callable:
     return lambda *a: config.data_transferer and config.data_transferer.call(path, config, *a)
 
 
-def _exec_type_call_union(config: '_configtype', typ: type, path: str, val) -> Any | None:
+def _exec_type_call_union(config: _base_type, typ: type, path: str, val) -> Any | None:
     for t in typ.__args__:
         try:
             return t(val)
@@ -83,7 +86,15 @@ class allocateable:
             rep,
         )
 
-    def __init__(self, root: '_configtype', path_prefix: str = '', **kwargs) -> None:
+    def __init__(
+        self,
+        root: _base_type,
+        current_typ: type,
+        path_prefix: str = '',
+        **kwargs,
+    ) -> None:
+        super().__init__()  # For sub-classes which have multiple parents.
+
         self.root = root
         self.kwargs = kwargs
 
@@ -93,11 +104,12 @@ class allocateable:
                 key,
                 typ(
                     root=root,
+                    current_typ=typ,
                     path_prefix=f'{path_prefix}{key}.',
                     **kwargs.get(key, {}),
                 ),
             )
-            for key, typ in self.__class__.__dict__.items()
+            for key, typ in current_typ.__dict__.items()
             if isinstance(typ, type) and issubclass(typ, allocateable)
         ]
 
@@ -113,7 +125,7 @@ class allocateable:
                 rep=(rep := self.kwargs.get(key, None)),
                 val=self.serialise_object(path, key, typ, rep),
             )
-            for key, typ in self.__class__.__annotations__.items()
+            for key, typ in current_typ.__annotations__.items()
         ]
 
         for ann in self.annotations:
@@ -129,17 +141,3 @@ class allocateable:
             for sub in self.subsections
             for key, res in sub.val.flatten().items()
         }
-
-
-class _configtype(allocateable):
-    def __init__(self, path: str = util.resource.DEFAULT_CONFIG_PATH) -> None:
-        '''
-        Retrieves the game configuration data and serialises it through some weird custom method that I made in the `allocateable` class.
-        '''
-        self.data_transferer = None
-        with open(util.resource.retr_config_full_path(path), 'rb') as f:
-            self.data_dict: dict = tomli.load(f)
-        super().__init__(root=self, **self.data_dict)
-
-    def set_data_transferer(self, transferer: data_transfer._main.transferer):
-        self.data_transferer = transferer
