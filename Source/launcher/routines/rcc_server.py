@@ -1,4 +1,7 @@
-import launcher.routines._logic as logic
+import web_server._logic as web_server_logic
+import web_server._main as web_server
+
+from . import _logic as logic
 import util.const as const
 import data_transfer._main
 import config.structure
@@ -115,22 +118,27 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def make_rcc_popen(self):
         return self.make_popen(
             [
-                *(() if os.name == 'nt' else ('wine',)),
                 self.get_versioned_path('RCCService.exe'),
 
                 f'-placeid:{const.DEFAULT_PLACE_ID}',
 
                 '-localtest', self.get_versioned_path(
-                    'GameServer.json'),
+                    'GameServer.json',
+                ),
 
                 '-settingsfile', self.get_versioned_path(
-                    'DevSettingsFile.json'),
+                    'DevSettingsFile.json',
+                ),
 
                 '-port 64989',
-                '-verbose',
+                *(('-verbose',) if self.local_args.verbose else ()),
             ],
             stdin=subprocess.PIPE,
             cwd=self.get_versioned_path(),
+
+            # This suppresses the "To enable debug output, run with the -verbose flag"
+            # which prints if verbosity is disabled.
+            stdout=None if self.local_args.verbose else subprocess.PIPE,
         )
 
     def process(self) -> None:
@@ -151,8 +159,9 @@ class arg_type(logic.bin_ssl_arg_type):
     game_config: config._main.obj_type
     rcc_port_num: int = 2005
     skip_popen: bool = False
-    web_port: logic.port = \
-        logic.port(
+    verbose: bool = False
+    web_port: web_server_logic.port_typ = \
+        web_server_logic.port_typ(
             port_num=80,
             is_ssl=False,
             is_ipv6=False,

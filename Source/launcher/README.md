@@ -18,7 +18,7 @@ The `logic.bin_ssl_arg_type` can be replaced with any other `arg_type` class (in
 **To further clarify**, here's a non-functional skeleton for any modules in `./routines` you wish to add. The `{***}` are placed where you add stuff.
 
 ```py
-import launcher.routines._logic as logic
+from ...routines import _logic as logic
 import dataclasses
 {***} # Any other potential imports.
 

@@ -1,9 +1,9 @@
 from typing import Any
+import dataclasses
 import functools
 import itertools
 import queue
 import uuid
-import attr
 
 SCRIPT_FORMAT = """
 _G.RFD = {%(functions)s}
@@ -26,7 +26,7 @@ end)
 """
 
 
-@attr.dataclass
+@dataclasses.dataclass
 class _input_type:
     path: str
     guid: str
@@ -44,7 +44,7 @@ class transferer:
             if guid not in self.output_dict:
                 return guid
 
-    def call(self, path: str, game_config, *a):
+    def call(self, path: str, game_config, *call_args):
         temp_queue = queue.Queue()
         guid = self.generate_guid()
         self.output_dict[guid] = temp_queue
@@ -52,7 +52,7 @@ class transferer:
         self.input_queue.put(_input_type(
             path=path,
             guid=guid,
-            args=a,
+            args=call_args,
         ))
 
         # Waits for the result to be passed in, then deletes the container to save memory.
@@ -71,7 +71,7 @@ class transferer:
             except queue.Empty:
                 break
 
-            val = attr.asdict(item)
+            val = dataclasses.asdict(item)
             result[item.guid] = val
         return result
 

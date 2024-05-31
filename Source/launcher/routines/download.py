@@ -3,7 +3,7 @@ import util.versions
 import dataclasses
 import util.const
 
-import launcher.routines._logic as logic
+from . import _logic as logic
 import launcher.downloader._main as downloader
 
 

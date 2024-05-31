@@ -90,8 +90,8 @@ def _(self: web_server_handler) -> bool:
     '''
     Used by clients to automatically detect which version to run.
     '''
-    self.send_data(
-        bytes(self.server.game_config.game_setup.roblox_version.name, encoding='utf-8'))
+    version = self.server.game_config.game_setup.roblox_version
+    self.send_data(bytes(version.name, encoding='utf-8'))
     return True
 
 
@@ -125,7 +125,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/game/join.ashx', min_version=401)
+@server_path('/game/join.ashx', min_version=400)
 def _(self: web_server_handler) -> bool:
     self.send_json(perform_basic_join(self) | {
         'ClientPort': 0,
@@ -329,14 +329,12 @@ def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
     '''
-    user_id = self.server.game_config.user_dict.sanitise_id_num(
-        self.query.get('userId'))
-    if not user_id:
+    user_info = self.server.game_config.user_dict.resolve_user_info(
+        self.query.get('userId'),
+    )
+    if not user_info:
         return False
-
-    user_code = self.server.game_config.user_dict.get_code_from_id_num(user_id)
-    if not user_code:
-        return False
+    user_code = user_info.user_code
 
     json = {
         "animations": {},
@@ -393,14 +391,12 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     TODO: properly implement avatars.
     '''
-    user_id = self.server.game_config.user_dict.sanitise_id_num(
-        self.query.get('userId'))
-    if not user_id:
+    user_info = self.server.game_config.user_dict.resolve_user_info(
+        self.query.get('userId'),
+    )
+    if not user_info:
         return False
-
-    user_code = self.server.game_config.user_dict.get_code_from_id_num(user_id)
-    if not user_code:
-        return False
+    user_code = user_info.user_code
 
     self.send_json({
         "resolvedAvatarType": self.game_config.server_core.retrieve_avatar_type(user_code),

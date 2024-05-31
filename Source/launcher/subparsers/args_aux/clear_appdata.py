@@ -1,7 +1,8 @@
 import launcher.routines.clear_appdata as clear_appdata
 import launcher.subparsers._logic as sub_logic
-import launcher.routines._logic as logic
+from ...routines import _logic as logic
 import argparse
+
 CACHEABLE_ARG_SUPERTYPE = logic.bin_arg_type
 
 

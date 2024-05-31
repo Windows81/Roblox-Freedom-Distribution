@@ -1,13 +1,16 @@
 import launcher.subparsers._logic as sub_logic
-import launcher.routines._logic as logic
+from ...routines import _logic as logic
+from web_server._logic import port_typ
 import config._main as config
 import util.resource
 import argparse
 
-import launcher.routines.download as download
-import launcher.routines.web_server as web_server
-import launcher.routines.rcc_server as rcc_server
-import launcher.routines.player as player
+from launcher.routines import (
+    download,
+    web_server,
+    rcc_server,
+    player,
+)
 
 
 @sub_logic.add_args(sub_logic.launch_mode.SERVER)
@@ -35,6 +38,11 @@ def subparse(
         '--run_client', '-rc', '--run_player',
         action='store_true',
         help='Runs an instance of the player immediately after starting the server.',
+    )
+    subparser.add_argument(
+        '--verbose', '-v',
+        action='store_true',
+        help='Makes console output from RCC verbose.',
     )
 
     skip_mutex = subparser.add_mutually_exclusive_group()
@@ -64,13 +72,13 @@ def _(
     game_config = config.get_cached_config(args.config_path)
     routine_args = []
 
-    web_port_ipv4 = logic.port(
+    web_port_ipv4 = port_typ(
         port_num=args.web_port,
         is_ssl=True,
         is_ipv6=False,
     )
 
-    web_port_ipv6 = logic.port(
+    web_port_ipv6 = port_typ(
         port_num=args.web_port,
         is_ssl=True,
         is_ipv6=True,
@@ -79,8 +87,9 @@ def _(
     if not args.skip_web:
         routine_args.extend([
             web_server.arg_type(
-                # IPv6 goes first since `localhost` resolves fist to [::1] on the client.
+                # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
                 web_ports=[web_port_ipv6, web_port_ipv4],
+                verbose=args.verbose,
                 game_config=game_config,
             ),
         ])
@@ -90,8 +99,9 @@ def _(
             rcc_server.arg_type(
                 rcc_port_num=args.rcc_port,
                 web_port=web_port_ipv4,
-                game_config=game_config,
+                verbose=args.verbose,
                 skip_popen=args.skip_rcc_popen,
+                game_config=game_config,
             ),
         ])
 

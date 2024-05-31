@@ -1,5 +1,6 @@
 import launcher.routines._logic as logic
 import util.versions as versions
+import dataclasses
 import util.const as const
 from urllib import parse
 import config.structure
@@ -16,6 +17,15 @@ import json
 import ssl
 import re
 import os
+
+
+@dataclasses.dataclass
+class port_typ:
+    def __hash__(self) -> int:
+        return self.port_num
+    port_num: int
+    is_ssl: bool = True
+    is_ipv6: bool = False
 
 
 class func_mode(enum.Enum):
@@ -52,13 +62,15 @@ def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
 class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
-        port: logic.port,
+        port: port_typ,
         game_config: config._main.obj_type,
+        print_http_log: bool = False,
         *args, **kwargs,
     ) -> None:
         self.game_config = game_config
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
+        self.print_http_log = print_http_log
 
         super().__init__(
             ('', port.port_num),
@@ -73,14 +85,12 @@ class web_server_ssl(web_server):
 
     def __init__(
         self,
-        port: logic.port,
-        game_config: config._main.obj_type,
+        port: port_typ,
         *args, **kwargs,
     ) -> None:
 
         super().__init__(
             port,
-            game_config,
             *args, **kwargs,
         )
         self.identities = {'::1', '127.0.0.1', 'localhost'}
@@ -196,7 +206,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     ) -> None:
 
         data = sign_prefix and rbx_sign(
-            key=const.JOIN_GAME_PRIVATE_KEY,
+            key=const.JOIN_GAME_SIGN_KEY,
             prefix=sign_prefix,
             data=byts,
         ) or byts
@@ -208,10 +218,13 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
-    def __process_func(self, func, *a, **kwa) -> bool:
+    def __process_func(self, func, *args, **kwargs) -> bool:
         if not func:
             return False
-        return func[self.game_config.game_setup.roblox_version](self, *a, **kwa)
+        version_func = func.get(self.game_config.game_setup.roblox_version)
+        if not version_func:
+            return False
+        return version_func(self, *args, **kwargs)
 
     def __open_from_static(self) -> bool:
         func = SERVER_FUNCS[func_mode.STATIC].get(self.urlsplit.path, None)
@@ -243,7 +256,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return True
 
     def log_message(self, format, *args) -> None:
-        if not const.HTTPD_SHOW_LOGS:
+        if not self.server.print_http_log:
             return
         if not self.is_valid_request:
             return

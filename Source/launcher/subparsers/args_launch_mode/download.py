@@ -2,7 +2,7 @@ import launcher.subparsers._logic as sub_logic
 import launcher.routines.download as download
 import launcher.routines.rcc_server as rcc_server
 import launcher.routines.player as player
-import launcher.routines._logic as logic
+from ...routines import _logic as logic
 import util.resource
 import util.versions
 import argparse

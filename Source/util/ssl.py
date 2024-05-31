@@ -8,7 +8,6 @@ import trustme
 import random
 import socket
 import ssl
-import re
 
 IPV4_SERVER_LIST = [
     "http://ipv4.icanhazip.com/",
@@ -47,22 +46,7 @@ def fetch(server) -> str | None:
             content = content.decode('UTF-8')
         except UnicodeDecodeError:
             content = content.decode('ISO-8859-1')
-
         return content
-        match = re.search(
-            r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.' +
-            r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.' +
-            r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.' +
-            r'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)',
-            content,
-        )
-        if not match:
-            return None
-
-        address = match.group(0)
-        if len(address) == 0:
-            return None
-        return address
 
     except Exception:
         return None

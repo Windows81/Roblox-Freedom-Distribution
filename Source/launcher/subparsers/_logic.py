@@ -39,19 +39,19 @@ SERIALISE_TYPE_SETS: dict[launch_mode, set[type]] = {
 }
 
 
-def call_auxs(args_table: dict[launch_mode, list[Callable]], l_mode: launch_mode, *a, **kwa) -> list:
+def call_auxs(args_table: dict[launch_mode, list[Callable]], l_mode: launch_mode, *args, **kwargs) -> list:
     return [
         result
         for func in args_table[launch_mode.ALWAYS]
-        for result in (func(l_mode, *a, **kwa) or [])
+        for result in (func(l_mode, *args, **kwargs) or [])
     ]
 
 
-def call_subparser(args_table: dict[launch_mode, list[Callable]], l_mode: launch_mode, *a, **kwa) -> list:
+def call_subparser(args_table: dict[launch_mode, list[Callable]], l_mode: launch_mode, *args, **kwargs) -> list:
     return [
         result
         for func in args_table[l_mode]
-        for result in (func(*a, **kwa) or [])
+        for result in (func(*args, **kwargs) or [])
     ]
 
 

@@ -11,9 +11,11 @@ def _(self: web_server_handler) -> bool:
     asset_id = next(
         i for i in [
             assets._main.resolve_asset_id(
-                self.query.get('id', None)),
+                self.query.get('id', None),
+            ),
             assets._main.resolve_asset_version_id(
-                self.query.get('assetversionid', None)),
+                self.query.get('assetversionid', None),
+            ),
         ]
         if i != None
     )

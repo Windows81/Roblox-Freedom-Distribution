@@ -3,8 +3,8 @@ import data_transfer._main
 from . import user_dict
 import util.resource
 import util.versions
+import dataclasses
 import functools
-import attr
 
 
 class _base_type:
@@ -14,12 +14,12 @@ class _base_type:
         super().__init__()
 
 
-def _exec_type_call_default(config: _base_type, typ: type, path: str, *a, **kwa) -> Any:
-    return typ(*a, **kwa)
+def _exec_type_call_default(config: _base_type, typ: type, path: str, *args, **kwargs) -> Any:
+    return typ(*args, **kwargs)
 
 
 def _exec_type_call_callable(config: _base_type, typ: type, path: str, _) -> Callable:
-    return lambda *a: config.data_transferer and config.data_transferer.call(path, config, *a)
+    return lambda *args: config.data_transferer and config.data_transferer.call(path, config, *args)
 
 
 def _exec_type_call_union(config: _base_type, typ: type, path: str, val) -> Any | None:
@@ -45,13 +45,13 @@ _TYPE_CALLS = {
 }
 
 
-@attr.dataclass
+@dataclasses.dataclass
 class subsection:
     key: str
     val: Any
 
 
-@attr.dataclass
+@dataclasses.dataclass
 class annotation:
     key: str
     typ: type

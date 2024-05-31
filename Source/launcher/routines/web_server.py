@@ -1,5 +1,7 @@
-import launcher.routines._logic as logic
-import web_server._main as _main
+import web_server._logic as web_server_logic
+import web_server._main as web_server
+
+from . import _logic as logic
 import config.structure
 import config._main
 import config._main
@@ -9,33 +11,17 @@ import threading
 
 class obj_type(logic.server_entry):
     game_config: config._main.obj_type
-    httpds = list[_main.web_server._logic.web_server]()
+    httpds = list[web_server_logic.web_server]()
     local_args: 'arg_type'
 
-    def __add_server(self, web_port: logic.port, *args, **kwargs) -> None:
-        try:
-            # Unpacks the 'port' struct here because its usefulness is only in the 'launcher' supermodule.
-            ht = _main.make_server(*args, **web_port.__dict__, **kwargs)
-            th = threading.Thread(target=ht.serve_forever)
-            self.threads.append(th)
-            th.start()
-
-        except PermissionError:
-            print(
-                'WARNING: web servers were unable to start at port %d.' %
-                (web_port.port_num)
-            )
-            self.server_running = False
-
-    def __add_servers(
+    def __run_servers(
         self,
-        web_ports: list[logic.port],
+        web_ports: list[web_server_logic.port_typ],
         game_config: config._main.obj_type,
-        *args,
-        **kwargs,
+        *args, **kwargs,
     ) -> None:
         hts = [
-            _main.make_server(*args, port, game_config, **kwargs)
+            web_server.make_server(*args, port, game_config, **kwargs)
             for port in web_ports
         ]
         self.httpds.extend(hts)
@@ -47,8 +33,9 @@ class obj_type(logic.server_entry):
 
     def process(self) -> None:
         self.server_running = True
-        self.__add_servers(
+        self.__run_servers(
             web_ports=self.local_args.web_ports,
+            print_http_log=self.local_args.verbose,
             game_config=self.game_config,
         )
 
@@ -64,4 +51,6 @@ class arg_type(logic.arg_type):
     obj_type = obj_type
 
     game_config: config._main.obj_type
-    web_ports: list[logic.port] = dataclasses.field(default_factory=list)
+    web_ports: list[web_server_logic.port_typ] = dataclasses.field(
+        default_factory=list)
+    verbose: bool = False

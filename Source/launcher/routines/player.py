@@ -1,3 +1,6 @@
+import web_server._logic as web_server_logic
+import web_server._main as web_server
+
 from . import _logic as logic
 import urllib.request
 import util.resource
@@ -53,7 +56,6 @@ class obj_type(logic.bin_ssl_entry):
         time.sleep(self.local_args.launch_delay)
         base_url = self.local_args.get_base_url()
         self.make_popen([
-            *(() if os.name == 'nt' else ('wine',)),
             self.get_versioned_path('RobloxPlayerBeta.exe'),
             '-a', f'{base_url}/login/negotiate.ashx',
             '-j', f'{base_url}/Game/PlaceLauncher.ashx?' +
@@ -76,7 +78,7 @@ class arg_type(logic.bin_ssl_arg_type):
     rcc_host: str = 'localhost'
     rcc_port_num: int = 2005
     web_host: str | None = None
-    web_port: logic.port = logic.port(
+    web_port: web_server_logic.port_typ = web_server_logic.port_typ(
         port_num=80,
         is_ssl=False,
         is_ipv6=False,

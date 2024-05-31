@@ -1,7 +1,10 @@
-import launcher.routines._logic as logic
+from . import _logic as logic
 import dataclasses
+import threading
 import os.path
 import os
+
+NUM_THREADS = 4
 
 
 class obj_type(logic.entry):
@@ -13,6 +16,12 @@ class obj_type(logic.entry):
             f.seek(12)
             b = f.read(l)
         return b == self.base_url_bytes
+
+    def remove_hosts(self, full_paths: list[str]) -> None:
+        for full_path in full_paths:
+            if not self.check_host(full_path):
+                continue
+            os.remove(full_path)
 
     def process(self) -> None:
         self.base_url_bytes = bytes(self.local_args.base_url, encoding='utf-8')
@@ -26,11 +35,24 @@ class obj_type(logic.entry):
         if not os.path.isdir(http_folder):
             return
 
-        for fn in os.listdir(http_folder):
-            full_path = os.path.join(http_folder, fn)
-            if not self.check_host(full_path):
-                continue
-            os.remove(full_path)
+        full_paths = [
+            os.path.join(http_folder, fn)
+            for fn in os.listdir(http_folder)
+        ]
+
+        threads = [
+            threading.Thread(
+                target=self.remove_hosts,
+                args=(full_paths[i::NUM_THREADS],),
+            )
+            for i in range(NUM_THREADS)
+        ]
+
+        for t in threads:
+            t.start()
+
+        for t in threads:
+            t.join()
 
 
 @dataclasses.dataclass

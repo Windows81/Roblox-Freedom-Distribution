@@ -24,6 +24,12 @@ def get_asset_path(aid: int) -> str:
     return util.resource.retr_full_path(util.resource.dir_type.ASSET, f'{aid:011d}')
 
 
+# TODO: replace:
+# 50 52 4F 50 5A 00 00 00 72 00 00 00 00 00 00 00 FF 36 00 00 00 00 08 00 00 00 46 6F 6E 74 46 61 63 65 20 2C 00 00 00 72 62 78 61 73 73 65 74 3A 2F 2F 66 6F 6E 74 73 2F 66 61 6D 69 6C 69 65 73 2F 53 6F 75 72 63 65 53 61 6E 73 50 72 6F 2E 6A 73 6F 6E 90 01 00 2A 33 00 01 09 2A 00 C0 2D 52 65 67 75 6C 61 72 2E 74 74 66
+# with
+# 50 52 4F 50 13 00 00 00 11 00 00 00 00 00 00 00 F0 02 00 00 00 00 04 00 00 00 46 6F 6E 74 12 00 00 00 03
+
+
 def replace_rōblox_links(data: bytes) -> bytes:
     '''
     Redirects `assetdelivery.roblox.com` links within any `rbxm` data container to your local URL.
@@ -44,7 +50,7 @@ def replace_rōblox_links(data: bytes) -> bytes:
         ])
 
     return re.sub(
-        b'(https://assetdelivery.roblox.com(.{,35}))[\x10-\xff]\x00([\xf0-\xff][\x00-\x10])',
+        b'(https://assetdelivery.roblox.com(.{,35}))[\x00-\xff]\x00([\xf0-\xff][\x00-\x10])',
         replace_func, data,
     )
 

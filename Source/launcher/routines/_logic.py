@@ -1,4 +1,5 @@
 from ..downloader import _main as downloader
+import web_server._logic as web_server
 import config.structure
 import urllib.request
 import util.versions
@@ -7,20 +8,10 @@ import urllib.error
 import config._main
 import urllib.parse
 import http.client
-import dataclasses
 import subprocess
 import threading
 import ssl
 import os
-
-
-@dataclasses.dataclass
-class port:
-    def __hash__(self) -> int:
-        return self.port_num
-    port_num: int
-    is_ssl: bool = True
-    is_ipv6: bool = False
 
 
 class _entry:
@@ -55,7 +46,7 @@ class bin_arg_type(popen_arg_type):
 
 class bin_ssl_arg_type(bin_arg_type):
     web_host: str | None = None
-    web_port: port = port(
+    web_port: web_server.port_typ = web_server.port_typ(
         port_num=80,
         is_ssl=True,
         is_ipv6=False,
@@ -98,8 +89,12 @@ class popen_entry(entry, subprocess.Popen):
     popen_daemons: list[subprocess.Popen]
     debug_popen: subprocess.Popen
 
-    def make_popen(self, *args, **kwargs) -> None:
-        self.principal = subprocess.Popen(*args, **kwargs)
+    def make_popen(self, cmd_args: list, *args, **kwargs) -> None:
+        # TODO: test native support for RFD on systems with Wine.
+        if os.name != 'nt':
+            cmd_args[:0] = ['wine']
+
+        self.principal = subprocess.Popen(cmd_args, *args, **kwargs)
         self.popen_mains = [
             self.principal,
         ]
