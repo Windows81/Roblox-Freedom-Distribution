@@ -11,15 +11,13 @@ instances.count = 1
 # Aliases for "v348" is "2018M", "v463" is "2021E", etc.
 roblox_version = '2018M'
 place_path = 'c:\Users\USERNAME\Documents\Roblox Files\Baseplate.rbxl'
-icon_path = 'C:\Users\USERNAME\Pictures\097050bd37142a4080975bb8e415d2b8.jpg'
+icon_path = 'C:\Users\USERNAME\Pictures\Byfron Icon.png'
 name = '666'
 description = ''
 creator.name = 'ÒÓ'
 
 
 [server_core]
-# Python function `RESULT` which generates an RFD-specific user code if one isn't provided.
-# Server maintainers should review the code because it's used by 'eval'.
 retrieve_default_user_code = '''
 function(tick) -- float -> str
     return string.format('Tick %d', tick)
@@ -33,7 +31,6 @@ function(user_code, ip_addr) -- string -> bool
 end
 '''
 
-chat_style = 'ClassicAndBubble'
 retrieve_avatar_type = '''
 function(user_code) -- str -> str
     if _G.avatar_spinner == nil then _G.avatar_spinner = 0 end
@@ -42,34 +39,28 @@ function(user_code) -- str -> str
 end
 '''
 
-# Python function `RESULT` which evaluates the player's `Name` value from their RFD-specific user code.
-# Server maintainers should review the code because it's used by 'eval'.
 retrieve_username = '''
 function(user_code) -- str -> str
     return user_code
 end
 '''
 
-# Python function `RESULT` which evaluates the player's `UserId` value from their RFD-specific user code.
-# Server maintainers should review the code because it's used by 'eval'.
 retrieve_user_id = '''
 function(user_code) -- str -> int
     return math.random(1, 16777216)
 end
 '''
 
-# Python function `RESULT` which evaluates the player's `AccountAge` value from their RFD-specific user code.
-# Server maintainers should review the code because it's used by 'eval'.
 retrieve_account_age = '''
 function(user_code) -- str -> int
     return 6969
 end
 '''
 
-# Python function `RESULT` which filters text.
-# Server maintainers should review the code because it's used by 'eval'.
 filter_text = '''
 function(user_code, text)
     return text:gsub('oo','òó'):gsub('OO','ÒÓ'):gsub('ee','èé'):gsub('EE','ÈÉ'):gsub('Roblox','Rōblox'):gsub('ROBLOX','RŌBLOX')
 end
 '''
+
+chat_style = 'ClassicAndBubble'
