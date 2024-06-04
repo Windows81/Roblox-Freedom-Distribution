@@ -20,6 +20,7 @@
 			"args": [
 				"server",
 				"--run_client",
+				"--verbose",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
@@ -33,6 +34,7 @@
 			"args": [
 				"server",
 				"--run_client",
+				"--verbose",
 				"--debug",
 			],
 			"console": "integratedTerminal",
@@ -46,6 +48,7 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"server",
+				"--verbose",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true

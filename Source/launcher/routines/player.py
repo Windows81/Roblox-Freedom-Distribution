@@ -106,7 +106,7 @@ class arg_type(logic.bin_ssl_arg_type):
     def sanitise_user_code(self):
         if self.user_code:
             return
-        res = self.send_request('/rfd/default-user-code')
+        res = self.send_request('/rfd/default-user-code', timeout=120)
         self.user_code = str(res.read(), encoding='utf-8')
 
     def sanitise(self):

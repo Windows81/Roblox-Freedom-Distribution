@@ -4,6 +4,7 @@ import web_server._main as web_server
 from . import _logic as logic
 import util.const as const
 import data_transfer._main
+import assets.rbxm_parse
 import config.structure
 import util.resource
 import util.versions
@@ -30,9 +31,10 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         from_path = self.game_config.game_setup.place_path
         if not from_path:
             return
-
         to_path = assets._main.get_asset_path(const.DEFAULT_PLACE_ID)
-        shutil.copyfile(from_path, to_path)
+
+        with open(from_path, 'rb') as rf, open(to_path, 'wb') as wf:
+            wf.write(assets.rbxm_parse.parse(rf.read()))
 
     def save_app_setting(self) -> str:
         '''

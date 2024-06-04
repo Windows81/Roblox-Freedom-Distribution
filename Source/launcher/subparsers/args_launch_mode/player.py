@@ -1,6 +1,7 @@
 import launcher.subparsers._logic as sub_logic
 import launcher.routines.player as player
 from ...routines import _logic as logic
+from web_server._logic import port_typ
 import argparse
 
 
@@ -54,7 +55,7 @@ def _(
             rcc_host=args.rcc_host,
             rcc_port_num=args.rcc_port,
             web_host=args.web_host,
-            web_port=logic.port(
+            web_port=port_typ(
                 port_num=args.web_port,
                 is_ssl=True,
             ),

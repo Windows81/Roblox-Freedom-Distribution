@@ -52,12 +52,12 @@ class bin_ssl_arg_type(bin_arg_type):
         is_ipv6=False,
     )
 
-    def send_request(self, path: str) -> http.client.HTTPResponse:
+    def send_request(self, path: str, timeout: float = 3) -> http.client.HTTPResponse:
         try:
             return urllib.request.urlopen(
                 f'{self.get_base_url()}{path}',
                 context=bin_ssl_entry.get_none_ssl(),
-                timeout=3,
+                timeout=timeout,
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(

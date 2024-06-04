@@ -1108,10 +1108,13 @@ def read_mesh_data(data: bytes, meshVersion: float) -> FileMeshData:
     return meshData
 
 
-def convert_mesh(originalData: bytes) -> bytes:
-    meshVersion = get_mesh_version(originalData)
-    if meshVersion < 4:
-        return originalData
+def parse(originalData: bytes) -> bytes:
+    try:
+        meshVersion = get_mesh_version(originalData)
+        if meshVersion < 4:
+            return originalData
 
-    meshData = read_mesh_data(originalData, meshVersion)
-    return export_mesh_v2(meshData)
+        meshData = read_mesh_data(originalData, meshVersion)
+        return export_mesh_v2(meshData)
+    except Exception:
+        return originalData
