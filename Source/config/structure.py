@@ -45,5 +45,7 @@ class config_type(base_types.allocateable):
         retrieve_username: Callable[[str], str]
         retrieve_user_id: Callable[[str], int]
         retrieve_avatar_type: Callable[[str], avatar_type]
+        retrieve_avatar_items: Callable[[str], list[str]]
+        retrieve_avatar_scales: Callable[[str], dict[str, float]]
         retrieve_account_age: Callable[[str], int]
         filter_text: Callable[[str, str], str]

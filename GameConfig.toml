@@ -38,6 +38,50 @@ function(user_code) -- str -> str
 end
 '''
 
+retrieve_avatar_items = '''
+function(user_code) -- str -> [str]
+    return {
+        10726856854,
+        9482991343,
+        9481782649,
+        9120251003,
+        6445262286,
+        6969309778,
+        5731052645,
+        2846257298,
+        121390054,
+        261826995,
+        154386348,
+        201733574,
+        48474294,
+        6340101,
+        192483960,
+        190245296,
+        183808364,
+        34247191,
+    }
+end
+'''
+
+retrieve_body_colors = '''
+function(user_code) -- str -> [str]
+    return {}
+end
+'''
+
+retrieve_avatar_scales = '''
+function(user_code) -- str -> [str]
+    return {
+        Height = 0.5,
+        Width = 0.5,
+        Head = 1.5,
+        Depth = 0.5,
+        Proportion = 1,
+        BodyType = 0,
+    }
+end
+'''
+
 retrieve_username = '''
 function(user_code) -- str -> str
     return user_code

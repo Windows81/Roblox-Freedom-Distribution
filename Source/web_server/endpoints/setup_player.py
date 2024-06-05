@@ -336,29 +336,16 @@ def _(self: web_server_handler) -> bool:
         return False
     user_code = user_info.user_code
 
+    resolvedAvatarType, accessoryVersionIds, scales = (
+        self.game_config.server_core.retrieve_avatar_type(user_code),
+        self.game_config.server_core.retrieve_avatar_items(user_code),
+        self.game_config.server_core.retrieve_avatar_scales(user_code),
+    )
+
     json = {
         "animations": {},
-        "resolvedAvatarType": self.game_config.server_core.retrieve_avatar_type(user_code),
-        "accessoryVersionIds": [
-            10726856854,
-            9482991343,
-            9481782649,
-            9120251003,
-            6445262286,
-            6969309778,
-            5731052645,
-            2846257298,
-            121390054,
-            261826995,
-            154386348,
-            201733574,
-            48474294,
-            6340101,
-            192483960,
-            190245296,
-            183808364,
-            34247191,
-        ],
+        "resolvedAvatarType": resolvedAvatarType,
+        "accessoryVersionIds": accessoryVersionIds,
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
         "bodyColors": {
@@ -370,12 +357,12 @@ def _(self: web_server_handler) -> bool:
             "TorsoColor": 1013,
         },
         "scales": {
-            "Height": 1,
-            "Width": 1,
-            "Head": 1,
-            "Depth": 1,
-            "Proportion": 0,
-            "BodyType": 0,
+            "Height": scales['Height'],
+            "Width": scales['Width'],
+            "Head": scales['Head'],
+            "Depth": scales['Depth'],
+            "Proportion": scales['Proportion'],
+            "BodyType": scales['BodyType'],
         },
     }
     self.send_json(json)
@@ -398,99 +385,22 @@ def _(self: web_server_handler) -> bool:
         return False
     user_code = user_info.user_code
 
+    resolvedAvatarType, accessoryVersionIds, scales = (
+        self.game_config.server_core.retrieve_avatar_type(user_code),
+        self.game_config.server_core.retrieve_avatar_items(user_code),
+        self.game_config.server_core.retrieve_avatar_scales(user_code),
+    )
+
     self.send_json({
-        "resolvedAvatarType": self.game_config.server_core.retrieve_avatar_type(user_code),
+        "resolvedAvatarType": resolvedAvatarType,
         "equippedGearVersionIds": [],
         "backpackGearVersionIds": [],
         "assetAndAssetTypeIds": [
             {
-                "assetId": 10726856854,
-                "assetTypeId": 28
-            },
-            {
-                "assetId": 9482991343,
-                "assetTypeId": 71,
-                "meta": {
-                    "order": 3,
-                    "version": 1
-                }
-            },
-            {
-                "assetId": 9481782649,
-                "assetTypeId": 70,
-                "meta": {
-                    "order": 3,
-                    "version": 1
-                }
-            },
-            {
-                "assetId": 9120251003,
-                "assetTypeId": 66,
-                "meta": {
-                    "order": 4,
-                    "version": 1
-                }
-            },
-            {
-                "assetId": 6445262286,
-                "assetTypeId": 30
-            },
-            {
-                "assetId": 6969309778,
-                "assetTypeId": 11
-            },
-            {
-                "assetId": 5731052645,
-                "assetTypeId": 8
-            },
-            {
-                "assetId": 2846257298,
-                "assetTypeId": 8
-            },
-            {
-                "assetId": 121390054,
-                "assetTypeId": 42
-            },
-            {
-                "assetId": 261826995,
-                "assetTypeId": 42
-            },
-            {
-                "assetId": 154386348,
-                "assetTypeId": 12
-            },
-            {
-                "assetId": 201733574,
-                "assetTypeId": 47
-            },
-            {
-                "assetId": 48474294,
-                "assetTypeId": 41,
-                "meta": {
-                    "order": 11,
-                    "version": 1
-                }
-            },
-            {
-                "assetId": 6340101,
-                "assetTypeId": 17
-            },
-            {
-                "assetId": 192483960,
-                "assetTypeId": 47
-            },
-            {
-                "assetId": 190245296,
-                "assetTypeId": 43
-            },
-            {
-                "assetId": 183808364,
-                "assetTypeId": 8
-            },
-            {
-                "assetId": 34247191,
+                "assetId": item,
                 "assetTypeId": 8
             }
+            for item in accessoryVersionIds
         ],
         "animationAssetIds": {
             "run": 2510238627,
@@ -507,12 +417,12 @@ def _(self: web_server_handler) -> bool:
             "leftLegColorId": 1013,
         },
         "scales": {
-            "height": 1,
-            "width": 1,
-            "head": 1,
-            "depth": 1,
-            "proportion": 1,
-            "bodyType": 0.8
+            "height": scales['Height'],
+            "width": scales['Width'],
+            "head": scales['Head'],
+            "depth": scales['Depth'],
+            "proportion": max(scales['Proportion'], 1e-2),
+            "bodyType": max(scales['BodyType'], 1e-2),
         },
         "emotes": [
             {

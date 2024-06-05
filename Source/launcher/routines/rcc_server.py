@@ -1,5 +1,5 @@
 import web_server._logic as web_server_logic
-import web_server as web_serverr
+import web_server as web_server
 
 from . import _logic as logic
 import util.const as const
