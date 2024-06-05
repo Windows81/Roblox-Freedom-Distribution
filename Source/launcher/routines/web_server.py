@@ -21,13 +21,16 @@ class obj_type(logic.server_entry):
         *args, **kwargs,
     ) -> None:
         hts = [
-            web_server.make_server(*args, port, game_config, **kwargs)
+            web_server.make_server(*args, port, game_config, **kwargs) #type: ignore
             for port in web_ports
         ]
         self.httpds.extend(hts)
 
         for ht in hts:
-            th = threading.Thread(target=ht.serve_forever)
+            th = threading.Thread(
+                target=ht.serve_forever,
+                daemon=True,
+            )
             self.threads.append(th)
             th.start()
 

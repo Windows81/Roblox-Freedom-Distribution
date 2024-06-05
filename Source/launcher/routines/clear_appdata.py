@@ -44,6 +44,7 @@ class obj_type(logic.entry):
             threading.Thread(
                 target=self.remove_hosts,
                 args=(full_paths[i::NUM_THREADS],),
+                daemon=True,
             )
             for i in range(NUM_THREADS)
         ]

@@ -10,7 +10,7 @@ instances.count = 1
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2021E'
-place_path = 'c:\Users\USERNAME\Documents\Roblox Files\Byfron Discussion [14863253911].rbxl'
+place_path = 'c:\Users\USERNAME\Documents\Roblox Files\Baseplate.rbxl'
 # Stretches to 16:9.
 icon_path = 'C:\Users\USERNAME\Pictures\Byfron Icon.png'
 name = '666'

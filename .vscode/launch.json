@@ -54,6 +54,20 @@
 			"justMyCode": true
 		},
 		{
+			"name": "Python: Launch Server Only (Debug)",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"server",
+				"--verbose",
+				"--debug",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
 			"name": "Python: Launch Client from Localhost",
 			"type": "debugpy",
 			"request": "launch",
