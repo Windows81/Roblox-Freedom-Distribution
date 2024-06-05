@@ -199,7 +199,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/Game/PlaceLauncher.ashx')
+@server_path('/game/PlaceLauncher.ashx')
 @server_path('/game/placelauncher.ashx')
 def _(self: web_server_handler) -> bool:
     self.send_json({

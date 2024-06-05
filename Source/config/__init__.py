@@ -11,7 +11,8 @@ class obj_type(structure.config_type, base_types._base_type):
         '''
         Retrieves the game configuration data and serialises it.
         '''
-        with open(util.resource.retr_config_full_path(path), 'rb') as f:
+        self.file_path = util.resource.retr_config_full_path(path)
+        with open(self.file_path, 'rb') as f:
             self.data_dict: dict = tomli.load(f)
 
         super().__init__(

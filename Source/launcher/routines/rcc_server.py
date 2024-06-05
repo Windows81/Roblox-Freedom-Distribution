@@ -14,7 +14,6 @@ import dataclasses
 import subprocess
 import functools
 import util.ssl
-import shutil
 import json
 import os
 

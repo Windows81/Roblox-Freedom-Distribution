@@ -6,9 +6,9 @@ This document outlines the planned features and improvements for our project. Pl
 
 ### Peer-to-peer support
 
-- [ ] Implement peer-to-peer support for seamless communication between users.
+- [x] Implement peer-to-peer support for seamless communication between users.
 - [ ] Ensure secure and efficient data transfer between peers.
-- [ ] Enable real-time collaboration and interaction among users.
+- [x] Enable real-time collaboration and interaction among users.
 
 ### Freecam Toggle with Rōblox Logo Hide
 
@@ -18,9 +18,9 @@ This document outlines the planned features and improvements for our project. Pl
 
 ### Native Character Loader
 
-- [ ] Develop a native character loader to enhance performance and user customization.
+- [x] Develop a native character loader to enhance performance and user customization.
 - [ ] Allow users to load and customize their characters seamlessly within the application.
-- [ ] Ensure compatibility with various character models and customization options.
+- [x] Ensure compatibility with various character models and customization options.
 
 ### Support for Different Client Versions
 

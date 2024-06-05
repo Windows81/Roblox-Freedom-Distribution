@@ -29,8 +29,8 @@ class config_type(base_types.allocateable):
             count: int
 
     class game_setup(base_types.allocateable):
-        place_path: Optional[base_types.allocateable.path]
-        icon_path: base_types.allocateable.path
+        place_path: base_types.file_path
+        icon_path: base_types.file_path
         roblox_version: util.versions.rōblox
 
         class creator(base_types.allocateable):

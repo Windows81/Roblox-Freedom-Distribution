@@ -44,6 +44,7 @@ FONTS = {
     b'HighwayGothic.json\x90\x01\x00': b'\x0b',
     b'Oswald.json\x90\x01\x00': b'\x24',
     b'SpecialElite.json\x90\x01\x00': b'\x2b',
+    b'SpecialElite.json\xf4\x01\x00': b'\x2b',
     b'GothamSSm.json\x84\x03\x00': b'\x14',
     b'GothamSSm.json\xf4\x01\x00': b'\x12',
     b'Balthazar.json\x90\x01\x00': b'\x0e',
@@ -64,12 +65,15 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
     new_values = [
         FONTS.get(m.group(1), b'\03')
         for m in re.finditer(
-            br'.\x00\x00\x00rbxasset://fonts/families/([^\.]+\.json.{3})' +
-            br'.\x00\x00\x00rbxasset://fonts/(.+?)\..tf',
+            br'[\x10-\xff]\x00\x00\x00rbxasset://fonts/families/([^\.]+\.json.{3})' +
+            br'(?:[\x10-\xff]\x00\x00\x00rbxasset://fonts/(.+?)\..tf|\x00\x00\x00\x00)',
             chunk_values,
         )
     ]
 
+    # Fonts (just like all enums) are stored as an interleaved array of big-endian `uint32`s.
+    # Why the large string of zeroes?  We're taking advantage of the fact that `Enum.Font` never goes above 256.
+    # Because integers here are big-endian, we put the least significant bytes at the end.
     return b''.join([
         class_id,
         prop_info,

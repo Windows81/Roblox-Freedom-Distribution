@@ -14,9 +14,9 @@ TOP_DIR = \
 
 class dir_type(enum.Enum):
     RŌBLOX = 0
-    CONFIG = 1
-    ASSET = 2
-    SSL = 3
+    ASSET = 1
+    SSL = 2
+    MISC = 3
 
 
 class bin_subtype(enum.Enum):
@@ -36,26 +36,26 @@ def get_paths(d: dir_type) -> list[str]:
         case (False, dir_type.RŌBLOX):
             return [TOP_DIR, 'Roblox']
 
-        case (True, dir_type.CONFIG):
-            return [TOP_DIR]
-        case (False, dir_type.CONFIG):
-            return [TOP_DIR]
-
         case (True, dir_type.ASSET):
             return [TOP_DIR, 'AssetCache']
         case (False, dir_type.ASSET):
             return [TOP_DIR, 'AssetCache']
 
-        # We're storing TLS certiifcates in temporary directory "_MEIPASS".
+        # If running from `exe`, stores TLS certiifcates in a temporary directory.
         case (True, dir_type.SSL):
-            return [sys._MEIPASS]
+            return [getattr(sys, '_MEIPASS', '')]
         case (False, dir_type.SSL):
             return [TOP_DIR, 'Source', 'ssl']
+
+        case (True, dir_type.MISC):
+            return [TOP_DIR]
+        case (False, dir_type.MISC):
+            return [TOP_DIR]
     return []
 
 
 @functools.cache
-def make_dirs(full_path: str):
+def make_dirs(full_path: str) -> None:
     pieces = []
     head = os.path.abspath(full_path)
     tail = True
@@ -81,7 +81,7 @@ def retr_rōblox_full_path(version: util.versions.rōblox, bin_type: bin_subtype
 def retr_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:
     if not os.path.isabs(path):
         path = os.path.join(
-            retr_full_path(dir_type.CONFIG),
+            retr_full_path(dir_type.MISC),
             path,
         )
     return os.path.normpath(path)

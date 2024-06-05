@@ -1,31 +1,52 @@
-from typing_extensions import Self, Callable, Union, Any
+from typing_extensions import Callable, Union, Any
 from . import user_dict
 import util.resource
 import util.versions
 import data_transfer
 import dataclasses
 import functools
+import os.path
 
 
 class _base_type:
+    file_path: str
+
     def __init__(self) -> None:
         self.data_transferer = data_transfer.transferer()
         self.user_dict = user_dict.user_dict(self)
         super().__init__()
 
 
+@functools.cache
+def get_type_call(typ: type) -> Callable:
+    for k in [
+        typ,
+        getattr(typ, '__origin__', None),
+    ]:
+        if k not in _TYPE_CALLS:
+            continue
+        return _TYPE_CALLS[k]
+    return _exec_type_call_default
+
+
 def _exec_type_call_default(config: _base_type, typ: type, path: str, *args, **kwargs) -> Any:
     return typ(*args, **kwargs)
 
 
-def _exec_type_call_callable(config: _base_type, typ: type, path: str, _) -> Callable:
+def _exec_type_call_callable(config: _base_type, typ: type, path: str, val) -> Callable:
     return lambda *args: config.data_transferer and config.data_transferer.call(path, config, *args)
 
 
 def _exec_type_call_union(config: _base_type, typ: type, path: str, val) -> Any | None:
     for t in typ.__args__:
         try:
-            return t(val)
+            type_call = get_type_call(t)
+            return type_call(
+                config,
+                typ,
+                path,
+                val,
+            )
         except Exception:
             pass
 
@@ -35,13 +56,22 @@ def _exec_type_call_union(config: _base_type, typ: type, path: str, val) -> Any 
     )
 
 
+class file_path(str):
+    @staticmethod
+    def evaluate(config: _base_type, val: str) -> 'file_path':
+        root = os.path.dirname(config.file_path)
+        return file_path(os.path.join(root, val))
+
+
 _TYPE_CALLS = {
-    util.versions.rōblox: lambda _, __, ___, v: util.versions.rōblox.from_name(v),
+    util.versions.rōblox: lambda config, typ, path, val: util.versions.rōblox.from_name(val),
 
     # Through `getattr`, hacky method to get callables.
     getattr(Callable, '__origin__'): _exec_type_call_callable,
 
     Union: _exec_type_call_union,
+
+    file_path: lambda config, typ, path, val: file_path.evaluate(config, val),
 }
 
 
@@ -61,24 +91,8 @@ class annotation:
 
 
 class allocateable:
-    class path(str):
-        def __new__(cls, val: str) -> Self:
-            return str.__new__(cls, util.resource.retr_full_path(util.resource.dir_type.CONFIG, val))
-
-    @classmethod
-    @functools.cache
-    def get_type_call(cls, typ: type) -> Callable:
-        for k in [
-            typ,
-            getattr(typ, '__origin__', None),
-        ]:
-            if k not in _TYPE_CALLS:
-                continue
-            return _TYPE_CALLS[k]
-        return _exec_type_call_default
-
     def serialise_object(self, path: str, key: str, typ: type, rep: Any) -> Any:
-        type_call = allocateable.get_type_call(typ)
+        type_call = get_type_call(typ)
         return type_call(
             self.root,
             typ,

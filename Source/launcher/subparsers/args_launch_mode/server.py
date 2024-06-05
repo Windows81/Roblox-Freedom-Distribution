@@ -20,7 +20,7 @@ def subparse(
 ) -> None:
 
     subparser.add_argument(
-        '--config_path', '-cp', type=str, nargs='?',
+        '--config_path', '--config', '-cp', type=str, nargs='?',
         default=util.resource.DEFAULT_CONFIG_PATH,
         help='Game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up.',
     )
