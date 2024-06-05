@@ -1,14 +1,14 @@
 import web_server._logic as web_server
 import config.structure
-import config._main
+import config
 
 # Make sure all API endpoints are working without taking anything therefrom.
-from .endpoints._main import _
+from .endpoints import _
 
 
 def make_server(
     port: web_server.port_typ,
-    game_config: config._main.obj_type,
+    game_config: config.obj_type,
     *args,
     **kwargs,
 ) -> web_server.web_server:

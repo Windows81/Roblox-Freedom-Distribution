@@ -1,11 +1,11 @@
 from . import (
-    mesh_convert,
-    rbxm_parse,
+    rbxl,
+    mesh,
 )
+
 import util.resource
 import urllib3
 import os
-import re
 
 
 def resolve_asset_id(id_str: str | None) -> int | None:
@@ -38,8 +38,8 @@ def load_online_asset(asset_id: int) -> bytes | None:
         return
 
     data = response.data
-    data = rbxm_parse.parse(data)
-    data = mesh_convert.parse(data)
+    data = rbxl.parse(data)
+    data = mesh.parse(data)
     return data
 
 

@@ -1,15 +1,15 @@
 import web_server._logic as web_server_logic
-import web_server._main as web_server
+import web_server as web_server
 
 from . import _logic as logic
 import util.const as const
-import data_transfer._main
-import assets.rbxm_parse
+import data_transfer
+import assets.rbxl
 import config.structure
 import util.resource
 import util.versions
-import config._main
-import assets._main
+import config
+import assets
 import dataclasses
 import subprocess
 import functools
@@ -31,10 +31,10 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         from_path = self.game_config.game_setup.place_path
         if not from_path:
             return
-        to_path = assets._main.get_asset_path(const.DEFAULT_PLACE_ID)
+        to_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
 
         with open(from_path, 'rb') as rf, open(to_path, 'wb') as wf:
-            wf.write(assets.rbxm_parse.parse(rf.read()))
+            wf.write(assets.rbxl.parse(rf.read()))
 
     def save_app_setting(self) -> str:
         '''
@@ -158,7 +158,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
 class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
 
-    game_config: config._main.obj_type
+    game_config: config.obj_type
     rcc_port_num: int = 2005
     skip_popen: bool = False
     verbose: bool = False
@@ -179,6 +179,6 @@ class arg_type(logic.bin_ssl_arg_type):
 
     def get_rcc_script(self) -> str:
         return '\n\n'.join([
-            data_transfer._main.get_rcc_routine(self.game_config),
+            data_transfer.get_rcc_routine(self.game_config),
             "print('Initialised RFD server scripts.')",
         ])

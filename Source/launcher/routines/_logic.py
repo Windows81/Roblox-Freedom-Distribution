@@ -1,11 +1,11 @@
-from ..downloader import _main as downloader
+from .. import downloader as downloader
 import web_server._logic as web_server
 import config.structure
 import urllib.request
 import util.versions
 import util.resource
 import urllib.error
-import config._main
+import config
 import urllib.parse
 import http.client
 import subprocess
@@ -31,7 +31,7 @@ class popen_arg_type(arg_type):
 
 
 class server_arg_type(arg_type):
-    game_config: config._main.obj_type
+    game_config: config.obj_type
 
 
 class bin_arg_type(popen_arg_type):
@@ -199,7 +199,7 @@ class server_entry(entry):
     '''
     Routine entry class that corresponds to a server-sided component.
     '''
-    game_config: config._main.obj_type
+    game_config: config.obj_type
     local_args: server_arg_type
 
     def __init__(self, *args, **kwargs) -> None:

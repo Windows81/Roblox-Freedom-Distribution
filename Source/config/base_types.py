@@ -1,15 +1,15 @@
 from typing_extensions import Self, Callable, Union, Any
-import data_transfer._main
 from . import user_dict
 import util.resource
 import util.versions
+import data_transfer
 import dataclasses
 import functools
 
 
 class _base_type:
     def __init__(self) -> None:
-        self.data_transferer = data_transfer._main.transferer()
+        self.data_transferer = data_transfer.transferer()
         self.user_dict = user_dict.user_dict(self)
         super().__init__()
 

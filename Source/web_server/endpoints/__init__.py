@@ -6,6 +6,7 @@ from . import (
     setup_player,
     setup_rcc,
     text_filter,
+    player_info,
 )
 
 

@@ -8,9 +8,10 @@ players.preferred = 666
 instances.count = 1
 
 [game_setup]
-# Aliases for "v348" is "2018M", "v463" is "2021E", etc.
-roblox_version = '2018M'
-place_path = 'c:\Users\USERNAME\Documents\Roblox Files\Greenwater.rbxl'
+# Aliases for "v348" is "2018M", "v463" is "2021E".
+roblox_version = '2021E'
+place_path = 'c:\Users\USERNAME\Documents\Roblox Files\Otel2.rbxl'
+# Stretches to 16:9.
 icon_path = 'C:\Users\USERNAME\Pictures\Byfron Icon.png'
 name = '666'
 description = ''
@@ -33,9 +34,7 @@ end
 
 retrieve_avatar_type = '''
 function(user_code) -- str -> str
-    if _G.avatar_spinner == nil then _G.avatar_spinner = 0 end
-    _G.avatar_spinner = _G.avatar_spinner % 2 + 1
-    return ({'R15', 'R6'})[_G.avatar_spinner]
+    return 'R15'
 end
 '''
 

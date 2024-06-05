@@ -4,7 +4,7 @@ import dataclasses
 import util.const
 
 from . import _logic as logic
-import launcher.downloader._main as downloader
+import launcher.downloader as downloader
 
 
 @dataclasses.dataclass

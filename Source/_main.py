@@ -1,5 +1,4 @@
-import launcher._main
-import argparse
+import launcher
 
 if __name__ == '__main__':
-    launcher._main.process()
+    launcher.process()

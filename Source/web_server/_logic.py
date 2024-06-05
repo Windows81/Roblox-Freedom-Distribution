@@ -5,7 +5,7 @@ import util.const as const
 from urllib import parse
 import config.structure
 import OpenSSL.crypto
-import config._main
+import config
 import http.server
 import mimetypes
 import functools
@@ -63,7 +63,7 @@ class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
         port: port_typ,
-        game_config: config._main.obj_type,
+        game_config: config.obj_type,
         print_http_log: bool = False,
         *args, **kwargs,
     ) -> None:
