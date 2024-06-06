@@ -1,11 +1,5 @@
 #!/bin/bash
 
-winebin=$(cat /home/"$USER"/RobloxFreedomDistribution/settings/winebin.txt)
-if ! [ -x "$(command -v "$winebin")" ]; then
-    echo 'Error: the command linked in winebin.txt is invalid.' >&2
-    exit 1
-fi
-
 mkdir /home/"$USER"/RobloxFreedomDistribution
 mkdir /home/"$USER"/RobloxFreedomDistribution/settings
 wget https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2024-06-06T0437Z/RFD.exe -O /home/"$USER"/RobloxFreedomDistribution/RFD.exe
