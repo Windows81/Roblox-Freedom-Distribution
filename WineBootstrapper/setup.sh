@@ -14,3 +14,5 @@ wget https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/ma
 chmod +x /home/"$USER"/RobloxFreedomDistribution/join.sh
 chmod +x /home/"$USER"/RobloxFreedomDistribution/host.sh
 chmod +x /home/"$USER"/RobloxFreedomDistribution/stop-all.sh
+echo "Roblox freedom distribution is now installed!"
+sleep 5
