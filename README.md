@@ -1,5 +1,5 @@
 # Rōblox: Freedom Distribution
-
+#WINDOWS 81 BRO ADD ME ON DISCORD MY DC IS: twig6843.
 A Rōblox 'revival' framework built with Python; tested on Python 3.10 and 3.12.
 
 Adapted from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
