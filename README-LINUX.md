@@ -10,6 +10,7 @@ chmod +x /tmp/setup.sh
 ```
 
 2.Run host.sh/join.sh depending on your use case
+
 Host
 ```
 /home/$USER/RobloxFreedomDistribution/host.sh
