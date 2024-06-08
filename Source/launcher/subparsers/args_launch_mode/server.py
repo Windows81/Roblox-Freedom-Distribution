@@ -40,6 +40,11 @@ def subparse(
         help='Runs an instance of the player immediately after starting the server.',
     )
     subparser.add_argument(
+        '--user_code', '-u',
+        type=str, nargs='?',
+        help='If -run_client is passed in, .',
+    )
+    subparser.add_argument(
         '--verbose', '-v',
         action='store_true',
         help='Makes console output from RCC verbose.',
@@ -112,6 +117,7 @@ def _(
                 web_host='127.0.0.1',
                 rcc_port_num=args.rcc_port,
                 web_port=web_port_ipv4,
+                user_code=args.user_code,
                 # Some CoreGUI elements don't render properly if we join too early.
                 launch_delay=3,
             ),

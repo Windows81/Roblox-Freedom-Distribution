@@ -52,7 +52,7 @@ class bin_ssl_arg_type(bin_arg_type):
         is_ipv6=False,
     )
 
-    def send_request(self, path: str, timeout: float = 3) -> http.client.HTTPResponse:
+    def send_request(self, path: str, timeout: float = 17) -> http.client.HTTPResponse:
         try:
             return urllib.request.urlopen(
                 f'{self.get_base_url()}{path}',
@@ -160,14 +160,15 @@ class bin_entry(ver_entry, popen_entry):
             return
         elif self.local_args.auto_download:
             print(
-                'Downloading "%s" for Rōblox version %s' %
-                (self.BIN_SUBTYPE, self.rōblox_version.name)
+                'Downloading zipped "%s" for Rōblox version %s...' %
+                (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
             )
             downloader.download_binary(self.rōblox_version, self.BIN_SUBTYPE)
+            print('Download completed')
         else:
             raise FileNotFoundError(
-                '"%s" not found for Rōblox version %s.' %
-                (self.BIN_SUBTYPE, self.rōblox_version.name)
+                'Zipped file "%s" not found for Rōblox version %s' %
+                (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
             )
 
 

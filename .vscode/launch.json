@@ -21,6 +21,8 @@
 				"server",
 				"--run_client",
 				"--verbose",
+				"--user_code",
+				"VisualPlugin",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
@@ -36,6 +38,8 @@
 				"--run_client",
 				"--verbose",
 				"--debug",
+				"--user_code",
+				"VisualPlugin",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true

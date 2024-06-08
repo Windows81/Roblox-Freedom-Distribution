@@ -7,6 +7,7 @@ from . import (
     setup_rcc,
     text_filter,
     player_info,
+    load_avatar,
 )
 
 

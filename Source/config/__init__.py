@@ -1,21 +1,20 @@
 
-from . import structure, base_types
+from . import _logic, structure
 import util.resource
 import util.versions
 import functools
 import tomli
 
 
-class obj_type(structure.config_type, base_types._base_type):
+class obj_type(structure.config_type, _logic.base_type):
     def __init__(self, path: str = util.resource.DEFAULT_CONFIG_PATH) -> None:
-        '''
-        Retrieves the game configuration data and serialises it.
-        '''
-        self.file_path = util.resource.retr_config_full_path(path)
-        with open(self.file_path, 'rb') as f:
-            self.data_dict: dict = tomli.load(f)
+        _logic.base_type.__init__(
+            self,
+            path=path,
+        )
 
-        super().__init__(
+        structure.config_type.__init__(
+            self,
             root=self,
             current_typ=structure.config_type,
             **self.data_dict,

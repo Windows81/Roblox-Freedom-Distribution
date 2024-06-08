@@ -16,7 +16,7 @@ def perform_basic_join(self: web_server_handler):
         return {}
 
     id_num = self.server.game_config.user_dict.add_user(user_code)
-    user_name = self.game_config.server_core.retrieve_username(user_code)
+    username = self.game_config.server_core.retrieve_username(user_code)
 
     return {
         'ServerConnections': [
@@ -36,9 +36,9 @@ def perform_basic_join(self: web_server_handler):
         'PlaceId':
             util.const.DEFAULT_PLACE_ID,
         'UserName':
-            user_name,
+            username,
         'DisplayName':
-            user_name,
+            username,
         'AccountAge':
             self.game_config.server_core.retrieve_account_age(user_code),
         'ChatStyle':
@@ -324,152 +324,6 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/v1.1/avatar-fetch/')
-def _(self: web_server_handler) -> bool:
-    '''
-    Character appearance for v348.
-    '''
-    user_info = self.server.game_config.user_dict.resolve_user_info(
-        self.query.get('userId'),
-    )
-    if not user_info:
-        return False
-    user_code = user_info.user_code
-
-    resolvedAvatarType, accessoryVersionIds, scales = (
-        self.game_config.server_core.retrieve_avatar_type(user_code),
-        self.game_config.server_core.retrieve_avatar_items(user_code),
-        self.game_config.server_core.retrieve_avatar_scales(user_code),
-    )
-
-    json = {
-        "animations": {},
-        "resolvedAvatarType": resolvedAvatarType,
-        "accessoryVersionIds": accessoryVersionIds,
-        "equippedGearVersionIds": [],
-        "backpackGearVersionIds": [],
-        "bodyColors": {
-            "HeadColor": 1013,
-            "LeftArmColor": 1013,
-            "LeftLegColor": 1013,
-            "RightArmColor": 1013,
-            "RightLegColor": 1013,
-            "TorsoColor": 1013,
-        },
-        "scales": {
-            "Height": scales['Height'],
-            "Width": scales['Width'],
-            "Head": scales['Head'],
-            "Depth": scales['Depth'],
-            "Proportion": scales['Proportion'],
-            "BodyType": scales['BodyType'],
-        },
-    }
-    self.send_json(json)
-    return True
-
-
-@server_path('/v1/avatar', min_version=400)
-@server_path('/v1/avatar/', min_version=400)
-@server_path('/v1/avatar-fetch', min_version=400)
-@server_path('/v1/avatar-fetch/', min_version=400)
-def _(self: web_server_handler) -> bool:
-    '''
-    Character appearance for v463.
-    TODO: properly implement avatars.
-    '''
-    user_info = self.server.game_config.user_dict.resolve_user_info(
-        self.query.get('userId'),
-    )
-    if not user_info:
-        return False
-    user_code = user_info.user_code
-
-    resolvedAvatarType, accessoryVersionIds, scales = (
-        self.game_config.server_core.retrieve_avatar_type(user_code),
-        self.game_config.server_core.retrieve_avatar_items(user_code),
-        self.game_config.server_core.retrieve_avatar_scales(user_code),
-    )
-
-    self.send_json({
-        "resolvedAvatarType": resolvedAvatarType,
-        "equippedGearVersionIds": [],
-        "backpackGearVersionIds": [],
-        "assetAndAssetTypeIds": [
-            {
-                "assetId": item,
-                "assetTypeId": 8
-            }
-            for item in accessoryVersionIds
-        ],
-        "animationAssetIds": {
-            "run": 2510238627,
-            "jump": 2510236649,
-            "fall": 2510233257,
-            "climb": 2510230574
-        },
-        "bodyColors": {
-            "headColorId": 1013,
-            "torsoColorId": 1013,
-            "rightArmColorId": 1013,
-            "leftArmColorId": 1013,
-            "rightLegColorId": 1013,
-            "leftLegColorId": 1013,
-        },
-        "scales": {
-            "height": scales['Height'],
-            "width": scales['Width'],
-            "head": scales['Head'],
-            "depth": scales['Depth'],
-            "proportion": max(scales['Proportion'], 1e-2),
-            "bodyType": max(scales['BodyType'], 1e-2),
-        },
-        "emotes": [
-            {
-                "assetId": 3696763549,
-                "assetName": "Heisman Pose",
-                "position": 1
-            },
-            {
-                "assetId": 3360692915,
-                "assetName": "Tilt",
-                "position": 2
-            },
-            {
-                "assetId": 3696761354,
-                "assetName": "Air Guitar",
-                "position": 3
-            },
-            {
-                "assetId": 3576968026,
-                "assetName": "Shrug",
-                "position": 4
-            },
-            {
-                "assetId": 3576686446,
-                "assetName": "Hello",
-                "position": 5
-            },
-            {
-                "assetId": 3696759798,
-                "assetName": "Superhero Reveal",
-                "position": 6
-            },
-            {
-                "assetId": 3360689775,
-                "assetName": "Salute",
-                "position": 7
-            },
-            {
-                "assetId": 3360686498,
-                "assetName": "Stadium",
-                "position": 8
-            }
-        ]
-    })
-    return True
-
-
 @server_path('/avatar-thumbnail/json')
 def _(self: web_server_handler) -> bool:
     '''
@@ -482,57 +336,6 @@ def _(self: web_server_handler) -> bool:
 @server_path('/avatar-thumbnail/image')
 def _(self: web_server_handler) -> bool:
     '''
-    To simplify the server program, let's not there be avatar thumbnail images.
+    To simplify the server program, let there not be avatar thumbnail images.
     '''
-    return True
-
-
-# TODO: handle social requests.
-@server_path('/Game/LuaWebService/HandleSocialRequest.ashx')
-def _(self: web_server_handler) -> bool:
-    match self.query['method']:
-        case 'GetGroupRank':
-            self.send_data(
-                bytes(f'<Value Type="integer">{255}</Value>', encoding='utf-8'))
-            return True
-
-    self.send_json({})
-    return True
-
-
-@server_path('/v2/users/([0-9]+)/groups/roles', regex=True)
-def _(self: web_server_handler, match: re.Match[str]) -> bool:
-    self.send_json({
-        "data": [
-            {
-                "group": {
-                    "id": group_id,
-                    "name": "string",
-                    "memberCount": 0,
-                    "hasVerifiedBadge": True,
-                },
-                "role": {
-                    "id": group_id,
-                    "name": "string",
-                    "rank": 255,
-                },
-                "isNotificationsEnabled": True,
-            }
-            for group_id in [
-                1200769,
-                2868472,
-                4199740,
-                4265462,
-                4265456,
-                4265443,
-                4265449,
-            ]
-        ]
-    })
-    return True
-
-
-@server_path('/gametransactions/getpendingtransactions/', min_version=400)
-def _(self: web_server_handler) -> bool:
-    self.send_json([])
     return True

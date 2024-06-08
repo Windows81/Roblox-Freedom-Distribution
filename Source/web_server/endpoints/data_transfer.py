@@ -4,7 +4,7 @@ import json
 
 @server_path("/rfd/data-transfer")
 def _(self: web_server_handler) -> bool:
-    transferer = self.server.game_config.data_transferer
+    transferer = self.server.data_transferer
     if not transferer:
         return False
 
