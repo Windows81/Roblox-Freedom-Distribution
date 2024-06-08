@@ -13,6 +13,12 @@ wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/mai
 mkdir /home/$USER/.wine/drive_c/robloxmaps
 wget https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl -O /home/"$USER"/.wine/drive_c/robloxmaps/2007Crossroads.rbxl
 
+#Set the Graphics Renderer API to OpenGL (2021)
+#mkdir /home/$USER/RobloxFreedomDistribution/Roblox
+#mkdir /home/$USER/RobloxFreedomDistribution/Roblox/v463
+#mkdir /home/$USER/RobloxFreedomDistribution/Roblox/v463/ClientSettings
+#wget https://raw.githubusercontent.com/Twig6943/RobloxGraphicsSwitcherForLinux/main/RFD/2021E/OpenGL/ClientAppSettings.json -O /home/$USER/RobloxFreedomDistribution/Roblox/v463/Player/ClientSettings/ClientAppSettings.json
+
 chmod +x /home/$USER/RobloxFreedomDistribution/join.sh
 chmod +x /home/$USER/RobloxFreedomDistribution/host.sh
 chmod +x /home/$USER/RobloxFreedomDistribution/stop-all.sh
