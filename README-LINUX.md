@@ -24,5 +24,6 @@ A common fix if you're having issues is to delete the "Roblox" folder
 ```
 sudo rm -r /home/$USER/RobloxFreedomDistribution/Roblox
 ```
+Using native wget/curl to download clients might fix issues too (not sure)
 
 If you're having issues, please add me on discord. My discord is twig6843. (with the dot)
