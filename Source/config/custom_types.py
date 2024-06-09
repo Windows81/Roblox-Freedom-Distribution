@@ -37,11 +37,6 @@ def _type_call_default(config: base_type, typ: type, path: str, *args, **kwargs)
     return typ(*args, **kwargs)
 
 
-def _type_call_storager(config: base_type, typ: type, path: str, val) -> storage.storager:
-    full_path = file_path.evaluate(config, val)
-    return storage.storager(full_path)
-
-
 def _type_call_rōblox_version(config: base_type, typ: type, path: str, val) -> util.versions.rōblox:
     return util.versions.rōblox.from_name(val)
 
@@ -95,6 +90,4 @@ type_calls = {
         _type_call_file_path,
     dataclasses.dataclass:
         _type_call_dataclass,
-    storage.storager:
-        _type_call_storager,
 }

@@ -1,5 +1,6 @@
 from web_server._logic import web_server_handler, server_path
 from config import obj_type
+import storage
 
 
 class avatar_data:
@@ -19,14 +20,19 @@ def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
     '''
-    user_info = self.server.game_config.user_dict.resolve_user_info(
-        self.query.get('userId'),
-    )
-    if not user_info:
-        return False
-    user_code = user_info.user_code
-    avatar = avatar_data(self.game_config, user_code)
+    database = self.server.database
 
+    id_num = self.query.get('userId')
+    user_code = database.get_player_field_from_index(
+        storage.player_field.ID_NUMBER,
+        id_num,
+        storage.player_field.USER_CODE,
+    )
+
+    if not user_code:
+        return False
+
+    avatar = avatar_data(self.game_config, user_code)
     self.send_json({
         "animations": {},
         "resolvedAvatarType": avatar.type.name,
@@ -62,14 +68,19 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     TODO: properly implement avatars.
     '''
-    user_info = self.server.game_config.user_dict.resolve_user_info(
-        self.query.get('userId'),
-    )
-    if not user_info:
-        return False
-    user_code = user_info.user_code
-    avatar = avatar_data(self.game_config, user_code)
+    database = self.server.database
 
+    id_num = self.query.get('userId')
+    user_code = database.get_player_field_from_index(
+        storage.player_field.ID_NUMBER,
+        id_num,
+        storage.player_field.USER_CODE,
+    )
+
+    if not user_code:
+        return False
+
+    avatar = avatar_data(self.game_config, user_code)
     self.send_json({
         "resolvedAvatarType": avatar.type.name,
         "equippedGearVersionIds": [],

@@ -37,8 +37,6 @@ class obj_type:
         path_prefix: str = '',
         **kwargs,
     ) -> None:
-        super().__init__()  # For sub-classes which have multiple parents.
-
         self.root = root
         self.kwargs = kwargs
 

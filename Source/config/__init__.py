@@ -1,9 +1,8 @@
-
 from . import _logic, structure
 import util.resource
 import util.versions
 import functools
-import tomli
+import storage
 
 
 class obj_type(structure.config_type, _logic.base_type):
@@ -12,12 +11,16 @@ class obj_type(structure.config_type, _logic.base_type):
             self,
             path=path,
         )
-
         structure.config_type.__init__(
             self,
             root=self,
             current_typ=structure.config_type,
             **self.data_dict,
+        )
+
+        self.database = storage.storager(
+            self.game_setup.database_path,
+            force_init=self.game_setup.erase_database_on_start,
         )
 
 

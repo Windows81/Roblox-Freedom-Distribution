@@ -69,7 +69,7 @@ class web_server(http.server.ThreadingHTTPServer):
     ) -> None:
         self.game_config = game_config
         self.data_transferer = game_config.data_transferer
-        self.database = game_config.game_setup.database_path
+        self.database = game_config.database
 
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET

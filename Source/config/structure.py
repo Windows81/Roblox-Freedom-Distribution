@@ -54,9 +54,10 @@ class config_type(allocateable.obj_type):
 
     class game_setup(allocateable.obj_type):
         place_path: custom_types.file_path
-        database_path: storage.storager
+        database_path: custom_types.file_path
         roblox_version: util.versions.rōblox
         icon_path: custom_types.file_path
+        erase_database_on_start: bool
 
         class creator(allocateable.obj_type):
             name: str

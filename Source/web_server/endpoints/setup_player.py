@@ -15,8 +15,9 @@ def perform_basic_join(self: web_server_handler):
     if not user_code:
         return {}
 
-    id_num = self.server.game_config.user_dict.add_user(user_code)
     username = self.game_config.server_core.retrieve_username(user_code)
+    id_num = self.game_config.server_core.retrieve_user_id(user_code)
+    self.server.database.add_player(user_code, username, id_num)
 
     return {
         'ServerConnections': [
