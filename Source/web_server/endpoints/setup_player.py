@@ -17,7 +17,11 @@ def perform_basic_join(self: web_server_handler):
 
     username = self.game_config.server_core.retrieve_username(user_code)
     id_num = self.game_config.server_core.retrieve_user_id(user_code)
-    self.server.database.add_player(user_code, username, id_num)
+
+    database = self.server.database.players
+    (user_code, username, id_num) = database.add_player(
+        user_code, username, id_num
+    )
 
     return {
         'ServerConnections': [

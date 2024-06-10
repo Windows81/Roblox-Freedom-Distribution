@@ -20,13 +20,13 @@ def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
     '''
-    database = self.server.database
+    database = self.server.database.players
 
     id_num = self.query.get('userId')
     user_code = database.get_player_field_from_index(
-        storage.player_field.ID_NUMBER,
+        database.player_field.ID_NUMBER,
         id_num,
-        storage.player_field.USER_CODE,
+        database.player_field.USER_CODE,
     )
 
     if not user_code:
@@ -68,13 +68,13 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     TODO: properly implement avatars.
     '''
-    database = self.server.database
+    database = self.server.database.players
 
     id_num = self.query.get('userId')
     user_code = database.get_player_field_from_index(
-        storage.player_field.ID_NUMBER,
+        database.player_field.ID_NUMBER,
         id_num,
-        storage.player_field.USER_CODE,
+        database.player_field.USER_CODE,
     )
 
     if not user_code:

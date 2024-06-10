@@ -8,6 +8,7 @@ from . import (
     text_filter,
     player_info,
     load_avatar,
+    load_persistence,
 )
 
 

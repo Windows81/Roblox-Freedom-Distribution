@@ -8,13 +8,13 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     GetUsernameFromUserId
     '''
-    database = self.server.database
+    database = self.server.database.players
 
     id_num = match.group(1)
     username = database.get_player_field_from_index(
-        storage.player_field.ID_NUMBER,
+        database.player_field.ID_NUMBER,
         id_num,
-        storage.player_field.USERNAME,
+        database.player_field.USERNAME,
     )
 
     if not username:
@@ -26,13 +26,13 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path("/users/get-by-username")
 def _(self: web_server_handler) -> bool:
-    database = self.server.database
+    database = self.server.database.players
 
     username = self.query['username']
     id_num = database.get_player_field_from_index(
-        storage.player_field.USERNAME,
+        database.player_field.USERNAME,
         username,
-        storage.player_field.ID_NUMBER,
+        database.player_field.ID_NUMBER,
     )
 
     if not id_num:
