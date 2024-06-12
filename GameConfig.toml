@@ -9,7 +9,7 @@ instances.count = 1
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2018M'
+roblox_version = '2021E'
 place_path = 'c:\Users\USERNAME\Documents\Roblox Files\Hotelistic.rbxl'
 database_path = '_.sqlite'
 erase_database_on_start = false
