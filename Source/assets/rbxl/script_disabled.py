@@ -6,10 +6,10 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
         return None
 
     class_id = _logic.get_class_id(info)
-    if not class_id:
+    if class_id is None:
         return None
 
-    if not parser.class_dict[class_id].endswith(b'Script'):
+    if not parser.class_dict[class_id].class_name.endswith(b'Script'):
         return None
 
     class_id = info.chunk_data[0:4]

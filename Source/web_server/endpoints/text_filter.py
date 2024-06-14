@@ -12,22 +12,24 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path("/moderation/v2/filtertext")
 def _(self: web_server_handler) -> bool:
+    database = self.server.database.players
 
     # Manually parsing here since `self.query` isn't automatically populated prior.
     field_data = str(self.read_content(), encoding='utf-8')
     self.query = dict(urllib.parse.parse_qsl(field_data))
 
     orig_text = self.query.get('text', None)
-    if not orig_text:
+    if orig_text is None:
         return False
 
-    user_id = self.server.game_config.user_dict.sanitise_id_num(
-        self.query.get('userId'))
-    if not user_id:
-        return False
+    id_num = self.query.get('userId')
+    user_code = database.get_player_field_from_index(
+        database.player_field.ID_NUMBER,
+        id_num,
+        database.player_field.USER_CODE,
+    )
 
-    user_code = self.server.game_config.user_dict.get_code_from_id_num(user_id)
-    if not user_code:
+    if user_code is None:
         return False
 
     mod_text = self.game_config.server_core.filter_text(

@@ -9,6 +9,7 @@ from . import (
     player_info,
     load_avatar,
     load_persistence,
+    save_place,
 )
 
 

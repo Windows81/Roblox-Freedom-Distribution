@@ -1,5 +1,4 @@
 from web_server._logic import web_server_handler, server_path
-import storage
 import re
 
 
@@ -17,7 +16,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
         database.player_field.USERNAME,
     )
 
-    if not username:
+    if username is None:
         return False
 
     self.send_json({'Username': username})
@@ -35,7 +34,7 @@ def _(self: web_server_handler) -> bool:
         database.player_field.ID_NUMBER,
     )
 
-    if not id_num:
+    if id_num is None:
         return False
 
     self.send_data(id_num)

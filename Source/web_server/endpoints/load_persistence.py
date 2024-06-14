@@ -24,14 +24,14 @@ def _(self: web_server_handler) -> bool:
         'target',
         None,
     )
-    if not target:
+    if target is None:
         return False
 
     key = self.query.get(
         'key',
         None,
     )
-    if not key:
+    if key is None:
         return False
 
     value = form_data.get(
@@ -66,14 +66,14 @@ def _(self: web_server_handler) -> bool:
             f"{prefix}.target",
             None,
         )
-        if not target:
+        if target is None:
             break
 
         key = form_data.get(
             f"{prefix}.key",
             None,
         )
-        if not key:
+        if key is None:
             break
 
         value = database.get(scope, target, key)

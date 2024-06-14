@@ -9,7 +9,7 @@ import os
 
 
 def resolve_asset_id(id_str: str | None) -> int | None:
-    if not id_str:
+    if id_str is None:
         return None
     try:
         return int(id_str)
@@ -55,7 +55,7 @@ def load_asset(asset_id: int) -> bytes | None:
             return f.read()
 
     online_data = load_online_asset(asset_id)
-    if not online_data:
+    if online_data is None:
         return
 
     with open(path, 'wb') as f:

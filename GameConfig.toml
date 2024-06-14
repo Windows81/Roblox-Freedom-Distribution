@@ -10,14 +10,23 @@ instances.count = 1
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2021E'
-place_path = 'c:\Users\USERNAME\Documents\Roblox Files\Hotelistic.rbxl'
-database_path = '_.sqlite'
-erase_database_on_start = false
-# Stretches to 16:9.
-icon_path = 'C:\Users\USERNAME\Pictures\Byfron Icon.png'
-name = '666'
+
+title = '666'
 description = ''
 creator.name = 'ÒÓ'
+
+[game_setup.place]
+path = 'c:\Users\USERNAME\Documents\Roblox Files\f3xkit.rbxl'
+# When game:SavePlace() is called, overwirtes the place at `.place_path`
+enable_saveplace = true
+
+[game_setup.database]
+path = '_.sqlite'
+clear_on_start = false
+
+[game_setup.icon]
+# Stretches to 16:9.
+path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 
 [server_core]

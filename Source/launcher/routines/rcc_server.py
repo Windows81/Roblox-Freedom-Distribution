@@ -27,8 +27,8 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         return self.game_config.game_setup.roblox_version
 
     def save_place_file(self) -> None:
-        from_path = self.game_config.game_setup.place_path
-        if not from_path:
+        from_path = self.game_config.game_setup.place.path
+        if from_path is None:
             return
         to_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
 

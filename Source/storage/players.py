@@ -63,7 +63,7 @@ class database(_logic.sqlite_connector_base):
         if index == self.player_field.ID_NUMBER:
             value = self.sanitise_player_id_num(value)
 
-        if not value:
+        if value is None:
             return None
 
         result = self.sqlite.execute(
@@ -71,11 +71,11 @@ class database(_logic.sqlite_connector_base):
             SELECT {field.value} FROM "{self.TABLE_NAME}" WHERE {index.value} = {repr(value)}
             """,
         ).fetchone()
-        if not result:
+        if result is None:
             return None
         return result[0]
 
     def sanitise_player_id_num(self, id_num: str | int | None) -> int | None:
-        if not id_num:
+        if id_num is None:
             return None
         return int(id_num)

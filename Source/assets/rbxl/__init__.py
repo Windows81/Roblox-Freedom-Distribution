@@ -2,6 +2,7 @@ from . import (
     _logic,
     downdate_font,
     script_disabled,
+    skip_bytecode,
     roblox_links,
 )
 
@@ -12,4 +13,5 @@ def parse(data: bytes):
         downdate_font.replace,
         # script_disabled.replace, # Not useful yet; `rbxl` files still store scripts' `Disabled` property internally.
         roblox_links.replace,
+        skip_bytecode.replace,
     ])

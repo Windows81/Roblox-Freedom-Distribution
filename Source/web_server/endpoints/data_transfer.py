@@ -5,7 +5,7 @@ import json
 @server_path("/rfd/data-transfer")
 def _(self: web_server_handler) -> bool:
     transferer = self.server.data_transferer
-    if not transferer:
+    if transferer is None:
         return False
 
     input_data = json.loads(self.read_content())

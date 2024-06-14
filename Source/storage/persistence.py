@@ -64,7 +64,7 @@ class database(_logic.sqlite_connector_base):
             AND {self.field.KEY.value} = {repr(key)}
             """,
         ).fetchone()
-        if not result:
+        if result is None:
             return None
 
         value = result[0]

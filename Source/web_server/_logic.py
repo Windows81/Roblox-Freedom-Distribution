@@ -133,7 +133,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return False
 
         host: str | None = self.headers.get('Host')
-        if not host:
+        if host is None:
             return False
 
         self.is_valid_request = True
@@ -222,10 +222,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def __process_func(self, func, *args, **kwargs) -> bool:
-        if not func:
+        if func is None:
             return False
         version_func = func.get(self.game_config.game_setup.roblox_version)
-        if not version_func:
+        if version_func is None:
             return False
         return version_func(self, *args, **kwargs)
 
@@ -236,7 +236,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     def __open_from_regex(self) -> bool:
         for pattern, func in SERVER_FUNCS[func_mode.REGEX].items():
             match = re.search(pattern, self.urlsplit.path)
-            if not match:
+            if match is None:
                 continue
             return self.__process_func(func, match)
         return False

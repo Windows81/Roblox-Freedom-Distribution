@@ -84,7 +84,7 @@ class string_replacer:
             self.pattern,
             arg.string[string_pos:string_pos+string_size],
         )
-        if not new_match:
+        if new_match is None:
             return None
 
         new_match_bytes = new_match.group()
@@ -130,41 +130,100 @@ class chunk_info:
     chunk_data: bytes
 
 
+@dataclasses.dataclass
+class inst_dict_item:
+    class_name: bytes
+    chunk_length: int
+
+
 def get_class_id(info: chunk_info) -> bytes | None:
+    '''
+    For `INST` or `PROP`, refer to `ClassID`.
+    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#instances-chunk
+    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
+    '''
     if info.chunk_name not in {b'PROP', b'INST'}:
         return None
     return info.chunk_data[0:4]
 
 
 def get_first_chunk_str(info: chunk_info) -> bytes | None:
+    '''
+    For `INST`, refer to `ClassName`.
+    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#instances-chunk
+    For `PROP`, refer to `Name`.
+    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
+    '''
     if info.chunk_name not in {b'PROP', b'INST'}:
         return None
-    size = int.from_bytes(
+    str_size = int.from_bytes(
         info.chunk_data[4:8],
         byteorder='little',
     )
-    return info.chunk_data[8:8+size]
+    str_start = 8
+    return info.chunk_data[str_start:str_start+str_size]
+
+
+def get_type_id(info: chunk_info) -> int | None:
+    '''
+    For `PROP`, refer to `TypeID`.
+    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#values
+    '''
+    if info.chunk_name not in {b'PROP'}:
+        return None
+    str_size = int.from_bytes(
+        info.chunk_data[4:8],
+        byteorder='little',
+    )
+    str_end = 8 + str_size
+    return info.chunk_data[str_end]
+
+
+def get_instance_count(info: chunk_info) -> int | None:
+    '''
+    For `INST`, refer to `Length`.
+    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#instances-chunk
+    '''
+    if info.chunk_name not in {b'INST'}:
+        return None
+    str_size = int.from_bytes(
+        info.chunk_data[4:8],
+        byteorder='little',
+    )
+    prop_start = 9 + str_size + 1
+    return int.from_bytes(
+        info.chunk_data[prop_start:prop_start+4],
+        byteorder='little',
+    )
 
 
 class rbxl_parser:
     def __init__(self, data: bytes) -> None:
         self.file_data = data
 
-    def parse_file(self, transforms: list[Callable[['rbxl_parser', chunk_info], bytes | None]]) -> bytes:
+    def parse_file(
+        self,
+        transforms: list[Callable[['rbxl_parser', chunk_info], bytes | None]],
+    ) -> bytes:
         read_stream = io.BytesIO(self.file_data)
         write_stream = io.BytesIO()
 
+        # Copies the header from `read_stream` to `write_stream`.
         header = self.__process_header(read_stream)
-        if not header:
+        if header is None:
             return self.file_data
         write_stream.write(header)
 
+        # https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
         while True:
             info = self.__process_chunk(read_stream)
-            if not info:
+            if info is None:
                 break
             for trans in transforms:
-                info.chunk_data = trans(self, info) or info.chunk_data
+                info.chunk_data = (
+                    trans(self, info)
+                    or info.chunk_data
+                )
             new_chunk = self.compile_chunk(info)
             write_stream.write(new_chunk)
 
@@ -192,7 +251,7 @@ class rbxl_parser:
             self.header_info[10:18],
             byteorder='little',
         )
-        self.class_dict: dict[bytes, bytes] = {}
+        self.class_dict: dict[bytes, inst_dict_item] = {}
 
         return b''.join([
             HEADER_SIGNATURE,
@@ -201,24 +260,33 @@ class rbxl_parser:
 
     def __process_chunk(self, read_stream: io.BytesIO) -> chunk_info | None:
         info = self.decompress_chunk(read_stream)
-        if not info:
+        if info is None:
             return None
 
         if info.chunk_name == b'INST':
             class_id = get_class_id(info)
-            if not class_id:
+            if class_id is None:
                 return
+
             class_name = get_first_chunk_str(info)
-            if not class_name:
+            if class_name is None:
                 return
-            self.class_dict[class_id] = class_name
+
+            chunk_length = get_instance_count(info)
+            if chunk_length is None:
+                return
+
+            self.class_dict[class_id] = inst_dict_item(
+                class_name=class_name,
+                chunk_length=chunk_length,
+            )
 
         return info
 
     @staticmethod
     def decompress_chunk(read_stream: io.BytesIO) -> chunk_info | None:
         chunk_name = read_stream.read(4)
-        if not chunk_name:
+        if chunk_name == b'':
             return None
 
         compressed_size = int.from_bytes(

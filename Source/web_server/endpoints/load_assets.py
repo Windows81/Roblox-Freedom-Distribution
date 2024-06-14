@@ -21,11 +21,11 @@ def _(self: web_server_handler) -> bool:
             if i != None),
         None
     )
-    if not asset_id:
+    if asset_id is None:
         return False
 
     asset = assets.load_asset(asset_id)
-    if not asset:
+    if asset is None:
         return False
 
     self.send_data(asset)

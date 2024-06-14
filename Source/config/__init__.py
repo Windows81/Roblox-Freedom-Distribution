@@ -19,8 +19,8 @@ class obj_type(structure.config_type, _logic.base_type):
         )
 
         self.database = storage.storager(
-            self.game_setup.database_path,
-            force_init=self.game_setup.erase_database_on_start,
+            self.game_setup.database.path,
+            force_init=self.game_setup.database.clear_on_start,
         )
 
 

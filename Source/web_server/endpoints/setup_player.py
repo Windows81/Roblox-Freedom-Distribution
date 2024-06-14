@@ -12,7 +12,7 @@ def perform_basic_join(self: web_server_handler):
     rcc_port = self.query.get('rcc-port')
 
     user_code = self.query.get('user-code')
-    if not user_code:
+    if user_code is None:
         return {}
 
     username = self.game_config.server_core.retrieve_username(user_code)
@@ -79,7 +79,7 @@ def _(self: web_server_handler) -> bool:
         if user_code else True
     )
 
-    if not is_user_allowed:
+    if is_user_allowed is None:
         self.send_error(403)
         return True
 
@@ -223,7 +223,7 @@ def _(self: web_server_handler) -> bool:
     self.send_json({
         'AssetId': 93722443,
         'ProductId': 13831621,
-        'Name': self.game_config.game_setup.name,
+        'Name': self.game_config.game_setup.title,
         'Description': self.game_config.game_setup.description,
         'AssetTypeId': 19,
         'Creator': {
@@ -289,7 +289,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/Thumbs/GameIcon.ashx')
 def _(self: web_server_handler) -> bool:
-    with open(self.game_config.game_setup.icon_path, 'rb') as f:
+    with open(self.game_config.game_setup.icon.path, 'rb') as f:
         self.send_data(f.read())
     return True
 

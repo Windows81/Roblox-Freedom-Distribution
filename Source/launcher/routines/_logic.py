@@ -52,7 +52,7 @@ class bin_ssl_arg_type(bin_arg_type):
         is_ipv6=False,
     )
 
-    def send_request(self, path: str, timeout: float = 17) -> http.client.HTTPResponse:
+    def send_request(self, path: str, timeout: float = 120) -> http.client.HTTPResponse:
         try:
             return urllib.request.urlopen(
                 f'{self.get_base_url()}{path}',

@@ -53,16 +53,24 @@ class config_type(allocateable.obj_type):
             count: int
 
     class game_setup(allocateable.obj_type):
-        place_path: custom_types.file_path
-        database_path: custom_types.file_path
-        roblox_version: util.versions.rōblox
-        icon_path: custom_types.file_path
-        erase_database_on_start: bool
+        class place(allocateable.obj_type):
+            path: custom_types.file_path
+            enable_saveplace: bool
+
+        class database(allocateable.obj_type):
+            path: custom_types.file_path
+            clear_on_start: bool
+
+        class icon(allocateable.obj_type):
+            path: custom_types.file_path
 
         class creator(allocateable.obj_type):
             name: str
-        name: str
+
+        title: str
         description: str
+
+        roblox_version: util.versions.rōblox
 
     class server_core(allocateable.obj_type):
         chat_style: chat_style

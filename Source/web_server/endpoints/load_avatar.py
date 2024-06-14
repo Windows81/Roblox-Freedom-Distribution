@@ -29,7 +29,7 @@ def _(self: web_server_handler) -> bool:
         database.player_field.USER_CODE,
     )
 
-    if not user_code:
+    if user_code is None:
         return False
 
     avatar = avatar_data(self.game_config, user_code)
@@ -77,7 +77,7 @@ def _(self: web_server_handler) -> bool:
         database.player_field.USER_CODE,
     )
 
-    if not user_code:
+    if user_code is None:
         return False
 
     avatar = avatar_data(self.game_config, user_code)
