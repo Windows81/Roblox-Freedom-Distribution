@@ -1,24 +1,11 @@
 #!/bin/bash
 
-#This uses an older version with wine (the latest RFD.exe seems to not work with wine. We're working on getting the latest version to work with wine.)
+echo "Make sure you have wine,wget & jq installed!"
+sleep 5
 
-# Get the latest release information from GitHub API
-latest_release_info=$(curl -s https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest)
-
-# Extract the URL for RFD.exe from the latest release information
-download_url=$(echo "$latest_release_info" | grep -oP '"browser_download_url": "\K(.*RFD.exe)(?=")')
-
-# Define the destination directory and file path
-destination_dir="/home/$USER/RobloxFreedomDistribution"
-destination_file="$destination_dir/RFD.exe"
-
-# Download the file using wget
-wget "$download_url" -O "$destination_file"
-
-echo "Downloaded RFD.exe to $destination_file"
-
-# Define the base directory
+# Define the base directoriest
 base_dir="/home/$USER/RobloxFreedomDistribution"
+destination_file="$base_dir/RFD.exe"
 settings_dir="$base_dir/settings"
 maps_dir="$base_dir/maps"
 
@@ -27,13 +14,26 @@ mkdir -p "$base_dir"
 mkdir -p "$settings_dir"
 mkdir -p "$maps_dir"
 
-# Download the files using curl
-curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/join.sh -o "$base_dir/join.sh"
-curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/host.sh -o "$base_dir/host.sh"
-curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/stop-all.sh -o "$base_dir/stop-all.sh"
-curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/GameConfig.toml -o "$base_dir/GameConfig.toml"
-curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt -o "$settings_dir/winebin.txt"
-curl -L https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl -o "$maps_dir/2007Crossroads.rbxl"
+# Get the latest release information from GitHub API
+latest_release_info=$(curl -s https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest)
+
+# Extract the URL for RFD.exe from the latest release information
+download_url=$(echo "$latest_release_info" | grep -oP '"browser_download_url": "\K(.*RFD.exe)(?=")')
+
+# Download the file using wget
+wget "$base_dir" -O "$destination_file"
+
+echo "Downloaded RFD.exe to $destination_file"
+
+# Download the files using wget
+wget -O "$base_dir/join.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/join.sh
+wget -O "$base_dir/host.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/host.sh
+wget -O "$base_dir/stop-all.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/stop-all.sh
+wget -O "$base_dir/GameConfig.toml" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/GameConfig.toml
+wget -O "$settings_dir/winebin.txt" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt
+wget -O "$maps_dir/2007Crossroads.rbxl" https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl
+
+echo "Files downloaded successfully."
 
 echo "Files downloaded successfully."
 
