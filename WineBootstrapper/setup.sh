@@ -2,25 +2,52 @@
 
 #This uses an older version with wine (the latest RFD.exe seems to not work with wine. We're working on getting the latest version to work with wine.)
 
-mkdir /home/$USER/RobloxFreedomDistribution
-mkdir /home/$USER/RobloxFreedomDistribution/settings
-wget https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2024-05-16T0741Z/RFD.exe -O /home/$USER/RobloxFreedomDistribution/RFD.exe
-wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/join.sh -O /home/"$USER"/RobloxFreedomDistribution/join.sh
-wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/host.sh -O /home/"$USER"/RobloxFreedomDistribution/host.sh
-wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/stop-all.sh -O /home/"$USER"/RobloxFreedomDistribution/stop-all.sh
-wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/GameConfig.toml -O /home/"$USER"/RobloxFreedomDistribution/GameConfig.toml
-wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt -O /home/"$USER"/RobloxFreedomDistribution/settings/winebin.txt
-mkdir /home/$USER/.wine/drive_c/robloxmaps
-wget https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl -O /home/"$USER"/.wine/drive_c/robloxmaps/2007Crossroads.rbxl
+# Get the latest release information from GitHub API
+latest_release_info=$(curl -s https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest)
+
+# Extract the URL for RFD.exe from the latest release information
+download_url=$(echo "$latest_release_info" | grep -oP '"browser_download_url": "\K(.*RFD.exe)(?=")')
+
+# Define the destination directory and file path
+destination_dir="/home/$USER/RobloxFreedomDistribution"
+destination_file="$destination_dir/RFD.exe"
+
+# Download the file using wget
+wget "$download_url" -O "$destination_file"
+
+echo "Downloaded RFD.exe to $destination_file"
+
+# Define the base directory
+base_dir="/home/$USER/RobloxFreedomDistribution"
+settings_dir="$base_dir/settings"
+maps_dir="$base_dir/maps"
+
+# Create directories if they do not exist
+mkdir -p "$base_dir"
+mkdir -p "$settings_dir"
+mkdir -p "$maps_dir"
+
+# Download the files using curl
+curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/join.sh -o "$base_dir/join.sh"
+curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/host.sh -o "$base_dir/host.sh"
+curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/stop-all.sh -o "$base_dir/stop-all.sh"
+curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/GameConfig.toml -o "$base_dir/GameConfig.toml"
+curl -L https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt -o "$settings_dir/winebin.txt"
+curl -L https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl -o "$maps_dir/2007Crossroads.rbxl"
+
+echo "Files downloaded successfully."
 
 #Set the Graphics Renderer API to OpenGL (2021)
 #mkdir /home/$USER/RobloxFreedomDistribution/Roblox
 #mkdir /home/$USER/RobloxFreedomDistribution/Roblox/v463
 #mkdir /home/$USER/RobloxFreedomDistribution/Roblox/v463/ClientSettings
-#wget https://raw.githubusercontent.com/Twig6943/RobloxGraphicsSwitcherForLinux/main/RFD/2021E/OpenGL/ClientAppSettings.json -O /home/$USER/RobloxFreedomDistribution/Roblox/v463/Player/ClientSettings/ClientAppSettings.json
+#wget https://raw.githubusercontent.com/Twig6943/RobloxGraphicsSwitcherForLinux/main/RFD/2021E/OpenGL/ClientAppSettings.json -O $base_dir/Roblox/v463/Player/ClientSettings/ClientAppSettings.json
 
-chmod +x /home/$USER/RobloxFreedomDistribution/join.sh
-chmod +x /home/$USER/RobloxFreedomDistribution/host.sh
-chmod +x /home/$USER/RobloxFreedomDistribution/stop-all.sh
+#Desktop file integration
+
+#Chmod the scripts
+chmod +x $base_dir/join.sh
+chmod +x $base_dir/host.sh
+chmod +x $base_dir/stop-all.sh
 echo "Roblox freedom distribution is now installed!"
 sleep 5
