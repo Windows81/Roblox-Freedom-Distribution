@@ -9,14 +9,14 @@ instances.count = 1
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2021E'
+roblox_version = '2018M'
 
 title = '666'
 description = ''
 creator.name = 'ÒÓ'
 
 [game_setup.place]
-path = 'c:\Users\USERNAME\Documents\Roblox Files\f3xkit.rbxl'
+path = 'c:\Users\USERNAME\Documents\Roblox Files\LumberTycoon2_2018M.rbxl'
 # When game:SavePlace() is called, overwirtes the place at `.place_path`
 enable_saveplace = true
 
@@ -45,7 +45,7 @@ end
 
 retrieve_avatar_type = '''
 function(user_code) -- str -> str
-    return 'R15'
+    return 'R6'
 end
 '''
 

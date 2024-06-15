@@ -31,7 +31,7 @@ class database(_logic.sqlite_connector_base):
         self.sqlite.commit()
 
     def set(self, scope: str, target: str, key: str, value) -> None:
-        value_str = json.loads(value)
+        value_str = json.dumps(value)
         self.sqlite.execute(
             f"""
             INSERT INTO "{self.TABLE_NAME}"
@@ -68,4 +68,4 @@ class database(_logic.sqlite_connector_base):
             return None
 
         value = result[0]
-        return json.dumps(value)
+        return json.loads(value)
