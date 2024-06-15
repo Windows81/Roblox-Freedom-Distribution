@@ -14,16 +14,20 @@ mkdir -p "$base_dir"
 mkdir -p "$settings_dir"
 mkdir -p "$maps_dir"
 
-# Get the latest release information from GitHub API
-latest_release_info=$(curl -s https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest)
+# Fetch the latest release information from GitHub API and parse the URL using jq
+download_url=$(wget -qO- https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest | jq -r '.assets[] | select(.name == "RFD.exe") | .browser_download_url')
 
-# Extract the URL for RFD.exe from the latest release information
-download_url=$(echo "$latest_release_info" | grep -oP '"browser_download_url": "\K(.*RFD.exe)(?=")')
+# Check if download_url is not empty
+if [ -z "$download_url" ]; then
+  echo "Error: Could not find the download URL for RFD.exe"
+  exit 1
+fi
 
 # Download the file using wget
-wget "$base_dir" -O "$destination_file"
+wget "$download_url" -O "$destination_file"
 
 echo "Downloaded RFD.exe to $destination_file"
+
 
 # Download the files using wget
 wget -O "$base_dir/join.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/join.sh
@@ -32,8 +36,6 @@ wget -O "$base_dir/stop-all.sh" https://raw.githubusercontent.com/Windows81/Robl
 wget -O "$base_dir/GameConfig.toml" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/GameConfig.toml
 wget -O "$settings_dir/winebin.txt" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt
 wget -O "$maps_dir/2007Crossroads.rbxl" https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl
-
-echo "Files downloaded successfully."
 
 echo "Files downloaded successfully."
 
