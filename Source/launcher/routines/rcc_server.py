@@ -179,5 +179,6 @@ class arg_type(logic.bin_ssl_arg_type):
     def get_rcc_script(self) -> str:
         return '\n\n'.join([
             data_transfer.get_rcc_routine(self.game_config),
+            self.game_config.game_setup.startup_script,
             "print('Initialised RFD server scripts.')",
         ])

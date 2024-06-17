@@ -16,7 +16,7 @@ class annotation:
     key: str
     typ: type
     path: str
-    rep: Any
+    rep: Any  # As in 'Pythonic representation'.  Needs to be clarified.
     val: Any
 
 
@@ -58,13 +58,20 @@ class obj_type:
         for sub in self.subsections:
             setattr(self, sub.key, sub.val)
 
+        def get_rep(key: str):
+            '''
+            Grabs the intermediate representation from the game config file,
+            Else the default as defined in `./structure.py`.
+            '''
+            return self.kwargs.get(key, getattr(current_typ, key, None))
+
         # Iterates through individual settings in this section.
         self.annotations = [
             annotation(
                 key=key,
                 typ=typ,
                 path=(path := f'{path_prefix}{key}'),
-                rep=(rep := self.kwargs.get(key, None)),
+                rep=(rep := get_rep(key)),
                 val=self.serialise_object(path, key, typ, rep),
             )
             for key, typ in current_typ.__annotations__.items()

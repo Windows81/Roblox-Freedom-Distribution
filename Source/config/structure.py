@@ -55,17 +55,19 @@ class config_type(allocateable.obj_type):
     class game_setup(allocateable.obj_type):
         class place(allocateable.obj_type):
             path: custom_types.file_path
-            enable_saveplace: bool
+            enable_saveplace: bool = False
 
         class database(allocateable.obj_type):
             path: custom_types.file_path
             clear_on_start: bool
 
         class icon(allocateable.obj_type):
-            path: custom_types.file_path
+            path: custom_types.file_path = custom_types.file_path('')
 
         class creator(allocateable.obj_type):
             name: str
+
+        startup_script: str = ''
 
         title: str
         description: str
