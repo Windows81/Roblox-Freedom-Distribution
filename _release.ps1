@@ -3,6 +3,7 @@ $confirmation = (Read-Host "Save zipped files? (y?)") -eq "y"
 # Packs Rōblox executables into GitHub releases that can be downloaded.
 $release_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" (curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
 $root = "$PSScriptRoot"
+$files = New-Object System.Collections.Generic.List[System.Object]
 
 function UpdateAndPush() {
 	git add .
@@ -18,8 +19,9 @@ function CreateBinary() {
 		--workpath "$root/PyInstallerWork" `
 		--distpath "$root/Binaries" `
 		--icon "$root/Source/Icon.ico"
-	$bins = Get-ChildItem "$root/Binaries/*"
-	return $bins
+	foreach ($_ in (Get-ChildItem "$root/Binaries/*")) {
+		$files.Add($_)
+	}
 }
 
 function UpdateZippedDirVersion() {
@@ -29,25 +31,23 @@ function UpdateZippedDirVersion() {
 }
 
 function CreateZippedDirs() {
-	$zips = New-Object System.Collections.Generic.List[System.Object]
-	Get-ChildItem "$root/Roblox/*/*" -Directory | ForEach-Object {
+	foreach ($_ in (Get-ChildItem "$root/Roblox/*/*" -Directory)) {
 		$zip = "$root/Roblox/$($_.Parent.Name).$($_.Name).7z"
 		Remove-Item $zip -Force -Confirm
 		if (-not (Test-Path $zip)) { 7z a $zip "$($_.FullName)/*" }
-		$zips.Add($zip)
+		$files.Add($zip)
 	}
-	return $zips
 }
 
 if (-not $confirmation) {
 	UpdateAndPush
-	$bins = CreateBinary
-	gh release create "$release_name" --notes "" $bins -p
+	CreateBinary
+	gh release create "$release_name" --notes "" $files -p
 	return
 }
 
 UpdateZippedDirVersion
 UpdateAndPush
-$bins = CreateBinary
-$zips = CreateZippedDirs
-gh release create "$release_name" --notes "" $bins $zips -p
+CreateBinary
+CreateZippedDirs
+gh release create "$release_name" --notes "" $files -p

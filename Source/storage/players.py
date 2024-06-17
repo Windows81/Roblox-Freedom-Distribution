@@ -37,13 +37,13 @@ class database(_logic.sqlite_connector_base):
                 {self.player_field.USERNAME.value},
                 {self.player_field.ID_NUMBER.value}
             )
-            VALUES
-            (
-                {repr(user_code)},
-                {repr(username)},
-                {repr(id_num)}
-            )
+            VALUES (?, ?, ?)
             """,
+            (
+                user_code,
+                username,
+                id_num,
+            ),
         )
         self.sqlite.commit()
         result = self.sqlite.execute(

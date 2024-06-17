@@ -11,18 +11,18 @@ instances.count = 1
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2018M'
 
-title = '666'
+title = 'Lumber Tycoon 2'
 description = ''
 creator.name = 'ÒÓ'
 startup_script = 'game.workspace.FilteringEnabled = true'
 
 [game_setup.place]
-path = 'c:\Users\USERNAME\Documents\Roblox Files\LumberTycoon2_2018M.rbxl'
-# When game:SavePlace() is called, overwirtes the place at `.place_path`
-enable_saveplace = true
+path = 'C:\Users\USERNAME\Documents\Roblox Files\Lumber Tycoon 2\Lumber Tycoon 2.rbxl'
+# When game:SavePlace() is called, overwirtes the place at `.path`
+enable_saveplace = false
 
 [game_setup.database]
-path = '_.sqlite'
+path = 'C:\Users\USERNAME\Documents\Roblox Files\Lumber Tycoon 2\_.sqlite'
 clear_on_start = false
 
 [game_setup.icon]
@@ -53,24 +53,6 @@ end
 retrieve_avatar_items = '''
 function(user_code) -- str -> [str]
     return {
-        10726856854,
-        9482991343,
-        9481782649,
-        9120251003,
-        4381817635,
-        6969309778,
-        5731052645,
-        2846257298,
-        121390054,
-        261826995,
-        154386348,
-        201733574,
-        48474294,
-        6340101,
-        192483960,
-        190245296,
-        183808364,
-        34247191,
     }
 end
 '''

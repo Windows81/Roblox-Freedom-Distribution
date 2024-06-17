@@ -1,3 +1,4 @@
+import json
 from web_server._logic import web_server_handler, server_path
 import urllib.parse
 import itertools
@@ -34,10 +35,11 @@ def _(self: web_server_handler) -> bool:
     if key is None:
         return False
 
-    value = form_data.get(
+    value_str = form_data.get(
         'value',
-        None,
+        'null',
     )
+    value = json.loads(value_str)
 
     database.set(scope, target, key, value)
     self.send_json({"data": value})
@@ -78,7 +80,7 @@ def _(self: web_server_handler) -> bool:
 
         value = database.get(scope, target, key)
         return_data.append({
-            "Value": value,
+            "Value": json.dumps(value),
             "Scope": scope,
             "Key": key,
             "Target": target,

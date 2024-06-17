@@ -41,14 +41,14 @@ class database(_logic.sqlite_connector_base):
                 {self.field.KEY.value},
                 {self.field.VALUE.value}
             )
-            VALUES
-            (
-                {repr(scope)},
-                {repr(target)},
-                {repr(key)},
-                {repr(value_str)}
-            )
+            VALUES (?, ?, ?, ?)
             """,
+            (
+                scope,
+                target,
+                key,
+                value_str,
+            ),
         )
         self.sqlite.commit()
 
