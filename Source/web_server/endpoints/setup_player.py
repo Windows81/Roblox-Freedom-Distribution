@@ -7,7 +7,7 @@ import time
 import re
 
 
-def perform_basic_join(self: web_server_handler):
+def perform_join(self: web_server_handler):
     rcc_host_addr = self.query.get('rcc-host-addr')
     rcc_port = self.query.get('rcc-port')
 
@@ -68,21 +68,6 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/rfd/certificate')
 def _(self: web_server_handler) -> bool:
-    client_addr = self.address_string()
-
-    user_code = self.query.get('user-code', None)
-    is_user_allowed = (
-        self.game_config.server_core.check_user_allowed(
-            user_code,
-            client_addr,
-        )
-        if user_code else True
-    )
-
-    if is_user_allowed is None:
-        self.send_error(403)
-        return True
-
     if not isinstance(self.server, web_server_ssl):
         return False
     self.server.add_identities(self.ip_addr)
@@ -102,7 +87,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/game/join.ashx')
 def _(self: web_server_handler) -> bool:
-    self.send_json(perform_basic_join(self) | {
+    self.send_json(perform_join(self) | {
         'ClientPort': 0,
         'PingUrl': '',
         'PingInterval': 0,
@@ -132,7 +117,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/game/join.ashx', min_version=400)
 def _(self: web_server_handler) -> bool:
-    self.send_json(perform_basic_join(self) | {
+    self.send_json(perform_join(self) | {
         'ClientPort': 0,
         'PingUrl': '',
         'PingInterval': 0,
@@ -266,6 +251,12 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/login/negotiate.ashx')
 @server_path('/universes/validate-place-join')
+def _(self: web_server_handler) -> bool:
+    self.send_json(True)
+    return True
+
+
+@server_path('/rfd/is-player-allowed')
 def _(self: web_server_handler) -> bool:
     self.send_json(True)
     return True

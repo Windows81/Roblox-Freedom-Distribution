@@ -5,14 +5,13 @@ import util.versions
 import dataclasses
 import functools
 import os.path
-import storage
 
 
-class file_path(str):
+class path_obj(str):
     @staticmethod
-    def evaluate(config: base_type, val: str) -> 'file_path':
+    def evaluate(config: base_type, val: str) -> 'path_obj':
         root = os.path.dirname(config.config_path)
-        return file_path(os.path.join(root, val))
+        return path_obj(os.path.join(root, val))
 
 
 @functools.cache
@@ -56,8 +55,8 @@ def _type_call_dataclass(config: base_type, typ: type, path: str, val) -> Callab
     return typ(**val)
 
 
-def _type_call_file_path(config: base_type, typ: type, path: str, val) -> file_path:
-    return file_path.evaluate(config, val)
+def _type_call_file_path(config: base_type, typ: type, path: str, val) -> path_obj:
+    return path_obj.evaluate(config, val)
 
 
 def _type_call_union(config: base_type, typ: type, path: str, val) -> Any | None:
@@ -86,7 +85,7 @@ type_calls = {
         _type_call_rōblox_version,
     Union:
         _type_call_union,
-    file_path:
+    path_obj:
         _type_call_file_path,
     dataclasses.dataclass:
         _type_call_dataclass,

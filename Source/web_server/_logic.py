@@ -1,3 +1,4 @@
+from typing_extensions import Any, Callable
 import launcher.routines._logic as logic
 import util.versions as versions
 import dataclasses
@@ -33,15 +34,54 @@ class func_mode(enum.Enum):
     REGEX = 1
 
 
-SERVER_FUNCS = {m: dict[str, versions.version_holder]() for m in func_mode}
+class holder(dict[versions.rōblox, Any]):
+    def __add_pred(self, func: Callable[[int], bool], obj):
+        for v in versions.rōblox:
+            if not func(v.get_number()):
+                continue
+            super().__setitem__(v, obj)
+        return obj
+
+    def add_min(self, obj, min_version: int):
+        return self.__add_pred(lambda n: n >= min_version, obj)
+
+    def add_all(self, obj):
+        return self.__add_pred(lambda n: True, obj)
 
 
-def server_path(path: str, regex: bool = False, min_version: int = 0):
-    def inner(f):
-        dict_mode = func_mode.REGEX if regex else func_mode.STATIC
-        SERVER_FUNCS[dict_mode].setdefault(
-            path, versions.version_holder()).add_min(f, min_version)
-        return f
+@dataclasses.dataclass(frozen=True)
+class server_func_key:
+    mode: func_mode
+    version: versions.rōblox
+    path: str
+    command: str
+
+
+SERVER_FUNCS = dict[server_func_key, Callable]()
+
+
+def server_path(path: str, regex: bool = False, min_version: int = 0, commands: set[str] = {'POST', 'GET'}):
+    def inner(func):
+        dict_mode = (
+            func_mode.REGEX
+            if regex
+            else func_mode.STATIC
+        )
+
+        global SERVER_FUNCS
+        SERVER_FUNCS |= {
+            server_func_key(
+                mode=dict_mode,
+                version=version,
+                path=path,
+                command=command,
+            ): func
+            for version in versions.rōblox
+            if version.get_number() >= min_version
+            for command in commands
+        }
+
+        return func
     return inner
 
 
@@ -221,24 +261,27 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
-    def __process_func(self, func, *args, **kwargs) -> bool:
-        if func is None:
-            return False
-        version_func = func.get(self.game_config.game_setup.roblox_version)
-        if version_func is None:
-            return False
-        return version_func(self, *args, **kwargs)
-
     def __open_from_static(self) -> bool:
-        func = SERVER_FUNCS[func_mode.STATIC].get(self.urlsplit.path, None)
-        return self.__process_func(func)
+        key = server_func_key(
+            mode=func_mode.STATIC,
+            version=self.game_config.game_setup.roblox_version,
+            path=self.urlsplit.path,
+            command=self.command,
+        )
+
+        func = SERVER_FUNCS.get(key, None)
+        if func:
+            return func(self)
+        return False
 
     def __open_from_regex(self) -> bool:
-        for pattern, func in SERVER_FUNCS[func_mode.REGEX].items():
-            match = re.search(pattern, self.urlsplit.path)
+        for key, func in SERVER_FUNCS.items():
+            if key.mode != func_mode.REGEX:
+                continue
+            match = re.search(key.path, self.urlsplit.path)
             if match is None:
                 continue
-            return self.__process_func(func, match)
+            return func(self, match)
         return False
 
     def __open_from_file(self) -> bool:

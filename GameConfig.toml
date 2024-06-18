@@ -9,7 +9,7 @@ instances.count = 1
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2018M'
+roblox_version = '2018'
 
 title = 'Lumber Tycoon 2'
 description = ''
@@ -17,12 +17,12 @@ creator.name = 'ÒÓ'
 startup_script = 'game.workspace.FilteringEnabled = true'
 
 [game_setup.place]
-path = 'C:\Users\USERNAME\Documents\Roblox Files\Lumber Tycoon 2\Lumber Tycoon 2.rbxl'
+path = 'c:\Users\USERNAME\Documents\Roblox Files\Live in Minecraft Hotel! 1.7.6 Anti exploit!.rbxl'
 # When game:SavePlace() is called, overwirtes the place at `.path`
 enable_saveplace = false
 
 [game_setup.database]
-path = 'C:\Users\USERNAME\Documents\Roblox Files\Lumber Tycoon 2\_.sqlite'
+path = '_.sqlite'
 clear_on_start = false
 
 [game_setup.icon]
@@ -38,8 +38,7 @@ end
 '''
 
 check_user_allowed = '''
-function(user_code, ip_addr) -- string -> bool
-    print(user_code, 'joined from IP address', ip_addr)
+function(user_code) -- string -> bool
     return true
 end
 '''

@@ -189,8 +189,7 @@ class bin_ssl_entry(bin_entry):
         if not self.local_args.web_port.is_ssl:
             return
 
-        qs = urllib.parse.urlencode(query_args)
-        res = self.local_args.send_request(f'/rfd/certificate?{qs}')
+        res = self.local_args.send_request(f'/rfd/certificate')
         path = self.get_versioned_path('SSL', 'cacert.pem')
         with open(path, 'wb') as f:
             f.write(res.read())

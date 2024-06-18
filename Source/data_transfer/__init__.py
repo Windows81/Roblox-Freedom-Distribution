@@ -5,26 +5,6 @@ import itertools
 import queue
 import uuid
 
-SCRIPT_FORMAT = """
-_G.RFD = {%(functions)s}
-spawn(function()
-    local BaseUrl = game:GetService("ContentProvider").BaseUrl:lower()
-    local HttpRbxApiService = game:GetService("HttpRbxApiService")
-    local HttpService = game:GetService("HttpService")
-    local Results = {}
-    local Url = BaseUrl .. "rfd/data-transfer"
-    while true do
-    	local Calls = HttpRbxApiService:PostAsync(Url, HttpService:JSONEncode(Results))
-    	Results = {}
-    	for guid, data in next, HttpService:JSONDecode(Calls) do
-    		local path, args = data.path, data.args
-    		Results[guid] = _G.RFD[path](unpack(args))
-            print(path, unpack(args), Results[guid])
-    	end
-    end
-end)
-"""
-
 
 @dataclasses.dataclass
 class _input_type:
@@ -90,10 +70,10 @@ def list_functions(game_config) -> dict:
 
 
 @functools.cache
-def get_rcc_routine(game_config) -> str:
-    return SCRIPT_FORMAT % {
-        'functions': '\n'.join(
+def get_rcc_snippet(game_config) -> str:
+    return "_G.RFD = {%s}" % (
+        '\n'.join(
             f'["{ann.path}"] = ({ann.rep});'
             for ann in list_functions(game_config).values()
         )
-    }
+    )

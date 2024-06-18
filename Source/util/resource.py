@@ -14,9 +14,8 @@ TOP_DIR = \
 
 class dir_type(enum.Enum):
     RŌBLOX = 0
-    ASSET = 1
-    SSL = 2
-    MISC = 3
+    SSL = 1
+    MISC = 2
 
 
 class bin_subtype(enum.Enum):
@@ -35,11 +34,6 @@ def get_paths(d: dir_type) -> list[str]:
             return [TOP_DIR, 'Roblox']
         case (False, dir_type.RŌBLOX):
             return [TOP_DIR, 'Roblox']
-
-        case (True, dir_type.ASSET):
-            return [TOP_DIR, 'AssetCache']
-        case (False, dir_type.ASSET):
-            return [TOP_DIR, 'AssetCache']
 
         # If running from `exe`, stores TLS certiifcates in a temporary directory.
         case (True, dir_type.SSL):

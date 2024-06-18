@@ -3,6 +3,7 @@ import util.resource
 import util.versions
 import functools
 import storage
+import assets
 
 
 class obj_type(structure.config_type, _logic.base_type):
@@ -11,6 +12,7 @@ class obj_type(structure.config_type, _logic.base_type):
             self,
             path=path,
         )
+
         structure.config_type.__init__(
             self,
             root=self,
@@ -21,6 +23,10 @@ class obj_type(structure.config_type, _logic.base_type):
         self.database = storage.storager(
             self.game_setup.database.path,
             force_init=self.game_setup.database.clear_on_start,
+        )
+
+        self.asset_cache = assets.asseter(
+            dir_path=self.game_setup.asset_cache.path,
         )
 
 

@@ -5,7 +5,6 @@ from . import custom_types
 import util.versions
 import util.resource
 import dataclasses
-import storage
 import enum
 
 
@@ -54,15 +53,18 @@ class config_type(allocateable.obj_type):
 
     class game_setup(allocateable.obj_type):
         class place(allocateable.obj_type):
-            path: custom_types.file_path
+            path: custom_types.path_obj
             enable_saveplace: bool = False
 
+        class asset_cache(allocateable.obj_type):
+            path: custom_types.path_obj = custom_types.path_obj('./AssetCache')
+
         class database(allocateable.obj_type):
-            path: custom_types.file_path
+            path: custom_types.path_obj
             clear_on_start: bool
 
         class icon(allocateable.obj_type):
-            path: custom_types.file_path = custom_types.file_path('')
+            path: custom_types.path_obj = custom_types.path_obj('')
 
         class creator(allocateable.obj_type):
             name: str
@@ -77,7 +79,8 @@ class config_type(allocateable.obj_type):
     class server_core(allocateable.obj_type):
         chat_style: chat_style
         retrieve_default_user_code: Callable[[float], str]
-        check_user_allowed: Callable[[str, str], bool]
+        check_user_allowed: Callable[[str], bool] = \
+            'function() return true end'  # type: ignore
         retrieve_username: Callable[[str], str]
         retrieve_user_id: Callable[[str], int]
         retrieve_avatar_type: Callable[[str], avatar_type]

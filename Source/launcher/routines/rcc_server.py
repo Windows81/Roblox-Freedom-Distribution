@@ -1,19 +1,19 @@
 import web_server._logic as web_server_logic
 import web_server as web_server
 
+from ..startup_scripts import rcc_server
 from . import _logic as logic
 import util.const as const
-import data_transfer
 import assets.rbxl
 import config.structure
 import util.resource
 import util.versions
-import config
-import assets
 import dataclasses
 import subprocess
 import functools
 import util.ssl
+import config
+import assets
 import json
 import os
 
@@ -27,10 +27,12 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         return self.game_config.game_setup.roblox_version
 
     def save_place_file(self) -> None:
-        from_path = self.game_config.game_setup.place.path
+        config = self.game_config
+
+        from_path = config.game_setup.place.path
         if from_path is None:
             return
-        to_path = assets.get_asset_path(const.DEFAULT_PLACE_ID)
+        to_path = config.asset_cache.get_asset_path(const.DEFAULT_PLACE_ID)
 
         with open(from_path, 'rb') as rf, open(to_path, 'wb') as wf:
             wf.write(assets.rbxl.parse(rf.read()))
@@ -50,16 +52,16 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             ]))
         return path
 
-    def save_server_script(self) -> str:
-        path = self.get_versioned_path(os.path.join(
+    def save_starter_scripts(self) -> None:
+        server_path = self.get_versioned_path(os.path.join(
             'Content',
             'Scripts',
             'CoreScripts',
             'RFDStarterScript.lua',
         ))
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(self.local_args.get_rcc_script())
-        return path
+        with open(server_path, 'w', encoding='utf-8') as f:
+            rcc_script = rcc_server.get_script(self.game_config)
+            f.write(rcc_script)
 
     def save_gameserver(self) -> str:
         base_url = self.local_args.get_base_url()
@@ -143,7 +145,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         )
 
     def process(self) -> None:
-        self.save_server_script()
+        self.save_starter_scripts()
         self.save_place_file()
         self.save_app_setting()
         self.save_ssl_cert()
@@ -175,10 +177,3 @@ class arg_type(logic.bin_ssl_arg_type):
 
     def get_app_base_url(self) -> str:
         return f'{self.get_base_url()}/'
-
-    def get_rcc_script(self) -> str:
-        return '\n\n'.join([
-            data_transfer.get_rcc_routine(self.game_config),
-            self.game_config.game_setup.startup_script,
-            "print('Initialised RFD server scripts.')",
-        ])

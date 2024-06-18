@@ -22,6 +22,8 @@ class annotation:
 
 class obj_type:
     def serialise_object(self, path: str, key: str, typ: type, rep: Any) -> Any:
+        if type(rep) == typ:
+            return rep
         type_call = get_type_call(typ)
         return type_call(
             self.root,
