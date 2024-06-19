@@ -13,7 +13,7 @@ chmod +x /tmp/setup.sh
 /tmp/setup.sh
 ```
 
-2.Run host.sh/join.sh depending on your use case
+2.Run host.sh/join.sh depending on your use case (or just search for FreedomDistribution in your start menu)
 
 Host
 ```
