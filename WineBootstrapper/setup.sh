@@ -1,6 +1,8 @@
 #!/bin/bash
 
 echo "Make sure you have wine,wget & jq installed!"
+sleep 3
+echo "If you want to install Roblox Freedom Distribution to another drive please change the "base_dir" variable in the script to your preferred location"
 sleep 5
 
 # Define the base directoriest
@@ -32,10 +34,12 @@ echo "Downloaded RFD.exe to $destination_file"
 # Download the files using wget
 wget -O "$base_dir/join.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/join.sh
 wget -O "$base_dir/host.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/host.sh
+wget -O "$base_dir/menu.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/menu.sh
 wget -O "$base_dir/stop-all.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/stop-all.sh
 wget -O "$base_dir/GameConfig.toml" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/GameConfig.toml
 wget -O "$settings_dir/winebin.txt" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt
 wget -O "$maps_dir/2007Crossroads.rbxl" https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl
+
 
 echo "Files downloaded successfully."
 
@@ -50,6 +54,26 @@ echo "Files downloaded successfully."
 #Chmod the scripts
 chmod +x $base_dir/join.sh
 chmod +x $base_dir/host.sh
+chmod +x $base_dir/menu.sh
 chmod +x $base_dir/stop-all.sh
+
+#Desktop file stuff
+wget -O "/home/$USER/.local/share/icons/hicolor/256x256/apps/freedom.png" https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/freedom.png?raw=true 
+
+
+#Create .desktop Entry
+rm ~/.local/share/applications/FreedomDistribution.desktop
+echo "[Desktop Entry]" >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "Name=FreedomDistribution" >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "Comment=A fork of the Rōblox Filtering Disabled project which allows people to host their own instances of Rōblox for other people to play." >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "Icon=/home/$USER/.local/share/icons/hicolor/256x256/apps/freedom.png" >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "Exec=$base_dir/menu.sh" >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "Terminal=True" >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "Type=Application" >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "Categories=Game;" >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "StartupNotify=true" >> ~/.local/share/applications/FreedomDistribution.desktop
+echo "Path=$base_dir" >> ~/.local/share/applications/FreedomDistribution.desktop
+cp ~/.local/share/applications/FreedomDistribution.desktop ~/Desktop/FreedomDistribution.desktop
+
 echo "Roblox freedom distribution is now installed!"
 sleep 5
