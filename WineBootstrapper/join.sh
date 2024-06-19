@@ -1,6 +1,6 @@
 #!/bin/bash
 
-winebin=$(cat /home/"$USER"/RobloxFreedomDistribution/settings/winebin.txt)
+winebin=$(cat settings/winebin.txt)
 if ! [ -x "$(command -v "$winebin")" ]; then
     echo 'Error: the command linked in winebin.txt is invalid.' >&2
     exit 1
@@ -12,5 +12,5 @@ port=$(whiptail --inputbox "Enter RCC port number:" 8 60 --title "RCC Port Numbe
 secondary_port=$(whiptail --inputbox "Enter webserver port number:" 8 60 --title "Webserver Port Number" 3>&1 1>&2 2>&3)
 username=$(whiptail --inputbox "Enter user code:" 8 60 --title "User Code" 3>&1 1>&2 2>&3)
 
-command="$winebin /home/\"$USER\"/RobloxFreedomDistribution/RFD.exe player -rh $ip_address -rp $port -wp $secondary_port -u $username"
+command="$winebin start RFD.exe player -rh $ip_address -rp $port -wp $secondary_port -u $username"
 eval "$command"
