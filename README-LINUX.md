@@ -4,6 +4,7 @@ Here's how to play Roblox Freedom Distribution on GNU/Linux 🐧
 
 1.Run these commands 
 ```
+rm /tmp/setup.sh 
 wget https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/setup.sh -O /tmp/setup.sh
 chmod +x /tmp/setup.sh
 /tmp/setup.sh
