@@ -18,21 +18,22 @@ mkdir -p "$settings_dir"
 mkdir -p "$maps_dir"
 mkdir -p "$assets_dir"
 
-# DOWNLOAD THE LATEST RFD.exe FROM GITHUB
+# DOWNLOAD THE LATEST RFD.exe FROM GITHUB (Currently Disabled)
 # Fetch the latest release information from GitHub API and parse the URL using jq
-download_url=$(wget -qO- https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest | jq -r '.assets[] | select(.name == "RFD.exe") | .browser_download_url')
+#download_url=$(wget -qO- https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest | jq -r '.assets[] | select(.name == "RFD.exe") | .browser_download_url')
 
 # Check if download_url is not empty
-if [ -z "$download_url" ]; then
-  echo "Error: Could not find the download URL for RFD.exe"
-  exit 1
-fi
+#if [ -z "$download_url" ]; then
+#  echo "Error: Could not find the download URL for RFD.exe"
+#  exit 1
+#fi
 
 # Download the file using wget
-wget "$download_url" -O "$destination_file"
-echo "Downloaded LATEST RFD.exe to $destination_file"
+#wget "$download_url" -O "$destination_file"
+#echo "Downloaded LATEST RFD.exe to $destination_file"
 
 # Download the files using wget
+wget -O "$base_dir/RFD.exe" https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2024-06-18T0911Z/RFD.exe
 wget -O "$base_dir/join.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/join.sh
 wget -O "$base_dir/host.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/host.sh
 wget -O "$base_dir/menu.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/menu.sh
