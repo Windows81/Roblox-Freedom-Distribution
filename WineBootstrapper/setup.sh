@@ -44,7 +44,7 @@ wget -O "$base_dir/stop-all.sh" https://raw.githubusercontent.com/Windows81/Robl
 wget -O "$base_dir/GameConfig.toml" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/GameConfig.toml
 wget -O "$settings_dir/winebin.txt" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt
 wget -O "$maps_dir/2007Crossroads.rbxl" https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl
-wget -O "$base_dir/AssetCache" https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/WineBootstrapper/00000001818
+wget -O "$assets_dir/00000001818" https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/WineBootstrapper/00000001818
 
 
 
