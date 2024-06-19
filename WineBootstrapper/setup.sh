@@ -10,12 +10,13 @@ base_dir="/home/$USER/RobloxFreedomDistribution"
 destination_file="$base_dir/RFD.exe"
 settings_dir="$base_dir/settings"
 maps_dir="$base_dir/maps"
+maps_dir="$base_dir/AssetCache"
 
 # Create directories if they do not exist
 mkdir -p "$base_dir"
 mkdir -p "$settings_dir"
 mkdir -p "$maps_dir"
-mkdir -p "$maps_dir/AssetCache"
+mkdir -p "$assets_dir"
 
 # DOWNLOAD THE LATEST RFD.exe FROM GITHUB
 # Fetch the latest release information from GitHub API and parse the URL using jq
