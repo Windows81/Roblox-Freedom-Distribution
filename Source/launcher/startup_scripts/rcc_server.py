@@ -23,8 +23,8 @@ spawn(function()
 end)
 
 game.Players.PlayerAdded:connect(function(Player)
-    print(Player, 'rjdkhdr')
-    local Url = BaseUrl .. "rfd/is-player-allowed?userId=" .. Player.UserId
+    local Url = "rfd/is-player-allowed?userId=" .. Player.UserId
+    print('mgkdsng', Player, Url)
     if HttpRbxApiService:GetAsync(Url) == 'true' then
         return
     end

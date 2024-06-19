@@ -75,6 +75,25 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
+@server_path('/rfd/is-player-allowed')
+def _(self: web_server_handler) -> bool:
+    database = self.server.database.players
+
+    id_num = self.query.get('userId')
+    user_code = database.get_player_field_from_index(
+        database.player_field.ID_NUMBER,
+        id_num,
+        database.player_field.USER_CODE,
+    )
+
+    if user_code is None:
+        self.send_data(b'false')
+        return True
+
+    self.send_data(b'true')
+    return True
+
+
 @server_path('/rfd/roblox-version')
 def _(self: web_server_handler) -> bool:
     '''
