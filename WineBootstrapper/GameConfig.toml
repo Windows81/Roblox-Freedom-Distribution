@@ -11,13 +11,13 @@ instances.count = 1
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2018M'
 
-title = 'Lumber Tycoon 2'
+title = 'Crossroads'
 description = ''
 creator.name = 'ÒÓ'
 startup_script = 'game.workspace.FilteringEnabled = true'
 
 [game_setup.place]
-path = 'maps\lt2.rbxl'
+path = 'maps\2007Crossroads.rbxl'
 # When game:SavePlace() is called, overwirtes the place at `.place_path`
 enable_saveplace = false
 
