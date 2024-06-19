@@ -16,27 +16,32 @@ mkdir -p "$base_dir"
 mkdir -p "$settings_dir"
 mkdir -p "$maps_dir"
 
+# DOWNLOAD THE LATEST RFD.exe FROM GITHUB (CURRENTLY DISABLED)
 # Fetch the latest release information from GitHub API and parse the URL using jq
-download_url=$(wget -qO- https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest | jq -r '.assets[] | select(.name == "RFD.exe") | .browser_download_url')
+#download_url=$(wget -qO- https://api.github.com/repos/Windows81/Roblox-Freedom-Distribution/releases/latest | jq -r '.assets[] | select(.name == "RFD.exe") | .browser_download_url')
 
 # Check if download_url is not empty
-if [ -z "$download_url" ]; then
-  echo "Error: Could not find the download URL for RFD.exe"
-  exit 1
-fi
+#if [ -z "$download_url" ]; then
+#  echo "Error: Could not find the download URL for RFD.exe"
+#  exit 1
+#fi
 
 # Download the file using wget
-wget "$download_url" -O "$destination_file"
-
-echo "Downloaded RFD.exe to $destination_file"
+#wget "$download_url" -O "$destination_file"
+#echo "Downloaded LATEST RFD.exe to $destination_file"
 
 
 # Download the files using wget
+wget -O "$base_dir/RFD.exe" https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2024-06-18T0911Z/RFD.exe
 wget -O "$base_dir/join.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/join.sh
 wget -O "$base_dir/host.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/host.sh
 wget -O "$base_dir/menu.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/menu.sh
 wget -O "$base_dir/stop-all.sh" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/stop-all.sh
-wget -O "$base_dir/GameConfig.toml" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/GameConfig.toml
+
+#Wget the GameConfig.toml from the the root of the repository (This is disabled cuz turns the GameConfig.toml requires some fixes for Linux)
+#wget -O "$base_dir/GameConfig.toml" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/GameConfig.toml
+#Wget the GameConfig.toml from the "WineBootstrapper" folder
+wget -O "$base_dir/GameConfig.toml" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/GameConfig.toml
 wget -O "$settings_dir/winebin.txt" https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/WineBootstrapper/winebin.txt
 wget -O "$maps_dir/2007Crossroads.rbxl" https://raw.githubusercontent.com/Vector4-new/RobloxFDLauncherLinux/main/maps/2007Crossroads.rbxl
 
