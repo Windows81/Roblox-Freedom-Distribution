@@ -93,8 +93,12 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"player",
-				"-wh",
-				"192.168.50.69",
+				"-rh",
+				"treatment-col.gl.at.ply.gg",
+				"-rp",
+				"56288",
+				"-wp",
+				"56829",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
@@ -108,7 +112,7 @@
 			"args": [
 				"player",
 				"-wh",
-				"2603:8000:1:3a97:81ec:e544:bb42:6975",
+				"2607:fb91:1b74:d4d8:3dfb:5a51:55c3:d516",
 				//"2603-8000-1-3a97-d421-214a-2471-ac0c.ipv6-literal.net",
 			],
 			"console": "integratedTerminal",

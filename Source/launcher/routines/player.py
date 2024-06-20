@@ -36,9 +36,6 @@ class obj_type(logic.bin_ssl_entry):
             ]))
         return path
 
-    def save_ssl_cert(self):
-        return super().save_ssl_cert({'user-code': self.local_args.user_code})
-
     def enable_mutex(self) -> None:
         '''
         Enables multiple instances of Rōblox to run concurrently.
