@@ -1,15 +1,16 @@
+import web_server._logic as web_server_logic
 from .. import downloader as downloader
-import web_server._logic as web_server
 import config.structure
 import urllib.request
 import util.versions
 import util.resource
 import urllib.error
-import config
 import urllib.parse
 import http.client
 import subprocess
 import threading
+import certifi
+import config
 import ssl
 import os
 
@@ -46,7 +47,7 @@ class bin_arg_type(popen_arg_type):
 
 class bin_ssl_arg_type(bin_arg_type):
     web_host: str | None = None
-    web_port: web_server.port_typ = web_server.port_typ(
+    web_port: web_server_logic.port_typ = web_server_logic.port_typ(
         port_num=80,
         is_ssl=True,
         is_ipv6=False,
@@ -64,6 +65,43 @@ class bin_ssl_arg_type(bin_arg_type):
                 'No server is currently running on %s:%d.' %
                 (self.web_host, self.web_port.port_num),
             )
+
+
+class host_arg_type(arg_type):
+    rcc_host: str | None = None
+    rcc_port_num: int = 2005
+
+    web_host: str | None = None
+    web_port: web_server_logic.port_typ = web_server_logic.port_typ(
+        port_num=80,
+        is_ssl=False,
+        is_ipv6=False,
+    ),  # type: ignore
+    user_code: str | None = None
+    launch_delay: float = 0
+
+    def sanitise(self) -> None:
+        super().sanitise()
+
+        self.web_host, self.rcc_host = \
+            self.web_host or self.rcc_host or 'localhost', \
+            self.rcc_host or self.web_host or 'localhost'
+
+        if self.rcc_host == 'localhost':
+            self.rcc_host = '127.0.0.1'
+        elif ':' in self.rcc_host:
+            self.rcc_host = f'[{self.rcc_host}]'
+
+        self.app_host = self.web_host
+        if self.web_host == 'localhost':
+            self.web_host = self.app_host = '127.0.0.1'
+
+        elif self.web_host and ':' in self.web_host:
+
+            # The ".ipv6-literal.net" replacement only works on Windows and might not translate well on Wine.
+            # It's strictly necessary for 2021E because some CoreGUI stuff will crash if the BaseUrl doesn't have a dot in it.
+            unc_ip_str = self.web_host.replace(':', '-')
+            self.web_host = self.app_host = f'{unc_ip_str}.ipv6-literal.net'
 
 
 class entry(_entry):
@@ -191,8 +229,12 @@ class bin_ssl_entry(bin_entry):
 
         res = self.local_args.send_request(f'/rfd/certificate')
         path = self.get_versioned_path('SSL', 'cacert.pem')
-        with open(path, 'wb') as f:
-            f.write(res.read())
+
+        with open(path, 'w') as f:
+            f.write(''.join([
+                res.read().decode(),
+                certifi.contents(),
+            ]))
 
 
 class server_entry(entry):

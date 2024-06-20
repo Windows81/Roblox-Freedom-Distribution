@@ -72,7 +72,7 @@ class obj_type(logic.bin_ssl_entry):
 
 
 @dataclasses.dataclass
-class arg_type(logic.bin_ssl_arg_type):
+class arg_type(logic.bin_ssl_arg_type, logic.host_arg_type):
     obj_type = obj_type
 
     rcc_host: str = 'localhost'
@@ -86,32 +86,14 @@ class arg_type(logic.bin_ssl_arg_type):
     user_code: str | None = None
     launch_delay: float = 0
 
-    def sanitise_hosts(self):
-        if self.rcc_host == 'localhost':
-            self.rcc_host = '127.0.0.1'
-        elif ':' in self.rcc_host:
-            self.rcc_host = f'[{self.rcc_host}]'
-
-        self.app_host = self.web_host
-        if self.web_host == 'localhost':
-            self.web_host = self.app_host = '127.0.0.1'
-
-        elif self.web_host and ':' in self.web_host:
-
-            # The ".ipv6-literal.net" replacement only works on Windows and might not translate well on Wine.
-            # It's strictly necessary for 2021E because some CoreGUI stuff will crash if the BaseUrl doesn't have a dot in it.
-            unc_ip_str = self.web_host.replace(':', '-')
-            self.web_host = self.app_host = f'{unc_ip_str}.ipv6-literal.net'
-
     def sanitise_user_code(self):
         if self.user_code:
             return
-        res = self.send_request('/rfd/default-user-code', timeout=120)
+        res = self.send_request('/rfd/default-user-code')
         self.user_code = str(res.read(), encoding='utf-8')
 
     def sanitise(self):
         super().sanitise()
-        self.sanitise_hosts()
         self.sanitise_user_code()
 
     def get_base_url(self) -> str:

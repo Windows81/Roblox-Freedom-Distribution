@@ -57,14 +57,15 @@ class config_type(allocateable.obj_type):
             enable_saveplace: bool = False
 
         class asset_cache(allocateable.obj_type):
-            path: custom_types.path_obj = custom_types.path_obj('./AssetCache')
+            path: custom_types.path_obj = './AssetCache'  # type:ignore
+            clear_on_start: bool = False
 
         class database(allocateable.obj_type):
             path: custom_types.path_obj
             clear_on_start: bool
 
         class icon(allocateable.obj_type):
-            path: custom_types.path_obj = custom_types.path_obj('')
+            path: custom_types.path_obj = ''  # type:ignore
 
         class creator(allocateable.obj_type):
             name: str

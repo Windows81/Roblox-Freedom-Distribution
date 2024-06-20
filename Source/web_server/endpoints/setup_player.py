@@ -1,3 +1,5 @@
+from urllib import parse
+import urllib3
 from web_server._logic import web_server_handler, server_path, web_server_ssl
 import util.resource
 import util.const
@@ -8,10 +10,17 @@ import re
 
 
 def perform_join(self: web_server_handler):
-    rcc_host_addr = self.query.get('rcc-host-addr')
-    rcc_port = self.query.get('rcc-port')
+    # The query arguments in `Roblox-Session-Id` were previously serialised
+    # when `join.ashx` was called the first time a player joined.
+    # Only 2021E supports rejoining when connection is lost.
+    query_args = json.loads(
+        self.headers.get('Roblox-Session-Id', '{}'),
+    ) | self.query
 
-    user_code = self.query.get('user-code')
+    rcc_host_addr = query_args.get('rcc-host-addr', self.hostname)
+    rcc_port = query_args.get('rcc-port')
+
+    user_code = query_args.get('user-code')
     if user_code is None:
         return {}
 
@@ -54,6 +63,10 @@ def perform_join(self: web_server_handler):
             id_num,
         'CharacterAppearance':
             f'{self.hostname}/v1.1/avatar-fetch?userId={id_num}',
+
+        # NOTE: the `SessionId` is saved as an HTTPS header for later requests.
+        # I'm placing the information which was passed into `join.ashx` here for simplicity.
+        'SessionId': json.dumps(query_args),
     }
 
 
@@ -146,7 +159,7 @@ def _(self: web_server_handler) -> bool:
         'GameLocale': 'en_us#RobloxTranslateAbTest2',
         'SuperSafeChat': True,
         'ClientTicket': '2022-03-26T05:13:05.7649319Z;dj09X5iTmYtOPwh0hbEC8yvSO1t99oB3Yh5qD/sinDFszq3hPPaL6hH16TvtCen6cABIycyDv3tghW7k8W+xuqW0/xWvs0XJeiIWstmChYnORzM1yCAVnAh3puyxgaiIbg41WJSMALRSh1hoRiVFOXw4BKjSKk7DrTTcL9nOG1V5YwVnmAJKY7/m0yZ81xE99QL8UVdKz2ycK8l8JFvfkMvgpqLNBv0APRNykGDauEhAx283vARJFF0D9UuSV69q6htLJ1CN2kXL0Saxtt/kRdoP3p3Nhj2VgycZnGEo2NaG25vwc/KzOYEFUV0QdQPC8Vs2iFuq8oK+fXRc3v6dnQ==;BO8oP7rzmnIky5ethym6yRECd6H14ojfHP3nHxSzfTs=;XsuKZL4TBjh8STukr1AgkmDSo5LGgQKQbvymZYi/80TYPM5/MXNr5HKoF3MOT3Nfm0MrubracyAtg5O3slIKBg==;6',
-        'GameId': '29fd9df4-4c59-4d8c-8cee-8f187b09709b',
+        'GameId': 1818,
         'CreatorId': 4372130,
         'CreatorTypeEnum': 'Group',
         'MembershipType': 'None',
@@ -155,35 +168,6 @@ def _(self: web_server_handler) -> bool:
         'CookieStoreEnabled': True,
         'IsUnknownOrUnder13': False,
         'GameChatType': 'AllUsers',
-        'SessionId': json.dumps({
-            'SessionId': 'c89589f1-d1de-46e3-80e0-2703d1159409',
-            'GameId': '29fd9df4-4c59-4d8c-8cee-8f187b09709b',
-            'PlaceId': util.const.DEFAULT_PLACE_ID,
-            'ClientIpAddress': '207.241.232.186',
-            'PlatformTypeId': 5,
-            'SessionStarted': '2022-03-26T05:13:05.762819Z',
-            'BrowserTrackerId': 129849985826,
-            'PartyId': None,
-            'Age': 80.2683342765271,
-            'Latitude': 37.78,
-            'Longitude': -122.465,
-            'CountryId': 1,
-            'PolicyCountryId': 'US',
-            'LanguageId': 41,
-            'BlockedPlayerIds': [],
-            'JoinType': 'MatchMade',
-            'PlaySessionFlags': 0,
-            'MatchmakingDecisionId': 'a0311216-ec21-4b5d-b3c0-8538a9a4dc7d',
-            'UserScoreObfuscated': 4895515560,
-            'UserScorePublicKey': 235,
-            'GameJoinMetadata': {
-                'JoinSource': 0,
-                'RequestType': 0
-            },
-            'RandomSeed2': '7HOfysTid4XsV/3mBPPPhKHIykE4GXSBBBzd93rplbDQ3bNSgPFcR9auB780LjNYg+4mbNQPOqTmJ2o3hUefmw==',
-            'IsUserVoiceChatEnabled': True,
-            'SourcePlaceId': None,
-        }),
         'AnalyticsSessionId': 'c89589f1-d1de-46e3-80e0-2703d1159409',
         'DataCenterId': 302,
         'UniverseId': 994732206,

@@ -4,12 +4,16 @@ from . import (
 )
 
 import urllib3
+import shutil
 import os
 
 
 class asseter:
-    def __init__(self, dir_path: str) -> None:
+    def __init__(self, dir_path: str, clear_on_start: bool = False) -> None:
         self.dir_path = dir_path
+        os.makedirs(dir_path, exist_ok=True)
+        if clear_on_start:
+            shutil.rmtree(dir_path)
 
     def get_asset_path(self, aid: int) -> str:
         return os.path.join(self.dir_path, f'{aid:011d}')
@@ -29,8 +33,10 @@ class asseter:
 
     def load_online_asset(self, asset_id: int) -> bytes | None:
         for key in {'id'}:
-            url = f'https://assetdelivery.roblox.com/v1/asset/?{
-                key}={asset_id}'
+            url = (
+                f'https://assetdelivery.roblox.com/v1/asset/?%s=%s' %
+                (key, asset_id)
+            )
             http = urllib3.PoolManager()
             response = http.request('GET', url)
             if response.status == 200:

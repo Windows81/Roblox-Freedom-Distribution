@@ -27,6 +27,7 @@ class obj_type(structure.config_type, _logic.base_type):
 
         self.asset_cache = assets.asseter(
             dir_path=self.game_setup.asset_cache.path,
+            clear_on_start=self.game_setup.asset_cache.clear_on_start,
         )
 
 

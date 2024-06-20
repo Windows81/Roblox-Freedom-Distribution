@@ -31,17 +31,23 @@ def _(
 
     if args_ns.keep_cache:
         return []
-    base_urls = set(
-        a.get_base_url()
+    base_args = [
+        a
         for a in args_list
-        if isinstance(a, logic.bin_arg_type)
-    )
+        if isinstance(a, logic.host_arg_type)
+    ]
+
+    if base_args == None:
+        return []
 
     args_list[:0] = [
         clear_appdata.arg_type(
-            base_url=base,
+            rcc_host=base.rcc_host,
+            rcc_port_num=base.rcc_port_num,
+            web_host=base.web_host,
+            web_port=base.web_port,
         )
-        for base in base_urls
+        for base in base_args
     ]
 
     return []

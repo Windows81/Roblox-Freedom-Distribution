@@ -1,4 +1,4 @@
-import web_server._logic as web_server
+import web_server._logic as web_server_logic
 from . import _logic as logic
 import util.resource
 import dataclasses
@@ -37,8 +37,8 @@ class arg_type(logic.bin_arg_type):
 
     cmd_args: list[str] = dataclasses.field(default_factory=list)
     web_host: str | None = None
-    web_port: web_server.port_typ = \
-        web_server.port_typ(
+    web_port: web_server_logic.port_typ = \
+        web_server_logic.port_typ(
             port_num=80,
             is_ssl=False,
             is_ipv6=False,
