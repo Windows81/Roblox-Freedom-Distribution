@@ -11,6 +11,7 @@ import subprocess
 import threading
 import certifi
 import config
+import copy
 import ssl
 import os
 
@@ -25,6 +26,11 @@ class arg_type:
 
     def sanitise(self) -> None:
         pass
+
+    def reconstruct(self):
+        result = copy.copy(self)
+        result.sanitise()
+        return result
 
 
 class popen_arg_type(arg_type):

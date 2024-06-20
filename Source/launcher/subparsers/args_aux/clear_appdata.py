@@ -32,9 +32,9 @@ def _(
     if args_ns.keep_cache:
         return []
     base_args = [
-        a
+        a.reconstruct()
         for a in args_list
-        if isinstance(a, logic.host_arg_type)
+        if isinstance(a, logic.bin_arg_type)
     ]
 
     if base_args == None:
@@ -42,10 +42,7 @@ def _(
 
     args_list[:0] = [
         clear_appdata.arg_type(
-            rcc_host=base.rcc_host,
-            rcc_port_num=base.rcc_port_num,
-            web_host=base.web_host,
-            web_port=base.web_port,
+            base_url=base.get_app_base_url(),
         )
         for base in base_args
     ]

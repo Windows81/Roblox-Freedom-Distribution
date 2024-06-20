@@ -28,9 +28,7 @@ class obj_type(logic.entry):
             os.remove(full_path)
 
     def process(self) -> None:
-        if self.local_args.web_host == None:
-            return
-        self.base_url_bytes = bytes(self.local_args.web_host, encoding='utf-8')
+        self.base_url_bytes = bytes(self.local_args.base_url, encoding='utf-8')
         http_folder = os.path.join(
             os.getenv('LocalAppData', ''),
             'Temp',
@@ -63,14 +61,6 @@ class obj_type(logic.entry):
 
 
 @dataclasses.dataclass
-class arg_type(logic.host_arg_type):
+class arg_type(logic.arg_type):
     obj_type = obj_type
-
-    rcc_host: str | None = None
-    rcc_port_num: int = 2005
-    web_host: str | None = None
-    web_port: web_server_logic.port_typ = web_server_logic.port_typ(
-        port_num=80,
-        is_ssl=False,
-        is_ipv6=False,
-    ),  # type: ignore
+    base_url: str
