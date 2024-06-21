@@ -80,10 +80,13 @@ def parse_args(args: list[str] | None) -> routine_logic.routine:
 
 
 def process(args: list[str] | None = None) -> None:
+    routine = None
     try:
         routine = parse_args(args)
         routine.wait()
     except KeyboardInterrupt:
         pass
+    except Exception as x:
+        print(x)
     finally:
         del routine
