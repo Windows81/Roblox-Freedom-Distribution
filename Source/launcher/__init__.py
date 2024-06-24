@@ -85,8 +85,9 @@ def process(args: list[str] | None = None) -> None:
         routine = parse_args(args)
         routine.wait()
     except KeyboardInterrupt:
-        pass
-    except Exception as x:
-        print(x)
+        exit(1)
+    except Exception as e:
+        # https://stackoverflow.com/a/33239954
+        print(getattr(e, 'reason', str(e)))
     finally:
         del routine

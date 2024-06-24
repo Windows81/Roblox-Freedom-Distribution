@@ -27,21 +27,10 @@ Join
 
 
 ### Known issues ❗❗❗
-1.RFD.exe failing to download the clients. A common fix for this is to remove your "Roblox" folder.
+RFD.exe failing to download the clients. A common fix for this is to remove your "Roblox" folder.
 ```
 sudo rm -r /home/$USER/RobloxFreedomDistribution/Roblox
 ```
 Using native wget/curl to download clients might fix the said issue too (not sure)
-
-2.Freedom distribution not launching on window managers through the .desktop shortcut
-If you're using a window manager do the following to fix this isse
-```
-nano /home/$USER/.local/share/applications/FreedomDistribution.desktop
-```
-Add "kitty" to the exec part it should look like this in the end
-```
-Exec=kitty /home/twig/RobloxFreedomDistribution/menu.sh
-```
-
 
 If you're having issues, please add me on discord. My discord is twig6843. (with the dot)

@@ -2,6 +2,16 @@ from web_server._logic import web_server_handler, server_path
 import re
 
 
+@server_path("/v1/users/([0-9+)/friends", regex=True)
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    '''
+    Dummy endpoint for 2021E.
+    Script 'Chat.ChatModules.FriendJoinNotifier', Line 46
+    '''
+    self.send_json({"data": []})
+    return True
+
+
 @server_path("/users/([0-9]+)", regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''

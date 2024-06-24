@@ -24,7 +24,6 @@ end)
 
 game.Players.PlayerAdded:connect(function(Player)
     local Url = "rfd/is-player-allowed?userId=" .. Player.UserId
-    print('mgkdsng', Player, Url)
     if HttpRbxApiService:GetAsync(Url) == 'true' then
         return
     end
