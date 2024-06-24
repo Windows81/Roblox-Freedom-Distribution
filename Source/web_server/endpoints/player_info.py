@@ -2,7 +2,7 @@ from web_server._logic import web_server_handler, server_path
 import re
 
 
-@server_path("/v1/users/([0-9+)/friends", regex=True)
+@server_path("/v1/users/([0-9]+)/friends", regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     Dummy endpoint for 2021E.
