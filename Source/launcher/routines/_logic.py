@@ -124,13 +124,11 @@ class entry(_entry):
                 t.join(1)
 
 
-class popen_entry(entry, subprocess.Popen):
+class popen_entry(entry):
     '''
     Routine entry class that corresponds to a Popen subprocess object.
     '''
     local_args: popen_arg_type
-    popen_mains: list[subprocess.Popen]
-    popen_daemons: list[subprocess.Popen]
     debug_popen: subprocess.Popen
 
     def make_popen(self, cmd_args: list, *args, **kwargs) -> None:
@@ -146,18 +144,20 @@ class popen_entry(entry, subprocess.Popen):
             *(
                 [
                     subprocess.Popen([
-                        'x96dbg',
+                        'x32dbg',
                         '-p', str(self.principal.pid),
                     ])
                 ]
                 if self.local_args.debug_x96
                 else []
-            )
+            ),
         ]
 
     def __del__(self) -> None:
-        if hasattr(self, '_handle'):
-            subprocess.Popen.__del__(self)
+        for p in self.popen_mains:
+            p.terminate()
+        for p in self.popen_daemons:
+            p.kill()
 
     def wait(self) -> None:
         for p in self.popen_mains:
