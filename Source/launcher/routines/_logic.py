@@ -1,3 +1,4 @@
+import time
 import web_server._logic as web_server_logic
 from .. import downloader as downloader
 import config.structure
@@ -130,6 +131,14 @@ class popen_entry(entry):
     '''
     local_args: popen_arg_type
     debug_popen: subprocess.Popen
+    popen_mains: list[subprocess.Popen]
+    popen_daemons: list[subprocess.Popen]
+
+    def __init__(self, local_args: arg_type) -> None:
+        super().__init__(local_args)
+        # Arrays are initialised in case `make_popen` raises an exception.
+        self.popen_mains = []
+        self.popen_daemons = []
 
     def make_popen(self, cmd_args: list, *args, **kwargs) -> None:
         # TODO: test native support for RFD on systems with Wine.
@@ -144,7 +153,7 @@ class popen_entry(entry):
             *(
                 [
                     subprocess.Popen([
-                        'x32dbg',
+                        'x32dbg-unsigned',
                         '-p', str(self.principal.pid),
                     ])
                 ]
@@ -157,7 +166,7 @@ class popen_entry(entry):
         for p in self.popen_mains:
             p.terminate()
         for p in self.popen_daemons:
-            p.kill()
+            p.terminate()
 
     def wait(self) -> None:
         for p in self.popen_mains:

@@ -101,9 +101,3 @@ class arg_type(logic.bin_ssl_arg_type, logic.host_arg_type):
         return \
             f'http{"s" if self.web_port.is_ssl else ""}://' + \
             f'{self.app_host}:{self.web_port.port_num}'
-
-    @classmethod
-    def construct(cls, *args, **kwargs):
-        result = cls(*args, **kwargs)
-        result.sanitise()
-        return result

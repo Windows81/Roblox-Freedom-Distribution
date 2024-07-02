@@ -37,7 +37,7 @@ def _(
         if isinstance(a, logic.bin_arg_type)
     ]
 
-    if base_args == None:
+    if base_args is None:
         return []
 
     args_list[:0] = [

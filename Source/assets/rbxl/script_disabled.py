@@ -13,7 +13,7 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
         return None
 
     class_id = info.chunk_data[0:4]
-    prop_info = b'\x08\x00\x00\x00Disabled\x02'
+    new_prop_name = b'\x08\x00\x00\x00Disabled\x02'
     # len(class_id + b'\x07\x00\x00\x00Enabled\x02') == 16
     chunk_values = info.chunk_data[16:]
 
@@ -25,6 +25,6 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
 
     return b''.join([
         class_id,
-        prop_info,
+        new_prop_name,
         *new_values,
     ])

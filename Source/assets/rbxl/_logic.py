@@ -133,7 +133,7 @@ class chunk_info:
 @dataclasses.dataclass
 class inst_dict_item:
     class_name: bytes
-    chunk_length: int
+    instance_count: int
 
 
 def get_class_id(info: chunk_info) -> bytes | None:
@@ -164,6 +164,21 @@ def get_first_chunk_str(info: chunk_info) -> bytes | None:
     return info.chunk_data[str_start:str_start+str_size]
 
 
+def get_prop_values(info: chunk_info) -> bytes | None:
+    '''
+    For `PROP`, refer to `Values`.
+    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
+    '''
+    if info.chunk_name not in {b'PROP'}:
+        return None
+    str_size = int.from_bytes(
+        info.chunk_data[4:8],
+        byteorder='little',
+    )
+    str_start = 8
+    return info.chunk_data[str_start+str_size+1:]
+
+
 def get_type_id(info: chunk_info) -> int | None:
     '''
     For `PROP`, refer to `TypeID`.
@@ -190,7 +205,7 @@ def get_instance_count(info: chunk_info) -> int | None:
         info.chunk_data[4:8],
         byteorder='little',
     )
-    prop_start = 9 + str_size + 1
+    prop_start = 8 + str_size + 1
     return int.from_bytes(
         info.chunk_data[prop_start:prop_start+4],
         byteorder='little',
@@ -272,13 +287,13 @@ class rbxl_parser:
             if class_name is None:
                 return
 
-            chunk_length = get_instance_count(info)
-            if chunk_length is None:
+            instance_count = get_instance_count(info)
+            if instance_count is None:
                 return
 
             self.class_dict[class_id] = inst_dict_item(
                 class_name=class_name,
-                chunk_length=chunk_length,
+                instance_count=instance_count,
             )
 
         return info
