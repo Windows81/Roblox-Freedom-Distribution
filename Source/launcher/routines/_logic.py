@@ -69,8 +69,8 @@ class bin_ssl_arg_type(bin_arg_type):
             )
         except urllib.error.URLError:
             raise urllib.error.URLError(
-                'No server is currently running on %s:%d.' %
-                (self.web_host, self.web_port.port_num),
+                'No server is currently running on %s:%d (%s).' %
+                (self.web_host, self.web_port.port_num, path),
             )
 
 

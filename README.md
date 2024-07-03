@@ -14,13 +14,15 @@ Everything here is free-as-in-freedom software.
 
 My use of Rōblox's binaries are unlikely to fall into fair use. Be wary of any potential copyright takedowns.
 
-In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Consider using other means.  Also consult this [document](./LEGAL.md) if you want to know why I think I'm protected under fair-use law.
+In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Consider using other means. Also consult this [document](./LEGAL.md) if you want to know why I think I'm protected under fair-use law.
 
 ## Installation
 
 ### As a Binary
 
-This is good for if you want to deploy quickly on any machine with connection to the internet.
+This is good for if you want to deploy quickly on any machine _with_ connection to the internet.
+
+#### For Windows
 
 To install _as a binary_, run:
 
@@ -29,7 +31,16 @@ mkdir rfd
 cd rfd
 wget https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe
 ```
-(For GNU/Linux 🐧 instructions please have a look at https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/README-LINUX.md)
+
+To launch RFD, your command line will look something like this:
+
+```
+./RFD.exe player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
+```
+
+#### For GNU/Linux
+
+Consult [`./WineBootstrapper/README.md`](./WineBootstrapper/README.md)
 
 ### From Source
 
@@ -41,6 +52,12 @@ To install _from source_, run:
 git clone https://github.com/Windows81/Roblox-Freedom-Distribution rfd
 cd rfd
 pip install -r ./Source/requirements.txt
+```
+
+To launch RFD, your command line will look something like this:
+
+```
+py Source/_main.py player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
 ```
 
 ## Command Syntax
@@ -73,13 +90,13 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 Command syntaxes for `studio` and `download` also exists, but haven't been adequately documented yet.
 
-## Protocols in Use
+## Network Ports in Use
 
 Anyone can host a server and must leave **two** network ports of their choice accessible.
 
-### RCC (UDP + TCP)
+### RCC (UDP)
 
-RCC is an acronym for 'Rōblox Cloud Compute', which is the server-side program we use to run the Rōblox physics engine.
+RCC is an acronym for 'Rōblox Cloud Compute', which is the `exe` program we use to run the Rōblox servers. It leaves one (maybe two) relevant port open.
 
 Host is specified by the `--rcc_host` or `-rh` option.
 
@@ -113,16 +130,18 @@ _Jetray_ for engineering the original [Rōblox Filtering Disabled](https://jetra
 
 ## Examples
 
+Where `...` is [your command-line prefix](#installation),
+
 ### Server
 
 ```shell
-py Source/_main.py server -rp 2005 -wp 2006
+... server -rp 2005 -wp 2006 --config ./GameConfig.toml
 ```
 
 ### Player
 
 ```shell
-py Source/_main.py player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
+... player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
 ```
 
 ---

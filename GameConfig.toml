@@ -11,13 +11,13 @@ instances.count = 1
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2021'
 
-title = 'Lumber Tycoon 2'
+title = 'òó'
 description = ''
 creator.name = 'ÒÓ'
-startup_script = 'game.workspace.FilteringEnabled = true'
+startup_script = ''
 
 [game_setup.place]
-path = 'c:\Users\USERNAME\Documents\Roblox Files\Live in Minecraft Hotel! 1.7.6 Anti exploit!.rbxl'
+path = 'd:\Users\username\Documents\Leaked-Roblox-Places-main\RBXL\BETA___T_C__City_of_Istanbul.rbxl'
 # When game:SavePlace() is called, overwirtes the place at `.path`
 enable_saveplace = false
 
@@ -45,13 +45,18 @@ end
 
 retrieve_avatar_type = '''
 function(user_code) -- str -> str
-    return 'R6'
+    return 'R15'
 end
 '''
 
 retrieve_avatar_items = '''
 function(user_code) -- str -> [str]
     return {
+        301820642,
+        5243961918,
+        11857928130,
+        86487700,
+        16630147,
     }
 end
 '''
