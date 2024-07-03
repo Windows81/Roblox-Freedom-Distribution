@@ -1,4 +1,4 @@
-<h1 align="center"><img src="freedom.png" height="20px"/> Rōblox: Freedom Distribution <img src="freedom.png" height="20px"/></h1>
+<h1 align="center"><img src="./Logo.png" height="20px"/> Rōblox: Freedom Distribution <img src="./Logo.png" height="20px"/></h1>
 
 **A Rōblox 'revival' framework built with Python; tested on Python 3.10 and 3.12.**
 
@@ -152,4 +152,4 @@ Where `...` is [your command-line prefix](#installation),
 
 ---
 
-<p align="center"><img src="freedom.png" height="60px"/></p>
+<p align="center"><img src="./Logo.png" height="60px"/></p>
