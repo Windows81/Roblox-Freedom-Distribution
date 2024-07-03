@@ -1,8 +1,10 @@
 <h1 align="center"><img src="freedom.png" height="20px"/> Rōblox: Freedom Distribution <img src="freedom.png" height="20px"/></h1>
 
-A Rōblox 'revival' framework built with Python; tested on Python 3.10 and 3.12.
+**A Rōblox 'revival' framework built with Python; tested on Python 3.10 and 3.12.**
 
-Adapted from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
+**If you worked with Python before, _initial_ [setup](#installation) is supposed to take less than a minute. Why _initial_? Freedom Distribution automatically downloads additional data (at most 110 MiB) for you.**
+
+Initial adaptation from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
 
 Users can host their own server instances of Rōblox using binaries from 2018-07-25 or 2021-01-25.
 
@@ -10,21 +12,25 @@ Players can join existing servers.
 
 Clients will automatically connect to a server of the same version.
 
-Everything here is free-as-in-freedom software.
+All the code is free-as-in-freedom software and is licenced under the GNU GPL v3.
+
+_This README is optimised for viewing on [GitHub](https://github.com/Windows81/Roblox-Freedom-Distribution)._
+
+## Copyright Acknowledgement
 
 My use of Rōblox's binaries are unlikely to fall into fair use. Be wary of any potential copyright takedowns.
 
-In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Consider using other means. Also consult this [document](./LEGAL.md) if you want to know why I think I'm protected under fair-use law.
+In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Consider using other means. Also consult this [document](./LEGAL.md) if you want to know why I believe I'm protected under fair-use law.
 
 ## Installation
 
-### As a Binary
+### As an [Executable](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe)
 
 This is good for if you want to deploy quickly on any machine _with_ connection to the internet.
 
 #### For Windows
 
-To install _as a binary_, run:
+To install _as an executable_, run:
 
 ```
 mkdir rfd
@@ -42,14 +48,14 @@ To launch RFD, your command line will look something like this:
 
 Consult [`./WineBootstrapper/README.md`](./WineBootstrapper/README.md)
 
-### From Source
+### From [Source](https://github.com/Windows81/Roblox-Freedom-Distribution/archive/refs/heads/main.zip)
 
 This is good for if you already have Python installed on your machine. Do you want to help contribute to RFD? Use this.
 
 To install _from source_, run:
 
 ```
-git clone https://github.com/Windows81/Roblox-Freedom-Distribution rfd
+git clone --depth 1 https://github.com/Windows81/Roblox-Freedom-Distribution rfd
 cd rfd
 pip install -r ./Source/requirements.txt
 ```
