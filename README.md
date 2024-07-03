@@ -1,5 +1,4 @@
-# Rōblox: Freedom Distribution
-![Placeholder](https://raw.githubusercontent.com/Windows81/Roblox-Freedom-Distribution/main/freedom.png)
+<h1 align="center"><img src="freedom.png" height="20px"/> Rōblox: Freedom Distribution <img src="freedom.png" height="20px"/></h1>
 
 A Rōblox 'revival' framework built with Python; tested on Python 3.10 and 3.12.
 
@@ -125,3 +124,7 @@ py Source/_main.py server -rp 2005 -wp 2006
 ```shell
 py Source/_main.py player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
 ```
+
+---
+
+<p align="center"><img src="freedom.png" height="60px"/></p>
