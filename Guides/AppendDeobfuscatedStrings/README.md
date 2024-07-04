@@ -1,4 +1,4 @@
-# How I exposed 2021E Rōblox's Strings
+# How I Exposed 2021E Rōblox's Strings
 
 This procedure doesn't have a direct use case that I know of. It _might_ make it easier for me to develop Freedom Distribution in the future.
 
@@ -25,9 +25,9 @@ Disclaimer: you can use better and more efficient methods than mine.
 
 ---
 
-4. Navigate to the _Memory Map_.
+4. Navigate to the _Memory Map_. Hit Ctrl + B to access _Find Pattern..._, then search for something like `/textures/`. If nothing shows up, retry steps 1 thru 3.
 
-5. Save the `.rdata` section to a `.bin` file, which should size up to about 8.8 MiB. You can pull it from [here](robloxplayerbeta_02287000.bin) if needed.
+5. Save the `.rdata` section to a `.bin` file, which should size up to about 8.8 MiB. You can pull it from [here](robloxplayerbeta_02057000.bin) if needed.
 
 ![alt text](image-2.png)
 
@@ -39,6 +39,10 @@ Disclaimer: you can use better and more efficient methods than mine.
 
 8. In selecting _PE Editor_ (Alt + 1), open the same `RobloxPlayerBeta.exe` as earlier.
 
+![alt text](image-5.png)
+
+---
+
 9. Navigate to _Sections_, right-click _anywhere_ on the _Sections Information_ box, then to _Add section_.
 
 ---
@@ -46,6 +50,10 @@ Disclaimer: you can use better and more efficient methods than mine.
 10. Add the new section from the `.bin` file you saved earlier and name it whatever you want.
 
 ![alt text](image-4.png)
+
+---
+
+11. https://github.com/adamhlt/ASLR-Disabler/releases
 
 ---
 
