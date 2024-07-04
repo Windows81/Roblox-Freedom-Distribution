@@ -67,7 +67,8 @@ class bin_ssl_arg_type(bin_arg_type):
                 context=bin_ssl_entry.get_none_ssl(),
                 timeout=timeout,
             )
-        except urllib.error.URLError:
+        except urllib.error.URLError as e:
+            print(e)
             raise urllib.error.URLError(
                 'No server is currently running on %s:%d (%s).' %
                 (self.web_host, self.web_port.port_num, path),
