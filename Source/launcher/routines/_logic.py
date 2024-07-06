@@ -1,4 +1,3 @@
-import time
 import web_server._logic as web_server_logic
 from .. import downloader as downloader
 import config.structure
@@ -68,7 +67,6 @@ class bin_ssl_arg_type(bin_arg_type):
                 timeout=timeout,
             )
         except urllib.error.URLError as e:
-            print(e)
             raise urllib.error.URLError(
                 'No server is currently running on %s:%d (%s).' %
                 (self.web_host, self.web_port.port_num, path),

@@ -2,9 +2,9 @@ import web_server._logic as web_server_logic
 import web_server as web_server
 
 from ..startup_scripts import rcc_server
+import assets.serialisers.rbxl as rbxl
 from . import _logic as logic
 import util.const as const
-import assets.rbxl
 import config.structure
 import util.resource
 import util.versions
@@ -32,10 +32,10 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         from_path = config.game_setup.place.path
         if from_path is None:
             return
-        to_path = config.asset_cache.get_asset_path(const.DEFAULT_PLACE_ID)
+        to_path = config.asset_cache.get_asset_num_path(const.DEFAULT_PLACE_ID)
 
         with open(from_path, 'rb') as rf, open(to_path, 'wb') as wf:
-            wf.write(assets.rbxl.parse(rf.read()))
+            wf.write(rbxl.parse(rf.read()))
 
     def save_app_setting(self) -> str:
         '''
