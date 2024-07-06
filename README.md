@@ -12,7 +12,7 @@ Players can join existing servers.
 
 Clients will automatically connect to a server of the same version.
 
-All the code is free-as-in-freedom software and is licenced under the GNU GPL v3.
+All the code is free-as-in-freedom software and is licensed under the GNU GPL v3.
 
 _This README is optimised for viewing on [GitHub](https://github.com/Windows81/Roblox-Freedom-Distribution)._
 
@@ -118,9 +118,18 @@ Port is specified by the `--webserver_port` or `-wp` option **(defaults to 2006)
 
 ## Studio?
 
-Rōblox Filtering Disabled has a working Studio build from 2022.
+You can modify `rbxl` file in current-day Studio as of July 2024. For compatibility with older clients, _RFD comes with its own [serialiser suite](./Source/assets/serialisers/)_. Objects transformed include:
 
-[Sodikm](https://archive.org/details/full-sodikm_202308) has a working Studio build from 2018.
+1. Fonts which existed in their respective versions,
+1. And meshes encoded with versions 4 or 5 _back_ to version 3.
+
+However, **union operations done in current-day Studio (CSG v3) are not supported**.
+
+In that case...
+
+[Rōblox Filtering Disabled](https://beepboopbap.itch.io/filtering-disabled) has a working Studio build from 2022.
+
+[Sodikm](https://archive.org/details/full-sodikm_202308) has a functional Studio build from 2018.
 
 You can also use [this 2018M build](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2023-08-31T09%EA%9E%8910Z/v348.Studio.7z) whilst running the Rōblox Filtering Disabled webserver.
 
@@ -128,9 +137,11 @@ If you need any help, please shoot me an issue on GitHub or a message to an acco
 
 ## Credits
 
-_iknowidontexistbutwhatifwin_ for patching the v463 (early 2021) binaries.
+_iknowidontexistbutwhatifwin_ for making initial patches to the v463 (early 2021) binaries.
 
-_Jetray_ for engineering the original [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) server in PHP.
+_Jetray_ and others for engineering the original [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) server in PHP.
+
+_Twig6843_ for [`./WineBootstrapper`](./WineBootstrapper/).
 
 **More to come...**
 
