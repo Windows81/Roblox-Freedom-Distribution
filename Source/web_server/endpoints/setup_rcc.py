@@ -1,6 +1,7 @@
 from web_server._logic import web_server_handler, server_path
-import util.ssl
+import util.versions as versions
 import util.const
+import util.ssl
 
 
 @server_path('/api.GetAllowedMD5Hashes/')
@@ -23,7 +24,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/v1.1/game-start-info', min_version=400)
+@server_path('/v1.1/game-start-info', versions={versions.rōblox.v463})
 def _(self: web_server_handler) -> bool:
     self.send_json({
         "gameAvatarType": "PlayerChoice",

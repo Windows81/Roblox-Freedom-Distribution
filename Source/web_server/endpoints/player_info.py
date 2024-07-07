@@ -1,4 +1,5 @@
 from web_server._logic import web_server_handler, server_path
+import util.versions as versions
 import re
 
 
@@ -103,7 +104,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     return True
 
 
-@server_path('/gametransactions/getpendingtransactions/', min_version=400)
+@server_path('/gametransactions/getpendingtransactions/', versions={versions.rōblox.v463})
 def _(self: web_server_handler) -> bool:
     self.send_json([])
     return True

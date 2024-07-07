@@ -1,6 +1,8 @@
-# How I Exposed 2021E Rōblox's Strings
+# Work-in-progress
 
-This procedure doesn't have a direct use case that I know of. It _might_ make it easier for me to develop Freedom Distribution in the future.
+_~~How I Exposed 2021E Rōblox's Strings~~_
+
+These steps were intended for a procedure which doesn't produce expected results. Please ignore for now.
 
 Reach out to VisualPlugin if you need help with the instructions.
 

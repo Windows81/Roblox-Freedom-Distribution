@@ -1,17 +1,15 @@
 from typing_extensions import Any, Callable
-import launcher.routines._logic as logic
 import util.versions as versions
-import dataclasses
 import util.const as const
 from urllib import parse
-import config.structure
 import OpenSSL.crypto
-import config
 import http.server
+import dataclasses
 import mimetypes
 import functools
 import util.ssl
 import base64
+import config
 import socket
 import enum
 import json
@@ -60,7 +58,12 @@ class server_func_key:
 SERVER_FUNCS = dict[server_func_key, Callable]()
 
 
-def server_path(path: str, regex: bool = False, min_version: int = 0, commands: set[str] = {'POST', 'GET'}):
+def server_path(
+    path: str,
+    regex: bool = False,
+    versions: set[versions.rōblox] = set(versions.rōblox),
+    commands: set[str] = {'POST', 'GET'}
+):
     def inner(func):
         dict_mode = (
             func_mode.REGEX
@@ -76,8 +79,7 @@ def server_path(path: str, regex: bool = False, min_version: int = 0, commands: 
                 path=path,
                 command=command,
             ): func
-            for version in versions.rōblox
-            if version.get_number() >= min_version
+            for version in versions
             for command in commands
         }
 

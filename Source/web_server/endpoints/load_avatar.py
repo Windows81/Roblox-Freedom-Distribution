@@ -1,6 +1,6 @@
 from web_server._logic import web_server_handler, server_path
+import util.versions as versions
 from config import obj_type
-import storage
 
 
 class avatar_data:
@@ -15,7 +15,7 @@ class avatar_data:
             .retrieve_avatar_colors(user_code)
 
 
-@server_path('/v1.1/avatar-fetch/')
+@server_path('/v1.1/avatar-fetch/', versions={versions.rōblox.v348})
 def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
@@ -59,10 +59,10 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/v1/avatar', min_version=400)
-@server_path('/v1/avatar/', min_version=400)
-@server_path('/v1/avatar-fetch', min_version=400)
-@server_path('/v1/avatar-fetch/', min_version=400)
+@server_path('/v1/avatar', versions={versions.rōblox.v463})
+@server_path('/v1/avatar/', versions={versions.rōblox.v463})
+@server_path('/v1/avatar-fetch', versions={versions.rōblox.v463})
+@server_path('/v1/avatar-fetch/', versions={versions.rōblox.v463})
 def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v463.

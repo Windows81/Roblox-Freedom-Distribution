@@ -1,7 +1,9 @@
 import typing_extensions
+import functools
 import enum
 
 
+@functools.total_ordering
 class rōblox(enum.Enum):
     # v271 = '2016L'
     v348 = ('2018M', '2018',)
@@ -23,6 +25,13 @@ class rōblox(enum.Enum):
     @staticmethod
     def from_name(value: str | int):
         return VERSION_MAP[str(value)]
+
+    def __lt__(self, other: typing_extensions.Self):
+        return self.get_number() < other.get_number()
+
+
+FIRST_VERSION = min(rōblox)
+LAST_VERSION = max(rōblox)
 
 
 VERSION_MAP = dict(

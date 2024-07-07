@@ -1,6 +1,5 @@
-from urllib import parse
-import urllib3
 from web_server._logic import web_server_handler, server_path, web_server_ssl
+import util.versions as versions
 import util.resource
 import util.const
 import util.ssl
@@ -147,7 +146,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/game/join.ashx', min_version=400)
+@server_path('/game/join.ashx', versions={versions.rōblox.v463})
 def _(self: web_server_handler) -> bool:
     self.send_json(perform_join(self) | {
         'ClientPort': 0,
