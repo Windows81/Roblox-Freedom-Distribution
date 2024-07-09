@@ -38,4 +38,4 @@ sudo rm -r /home/$USER/RobloxFreedomDistribution/Roblox
 
 Using native wget/curl to download clients might fix the said issue too (not sure)
 
-If you're having issues, please add me on Discord. My username is `twig6843`.
+If you're having issues, please add me on Discord. My username is `twig6843`
