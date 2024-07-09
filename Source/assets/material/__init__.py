@@ -13,7 +13,8 @@ def load_asset(asset_id: str) -> bytes | None:
     asset_sub = asset_id[len(const.ID_PREFIX):]
     # TODO: make material URL scheme more flexible.
     url = (
-        'https://github.com/Windows81/Roblox-Materials/raw/main/textures/Extrapolated2022/' +
+        # 'https://github.com/Windows81/Roblox-Materials/raw/main/textures/Extrapolated2022/' +
+        'https://github.com/Windows81/Roblox-Materials/raw/main/textures/ExperiencersInternational2021/' +
         '/'.join(asset_sub.split('-'))
     )
 
