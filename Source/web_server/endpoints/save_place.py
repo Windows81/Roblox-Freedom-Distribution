@@ -1,5 +1,6 @@
 from web_server._logic import web_server_handler, server_path
 import util.const
+import shutil
 import struct
 import gzip
 import zlib
@@ -57,8 +58,12 @@ def _(self: web_server_handler) -> bool:
     if not place_config.enable_saveplace:
         return False
 
+    place_path = place_config.path
+    backup_path = place_path + '.bak'
+    shutil.copy(place_path, backup_path)
+
     zipped_content = self.read_content()
-    with open(place_config.path, 'wb') as f:
+    with open(place_path, 'wb') as f:
         decompress_gzip(zipped_content, f)
 
     self.send_json([])

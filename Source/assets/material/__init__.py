@@ -11,6 +11,7 @@ def transform_to_id_num(asset_id: str) -> int:
 
 def load_asset(asset_id: str) -> bytes | None:
     asset_sub = asset_id[len(const.ID_PREFIX):]
+    # TODO: make material URL scheme more flexible.
     url = (
         'https://github.com/Windows81/Roblox-Materials/raw/main/textures/Extrapolated2022/' +
         '/'.join(asset_sub.split('-'))
