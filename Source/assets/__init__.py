@@ -102,7 +102,8 @@ class asseter:
 
         id_num = None
         if asset_id.startswith(material.const.ID_PREFIX):
-            id_num = material.transform_to_id_num(asset_id)
+            return material.load_asset(asset_id)
+            # id_num = material.transform_to_id_num(asset_id)
 
         if id_num:
             return self.load_asset_num(id_num)
