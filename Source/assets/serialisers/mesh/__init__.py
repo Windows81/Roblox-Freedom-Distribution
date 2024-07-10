@@ -9,5 +9,6 @@ def parse(originalData: bytes) -> bytes:
 
         meshData = rbxmesh.read_mesh_data(originalData, meshVersion)
         return rbxmesh.export_mesh_v2(meshData)
-    except Exception:
+    except Exception as e:
+        print(e)
         return originalData

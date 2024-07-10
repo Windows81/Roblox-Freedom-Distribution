@@ -63,8 +63,8 @@ class asseter:
         if data is None:
             return None
 
-        data = rbxl.parse(data)
         data = mesh.parse(data)
+        data = rbxl.parse(data)
         return data
 
     def load_local_asset(self, path: str) -> bytes | None:

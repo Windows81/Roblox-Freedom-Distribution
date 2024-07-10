@@ -52,7 +52,7 @@ class config_type(allocateable.obj_type):
             count: int
 
     class game_setup(allocateable.obj_type):
-        class place(allocateable.obj_type):
+        class place_file(allocateable.obj_type):
             path: custom_types.path_obj
             enable_saveplace: bool = False
 

@@ -54,7 +54,7 @@ def _(self: web_server_handler) -> bool:
     if self.query.get('assetId') != str(util.const.DEFAULT_PLACE_ID):
         return False
 
-    place_config = self.server.game_config.game_setup.place
+    place_config = self.server.game_config.game_setup.place_file
     if not place_config.enable_saveplace:
         return False
 

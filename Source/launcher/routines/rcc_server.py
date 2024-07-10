@@ -29,7 +29,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def save_place_file(self) -> None:
         config = self.game_config
 
-        from_path = config.game_setup.place.path
+        from_path = config.game_setup.place_file.path
         if from_path is None:
             return
         to_path = config.asset_cache.get_asset_num_path(const.DEFAULT_PLACE_ID)

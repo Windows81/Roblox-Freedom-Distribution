@@ -1,7 +1,7 @@
 import data_transfer
 import config
 
-BASE_SCRIPT_FORMAT = """
+BASE_SCRIPT_FORMAT = """%(rcc_snippet)s
 local BaseUrl = game:GetService("ContentProvider").BaseUrl:lower()
 local HttpRbxApiService = game:GetService("HttpRbxApiService")
 local HttpService = game:GetService("HttpService")
@@ -29,16 +29,17 @@ game.Players.PlayerAdded:connect(function(Player)
     end
     Player:Kick('Player is not allowed.')
 end)
+
+do
+%(startup_script)s
+end
+
+print('Initialised RFD server scripts.')
 """
 
 
 def get_script(game_config: config.obj_type) -> str:
-    return '\n\n'.join([
-        data_transfer.get_rcc_snippet(game_config),
-
-        BASE_SCRIPT_FORMAT % {
-        },
-
-        game_config.game_setup.startup_script,
-        "print('Initialised RFD server scripts.')",
-    ])
+    return BASE_SCRIPT_FORMAT % {
+        'rcc_snippet': data_transfer.get_rcc_snippet(game_config),
+        'startup_script': game_config.game_setup.startup_script,
+    }

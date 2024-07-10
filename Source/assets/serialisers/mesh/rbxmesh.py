@@ -3,7 +3,7 @@
     Python Library for reading and writing Roblox mesh files.
     Written by something.else on 21/9/2023
 
-    Supported meshes up to version 5.
+    Support for meshes up to version 5.
     Mesh Format documentation by MaximumADHD: https://devforum.roblox.com/t/roblox-mesh-format/326114
 """
 
@@ -908,11 +908,12 @@ def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
     offset += meshHeader.numSubsets * 72
     offset += meshHeader.unused
 
-    if offset != len(data):
-        raise Exception(
-            "read_mesh_v4: unexpected data at end of file (%d bytes)" %
-            (len(data) - offset)
-        )
+    # Don't count on this.  Mesh rbxassetid://7385905814 gets stopped whenever it tries to execute here.
+    # if offset != len(data):
+    #    raise Exception(
+    #       "read_mesh_v4: unexpected data at end of file (%d bytes)" %
+    #       (len(data) - offset)
+    #    )
 
     debug_print(
         "read_mesh_v4: read {len(meshData.vnts)} vertices and %d faces successfully" %
@@ -1049,7 +1050,8 @@ def export_mesh_v3(meshData: FileMeshData) -> bytes:
         40,
         12,
         4,
-        max( len(meshData.LODs), 2 ), # There has to be at least two LODs ( [0, 1234] ) if not ROBLOX will complain about an empty mesh
+        # There has to be at least two LODs ( [0, 1234] ) if not ROBLOX will complain about an empty mesh
+        max(len(meshData.LODs), 2),
         len(meshData.vnts),
         len(meshData.full_faces) if len(meshData.LODs) > 1 and len(
             meshData.full_faces) > len(meshData.faces) else len(meshData.faces),
@@ -1070,7 +1072,7 @@ def export_mesh_v3(meshData: FileMeshData) -> bytes:
             finalmesh += meshData.LODs[i].to_bytes(4, "little")
     else:
         finalmesh += (0).to_bytes(4, "little")
-        finalmesh += ( len(meshData.faces) ).to_bytes(4, "little")
+        finalmesh += (len(meshData.faces)).to_bytes(4, "little")
 
     return finalmesh
 
@@ -1094,7 +1096,7 @@ def read_mesh_data(data: bytes, meshVersion: float) -> FileMeshData:
         meshData: FileMeshData = read_mesh_v3(
             data, startingOffset + 1)
 
-    elif meshVersion == 4.0 or meshVersion == 4.01 or meshVersion == 4.1:
+    elif meshVersion == 4.0 or meshVersion == 4.1:
         meshData: FileMeshData = read_mesh_v4(
             data, startingOffset + 1)
 
