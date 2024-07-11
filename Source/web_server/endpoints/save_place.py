@@ -49,6 +49,9 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path("/ide/publish/UploadExistingAsset")
 def _(self: web_server_handler) -> bool:
+    '''
+    game:SavePlace()
+    '''
 
     # Returns false if the thing trying to be saved isn't the place we're in.
     if self.query.get('assetId') != str(util.const.DEFAULT_PLACE_ID):

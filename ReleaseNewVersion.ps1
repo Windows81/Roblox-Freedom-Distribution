@@ -20,8 +20,8 @@ function CreateBinary() {
 		--distpath "$root/Binaries" `
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec"
-	foreach ($_ in (Get-ChildItem "$root/Binaries/*")) {
-		$files.Add($_)
+	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
+		$files.Add($file)
 	}
 }
 
@@ -32,10 +32,20 @@ function UpdateZippedDirVersion() {
 }
 
 function CreateZippedDirs() {
-	foreach ($_ in (Get-ChildItem "$root/Roblox/*/*" -Directory)) {
-		$zip = "$root/Roblox/$($_.Parent.Name).$($_.Name).7z"
+	# Necessary since `RFDStarterScript.lua` files change whenever a new server is started.
+	foreach ($file in (Get-ChildItem "$root/Roblox" -Recurse -Filter RFDStarterScript.lua)) {
+		Set-Content $file ""
+	}
+
+	# Necessary since `AppSettings.xml` files change whenever a new server is started.
+	foreach ($file in (Get-ChildItem "$root/Roblox" -Recurse -Filter AppSettings.xml)) {
+		Set-Content $file ""
+	}
+
+	foreach ($dir in (Get-ChildItem "$root/Roblox/*/*" -Directory)) {
+		$zip = "$root/Roblox/$($dir.Parent.Name).$($dir.Name).7z"
 		Remove-Item $zip -Force -Confirm
-		if (-not (Test-Path $zip)) { 7z a $zip "$($_.FullName)/*" }
+		if (-not (Test-Path $zip)) { 7z a $zip "$($dir.FullName)/*" }
 		$files.Add($zip)
 	}
 }
