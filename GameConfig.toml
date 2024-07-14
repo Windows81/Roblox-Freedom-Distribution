@@ -17,8 +17,8 @@ creator.name = 'ÒÓ'
 startup_script = ''
 
 [game_setup.place_file]
-path = 'c:\Users\USERNAME\Documents\Roblox Files\Apartments.rbxl'
-# When game:SavePlace() is called, overwirtes the place at `.path`
+path = 'c:\Users\USERNAME\Documents\Roblox Files\F3X Test.rbxl'
+# When game:SavePlace() is called, overwrites the place at `.path`
 enable_saveplace = false
 
 [game_setup.database]
