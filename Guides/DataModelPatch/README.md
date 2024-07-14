@@ -2,7 +2,7 @@
 
 I took the Rōblox client binary from [here](https://setup.rbxcdn.com/version-5a54208fe8e24e87-RobloxApp.zip).
 
-I then did took the patches from [this guide](https://github.com/worships/2021e-localhost-guide?tab=readme-ov-file#patching-client) and made a few more which weren't relevant to `DataModelPatch`.
+I then did took the patches from [this guide](../Worships2021EGuide/README.md) and made a few more which weren't relevant to `DataModelPatch`.
 
 Dum Rōblox decided that they won't load `./Content/models/DataModelPatch/DataModelPatch.rbxm` if it's been modified. Not to worry; I patched the signing requirement out.
 

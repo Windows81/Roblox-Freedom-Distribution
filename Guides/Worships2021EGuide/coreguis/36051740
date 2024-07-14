@@ -1,0 +1,707 @@
+--[[if game.Players.LocalPlayer.Name == "Player" then
+	return
+end]]
+
+-- Script Globals
+local buildDeleteID = 36738185
+local buildStamperID = 87198196
+local buildGroupDraggerID = 36334760
+local buildConfigID = 87240571
+local buildRotateID = 0
+
+local buildTools = {}
+
+local player = nil
+local backpack = nil
+
+
+
+
+-- Functions
+local function waitForProperty(instance, name)
+	while not instance[name] do
+		instance.Changed:wait()
+	end
+end
+
+local function waitForChild(instance, name)
+	while not instance:FindFirstChild(name) do
+		instance.ChildAdded:wait()
+	end
+end
+
+function getLatestPlayer()
+	waitForProperty(game.Players,"LocalPlayer")
+	player = game.Players.LocalPlayer
+	waitForChild(player,"Backpack")
+	backpack = player.Backpack
+end
+
+function backpackHasTool(tool)
+	local backpackChildren = backpack:GetChildren()
+	for i = 1, #backpackChildren do
+		if backpackChildren[i] == tool then
+			return true
+		end
+	end
+	return false
+end
+
+function getToolAssetID(assetID,toolName)
+	local newTool = game:GetService("InsertService"):LoadAsset(assetID)
+	newTool = newTool:FindFirstChild(toolName)
+	return newTool
+end
+
+function giveAssetId(assetID,toolName)
+	local theTool = getToolAssetID(assetID,toolName)
+	if theTool and not backpackHasTool(theTool) then
+		theTool.Parent = backpack
+		table.insert(buildTools,theTool)
+	end
+end
+
+function givePlayerBuildTools()
+	getLatestPlayer()
+
+	giveAssetId(buildStamperID,"StamperTool")
+	giveAssetId(buildDeleteID,"BuildDelete")
+	giveAssetId(buildGroupDraggerID,"BuildGroupDragger")
+	giveAssetId(buildRotateID,"BuildRotate")
+	giveAssetId(buildConfigID,"BuildConfiguration")
+end
+
+function takePlayerBuildTools()
+	for k,v in ipairs(buildTools) do
+		v.Parent = nil
+	end
+	buildTools = {}
+end
+
+
+
+print("start script")
+-- Start Script
+if game.CoreGui.RobloxGui.ControlFrame.BottomLeftControl:FindFirstChild("ToolButton") then -- we are still using old build tools (TODO: remove this when new tools are good enough)
+	print("old tools")
+	local localAssetBase = "rbxasset://textures/ui/"
+
+	local control = script.Parent:FindFirstChild("ControlFrame")
+	local bottomLeftControls
+	local buildTools
+
+	if control then
+		bottomLeftControls = control.BottomLeftControl
+		buildTools = control.BuildTools
+	else
+		bottomLeftControls = script.Parent.BottomLeftControl
+		buildTools = script.Parent.BuildTools
+	end
+
+	buildToolsVisible = false
+
+	-- used right now to push build tools down a bit (should change in client)
+	buildTools.Frame.Position = UDim2.new(-0.15,0,0.3,0)
+
+	bottomLeftControls.ToolButton.Image = localAssetBase .. "ToolButton.png"
+
+	local prevObject = nil
+
+	local tryCount = 0
+
+	local location = 0
+
+	local name
+
+	local buttons = {}
+	local value
+
+	local player
+	local backpack
+
+	local resetCon
+
+	local equippedTool
+	local selectedButton
+
+	-- the build tools
+	local buildResize
+	local buildClone
+	local buildInsert
+	local buildDragger
+	local buildColor
+	local buildGroupDragger
+	local buildSurface
+	local buildMaterial
+	local buildConfiguration
+	local buildDelete
+
+	-- the build tools asset ids
+	local buildResizeID = 36738142
+	local buildCloneID = 36017373
+	local buildInsertID = 36431591
+	local buildDraggerID = 36068233
+	local buildColorID = 35205409
+	local buildGroupDraggerID = 36334760
+	local buildSurfaceID = 35226945
+	local buildMaterialID = 35223828
+	local buildConfigurationID = 36270159
+	local buildDeleteID = 36738185
+
+
+	function waitForProperty(instance, name)
+		while not instance[name] do
+			instance.Changed:wait()
+		end
+	end
+
+	function waitForChild(instance, name)
+		while not instance:FindFirstChild(name) do
+			instance.ChildAdded:wait()
+		end
+	end
+
+	function setPlayerAndBackpack()
+		waitForProperty(game.Players,"LocalPlayer")
+		player = game.Players.LocalPlayer
+		backpack = player.Backpack
+	end
+
+	setPlayerAndBackpack()
+
+	function playerReset()
+
+		loadTools()
+		local prevObject = nil
+		local equippedTool = nil
+ 		setPlayerAndBackpack()
+		resetCon:disconnect()
+		resetCon = game.Players.LocalPlayer.CharacterAdded:connect(playerReset)
+
+	end
+
+	resetCon = game.Players.LocalPlayer.CharacterAdded:connect(playerReset)
+
+	function giveSelectedValue(tool)
+
+		if tool:FindFirstChild("SelectedButton") == nil then
+			local selected = Instance.new("ObjectValue")
+			selected.Name = "SelectedButton"
+			selected.RobloxLocked = true
+		
+			if tool.Name == "BuildConfiguration" then
+				selected.Value = buildTools.Frame.MiscTools.PropertyTool
+			elseif tool.Name == "BuildInsert" then
+				selected.Value = buildTools.Frame
+			end
+			selected.Parent = tool
+		end
+
+	end
+
+	function loadTools()
+		-- load in all tools to decrease issues with loading, also don't have to keep reloading assets
+		buildResize = game:GetService("InsertService"):LoadAsset(buildResizeID)
+		buildResize = buildResize:FindFirstChild("BuildResize")
+		giveSelectedValue(buildResize)
+		buildResize.Parent = backpack
+
+		buildClone = game:GetService("InsertService"):LoadAsset(buildCloneID)
+		buildClone = buildClone:FindFirstChild("BuildClone")
+		giveSelectedValue(buildClone)
+		buildClone.Parent = backpack
+
+		buildInsert = game:GetService("InsertService"):LoadAsset(buildInsertID)
+		buildInsert = buildInsert:FindFirstChild("BuildInsert")
+		giveSelectedValue(buildInsert)
+		buildInsert.Parent = backpack
+
+		buildDragger = game:GetService("InsertService"):LoadAsset(buildDraggerID)
+		buildDragger = buildDragger:FindFirstChild("BuildDragger")
+		giveSelectedValue(buildDragger)
+		buildDragger.Parent = backpack
+
+		buildColor = game:GetService("InsertService"):LoadAsset(buildColorID)
+		buildColor = buildColor:FindFirstChild("BuildColorTester")
+		giveSelectedValue(buildColor)
+		buildColor.Parent = backpack
+
+		buildGroupDragger = game:GetService("InsertService"):LoadAsset(buildGroupDraggerID)
+		buildGroupDragger = buildGroupDragger:FindFirstChild("BuildGroupDragger")
+		giveSelectedValue(buildGroupDragger)
+		buildGroupDragger.Parent = backpack
+
+		buildSurface = game:GetService("InsertService"):LoadAsset(buildSurfaceID)
+		buildSurface = buildSurface:FindFirstChild("BuildSurfaceTest")
+		giveSelectedValue(buildSurface)
+		buildSurface.Parent = backpack
+
+		buildMaterial = game:GetService("InsertService"):LoadAsset(buildMaterialID)
+		buildMaterial = buildMaterial:FindFirstChild("BuildMaterialTest")
+		giveSelectedValue(buildMaterial)
+		buildMaterial.Parent = backpack
+
+		buildConfiguration = game:GetService("InsertService"):LoadAsset(buildConfigurationID)
+		buildConfiguration = buildConfiguration:FindFirstChild("BuildConfiguration")
+		giveSelectedValue(buildConfiguration)
+		buildConfiguration.Parent = backpack
+
+		buildDelete = game:GetService("InsertService"):LoadAsset(buildDeleteID)
+		buildDelete = buildDelete:FindFirstChild("BuildDelete")
+		giveSelectedValue(buildDelete)
+		buildDelete.Parent = backpack
+	end
+	loadTools()
+
+	waitForChild(buildTools,"SelectedButton")
+
+	buildTools.SelectedButton.Changed:connect(function(property)
+
+		if value == buildTools.SelectedButton.Value then return end
+		value = buildTools.SelectedButton.Value
+
+		selectedButton = buildTools.SelectedButton.Value
+
+		if equippedTool then
+			equippedTool.SelectedButton.Value = selectedButton
+		end
+	end)
+
+
+
+	local frames = buildTools.Frame:GetChildren()
+	 for i = 1, #frames do
+		if frames[i]:IsA("Frame") and frames[i].Name ~= "Divs" then
+			local buttonSubSet = frames[i]:GetChildren()
+			for j = 1, #buttonSubSet do
+				table.insert(buttons,buttonSubSet[j])
+			end
+		end
+	end
+
+	function unEquipAnyItems()
+
+		playerItems = player.Character:GetChildren()
+		for i = 1, #playerItems do
+			if playerItems[i]:isA("Tool") or playerItems[i]:isA("HopperBin") then
+				playerItems[i].Parent = backpack
+				return
+			end
+		end
+
+	end
+	unEquipAnyItems()
+
+	--------------------- Build Bar Tool Tip Code -----------------------------
+
+	function setUpText(toolTip)
+
+		local name = toolTip.Parent.Name
+		if name == "CloneObject" then toolTip.Text = "Copy Part"
+		elseif name == "DeleteObject" then toolTip.Text = "Delete Part"
+		elseif name == "InsertObject" then toolTip.Text = "Insert Part"
+		elseif name == "PropertyTool" then toolTip.Text = "Edit Part"
+		elseif name == "GroupMove" then toolTip.Text = "Move Models and Parts"
+		elseif name == "PartMove" then toolTip.Text = "Move Parts"
+		elseif name == "ScaleObject" then toolTip.Text = "Resize a part"
+		elseif name == "InputSelector" then toolTip.Text = "Change Surface"
+		elseif name == "MaterialSelector" then toolTip.Text = "Change Material"
+		elseif name == "PaintTool" then toolTip.Text = "Change Color" end
+
+	end
+
+	local fadeSpeed = 0.1
+	function buildToolsTips()
+
+		local frame = Instance.new("TextLabel")
+		frame.Name = "ToolTip"
+		frame.Text = "Hi! I'm a ToolTip!"
+		frame.ZIndex = 10
+		frame.Size = UDim2.new(2,0,1,0)
+		frame.Position = UDim2.new(1,0,0,0)
+		frame.BackgroundColor3 = Color3.new(1,1,153/255)
+		frame.BackgroundTransparency = 1
+		frame.TextTransparency = 1
+		frame.TextWrap = true
+
+		for i = 1, #buttons do
+			local tip = frame:Clone()
+			tip.RobloxLocked = true
+			tip.Parent = buttons[i]
+			setUpText(tip)
+			local inside = Instance.new("BoolValue")
+			inside.Value = false
+			inside.RobloxLocked = true
+			tip.Parent.MouseEnter:connect(function()
+				inside.Value = true
+				wait(1.2)
+				if inside.Value then
+					while inside.Value and tip.BackgroundTransparency > 0 do
+						tip.BackgroundTransparency = tip.BackgroundTransparency - fadeSpeed
+						tip.TextTransparency = tip.TextTransparency - fadeSpeed
+						wait()
+					end
+				end
+			end)
+			tip.Parent.MouseLeave:connect(function()
+				inside.Value = false
+				tip.BackgroundTransparency = 1
+				tip.TextTransparency = 1
+			end)
+			tip.Parent.MouseButton1Click:connect(function()
+				inside.Value = false
+				tip.BackgroundTransparency = 1
+				tip.TextTransparency = 1
+			end)
+		end
+	end
+
+	--------------------- End Build Bar Tool Tip Code --------------------------
+
+
+
+	----------------------------- Reset Button Code ----------------------------
+	function reset(subset)
+
+		local buttons = subset:GetChildren()
+		if subset.Name == "AddDeleteTools" then
+			for i = 1, #buttons do
+				buttons[i].Selected = false
+				if buttons[i].Name == "CloneObject" then buttons[i].Image = localAssetBase .. "CloneButton.png"
+				elseif buttons[i].Name == "DeleteObject" then buttons[i].Image = localAssetBase .. "DeleteButton.png"
+				elseif buttons[i].Name == "InsertObject" then buttons[i].Image = localAssetBase .. "InsertButton.png" end
+			end
+
+
+		elseif subset.Name == "MiscTools" then
+			for i = 1, #buttons do
+				buttons[i].Selected = false
+				if buttons[i].Name == "PropertyTool" then buttons[i].Image = localAssetBase .. "PropertyButton.png" end
+			end
+
+
+		elseif subset.Name == "PhysicalTools" then
+			for i = 1, #buttons do
+				buttons[i].Selected = false
+				if buttons[i].Name == "GroupMove" then buttons[i].Image = localAssetBase .. "GroupMoveButton.png"
+				elseif buttons[i].Name == "PartMove" then buttons[i].Image = localAssetBase .."PartMoveButton.png"
+				elseif buttons[i].Name == "ScaleObject" then buttons[i].Image = localAssetBase .. "ScaleButton.png" end
+			end
+
+
+		elseif subset.Name == "PropertyTools" then
+			for i = 1, #buttons do
+				buttons[i].Selected = false
+				if buttons[i].Name == "InputSelector" then buttons[i].Image = localAssetBase .. "SurfaceButton.png"
+				elseif buttons[i].Name == "MaterialSelector" then buttons[i].Image = localAssetBase .. "MaterialButton.png"
+				elseif buttons[i].Name == "PaintTool" then buttons[i].Image = localAssetBase .. "PaintButton.png" end
+			end
+		end
+
+	end
+
+	function resetAllButtons()
+
+		local categories = buildTools.Frame:GetChildren()
+		for i = 1, #categories do
+			reset(categories[i])
+		end
+
+	end
+
+	----------------------------- End Reset Button Code -------------------------
+	resetAllButtons()
+
+
+
+	-- sets button to active image
+	function setButtonStateActive(Object, Name)
+
+		if Name == "BuildInsert" then Object.Image = localAssetBase .. "InsertButton_dn.png" Object.Selected = true
+		elseif Name == "BuildDelete" then Object.Image = localAssetBase .. "DeleteButton_dn.png" Object.Selected = true
+		elseif Name == "BuildClone" then Object.Image = localAssetBase .. "CloneButton_dn.png" Object.Selected = true
+		elseif Name == "BuildConfiguration" then Object.Image = localAssetBase .. "PropertyButton_dn.png" Object.Selected = true
+		elseif Name == "BuildDragger" then Object.Image = localAssetBase .. "PartMoveButton_dn.png" Object.Selected = true
+		elseif Name == "BuildGroupDragger" then Object.Image = localAssetBase .. "GroupMoveButton_dn.png" Object.Selected = true
+		elseif Name == "BuildResize" then Object.Image = localAssetBase .. "ScaleButton_dn.png" Object.Selected = true
+		elseif Name == "BuildSurfaceTest" then Object.Image = localAssetBase .. "SurfaceButton_dn.png" Object.Selected = true
+		elseif Name == "BuildMaterialTest" then Object.Image = localAssetBase .. "MaterialButton_dn.png" Object.Selected = true
+		elseif Name == "BuildColorTester" then Object.Image = localAssetBase .. "PaintButton_dn.png" Object.Selected = true
+		end
+
+	end
+
+
+	function removeTool(tool, Object)
+
+		playerItems = player.Characer:GetChildren()
+		for i = 1, #playerItems do
+			if playerItems[i].Name == tool and playerItems[i]:isA("Tool") then
+				playerItems[i].Parent = backpack
+				playerItems[i]:remove()
+				return
+			end
+		end
+
+		backpackStuff = backpack:GetChildren()
+		for i = 1, #backpackStuff do
+			if backpackStuff[i].Name == tool then
+				backpackStuff[i].Parent = nil
+				backpackStuff[i]:remove()
+				return
+			end
+		end
+
+	end
+
+
+
+	function getTool(tool)
+		playerItems = player.Character:GetChildren()
+		for i = 1, #playerItems do
+			if playerItems[i].Name == tool then
+				if playerItems[i]:isA("Tool") then return playerItems[i], true end
+			end
+		end
+
+		backpackStuff = backpack:GetChildren()
+		for i = 1, #backpackStuff do
+			if backpackStuff[i].Name == tool then
+				return backpackStuff[i], false
+			end
+		end
+	end
+
+	function toolDeselection(Name,Object,id)
+
+		local hasTool, equipped = getTool(Name)
+		if equipped then
+			resetAllButtons()
+			unEquipAnyItems()
+			hasTool.Parent = nil
+			hasTool:remove()
+
+			if equippedTool then
+				equippedTool.Parent = nil
+				equippedTool:remove()
+				equippedTool = nil
+			end
+		end
+
+	end
+
+
+	-- Used to find allocated tool that we got at beginning of script
+	function getToolLocal(Name)
+
+		if Name == "BuildInsert" then return buildInsert
+		elseif Name == "BuildDelete" then return buildDelete
+		elseif Name == "BuildClone" then return buildClone
+		elseif Name == "BuildConfiguration" then return buildConfiguration
+		elseif Name == "BuildDragger" then return buildDragger
+		elseif Name == "BuildGroupDragger" then return buildGroupDragger
+		elseif Name == "BuildResize" then return buildResize
+		elseif Name == "BuildSurfaceTest" then return buildSurface
+		elseif Name == "BuildMaterialTest" then return buildMaterial
+		elseif Name == "BuildColorTester" then return buildColor
+		end
+
+	end
+
+	function assureTool(tool, id, Name)
+
+		if tool == nil or type(tool) ~= "userdata" or tool:FindFirstChild("Handle") == nil then
+			tool = game:GetService("InsertService"):LoadAsset(id)
+			
+			local instances = tool:GetChildren()
+			if #instances == 0 then
+				tool:Remove()
+				return nil
+			end
+
+			tool = tool:FindFirstChild(Name)
+			tool.Parent = backpack
+		end
+
+	end
+
+	-- general function to get tool when button is clicked
+	function toolSelection(Name,Object,id)
+		local tool = nil
+		local hasTool, equipped = getTool(Name)
+		if equipped then
+
+			if hasTool:FindFirstChild("SelectedButton") == false then
+				giveSelectedValue(hasTool)
+			end
+
+			resetAllButtons()
+			unEquipAnyItems()
+			hasTool.Parent = nil
+
+			if equippedTool ~= nil then
+				equippedTool.Parent = backpack
+			end
+
+		elseif hasTool then
+		
+			-- failsafe to make sure we load in tool, no matter what
+			assureTool(hasTool,id, Name)
+			if hasTool == nil then return nil end
+		
+			unEquipAnyItems()
+			Object.Selected = true
+			hasTool.Parent = player.Character
+			equippedTool = hasTool
+			hasTool.Unequipped:connect(function() resetAllButtons() end)
+			setButtonStateActive(Object, Name)
+
+		else
+			
+			-- first try to find tool we already loaded in
+			tool = getToolLocal(Name)
+
+			-- failsafe to make sure we load in tool, no matter what
+			assureTool(tool,id, Name)
+			if tool == nil then return nil end
+
+			if tool then
+
+        		if tool:FindFirstChild("SelectedButton") == nil then
+					local selected = Instance.new("ObjectValue")
+					selected.Name = "SelectedButton"
+					selected.RobloxLocked = true
+		
+					if Name == "BuildConfiguration" then
+						selected.Value = buildTools.Frame.MiscTools.PropertyTool
+					elseif Name == "BuildInsert" then
+						selected.Value = buildTools.Frame
+					end
+		
+					selected.Parent = tool
+				end
+
+				unEquipAnyItems()
+				if equippedTool ~= nil then
+					if prevObject then resetAllButtons() end
+					equippedTool.Parent = backpack
+				end
+
+				equippedTool = tool
+				equippedTool.Parent = player.Character
+				
+				Object.Selected = true
+				equippedTool.Unequipped:connect(function() resetAllButtons() end)
+				setButtonStateActive(Object, Name)
+			end
+		end
+		prevObject = Object
+	end
+
+
+	-- used to animate the tool bar open/close
+	local scrollSpeed = 0.01
+	function openCloseTools()
+		buildToolsVisible = not buildToolsVisible
+		if buildToolsVisible then
+			bottomLeftControls.ToolButton.Image = localAssetBase .. "ToolButton_dn.png"
+			buildTools.Frame.CloseButton.Image = localAssetBase .. "CloseButton.png"
+			buildTools.Frame.Size = UDim2.new(0.15,0,0.57,0)
+			buildTools.Frame.Position = UDim2.new(-0.1, 0,buildTools.Frame.Position.Y.Scale,0)
+			while buildTools.Frame.Position.X.Scale < -0.01 and buildToolsVisible do
+				buildTools.Frame.Position = UDim2.new(buildTools.Frame.Position.X.Scale + scrollSpeed, 0,buildTools.Frame.Position.Y.Scale,0)
+				wait()
+			end
+			buildTools.Frame.Position = UDim2.new(0, 0,buildTools.Frame.Position.Y.Scale,0)
+		else
+			bottomLeftControls.ToolButton.Image = localAssetBase .. "ToolButton.png"
+			while buildTools.Frame.AbsolutePosition.X + buildTools.Frame.AbsoluteSize.X  > 0 and not buildToolsVisible do
+				buildTools.Frame.Position = UDim2.new(buildTools.Frame.Position.X.Scale - scrollSpeed, 0,buildTools.Frame.Position.Y.Scale,0)
+				wait()
+			end
+			buildTools.Frame.Size = UDim2.new(0,buildTools.Frame.AbsoluteSize.X,buildTools.Frame.Size.Y.Scale,buildTools.Frame.Size.Y.Offset)
+			buildTools.Frame.Position = UDim2.new(0,-buildTools.Frame.AbsoluteSize.X,buildTools.Frame.Position.Y.Scale,buildTools.Frame.Position.Y.Offset)
+		end
+	end
+
+	-- setup tool button listeners
+	bottomLeftControls.ToolButton.MouseButton1Click:connect(openCloseTools)
+	bottomLeftControls.ToolButton.MouseEnter:connect(function() if not buildToolsVisible then bottomLeftControls.ToolButton.Image = localAssetBase .. "ToolButton_dn.png" end end)
+	bottomLeftControls.ToolButton.MouseLeave:connect(function() if not buildToolsVisible then bottomLeftControls.ToolButton.Image = localAssetBase .. "ToolButton.png" end end)
+
+	-- close button on build tools
+	buildTools.Frame.CloseButton.MouseButton1Click:connect(openCloseTools)
+	buildTools.Frame.CloseButton.MouseEnter:connect(function() buildTools.Frame.CloseButton.Image = localAssetBase .. "CloseButton_dn.png" end)
+	buildTools.Frame.CloseButton.MouseLeave:connect(function() buildTools.Frame.CloseButton.Image = localAssetBase .. "CloseButton.png" end)
+
+	buildToolsTips()
+
+	-- Add/Delete Tools
+	buildTools.Frame.AddDeleteTools.DeleteObject.MouseButton1Click:connect(function()
+	toolSelection("BuildDelete", buildTools.Frame.AddDeleteTools.DeleteObject,buildDeleteID) end)
+	buildTools.Frame.AddDeleteTools.CloneObject.MouseButton1Click:connect(function()
+	toolSelection("BuildClone",buildTools.Frame.AddDeleteTools.CloneObject,buildCloneID) end)
+	buildTools.Frame.AddDeleteTools.InsertObject.MouseButton1Click:connect(function()
+		toolSelection("BuildInsert",buildTools.Frame.AddDeleteTools.InsertObject,buildInsertID)
+		if(buildTools.Frame:FindFirstChild("InsertToolboxMain")) then
+			buildTools.Frame.InsertToolboxMain.InsertMainDialog.InsertTab.CloseButton.ClosedState.Changed:connect(function(value)
+				if value == true then
+					toolSelection("BuildInsert",buildTools.Frame.AddDeleteTools.InsertObject,buildInsertID)
+					if(buildTools.Frame:FindFirstChild("InsertToolboxMain")) then
+						buildTools.Frame.InsertToolboxMain.InsertMainDialog.InsertTab.CloseButton.ClosedState.Value = false
+					end
+				end
+			end)
+		end
+
+	end)
+
+	-- Physical Tools
+	buildTools.Frame.PhysicalTools.ScaleObject.MouseButton1Click:connect(function()
+	toolSelection("BuildResize",buildTools.Frame.PhysicalTools.ScaleObject, buildResizeID) end)
+	--[[buildTools.Frame.PhysicalTools.PartMove.MouseButton1Click:connect(function()
+	toolSelection("BuildDragger",buildTools.Frame.PhysicalTools.PartMove,buildDraggerID) end)]]
+	buildTools.Frame.PhysicalTools.GroupMove.MouseButton1Click:connect(function()
+	toolSelection("BuildGroupDragger",buildTools.Frame.PhysicalTools.GroupMove,buildGroupDraggerID) end)
+
+	-- Property Tools
+	buildTools.Frame.PropertyTools.MaterialSelector.MouseButton1Click:connect(function()
+	toolSelection("BuildMaterialTest",buildTools.Frame.PropertyTools.MaterialSelector,buildMaterialID) end)
+	buildTools.Frame.PropertyTools.MaterialSelector.MaterialMenu.CloseButton.ClosedState.Changed:connect(function(value)
+		if value == true then
+			toolSelection("BuildMaterialTest",buildTools.Frame.PropertyTools.MaterialSelector,buildMaterialID)
+			buildTools.Frame.PropertyTools.MaterialSelector.MaterialMenu.CloseButton.ClosedState.Value = false
+		end
+	end)
+	buildTools.Frame.PropertyTools.PaintTool.MouseButton1Click:connect(function()
+	toolSelection("BuildColorTester",buildTools.Frame.PropertyTools.PaintTool, buildColorID) end)
+	buildTools.Frame.PropertyTools.PaintTool.PaintMenu.CloseButton.ClosedState.Changed:connect(function(value)
+		if value == true then
+			toolSelection("BuildColorTester",buildTools.Frame.PropertyTools.PaintTool,buildColorID)
+			buildTools.Frame.PropertyTools.PaintTool.PaintMenu.CloseButton.ClosedState.Value = false
+		end
+	end)
+	buildTools.Frame.PropertyTools.InputSelector.MouseButton1Click:connect(function()
+	toolSelection("BuildSurfaceTest",buildTools.Frame.PropertyTools.InputSelector, buildSurfaceID) end)
+	buildTools.Frame.PropertyTools.InputSelector.SurfaceMenu.CloseButton.ClosedState.Changed:connect(function(value)
+		if value == true then
+			toolSelection("BuildSurfaceTest",buildTools.Frame.PropertyTools.InputSelector,buildSurfaceID)
+			buildTools.Frame.PropertyTools.InputSelector.SurfaceMenu.CloseButton.ClosedState.Value = false
+		end
+	end)
+
+	-- Misc Tools
+	buildTools.Frame.MiscTools.PropertyTool.MouseButton1Click:connect(function()
+	toolSelection("BuildConfiguration",buildTools.Frame.MiscTools.PropertyTool, buildConfigurationID) end)
+
+else -- we are using new build tools
+	getLatestPlayer()
+
+	givePlayerBuildTools()
+
+	-- If player dies, we make sure to give them build tools again
+	player.CharacterAdded:connect(function()
+		takePlayerBuildTools()
+		givePlayerBuildTools()
+	end)
+end
