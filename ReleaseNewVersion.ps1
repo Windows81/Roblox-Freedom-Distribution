@@ -32,20 +32,16 @@ function UpdateZippedDirVersion() {
 }
 
 function CreateZippedDirs() {
-	# Necessary since `RFDStarterScript.lua` files change whenever a new server is started.
-	foreach ($file in (Get-ChildItem "$root/Roblox" -Recurse -Filter RFDStarterScript.lua)) {
-		Set-Content $file ""
-	}
-
-	# Necessary since `AppSettings.xml` files change whenever a new server is started.
-	foreach ($file in (Get-ChildItem "$root/Roblox" -Recurse -Filter AppSettings.xml)) {
-		Set-Content $file ""
-	}
-
 	foreach ($dir in (Get-ChildItem "$root/Roblox/*/*" -Directory)) {
 		$zip = "$root/Roblox/$($dir.Parent.Name).$($dir.Name).7z"
 		Remove-Item $zip -Force -Confirm
-		if (-not (Test-Path $zip)) { 7z a $zip "$($dir.FullName)/*" }
+		if (-not (Test-Path $zip)) {
+			# The `-xr` switches are for excluding specific file names (https://documentation.help/7-Zip-18.0/exclude.htm).
+			7z a $zip "$($dir.FullName)/*" `
+				"-xr!AppSettings.xml" `
+				"-xr!RFDStarterScript.lua" `
+				"-xr!dxgi.dll" "-xr!Reshade.ini" "-xr!ReShade.log" # ReShade stuff
+		}
 		$files.Add($zip)
 	}
 }
