@@ -1,16 +1,18 @@
 <h1 align="center"><img src="./Logo.png" height="20px"/> Rōblox: Freedom Distribution <img src="./Logo.png" height="20px"/></h1>
 
-**A Rōblox 'revival' framework built with Python; tested on Python 3.10 and 3.12.**
+_Want to host your own Rōblox LAN parties? Looking for a way to deploy your Rōblox experiences, new and old, on your own machine?_
 
-**If you worked with Python before, _initial_ [setup](#installation) is supposed to take less than a minute. Why _initial_? Freedom Distribution automatically downloads additional data (at most 110 MiB) for you.**
+Rōblox Freedom Distribution is one such solution. It's a 'revival' launcher built on existing research for self-hosting Rōblox servers.
 
-Initial adaptation from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
-
-Users can host their own server instances of Rōblox using binaries from 2018-07-25 or 2021-01-25.
+Using RFD, users can host their own server instances from compiled Rōblox binaries from 2018-07-25 or 2021-01-25.
 
 Players can join existing servers.
 
-Clients will automatically connect to a server of the same version.
+Clients only need to keep track of which hosts and ports to connect to. That's because clients will automatically connect to a server of the same version.
+
+**If you worked with Python (3.10–3.12) before, [_initial_ setup](#installation) is supposed to take less than a minute. Why _initial_? Freedom Distribution automatically downloads additional data (at most 90 MiB) for you.**
+
+Initial adaptation from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
 
 All the code is free-as-in-freedom software and is licensed under the GNU GPL v3.
 
