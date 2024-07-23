@@ -7,7 +7,7 @@ from . import (
 )
 
 
-def parse(data: bytes):
+def parse(data: bytes) -> bytes:
     parser = _logic.rbxl_parser(data)
     return parser.parse_file([
         downdate_font.replace,
@@ -15,3 +15,7 @@ def parse(data: bytes):
         roblox_links.replace,
         skip_bytecode.replace,
     ])
+
+
+def check(data: bytes) -> bool:
+    return data.startswith(_logic.HEADER_SIGNATURE)

@@ -10,8 +10,9 @@ def load_rōblox_asset(asset_id: int) -> bytes | None:
         try:
             http = urllib3.PoolManager()
             response = http.request('GET', url)
-            if response.status == 200:
-                return response.data
+            if response.status != 200:
+                return None
+            return response.data
 
         except urllib3.exceptions.HTTPError as e:
             return None

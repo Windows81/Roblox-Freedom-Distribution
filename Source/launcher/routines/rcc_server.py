@@ -1,3 +1,4 @@
+import urllib3
 import web_server._logic as web_server_logic
 import web_server as web_server
 
@@ -13,7 +14,6 @@ import subprocess
 import functools
 import util.ssl
 import config
-import assets
 import json
 import os
 
@@ -27,15 +27,32 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         return self.game_config.game_setup.roblox_version
 
     def save_place_file(self) -> None:
+        '''
+        Parses and copies the place file (specified in the config file) to the asset cache.
+        '''
         config = self.game_config
 
-        from_path = config.game_setup.place_file.path
-        if from_path is None:
+        from_uri = config.game_setup.place_file.uri
+        if from_uri is None:
             return
         to_path = config.asset_cache.get_asset_num_path(const.DEFAULT_PLACE_ID)
 
-        with open(from_path, 'rb') as rf, open(to_path, 'wb') as wf:
-            wf.write(rbxl.parse(rf.read()))
+        if not from_uri.is_online:
+            with open(from_uri.value, 'rb') as rf, open(to_path, 'wb') as wf:
+                wf.write(rbxl.parse(rf.read()))
+            return
+
+        if config.game_setup.place_file.enable_saveplace:
+            print('Warning: config option "enable_saveplace" is redundant when the place file is an online resource.')
+
+        http = urllib3.PoolManager()
+        response = http.request('GET', from_uri.value)
+
+        if response.status != 200 or not rbxl.check(response.data):
+            raise Exception("Place file couldn't be loaded.")
+
+        with open(to_path, 'wb') as wf:
+            wf.write(rbxl.parse(response.data))
 
     def save_app_setting(self) -> str:
         '''

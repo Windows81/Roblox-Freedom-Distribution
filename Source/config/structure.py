@@ -1,42 +1,10 @@
 from typing_extensions import Callable
 
+from .types import wrappers, structs
 from . import allocateable
-from . import custom_types
 import util.versions
 import util.resource
-import dataclasses
 import enum
-
-
-@dataclasses.dataclass
-class avatar_colors:
-    head: int
-    left_arm: int
-    left_leg: int
-    right_arm: int
-    right_leg: int
-    torso: int
-
-
-@dataclasses.dataclass
-class avatar_scales:
-    height: float
-    width: float
-    head: float
-    depth: float
-    proportion: float
-    body_type: float
-
-
-class chat_style(enum.Enum):
-    CLASSIC_CHAT = "Classic"
-    BUBBLE_CHAT = "Bubble"
-    CLASSIC_AND_BUBBLE_CHAT = "ClassicAndBubble"
-
-
-class avatar_type(enum.Enum):
-    R6 = "R6"
-    R15 = "R15"
 
 
 class config_type(allocateable.obj_type):
@@ -53,19 +21,19 @@ class config_type(allocateable.obj_type):
 
     class game_setup(allocateable.obj_type):
         class place_file(allocateable.obj_type):
-            path: custom_types.path_obj
+            uri: wrappers.uri_obj
             enable_saveplace: bool = False
 
         class asset_cache(allocateable.obj_type):
-            path: custom_types.path_obj = './AssetCache'  # type:ignore
+            path: wrappers.path_str = './AssetCache'  # type:ignore
             clear_on_start: bool = False
 
         class database(allocateable.obj_type):
-            path: custom_types.path_obj
+            path: wrappers.path_str
             clear_on_start: bool
 
         class icon(allocateable.obj_type):
-            path: custom_types.path_obj = ''  # type:ignore
+            path: wrappers.path_str = ''  # type:ignore
 
         class creator(allocateable.obj_type):
             name: str
@@ -78,15 +46,15 @@ class config_type(allocateable.obj_type):
         roblox_version: util.versions.rōblox
 
     class server_core(allocateable.obj_type):
-        chat_style: chat_style
+        chat_style: structs.chat_style
         retrieve_default_user_code: Callable[[float], str]
         check_user_allowed: Callable[[str], bool] = \
             'function() return true end'  # type: ignore
         retrieve_username: Callable[[str], str]
         retrieve_user_id: Callable[[str], int]
-        retrieve_avatar_type: Callable[[str], avatar_type]
+        retrieve_avatar_type: Callable[[str], structs.avatar_type]
         retrieve_avatar_items: Callable[[str], list[str]]
-        retrieve_avatar_scales: Callable[[str], avatar_scales]
-        retrieve_avatar_colors: Callable[[str], avatar_colors]
+        retrieve_avatar_scales: Callable[[str], structs.avatar_scales]
+        retrieve_avatar_colors: Callable[[str], structs.avatar_colors]
         retrieve_account_age: Callable[[str], int]
         filter_text: Callable[[str, str], str]

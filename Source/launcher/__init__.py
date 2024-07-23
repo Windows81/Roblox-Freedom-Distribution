@@ -1,8 +1,20 @@
-from .subparsers.args_launch_mode import download, player, server, studio
-from .subparsers.args_aux import clear_appdata, download, debug
+from .subparsers.args_launch_mode import (
+    download,
+    player,
+    server,
+    studio,
+)
+
+from .subparsers.args_aux import (
+    clear_appdata,
+    download,
+    debug,
+)
 
 import launcher.routines._logic as routine_logic
 import launcher.subparsers._logic as sub_logic
+
+import traceback
 import argparse
 
 
@@ -87,6 +99,7 @@ def process(args: list[str] | None = None) -> None:
     except KeyboardInterrupt:
         pass
     except Exception as e:
-        print(e)
+        traceback.print_exc()
+        # print(e)
     finally:
         del routine

@@ -48,10 +48,9 @@ Pre-Patched versions are now released! If you do not want to patch 2021E yoursel
 4. After that return to the references tab up top. Search `--rbxsig4` and then double click it, or right click and click `Follow in Disassembler`.
     - Scroll up until you see a `push ebp` instruction underneath a bunch of `int3` instructions.
     - Right click on the `push ebp` instruction and click `Assemble` or press space, then change the whole instruction to `ret`. 
-    <br>
-    <br>
-    - Example of what you should see:<br>
-    ![example](image-2.png)
+
+- Example of what you should see:
+![example](image-2.png)
 
 5. Click on `File` > `Patch File...` and save it as `Patched.exe`.
     - Close x32dbg, then delete, rename, or move the old `RobloxPlayerBeta.exe`. After that, rename `Patched.exe` to `RobloxPlayerBeta.exe`.

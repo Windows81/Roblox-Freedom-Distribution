@@ -5,6 +5,8 @@ import lz4.block
 import io
 import re
 
+HEADER_SIGNATURE = b'\x3c\x72\x6f\x62\x6c\x6f\x78\x21\x89\xff\x0d\x0a\x1a\x0a'
+
 
 class string_replacer:
     INT_SIZE = 4
@@ -245,7 +247,6 @@ class rbxl_parser:
         return write_stream.getvalue()
 
     def __process_header(self, read_stream: io.BytesIO) -> bytes | None:
-        HEADER_SIGNATURE = b'\x3c\x72\x6f\x62\x6c\x6f\x78\x21\x89\xff\x0d\x0a\x1a\x0a'
         if read_stream.read(len(HEADER_SIGNATURE)) != HEADER_SIGNATURE:
             return None
 

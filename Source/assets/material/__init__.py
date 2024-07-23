@@ -20,5 +20,7 @@ def load_asset(asset_id: str) -> bytes | None:
 
     http = urllib3.PoolManager()
     response = http.request('GET', url)
-    if response.status == 200:
-        return response.data
+    if response.status != 200:
+        return None
+
+    return response.data

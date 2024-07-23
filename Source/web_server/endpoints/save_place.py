@@ -61,8 +61,13 @@ def _(self: web_server_handler) -> bool:
     if not place_config.enable_saveplace:
         return False
 
-    place_path = place_config.path
-    backup_path = place_path + '.bak'
+    # Don't save place if the URI is from online.
+    if place_config.uri.is_online:
+        return False
+
+    # Backups are important in case RFD crashes mid-save.
+    place_path = place_config.uri.value
+    backup_path = f'{place_path}.bak'
     shutil.copy(place_path, backup_path)
 
     zipped_content = self.read_content()

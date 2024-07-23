@@ -9,15 +9,16 @@ instances.count = 1
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2021'
+roblox_version = '2018'
 
 title = 'òó'
 description = ''
 creator.name = 'ÒÓ'
-startup_script = ''
+startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
-path = 'c:\Users\USERNAME\Documents\Roblox Files\F3X Test.rbxl'
+# uri = 'c:\Users\USERNAME\Documents\Roblox Files\F3X Test.rbxl'
+uri = 'https://archive.org/download/pickware-studio/escape%20toy%20r%20us%20%28OLD%20OBBY%29.rbxl'
 # When game:SavePlace() is called, overwrites the place at `.path`
 enable_saveplace = false
 
@@ -45,7 +46,7 @@ end
 
 retrieve_avatar_type = '''
 function(user_code) -- str -> str
-    return 'R15'
+    return 'R6'
 end
 '''
 

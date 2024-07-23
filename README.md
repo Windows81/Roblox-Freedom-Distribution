@@ -43,7 +43,7 @@ wget https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/do
 To launch RFD, your command line will look something like this:
 
 ```
-./RFD.exe player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
+./RFD.exe player -rh 172.88.194.43 -rp 2005 -wp 2006
 ```
 
 #### For GNU/Linux
@@ -65,7 +65,7 @@ pip install -r ./Source/requirements.txt
 To launch RFD, your command line will look something like this:
 
 ```
-py Source/_main.py player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
+py Source/_main.py player -rh 172.88.194.43 -rp 2005 -wp 2006
 ```
 
 ## Command Syntax
@@ -160,7 +160,7 @@ Where `...` is [your command-line prefix](#installation),
 ### Player
 
 ```shell
-... player -rh "2603:8000:1:3a97:81ec:e544:bb42:6975" -rp 2005 -wp 2006
+... player -rh 172.88.194.43 -rp 2005 -wp 2006
 ```
 
 ---

@@ -8,6 +8,9 @@ import assets
 
 class obj_type(structure.config_type, _logic.base_type):
     def __init__(self, path: str = util.resource.DEFAULT_CONFIG_PATH) -> None:
+        '''
+        High-level call: reads the game configuration data from a file and serialises it.
+        '''
         _logic.base_type.__init__(
             self,
             path=path,

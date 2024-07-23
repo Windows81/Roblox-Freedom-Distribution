@@ -1,17 +1,10 @@
 from typing_extensions import Callable, Union, Any
-from ._logic import base_type
+from .._logic import base_type as config_base_type
+from . import wrappers
 import util.resource
 import util.versions
 import dataclasses
 import functools
-import os.path
-
-
-class path_obj(str):
-    @staticmethod
-    def evaluate(config: base_type, val: str) -> 'path_obj':
-        root = os.path.dirname(config.config_path)
-        return path_obj(os.path.join(root, val))
 
 
 @functools.cache
@@ -29,18 +22,23 @@ def get_type_call(typ: type) -> Callable:
         if k not in type_calls:
             continue
         return type_calls[k]
-    return _type_call_default
+    else:
+        return _type_call_default
 
 
-def _type_call_default(config: base_type, typ: type, path: str, *args, **kwargs) -> Any:
+def _type_call_default(config: config_base_type, typ: type, path: str, *args, **kwargs) -> Any:
     return typ(*args, **kwargs)
 
 
-def _type_call_rōblox_version(config: base_type, typ: type, path: str, val) -> util.versions.rōblox:
+def _type_call_with_config(config: config_base_type, typ: type, path: str, *args, **kwargs) -> Any:
+    return typ(config, *args, **kwargs)
+
+
+def _type_call_rōblox_version(config: config_base_type, typ: type, path: str, val) -> util.versions.rōblox:
     return util.versions.rōblox.from_name(val)
 
 
-def _type_call_callable(config: base_type, typ: type, path: str, val) -> Callable:
+def _type_call_callable(config: config_base_type, typ: type, path: str, val) -> Callable:
     result_typ = typ.__args__[-1]
     result_type_call = get_type_call(result_typ)
     return lambda *args: result_type_call(
@@ -51,15 +49,15 @@ def _type_call_callable(config: base_type, typ: type, path: str, val) -> Callabl
     )
 
 
-def _type_call_dataclass(config: base_type, typ: type, path: str, val) -> Callable:
+def _type_call_dataclass_as_dict(config: config_base_type, typ: type, path: str, val) -> Callable:
+    '''
+    Entries typed as `dataclass` in-program are written as Python `dict` objects in the config file.
+    This snippet is responsible for casting the `dict` to  a `dataclass`.
+    '''
     return typ(**val)
 
 
-def _type_call_file_path(config: base_type, typ: type, path: str, val) -> path_obj:
-    return path_obj.evaluate(config, val)
-
-
-def _type_call_union(config: base_type, typ: type, path: str, val) -> Any | None:
+def _type_call_union(config: config_base_type, typ: type, path: str, val) -> Any | None:
     for t in typ.__args__:
         try:
             type_call = get_type_call(t)
@@ -85,8 +83,10 @@ type_calls = {
         _type_call_rōblox_version,
     Union:
         _type_call_union,
-    path_obj:
-        _type_call_file_path,
+    wrappers.path_str:
+        _type_call_with_config,
+    wrappers.uri_obj:
+        _type_call_with_config,
     dataclasses.dataclass:
-        _type_call_dataclass,
+        _type_call_dataclass_as_dict,
 }
