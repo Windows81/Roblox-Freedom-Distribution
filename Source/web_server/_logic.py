@@ -199,14 +199,19 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             f'{self.domain}:{self.sockname[1]}'
 
         self.url = f'{self.hostname}{self.path}'
-        self.urlsplit = parse.urlsplit(self.url)
+        self.url_split = parse.urlsplit(self.url)
+
+        # Optimised for query values which may contain more than one of the same field.
+        self.query_lists = parse.parse_qs(self.url_split.query)
+
+        # Optimised for quick access for query indicies which only show up once.
         self.query = {
             i: v[0]
-            for i, v in parse.parse_qs(self.urlsplit.query).items()
+            for i, v in self.query_lists.items()
         }
         return True
 
-    def do_GET(self) -> None:
+    def handle_rcc_request(self) -> None:
         if self.__open_from_static():
             return
         if self.__open_from_regex():
@@ -218,17 +223,11 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         except ssl.SSLEOFError:
             pass
 
-    def do_POST(self) -> None:
-        if self.__open_from_static():
-            return
-        if self.__open_from_regex():
-            return
-        if self.__open_from_file():
-            return
-        try:
-            self.send_error(404)
-        except ssl.SSLEOFError:
-            pass
+    def do_GET(self) -> None: return self.handle_rcc_request()
+    def do_POST(self) -> None: return self.handle_rcc_request()
+    def do_HEAD(self) -> None: return self.handle_rcc_request()
+    def do_PATCH(self) -> None: return self.handle_rcc_request()
+    def do_DELETE(self) -> None: return self.handle_rcc_request()
 
     def send_json(
         self,
@@ -260,14 +259,18 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         if content_type:
             self.send_header('content-type', content_type)
         self.send_header('content-length', str(len(data)))
-        self.end_headers()
+        try:
+            self.end_headers()
+        except ssl.SSLEOFError:
+            # A `ssl.SSLEOFError` is thrown whenever a request is interrupted.
+            pass
         self.wfile.write(data)
 
     def __open_from_static(self) -> bool:
         key = server_func_key(
             mode=func_mode.STATIC,
             version=self.game_config.game_setup.roblox_version,
-            path=self.urlsplit.path,
+            path=self.url_split.path,
             command=self.command,
         )
 
@@ -280,7 +283,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         for key, func in SERVER_FUNCS.items():
             if key.mode != func_mode.REGEX:
                 continue
-            match = re.search(key.path, self.urlsplit.path)
+            match = re.fullmatch(key.path, self.url_split.path)
             if match is None:
                 continue
             return func(self, match)
@@ -291,7 +294,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         # TODO: remove completely or find a new use for this piece of code.
         fn = os.path.realpath(os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
-            '../www', self.urlsplit.path,
+            '../www', self.url_split.path,
         ))
 
         if "." not in fn.split(os.path.sep)[-1]:

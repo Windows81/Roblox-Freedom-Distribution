@@ -216,7 +216,7 @@ class bin_entry(ver_entry, popen_entry):
                 (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
             )
             downloader.download_binary(self.rōblox_version, self.BIN_SUBTYPE)
-            print('Download completed')
+            print('Download completed!')
         else:
             raise FileNotFoundError(
                 'Zipped file "%s" not found for Rōblox version %s' %
@@ -280,10 +280,10 @@ class routine:
             self.entries.append(e)
             e.process()
 
-    def wait(self):
+    def wait(self) -> None:
         for e in self.entries:
             e.wait()
 
-    def __del__(self):
+    def __del__(self) -> None:
         for e in self.entries:
             del e

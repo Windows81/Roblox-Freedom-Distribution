@@ -158,3 +158,33 @@ def _(self: web_server_handler) -> bool:
         ]
     })
     return True
+
+
+@server_path('/v1.1/game-start-info', versions={versions.rōblox.v463})
+def _(self: web_server_handler) -> bool:
+    self.send_json({
+        "gameAvatarType": "PlayerChoice",
+        "allowCustomAnimations": "True",
+        "universeAvatarCollisionType": "OuterBox",
+        "universeAvatarBodyType": "Standard",
+        "jointPositioningType": "ArtistIntent",
+        "universeAvatarMinScales": {
+            "height": -1e17,
+            "width": -1e17,
+            "head": -1e17,
+            "depth": -1e17,
+            "proportion": -1e17,
+            "bodyType": -1e17,
+        },
+        "universeAvatarMaxScales": {
+            "height": +1e17,
+            "width": +1e17,
+            "head": +1e17,
+            "depth": +1e17,
+            "proportion": +1e17,
+            "bodyType": +1e17,
+        },
+        "universeAvatarAssetOverrides": [],
+        "moderationStatus": None,
+    })
+    return True

@@ -12,10 +12,10 @@ class database(_logic.sqlite_connector_base):
         KEY = '"key"'
         VALUE = '"value"'
 
-    def first_time_setup(self):
+    def first_time_setup(self) -> None:
         self.sqlite.execute(
             f"""
-            CREATE TABLE "{self.TABLE_NAME}" (
+            CREATE TABLE IF NOT EXISTS "{self.TABLE_NAME}" (
                 {self.field.SCOPE.value} TEXT NOT NULL,
                 {self.field.TARGET.value} TEXT NOT NULL,
                 {self.field.KEY.value} TEXT NOT NULL,

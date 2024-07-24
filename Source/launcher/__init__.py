@@ -18,7 +18,7 @@ import traceback
 import argparse
 
 
-def parse_args(args: list[str] | None) -> routine_logic.routine:
+def parse_args(args: list[str] | None) -> list:
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
@@ -87,14 +87,18 @@ def parse_args(args: list[str] | None) -> routine_logic.routine:
         routine_args_list,
     )
 
-    routine = routine_logic.routine(*routine_args_list)
-    return routine
+    return routine_args_list
+
+
+def perform_routine(routine_args_list: list) -> routine_logic.routine:
+    return routine_logic.routine(*routine_args_list)
 
 
 def process(args: list[str] | None = None) -> None:
     routine = None
     try:
-        routine = parse_args(args)
+        arg_list = parse_args(args)
+        routine = perform_routine(arg_list)
         routine.wait()
     except KeyboardInterrupt:
         pass

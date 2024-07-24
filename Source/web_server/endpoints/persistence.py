@@ -1,7 +1,7 @@
-import json
 from web_server._logic import web_server_handler, server_path
 import urllib.parse
 import itertools
+import json
 
 
 @server_path('/persistence/set')  # Usually expects POST.

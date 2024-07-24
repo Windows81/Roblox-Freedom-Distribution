@@ -13,7 +13,7 @@ class database(_logic.sqlite_connector_base):
     def first_time_setup(self) -> None:
         self.sqlite.execute(
             f"""
-            CREATE TABLE "{self.TABLE_NAME}" (
+            CREATE TABLE IF NOT EXISTS "{self.TABLE_NAME}" (
                 {self.player_field.USER_CODE.value} TEXT NOT NULL,
                 {self.player_field.USERNAME.value} TEXT NOT NULL,
                 {self.player_field.ID_NUMBER.value} INTEGER NOT NULL,

@@ -9,7 +9,7 @@ instances.count = 1
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2018'
+roblox_version = '2021'
 
 title = 'òó'
 description = ''
@@ -17,8 +17,8 @@ creator.name = 'ÒÓ'
 startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
-# uri = 'c:\Users\USERNAME\Documents\Roblox Files\F3X Test.rbxl'
-uri = 'https://archive.org/download/pickware-studio/escape%20toy%20r%20us%20%28OLD%20OBBY%29.rbxl'
+uri = 'd:\Users\username\Documents\SyntaxPlaces\32182 - Flee the Facility in 2018.rbxl'
+# uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
 # When game:SavePlace() is called, overwrites the place at `.path`
 enable_saveplace = false
 

@@ -8,7 +8,7 @@ class sqlite_connector_base:
         self.sqlite = sqlite
         if is_first_time:
             self.drop_existing()
-            self.first_time_setup()
+        self.first_time_setup()
 
     def drop_existing(self) -> None:
         self.sqlite.execute(

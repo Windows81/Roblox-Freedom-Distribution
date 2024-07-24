@@ -41,7 +41,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     self.send_json({
         "previousPageCursor": None,
-        "nextPageCursor": None,  # "11924224825_1_6f7d678fdda36d18945b54748884df34",
+        "nextPageCursor": None,
         "data": []
     })
     return True

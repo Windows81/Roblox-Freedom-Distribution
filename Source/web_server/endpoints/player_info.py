@@ -3,7 +3,7 @@ import util.versions as versions
 import re
 
 
-@server_path("/v1/users/([0-9]+)/friends", regex=True)
+@server_path("/v1/users/([0-9]+)/friends", regex=True, versions={versions.rōblox.v463}, commands={'POST', 'GET'})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     Dummy endpoint for 2021E.
@@ -65,7 +65,7 @@ def _(self: web_server_handler) -> bool:
     match self.query['method']:
         case 'GetGroupRank':
             self.send_data(
-                bytes(f'<Value Type="integer">{255}</Value>', encoding='utf-8'))
+                bytes(f'<Value Type="integer">{0}</Value>', encoding='utf-8'))
             return True
 
     self.send_json({})
@@ -91,13 +91,13 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
                 "isNotificationsEnabled": True,
             }
             for group_id in [
-                1200769,
-                2868472,
-                4199740,
-                4265462,
-                4265456,
-                4265443,
-                4265449,
+                # 1200769,
+                # 2868472,
+                # 4199740,
+                # 4265462,
+                # 4265456,
+                # 4265443,
+                # 4265449,
             ]
         ]
     })
@@ -107,4 +107,14 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 @server_path('/gametransactions/getpendingtransactions/', versions={versions.rōblox.v463})
 def _(self: web_server_handler) -> bool:
     self.send_json([])
+    return True
+
+
+@server_path('/v1/users/([0-9]+)/items/gamepass/([0-9]+)', regex=True)
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    self.send_json({
+        "previousPageCursor": None,
+        "nextPageCursor": None,
+        "data": []
+    })
     return True
