@@ -1,6 +1,7 @@
-
 from .._logic import base_type as config_base_type
 from typing_extensions import Self
+import util.const as const
+import fnmatch
 import os
 
 
@@ -26,3 +27,13 @@ class uri_obj:
 
         self.is_online = False
         self.value = path_str(config, input)
+
+
+class rfd_version_check(str):
+    def __new__(cls, val: str) -> Self:
+        if not fnmatch.fnmatch(const.GIT_RELEASE_VERSION, val):
+            raise Exception(
+                "The RFD version you're using doesn't match " +
+                "what was specified in the file."
+            )
+        return str.__new__(cls, val)

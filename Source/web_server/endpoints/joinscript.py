@@ -1,4 +1,5 @@
 from web_server._logic import web_server_handler, server_path
+from typing_extensions import Any
 import util.versions as versions
 import util.resource
 import util.const
@@ -6,23 +7,32 @@ import util.ssl
 import json
 
 
-def perform_join(self: web_server_handler):
-    # The query arguments in `Roblox-Session-Id` were previously serialised
-    # when `join.ashx` was called the first time a player joined.
-    # Only 2021E supports rejoining when connection is lost.
+def perform_join(self: web_server_handler) -> dict[str, Any]:
+    '''
+    The query arguments in `Roblox-Session-Id` were previously serialised
+    when `join.ashx` was called the first time a player joined.
+    Only 2021E supports rejoining when connection is lost.
+    '''
+    server_core = self.game_config.server_core
     query_args = json.loads(
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
 
     rcc_host_addr = query_args.get('rcc-host-addr', self.hostname)
     rcc_port = query_args.get('rcc-port')
-
     user_code = query_args.get('user-code')
+
+    # Very hacky to call `send_error` when the webserver will later call `send_json`.
     if user_code is None:
+        self.send_error(404)
         return {}
 
-    username = self.game_config.server_core.retrieve_username(user_code)
-    id_num = self.game_config.server_core.retrieve_user_id(user_code)
+    if not server_core.check_user_allowed(user_code):
+        self.send_error(403)
+        return {}
+
+    username = server_core.retrieve_username(user_code)
+    id_num = server_core.retrieve_user_id(user_code)
 
     database = self.server.database.players
     (user_code, username, id_num) = database.add_player(
@@ -51,9 +61,9 @@ def perform_join(self: web_server_handler):
         'DisplayName':
             username,
         'AccountAge':
-            self.game_config.server_core.retrieve_account_age(user_code),
+            server_core.retrieve_account_age(user_code),
         'ChatStyle':
-            self.game_config.server_core.chat_style.value,
+            server_core.chat_style.value,
         'characterAppearanceId':
             id_num,
         'CharacterAppearanceId':

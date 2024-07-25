@@ -261,10 +261,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.send_header('content-length', str(len(data)))
         try:
             self.end_headers()
+            self.wfile.write(data)
         except ssl.SSLEOFError:
-            # A `ssl.SSLEOFError` is thrown whenever a request is interrupted.
+            # A `ssl.SSLEOFError` is likely thrown whenever a request is interrupted.
             pass
-        self.wfile.write(data)
 
     def __open_from_static(self) -> bool:
         key = server_func_key(

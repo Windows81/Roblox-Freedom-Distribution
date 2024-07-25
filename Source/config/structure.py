@@ -4,13 +4,15 @@ from .types import wrappers, structs
 from . import allocateable
 import util.versions
 import util.resource
-import enum
 
 
 class config_type(allocateable.obj_type):
     '''
     Configuration specification, according by default to "GameConfig.toml".
     '''
+    class metadata(allocateable.obj_type):
+        config_version_wildcard: wrappers.rfd_version_check = "*"  # type:ignore
+
     class server_assignment(allocateable.obj_type):
         class players(allocateable.obj_type):
             maximum: int
@@ -35,13 +37,11 @@ class config_type(allocateable.obj_type):
         class icon(allocateable.obj_type):
             path: wrappers.path_str = ''  # type:ignore
 
-        class creator(allocateable.obj_type):
-            name: str
-
         startup_script: str = ''
 
         title: str
         description: str
+        creator_name: str
 
         roblox_version: util.versions.rōblox
 

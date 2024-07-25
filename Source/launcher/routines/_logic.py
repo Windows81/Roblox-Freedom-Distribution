@@ -181,6 +181,9 @@ class ver_entry(entry):
     rōblox_version: util.versions.rōblox
 
     def retr_version(self) -> util.versions.rōblox:
+        '''
+        Gets called once on `bin_entry.__init__` to initialise `self.rōblox_version`
+        '''
         raise NotImplementedError()
 
     def get_versioned_path(self, bin_type: util.resource.bin_subtype, *paths: str) -> str:

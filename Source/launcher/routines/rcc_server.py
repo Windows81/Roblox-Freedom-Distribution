@@ -40,23 +40,26 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         if not from_uri.is_online:
             with open(from_uri.value, 'rb') as rf, open(to_path, 'wb') as wf:
                 wf.write(rbxl.parse(rf.read()))
-            return
 
-        if config.game_setup.place_file.enable_saveplace:
-            print('Warning: config option "enable_saveplace" is redundant when the place file is an online resource.')
+        else:
+            if config.game_setup.place_file.enable_saveplace:
+                print(
+                    'Warning: config option "enable_saveplace" is redundant ' +
+                    'when the place file is an online resource.'
+                )
 
-        http = urllib3.PoolManager()
-        response = http.request('GET', from_uri.value)
+            http = urllib3.PoolManager()
+            response = http.request('GET', from_uri.value)
 
-        if response.status != 200 or not rbxl.check(response.data):
-            raise Exception("Place file couldn't be loaded.")
+            if response.status != 200 or not rbxl.check(response.data):
+                raise FileNotFoundError("Place file couldn't be loaded.")
 
-        with open(to_path, 'wb') as wf:
-            wf.write(rbxl.parse(response.data))
+            with open(to_path, 'wb') as wf:
+                wf.write(rbxl.parse(response.data))
 
     def save_app_setting(self) -> str:
         '''
-        Modifies settings to point to correct host name.
+        Simply modifies `AppSettings.xml` to point to correct host name.
         '''
         path = self.get_versioned_path('AppSettings.xml')
         app_base_url = self.local_args.get_app_base_url()
@@ -83,6 +86,8 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def save_gameserver(self) -> str:
         base_url = self.local_args.get_base_url()
         path = self.get_versioned_path('GameServer.json')
+        server_assignment = self.game_config.server_assignment
+
         with open(path, 'w', encoding='utf-8') as f:
             json.dump({
                 "Mode": "GameServer",
@@ -99,13 +104,13 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                     "PlaceFetchUrl":
                         f"{base_url}/asset/?id={const.DEFAULT_PLACE_ID}",
                     "MaxPlayers":
-                        self.game_config.server_assignment.players.maximum,
+                        server_assignment.players.maximum,
                     "PreferredPlayerCapacity":
-                        self.game_config.server_assignment.players.preferred,
+                        server_assignment.players.preferred,
                     "CharacterAppearance":
                         f"{base_url}/v1.1/avatar-fetch",
                     "MaxGameInstances":
-                        self.game_config.server_assignment.instances.count,
+                        server_assignment.instances.count,
                     "GsmInterval":
                         5,
                     "ApiKey":
@@ -135,7 +140,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             }, f)
         return path
 
-    def make_rcc_popen(self):
+    def make_rcc_popen(self) -> None:
         return self.make_popen(
             [
                 self.get_versioned_path('RCCService.exe'),

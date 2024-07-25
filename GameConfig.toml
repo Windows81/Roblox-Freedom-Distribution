@@ -2,10 +2,10 @@
 # PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
 # Some arguments are provided as absolute paths and only work on my machine.
 
-[server_assignment]
-players.maximum = 4096
-players.preferred = 666
-instances.count = 1
+# Wildcard which matches against the `GIT_RELEASE_VERSION`.
+# Useful for protecting changes in config structure between RFD versions.
+# If not included, the value is "*".
+metadata.config_version_wildcard = "*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
@@ -13,13 +13,18 @@ roblox_version = '2021'
 
 title = 'òó'
 description = ''
-creator.name = 'ÒÓ'
+creator_name = 'ÒÓ'
+
+# Runs at the CoreScript security level whenever a new *server* is started.
 startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
+# Can be a file path or an online resource through HTTP(S).
 uri = 'd:\Users\username\Documents\SyntaxPlaces\32182 - Flee the Facility in 2018.rbxl'
 # uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
-# When game:SavePlace() is called, overwrites the place at `.path`
+
+# When game:SavePlace() is called, overwrites the place at `.path`.
+# Doesn't work if `uri` points to an online resource.
 enable_saveplace = false
 
 [game_setup.database]
@@ -29,7 +34,6 @@ clear_on_start = false
 [game_setup.icon]
 # Stretches to 16:9.
 path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
-
 
 [server_core]
 retrieve_default_user_code = '''
@@ -126,3 +130,9 @@ end
 '''
 
 chat_style = 'ClassicAndBubble'
+
+
+[server_assignment]
+players.maximum = 4096
+players.preferred = 666
+instances.count = 1

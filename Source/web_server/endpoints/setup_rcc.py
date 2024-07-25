@@ -47,7 +47,7 @@ def _(self: web_server_handler) -> bool:
         'AssetTypeId': 19,
         'Creator': {
             'Id': 1,
-            'Name': self.game_config.game_setup.creator.name,
+            'Name': self.game_config.game_setup.creator_name,
             'CreatorType': 'User',
             'CreatorTargetId': 1
         },

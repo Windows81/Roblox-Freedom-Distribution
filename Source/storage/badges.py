@@ -1,6 +1,5 @@
 from . import _logic
 import enum
-import json
 
 
 class database(_logic.sqlite_connector_base):
