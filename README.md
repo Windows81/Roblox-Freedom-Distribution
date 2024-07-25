@@ -37,7 +37,7 @@ To install _as an executable_, run:
 ```
 mkdir rfd
 cd rfd
-wget https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe
+curl https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe --output RFD.exe
 ```
 
 To launch RFD, your command line will look something like this:
