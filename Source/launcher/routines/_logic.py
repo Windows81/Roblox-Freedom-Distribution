@@ -222,7 +222,7 @@ class bin_entry(ver_entry, popen_entry):
             print('Download completed!')
         else:
             raise FileNotFoundError(
-                'Zipped file "%s" not found for Rōblox version %s' %
+                'Zipped file "%s" not found for Rōblox version %s.' %
                 (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
             )
 

@@ -1,5 +1,30 @@
+from . import wrappers
 import dataclasses
 import enum
+
+
+@dataclasses.dataclass
+class badge:
+    id_num: int
+    name: str
+    icon: int
+
+
+@dataclasses.dataclass
+class gamepass:
+    id_num: int
+    name: str
+    icon: int
+
+
+@wrappers.dicter(int, 'id_num')
+class gamepasses(gamepass):
+    pass
+
+
+@wrappers.dicter(int, 'id_num')
+class badges(badge):
+    pass
 
 
 @dataclasses.dataclass

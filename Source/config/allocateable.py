@@ -26,10 +26,10 @@ class obj_type:
             return rep
         type_call = get_type_call(typ)
         return type_call(
-            self.root,
+            rep,  # value
+            self.root,  # config
             typ,
             path,
-            rep,
         )
 
     def __init__(
@@ -65,7 +65,14 @@ class obj_type:
             Grabs the intermediate representation from the game config file,
             Else the default as defined in `./structure.py`.
             '''
-            return self.kwargs.get(key, getattr(current_typ, key, None))
+            if key in self.kwargs:
+                return self.kwargs[key]
+            if hasattr(current_typ, key):
+                return getattr(current_typ, key)
+            raise IndexError(
+                'Unable to find setting "%s" in config file.' %
+                (key,)
+            )
 
         # Iterates through individual settings in this section.
         self.annotations = [

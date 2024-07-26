@@ -41,7 +41,13 @@ def _(self: web_server_handler) -> bool:
         self.send_data(b'false')
         return True
 
-    self.send_data(b'true')
+    # This function was also called during joinscript creation.
+    # It's called a second time here (potentially) for additional protection.
+    if self.server.game_config.server_core.check_user_allowed(user_code):
+        self.send_data(b'true')
+        return True
+
+    self.send_data(b'false')
     return True
 
 
@@ -65,12 +71,6 @@ def _(self: web_server_handler) -> bool:
 @server_path('/game/validate-machine')
 def _(self: web_server_handler) -> bool:
     self.send_json({"success": True})
-    return True
-
-
-@server_path('/rfd/is-player-allowed')
-def _(self: web_server_handler) -> bool:
-    self.send_json(True)
     return True
 
 
@@ -112,7 +112,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/Thumbs/GameIcon.ashx')
 def _(self: web_server_handler) -> bool:
-    with open(self.game_config.game_setup.icon.path, 'rb') as f:
+    with open(self.game_config.game_setup.icon_path, 'rb') as f:
         self.send_data(f.read())
     return True
 

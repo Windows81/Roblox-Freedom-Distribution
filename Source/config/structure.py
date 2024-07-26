@@ -1,4 +1,4 @@
-from typing_extensions import Callable
+from typing_extensions import Callable, Type
 
 from .types import wrappers, structs
 from . import allocateable
@@ -34,16 +34,13 @@ class config_type(allocateable.obj_type):
             path: wrappers.path_str
             clear_on_start: bool
 
-        class icon(allocateable.obj_type):
-            path: wrappers.path_str = ''  # type:ignore
-
+        roblox_version: util.versions.rōblox
         startup_script: str = ''
 
         title: str
         description: str
         creator_name: str
-
-        roblox_version: util.versions.rōblox
+        icon_path: wrappers.path_str = ''  # type:ignore
 
     class server_core(allocateable.obj_type):
         chat_style: structs.chat_style
@@ -58,3 +55,7 @@ class config_type(allocateable.obj_type):
         retrieve_avatar_colors: Callable[[str], structs.avatar_colors]
         retrieve_account_age: Callable[[str], int]
         filter_text: Callable[[str, str], str]
+
+    class remote_data(allocateable.obj_type):
+        gamepasses: structs.gamepasses
+        badges: structs.badges

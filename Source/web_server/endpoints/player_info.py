@@ -112,9 +112,34 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/v1/users/([0-9]+)/items/gamepass/([0-9]+)', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    '''
+    https://github.com/SushiDesigner/Meteor-back/blob/dc561b5af196ca9c375530d30d593fc8d7f0486c/routes/marketplace.js#L129
+    '''
+    user_id_num = int(match.group(1))
+    gamepass_id = int(match.group(2))
+    gamepass_catalogue = self.server.game_config.remote_data.gamepasses
+
+    has_gamepass = self.server.database.gamepasses.check(
+        user_id_num,
+        gamepass_id,
+    )
+
+    data = (
+        [
+            {
+                "type": "GamePass",
+                "id": gamepass_id,
+                "name": gamepass_catalogue.get(gamepass_id),
+                "instanceId": None,
+            }
+        ]
+        if has_gamepass else
+        []
+    )
+
     self.send_json({
         "previousPageCursor": None,
         "nextPageCursor": None,
-        "data": []
+        "data": data,
     })
     return True

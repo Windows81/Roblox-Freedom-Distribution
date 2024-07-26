@@ -1,0 +1,119 @@
+Date : 2024-07-26 08:49:05
+Directory : c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source
+Total : 68 files,  5033 codes, 96 comments, 1090 blanks, all 6219 lines
+
+Languages
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| Python           |         63 |      4,941 |         96 |      1,020 |      6,057 |
+| Markdown         |          4 |         84 |          0 |         70 |        154 |
+| pip requirements |          1 |          8 |          0 |          0 |          8 |
++------------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                           | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                              |         68 |      5,033 |         96 |      1,090 |      6,219 |
+| . (Files)                                                                                                      |          2 |         11 |          0 |          2 |         13 |
+| assets                                                                                                         |         12 |      1,798 |         32 |        317 |      2,147 |
+| assets (Files)                                                                                                 |          2 |        101 |          3 |         25 |        129 |
+| assets\material                                                                                                |          2 |        343 |          2 |         12 |        357 |
+| assets\serialisers                                                                                             |          8 |      1,354 |         27 |        280 |      1,661 |
+| assets\serialisers\mesh                                                                                        |          2 |        922 |         14 |        200 |      1,136 |
+| assets\serialisers\rbxl                                                                                        |          6 |        432 |         13 |         80 |        525 |
+| config                                                                                                         |          8 |        318 |          3 |         79 |        400 |
+| config (Files)                                                                                                 |          5 |        178 |          2 |         39 |        219 |
+| config\types                                                                                                   |          3 |        140 |          1 |         40 |        181 |
+| data_transfer                                                                                                  |          2 |         68 |          1 |         21 |         90 |
+| launcher                                                                                                       |         20 |      1,255 |         17 |        323 |      1,595 |
+| launcher (Files)                                                                                               |          2 |        143 |          7 |         69 |        219 |
+| launcher\downloader                                                                                            |          1 |         17 |          0 |          5 |         22 |
+| launcher\routines                                                                                              |          7 |        652 |          6 |        152 |        810 |
+| launcher\startup_scripts                                                                                       |          1 |         37 |          0 |          9 |         46 |
+| launcher\subparsers                                                                                            |          9 |        406 |          4 |         88 |        498 |
+| launcher\subparsers (Files)                                                                                    |          1 |         54 |          1 |         18 |         73 |
+| launcher\subparsers\args_aux                                                                                   |          4 |        127 |          1 |         35 |        163 |
+| launcher\subparsers\args_launch_mode                                                                           |          4 |        225 |          2 |         35 |        262 |
+| storage                                                                                                        |          5 |        220 |          0 |         40 |        260 |
+| util                                                                                                           |          4 |        232 |         13 |         65 |        310 |
+| web_server                                                                                                     |         15 |      1,131 |         30 |        243 |      1,404 |
+| web_server (Files)                                                                                             |          3 |        284 |          7 |         75 |        366 |
+| web_server\endpoints                                                                                           |         12 |        847 |         23 |        168 |      1,038 |
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                                                                       | language         | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\_main.py                                         | Python           |          3 |          0 |          2 |          5 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\__init__.py                               | Python           |         86 |          3 |         21 |        110 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\grabber.py                                | Python           |         15 |          0 |          4 |         19 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\material\__init__.py                      | Python           |         17 |          2 |          8 |         27 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\material\const.py                         | Python           |        326 |          0 |          4 |        330 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\mesh\__init__.py              | Python           |         10 |          0 |          4 |         14 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\mesh\rbxmesh.py               | Python           |        912 |         14 |        196 |      1,122 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\__init__.py              | Python           |         16 |          1 |          5 |         22 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\_logic.py                | Python           |        297 |          3 |         52 |        352 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\downdate_font.py         | Python           |         73 |          5 |          7 |         85 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\roblox_links.py          | Python           |         11 |          2 |          4 |         17 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\script_disabled.py       | Python           |         22 |          1 |          8 |         31 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\skip_bytecode.py         | Python           |         13 |          1 |          4 |         18 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\README.md                                 | Markdown         |          3 |          0 |          0 |          3 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\__init__.py                               | Python           |         33 |          0 |          8 |         41 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\_logic.py                                 | Python           |         10 |          0 |          4 |         14 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\allocateable.py                           | Python           |         86 |          2 |         14 |        102 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\structure.py                              | Python           |         46 |          0 |         13 |         59 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\types\__init__.py                         | Python           |         78 |          1 |         20 |         99 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\types\structs.py                          | Python           |         31 |          0 |         11 |         42 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\types\wrappers.py                         | Python           |         31 |          0 |          9 |         40 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\data_transfer\README.md                          | Markdown         |          5 |          0 |          5 |         10 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\data_transfer\__init__.py                        | Python           |         63 |          1 |         16 |         80 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\README.md                               | Markdown         |         60 |          0 |         49 |        109 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\__init__.py                             | Python           |         83 |          7 |         20 |        110 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\downloader\__init__.py                  | Python           |         17 |          0 |          5 |         22 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\_logic.py                      | Python           |        227 |          4 |         62 |        293 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\clear_appdata.py               | Python           |         52 |          0 |         15 |         67 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\download.py                    | Python           |         23 |          0 |         10 |         33 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\player.py                      | Python           |         88 |          0 |         16 |        104 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\rcc_server.py                  | Python           |        171 |          2 |         29 |        202 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\studio.py                      | Python           |         42 |          0 |          9 |         51 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\web_server.py                  | Python           |         49 |          0 |         11 |         60 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\startup_scripts\rcc_server.py           | Python           |         37 |          0 |          9 |         46 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\_logic.py                    | Python           |         54 |          1 |         18 |         73 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_aux\_logic.py           | Python           |         16 |          0 |          5 |         21 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_aux\clear_appdata.py    | Python           |         40 |          0 |         11 |         51 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_aux\debug.py            | Python           |         42 |          0 |         11 |         53 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_aux\download.py         | Python           |         29 |          1 |          8 |         38 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_launch_mode\download.py | Python           |         40 |          0 |          6 |         46 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_launch_mode\player.py   | Python           |         53 |          0 |          8 |         61 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_launch_mode\server.py   | Python           |        110 |          2 |         14 |        126 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_launch_mode\studio.py   | Python           |         22 |          0 |          7 |         29 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\requirements.txt                                 | pip requirements |          8 |          0 |          0 |          8 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\__init__.py                              | Python           |         18 |          0 |          5 |         23 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\_logic.py                                | Python           |         16 |          0 |          6 |         22 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\badges.py                                | Python           |         52 |          0 |          9 |         61 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\persistence.py                           | Python           |         63 |          0 |          9 |         72 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\players.py                               | Python           |         71 |          0 |         11 |         82 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\const.py                                    | Python           |         43 |          0 |          5 |         48 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\resource.py                                 | Python           |         58 |          2 |         22 |         82 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\ssl.py                                      | Python           |         99 |          8 |         26 |        133 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\versions.py                                 | Python           |         32 |          3 |         12 |         47 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\README.md                             | Markdown         |         16 |          0 |         16 |         32 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\__init__.py                           | Python           |         12 |          1 |          4 |         17 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\_logic.py                             | Python           |        256 |          6 |         55 |        317 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\__init__.py                 | Python           |         18 |          0 |          4 |         22 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\assets.py                   | Python           |         30 |          2 |          8 |         40 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\avatar.py                   | Python           |        176 |          0 |         15 |        191 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\badges.py                   | Python           |         23 |          0 |          6 |         29 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\data_transfer.py            | Python           |         12 |          0 |          5 |         17 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\joinscript.py               | Python           |        148 |          3 |         16 |        167 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\persistence.py              | Python           |         78 |          2 |         18 |         98 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\player_info.py              | Python           |         88 |          9 |         24 |        121 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\save_place.py               | Python           |         63 |          5 |         13 |         81 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\setup_player.py             | Python           |        111 |          0 |         36 |        147 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\setup_rcc.py                | Python           |         63 |          1 |         12 |         76 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\text_filter.py              | Python           |         37 |          1 |         11 |         49 |
+| Total                                                                                                          |                  |      5,033 |         96 |      1,090 |      6,219 |
++----------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+

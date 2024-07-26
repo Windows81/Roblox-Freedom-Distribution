@@ -9,18 +9,21 @@ metadata.config_version_wildcard = "*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2021'
+roblox_version = '2018'
 
 title = 'òó'
 description = ''
 creator_name = 'ÒÓ'
+
+# Stretches to 16:9.
+icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 # Runs at the CoreScript security level whenever a new *server* is started.
 startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
 # Can be a file path or an online resource through HTTP(S).
-uri = 'd:\Users\username\Documents\SyntaxPlaces\32182 - Flee the Facility in 2018.rbxl'
+uri = 'c:\Users\USERNAME\Documents\Roblox Files\Phineas and Ferb RP.rbxl'
 # uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
 
 # When game:SavePlace() is called, overwrites the place at `.path`.
@@ -30,10 +33,6 @@ enable_saveplace = false
 [game_setup.database]
 path = '_.sqlite'
 clear_on_start = false
-
-[game_setup.icon]
-# Stretches to 16:9.
-path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 [server_core]
 retrieve_default_user_code = '''
@@ -131,6 +130,15 @@ end
 
 chat_style = 'ClassicAndBubble'
 
+[[remote_data.badges]]
+id_num = 757
+name = 'uuuuu'
+icon = 0
+
+[[remote_data.gamepasses]]
+id_num = 757
+name = 'uuuuu'
+icon = 0
 
 [server_assignment]
 players.maximum = 4096

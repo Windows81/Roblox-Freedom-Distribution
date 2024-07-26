@@ -22,8 +22,10 @@ def decompress_gzip(data, file_handle) -> None:
         # Read all the data except the header
         decompressed = do.decompress(data[fp.tell():])
         if not do.eof or len(do.unused_data) < 8:
-            raise EOFError("Compressed file ended before the end-of-stream "
-                           "marker was reached")
+            raise EOFError(
+                "Compressed file ended before the end-of-stream "
+                "marker was reached"
+            )
         crc, length = struct.unpack("<II", do.unused_data[:8])
         if crc != zlib.crc32(decompressed):
             raise gzip.BadGzipFile("CRC check failed")

@@ -5,6 +5,8 @@ from . import (
     players,
     persistence,
     badges,
+    funds,
+    gamepasses,
 )
 
 
@@ -20,3 +22,5 @@ class storager:
         self.players = players.database(*arg_list)
         self.persistence = persistence.database(*arg_list)
         self.badges = badges.database(*arg_list)
+        self.funds = funds.database(*arg_list)
+        self.gamepasses = gamepasses.database(*arg_list)

@@ -27,6 +27,8 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         self.send_error(404)
         return {}
 
+    # This function will also be called after the player is added.
+    # It's called a second time elsewhere (potentially) for additional protection.
     if not server_core.check_user_allowed(user_code):
         self.send_error(403)
         return {}
