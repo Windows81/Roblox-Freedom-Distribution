@@ -23,7 +23,7 @@ startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
 # Can be a file path or an online resource through HTTP(S).
-uri = 'c:\Users\USERNAME\Documents\Roblox Files\Phineas and Ferb RP.rbxl'
+uri = 'd:\Users\username\Documents\SyntaxPlaces\16431 - ROBLOX High School (Modified).rbxl'
 # uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
 
 # When game:SavePlace() is called, overwrites the place at `.path`.
@@ -125,6 +125,20 @@ end
 filter_text = '''
 function(user_code, text)
     return text:gsub('oo','òó'):gsub('OO','ÒÓ'):gsub('ee','èé'):gsub('EE','ÈÉ'):gsub('Roblox','Rōblox'):gsub('ROBLOX','RŌBLOX')
+end
+'''
+
+retrieve_groups = '''
+function(user_code) -- str -> str
+    return {
+        ['1200769'] = 255;
+        ['2868472'] = 255;
+        ['4199740'] = 255;
+        ['4265462'] = 255;
+        ['4265456'] = 255;
+        ['4265443'] = 255;
+        ['4265449'] = 255;
+    }
 end
 '''
 

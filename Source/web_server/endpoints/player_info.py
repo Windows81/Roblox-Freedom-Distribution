@@ -64,8 +64,23 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     match self.query['method']:
         case 'GetGroupRank':
+            def get_rank() -> int:
+                group_id_str = self.query['groupid']
+                user_id_str = self.query['playerid']
+
+                database = self.server.database.players
+                user_code = database.get_player_field_from_index(
+                    database.player_field.ID_NUMBER,
+                    user_id_str,
+                    database.player_field.USER_CODE,
+                )
+
+                if user_code is None:
+                    return 0
+                return self.server.game_config.server_core.retrieve_groups(user_code).get(group_id_str, 0)
+
             self.send_data(
-                bytes(f'<Value Type="integer">{0}</Value>', encoding='utf-8'))
+                bytes(f'<Value Type="integer">{get_rank()}</Value>', encoding='utf-8'))
             return True
 
     self.send_json({})
@@ -74,6 +89,19 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/v2/users/([0-9]+)/groups/roles', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    database = self.server.database.players
+    user_id_num = int(match.group(1))
+
+    user_code = database.get_player_field_from_index(
+        database.player_field.ID_NUMBER,
+        user_id_num,
+        database.player_field.USER_CODE,
+    )
+    if not user_code:
+        return False
+
+    groups = self.server.game_config.server_core.retrieve_groups(user_code)
+
     self.send_json({
         "data": [
             {
@@ -84,28 +112,25 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
                     "hasVerifiedBadge": True,
                 },
                 "role": {
-                    "id": group_id,
+                    "id": int(group_id),
+                    "rank": group_rank,
                     "name": "string",
-                    "rank": 255,
                 },
                 "isNotificationsEnabled": True,
             }
-            for group_id in [
-                # 1200769,
-                # 2868472,
-                # 4199740,
-                # 4265462,
-                # 4265456,
-                # 4265443,
-                # 4265449,
-            ]
+            for group_id, group_rank in groups.items()
         ]
     })
     return True
 
 
-@server_path('/gametransactions/getpendingtransactions/', versions={versions.rōblox.v463})
+@server_path('/gametransactions/getpendingtransactions/')
 def _(self: web_server_handler) -> bool:
+    '''
+    Something to do with developer products.
+    Won't be implemented in RFD right now.
+    https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/gametransactions.py#L8
+    '''
     self.send_json([])
     return True
 

@@ -35,7 +35,7 @@ def _(self: web_server_handler) -> bool:
 @server_path('/marketplace/productinfo')
 def _(self: web_server_handler) -> bool:
     # Returns an error if the thing trying to be accessed isn't the place we're in.
-    if self.query.get('assetId') != str(util.const.DEFAULT_PLACE_ID):
+    if self.query['assetId'] != str(util.const.DEFAULT_PLACE_ID):
         self.send_error(404)
         return True
 

@@ -220,7 +220,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return
         try:
             self.send_error(404)
-        except ssl.SSLEOFError:
+        except Exception:
             pass
 
     def do_GET(self) -> None: return self.handle_rcc_request()
@@ -274,7 +274,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             command=self.command,
         )
 
-        func = SERVER_FUNCS.get(key, None)
+        func = SERVER_FUNCS.get(key)
         if func:
             return func(self)
         return False

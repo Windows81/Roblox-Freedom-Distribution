@@ -18,11 +18,9 @@ def _(self: web_server_handler) -> bool:
     field_data = str(self.read_content(), encoding='utf-8')
     self.query = dict(urllib.parse.parse_qsl(field_data))
 
-    orig_text = self.query.get('text', None)
-    if orig_text is None:
-        return False
+    orig_text = self.query['text']
+    id_num = self.query['userId']
 
-    id_num = self.query.get('userId')
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
         id_num,

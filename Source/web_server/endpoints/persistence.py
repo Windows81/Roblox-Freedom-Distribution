@@ -14,31 +14,13 @@ def _(self: web_server_handler) -> bool:
     database = self.server.database.persistence
 
     # TODO: implement sorted data stores.
-    data_type = self.query.get('type', None)
+    data_type = self.query.get('type')
 
-    scope = self.query.get(
-        'scope',
-        'global',
-    )
+    scope = self.query.get('scope', 'global')
+    target = self.query['target']
+    key = self.query['key']
 
-    target = self.query.get(
-        'target',
-        None,
-    )
-    if target is None:
-        return False
-
-    key = self.query.get(
-        'key',
-        None,
-    )
-    if key is None:
-        return False
-
-    value_str = form_data.get(
-        'value',
-        'null',
-    )
+    value_str = form_data.get('value', 'null')
     value = json.loads(value_str)
 
     database.set(scope, target, key, value)
@@ -87,7 +69,7 @@ def _(self: web_server_handler) -> bool:
         })
 
     # TODO: implement sorted data stores.
-    data_type = self.query.get('type', None)
+    data_type = self.query.get('type')
 
     if starting_count == 0:
         self.send_json({"data": [], "message": "No data being requested"})

@@ -38,8 +38,8 @@ class asseter:
 
     def resolve_asset_query(self, query: dict[str, str]) -> int | str | None:
         funcs = [
-            (query.get('id', None), self.resolve_asset_id),
-            (query.get('assetversionid', None), self.resolve_asset_version_id),
+            (query.get('id'), self.resolve_asset_id),
+            (query.get('assetversionid'), self.resolve_asset_version_id),
         ]
 
         return next(
@@ -100,10 +100,10 @@ class asseter:
         if local_data:
             return local_data
 
-        id_num = None
         if asset_id.startswith(material.const.ID_PREFIX):
-            return material.load_asset(asset_id)
-            # id_num = material.transform_to_id_num(asset_id)
-
-        if id_num:
-            return self.load_asset_num(id_num)
+            loaded = material.load_asset(asset_id)
+            if loaded:
+                return loaded
+            else:
+                id_num = material.transform_to_id_num(asset_id)
+                return self.load_asset_num(id_num)

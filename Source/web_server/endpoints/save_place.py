@@ -56,7 +56,7 @@ def _(self: web_server_handler) -> bool:
     '''
 
     # Returns false if the thing trying to be saved isn't the place we're in.
-    if self.query.get('assetId') != str(util.const.DEFAULT_PLACE_ID):
+    if self.query['assetId'] != str(util.const.DEFAULT_PLACE_ID):
         return False
 
     place_config = self.server.game_config.game_setup.place_file

@@ -30,7 +30,7 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     database = self.server.database.players
 
-    id_num = self.query.get('userId')
+    id_num = self.query['userId']
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
         id_num,
