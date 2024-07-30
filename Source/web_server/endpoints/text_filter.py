@@ -12,7 +12,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path("/moderation/v2/filtertext")
 def _(self: web_server_handler) -> bool:
-    database = self.server.database.players
+    database = self.server.storage.players
 
     # Manually parsing here since `self.query` isn't automatically populated prior.
     field_data = str(self.read_content(), encoding='utf-8')

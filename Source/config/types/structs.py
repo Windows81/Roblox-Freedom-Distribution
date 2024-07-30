@@ -14,17 +14,16 @@ class badge:
 class gamepass:
     id_num: int
     name: str
+    price: int
     icon: int
 
 
-@wrappers.dicter(int, 'id_num')
-class gamepasses(gamepass):
-    pass
+class gamepasses(wrappers.dicter[gamepass, int]):
+    key_name = 'id_num'
 
 
-@wrappers.dicter(int, 'id_num')
-class badges(badge):
-    pass
+class badges(wrappers.dicter[badge, int]):
+    key_name = 'id_num'
 
 
 @dataclasses.dataclass

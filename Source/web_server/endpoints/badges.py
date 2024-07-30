@@ -12,7 +12,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
     user_id_num = int(match.group(1))
     badge_ids = self.query_lists.get('badgeIds', [])
-    database = self.server.database.badges
+    database = self.server.storage.badges
 
     results = []
     for badge_id in badge_ids:

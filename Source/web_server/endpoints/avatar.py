@@ -20,7 +20,7 @@ def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
     '''
-    database = self.server.database.players
+    database = self.server.storage.players
 
     id_num = self.query['userId']
     user_code = database.get_player_field_from_index(
@@ -68,7 +68,7 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     TODO: properly implement avatars.
     '''
-    database = self.server.database.players
+    database = self.server.storage.players
 
     id_num = self.query['userId']
     user_code = database.get_player_field_from_index(
@@ -162,6 +162,9 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/v1.1/game-start-info', versions={versions.rōblox.v463})
 def _(self: web_server_handler) -> bool:
+    '''
+    https://github.com/Heliodex/Meteorite/blob/76d53e75dace3195c1068e0de66c137376a88bcf/Back/server.mjs#L3718
+    '''
     self.send_json({
         "gameAvatarType": "PlayerChoice",
         "allowCustomAnimations": "True",

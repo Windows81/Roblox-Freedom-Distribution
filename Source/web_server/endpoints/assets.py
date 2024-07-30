@@ -37,3 +37,14 @@ def _(self: web_server_handler) -> bool:
 
     self.send_data(asset)
     return True
+
+
+@server_path('/ownership/hasasset', commands={'GET'})
+def _(self: web_server_handler) -> bool:
+    '''
+    Typically used to check if players own specific catalogue items.
+    There are no current plans to implement catalogue APIs in RFD.
+    Collective ownership it is...
+    '''
+    self.send_json('true')
+    return True

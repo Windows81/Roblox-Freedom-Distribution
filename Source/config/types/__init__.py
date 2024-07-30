@@ -16,11 +16,7 @@ def get_type_call(object_type: type) -> Callable:
     if getattr(object_type, '__origin__', None) == getattr(Callable, '__origin__'):
         return type_calls[Callable]
 
-    for k in [
-        object_type,
-        # Decorator methods such as `dicter` have a `decorator` attribute.
-        getattr(object_type, 'decorator', None),
-    ]:
+    for k in object_type.mro():
         if k not in type_calls:
             continue
         return type_calls[k]
@@ -34,8 +30,9 @@ def _type_call_default(value, config: config_base_type, typ: type, path: str, *a
 
 def _type_call_dicter(value: list, config: config_base_type, typ: type, path: str) -> Any:
     item_type: type = typ.item_type
+    type_call = get_type_call(item_type)
     item_list = [
-        get_type_call(item_type)(
+        type_call(
             item,
             config,
             item_type,

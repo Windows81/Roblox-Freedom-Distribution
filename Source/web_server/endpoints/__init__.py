@@ -10,7 +10,10 @@ from . import (
     text_filter,
     player_info,
     save_place,
+    funds,
+    groups,
     joinscript,
+    gamepasses,
     badges,
 )
 

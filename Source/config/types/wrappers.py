@@ -1,25 +1,36 @@
+from typing_extensions import Self, Type, TypeVar, get_args
 from .._logic import base_type as config_base_type
-from typing_extensions import Self
 import util.const as const
 import fnmatch
 import os
 
+item_typ = TypeVar('item_typ')
+key_typ = TypeVar('key_typ')
 
-def dicter(key_typ: type, key: str):
-    '''
-    Converts a list of entries into a dictionary which can be indexed by `key`.
-    '''
-    def submethod(item_typ: type):
-        class subclass(dict[key_typ, item_typ]):
-            decorator = dicter
-            key_type = key_typ
-            item_type = item_typ
 
-            def __init__(self, item_list: list[key_typ]):
-                for item in item_list:
-                    self[getattr(item, key)] = item
-        return subclass
-    return submethod
+class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
+    '''
+    Inputs a list of `item_typ` values.
+    Acts a subclass of `dict[key_typ, item_typ]`,
+    where each key is equal to `getattr(item, 'key_name')`'''
+    key_name: str
+    item_type: type
+    key_type: type
+
+    # https://stackoverflow.com/a/71720366
+    def __init_subclass__(cls) -> None:
+        # `typed_base` should be something like `dicter[config.types.structs.gamepass, int]`.
+        # We're extracting the generic types which `__init__` will cast the input values into.
+        typed_base = next(
+            c
+            for c in getattr(cls, '__orig_bases__', [])
+            if getattr(c, '__origin__', None) == dicter
+        )
+        (cls.item_type, cls.key_type) = get_args(typed_base)
+
+    def __init__(self, item_list: list[item_typ]):
+        for item in item_list:
+            self[getattr(item, self.key_name)] = item
 
 
 class path_str(str):

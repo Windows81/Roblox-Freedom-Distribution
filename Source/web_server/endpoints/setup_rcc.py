@@ -34,8 +34,33 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/marketplace/productinfo')
 def _(self: web_server_handler) -> bool:
+    asset_id = int(self.query['assetId'])
+
+    gamepass_library = self.game_config.remote_data.gamepasses
+    if asset_id in gamepass_library:
+        gamepass_data = gamepass_library[asset_id]
+        self.send_json({
+            "PriceInRobux": gamepass_data.price,
+            "MinimumMembershipLevel": 0,
+            "TargetId": gamepass_data.id_num,
+            "AssetId": gamepass_data.id_num,
+            "ProductId": gamepass_data.id_num,
+            "Name": gamepass_data.name,
+            "Description": "",
+            "AssetTypeId": "GamePass",
+            "IsForSale": True,
+            "IsPublicDomain": False,
+            'Creator': {
+                'Id': 1,
+                'Name': self.game_config.game_setup.creator_name,
+                'CreatorType': 'User',
+                'CreatorTargetId': 1
+            },
+        })
+        return True
+
     # Returns an error if the thing trying to be accessed isn't the place we're in.
-    if self.query['assetId'] != str(util.const.DEFAULT_PLACE_ID):
+    if asset_id != util.const.DEFAULT_PLACE_ID:
         self.send_error(404)
         return True
 

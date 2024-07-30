@@ -64,11 +64,11 @@ def _(self: web_server_handler) -> bool:
         return False
 
     # Don't save place if the URI is from online.
-    if place_config.uri.is_online:
+    if place_config.rbxl_uri.is_online:
         return False
 
     # Backups are important in case RFD crashes mid-save.
-    place_path = place_config.uri.value
+    place_path = place_config.rbxl_uri.value
     backup_path = f'{place_path}.bak'
     shutil.copy(place_path, backup_path)
 

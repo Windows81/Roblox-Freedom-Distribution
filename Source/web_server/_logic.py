@@ -71,8 +71,7 @@ def server_path(
             else func_mode.STATIC
         )
 
-        global SERVER_FUNCS
-        SERVER_FUNCS |= {
+        SERVER_FUNCS.update({
             server_func_key(
                 mode=dict_mode,
                 version=version,
@@ -81,7 +80,7 @@ def server_path(
             ): func
             for version in versions
             for command in commands
-        }
+        })
 
         return func
     return inner
@@ -111,7 +110,7 @@ class web_server(http.server.ThreadingHTTPServer):
     ) -> None:
         self.game_config = game_config
         self.data_transferer = game_config.data_transferer
-        self.database = game_config.database
+        self.storage = game_config.storage
 
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
@@ -220,7 +219,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return
         try:
             self.send_error(404)
-        except Exception:
+        except ssl.SSLError:
             pass
 
     def do_GET(self) -> None: return self.handle_rcc_request()
@@ -275,9 +274,12 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         )
 
         func = SERVER_FUNCS.get(key)
-        if func:
+        if func is None:
+            return False
+        try:
             return func(self)
-        return False
+        except Exception:
+            return False
 
     def __open_from_regex(self) -> bool:
         for key, func in SERVER_FUNCS.items():
@@ -286,7 +288,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             match = re.fullmatch(key.path, self.url_split.path)
             if match is None:
                 continue
-            return func(self, match)
+            try:
+                return func(self, match)
+            except Exception:
+                continue
         return False
 
     def __open_from_file(self) -> bool:

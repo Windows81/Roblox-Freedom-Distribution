@@ -7,11 +7,28 @@ import util.ssl
 import json
 
 
+def init_player(self: web_server_handler, user_code: str) -> tuple[str, int, str]:
+    config = self.server.game_config
+    username = config.server_core.retrieve_username(user_code)
+    id_num = config.server_core.retrieve_user_id(user_code)
+
+    (user_code, id_num, username) = self.server.storage.players.add_player(
+        user_code, id_num, username,
+    )
+    # This method only affects a player's fund balance if they're joining for the first time.
+    self.server.storage.funds.init(
+        id_num,  config.server_core.retrieve_funds(user_code),
+    )
+    return (user_code, id_num, username)
+
+
 def perform_join(self: web_server_handler) -> dict[str, Any]:
     '''
     The query arguments in `Roblox-Session-Id` were previously serialised
     when `join.ashx` was called the first time a player joined.
-    Only 2021E supports rejoining when connection is lost.
+
+    Some methods (such as retrieving a user fund balance or rejoining in 2021E)
+    need data from `Roblox-Session-Id`.
     '''
     server_core = self.game_config.server_core
     query_args = json.loads(
@@ -33,15 +50,9 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         self.send_error(403)
         return {}
 
-    username = server_core.retrieve_username(user_code)
-    id_num = server_core.retrieve_user_id(user_code)
+    (user_code, id_num, username) = init_player(self, user_code)
 
-    database = self.server.database.players
-    (user_code, username, id_num) = database.add_player(
-        user_code, username, id_num
-    )
-
-    return {
+    join_data = {
         'ServerConnections': [
             {
                 'Address': rcc_host_addr,
@@ -72,11 +83,14 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
             id_num,
         'CharacterAppearance':
             f'{self.hostname}/v1.1/avatar-fetch?userId={id_num}',
-
-        # NOTE: the `SessionId` is saved as an HTTPS header for later requests.
-        # I'm placing the information which was passed into `join.ashx` here for simplicity.
-        'SessionId': json.dumps(query_args),
     }
+
+    # NOTE: the `SessionId` is saved as an HTTPS header `Roblox-Session-Id` for later requests.
+    # I'm placing the information which was passed into `join.ashx` here for simplicity.
+    join_data |= {
+        'SessionId': json.dumps(join_data)
+    }
+    return join_data
 
 
 @server_path('/game/join.ashx', versions={versions.rōblox.v348})
@@ -101,7 +115,6 @@ def _(self: web_server_handler) -> bool:
         'IsRobloxPlace': True,
         'GenerateTeleportJoin': False,
         'IsUnknownOrUnder13': False,
-        'SessionId': '',
         'DataCenterId': 0,
         'FollowUserId': 0,
         'UniverseId': 0,

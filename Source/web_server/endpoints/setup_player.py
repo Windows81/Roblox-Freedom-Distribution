@@ -28,7 +28,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/rfd/is-player-allowed')
 def _(self: web_server_handler) -> bool:
-    database = self.server.database.players
+    database = self.server.storage.players
 
     id_num = self.query['userId']
     user_code = database.get_player_field_from_index(

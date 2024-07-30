@@ -1,4 +1,4 @@
-from typing_extensions import Callable, Type
+from typing_extensions import Callable
 
 from .types import wrappers, structs
 from . import allocateable
@@ -23,15 +23,15 @@ class config_type(allocateable.obj_type):
 
     class game_setup(allocateable.obj_type):
         class place_file(allocateable.obj_type):
-            uri: wrappers.uri_obj
+            rbxl_uri: wrappers.uri_obj
             enable_saveplace: bool = False
 
         class asset_cache(allocateable.obj_type):
-            path: wrappers.path_str = './AssetCache'  # type:ignore
+            dir_path: wrappers.path_str = './AssetCache'  # type:ignore
             clear_on_start: bool = False
 
-        class database(allocateable.obj_type):
-            path: wrappers.path_str
+        class persistence(allocateable.obj_type):
+            sqlite_path: wrappers.path_str
             clear_on_start: bool
 
         roblox_version: util.versions.rōblox
@@ -79,16 +79,15 @@ class config_type(allocateable.obj_type):
         retrieve_avatar_scales: Callable[[str], structs.avatar_scales]
 
         retrieve_avatar_colors: Callable[[str], structs.avatar_colors]
-        '''
-        TODO: support all possible brick colour codes in 2018M.
-        '''
 
-        retrieve_groups: Callable[[str], dict[str, int]]
+        retrieve_groups: Callable[[str], dict[str, int]] = \
+            'function() return {} end'  # type: ignore
         '''
         Key is the group id.  Value is the rank.
         '''
 
         retrieve_account_age: Callable[[str], int]
+        retrieve_funds: Callable[[str], int]
         filter_text: Callable[[str, str], str]
 
     class remote_data(allocateable.obj_type):

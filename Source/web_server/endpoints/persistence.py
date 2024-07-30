@@ -11,7 +11,7 @@ def _(self: web_server_handler) -> bool:
     '''
     form_content = str(self.read_content(), encoding='utf-8')
     form_data = dict(urllib.parse.parse_qsl(form_content))
-    database = self.server.database.persistence
+    database = self.server.storage.persistence
 
     # TODO: implement sorted data stores.
     data_type = self.query.get('type')
@@ -30,13 +30,14 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/persistence/getv2')  # Usually expects POST.
 @server_path('/persistence/getV2')  # Usually expects POST.
+@server_path('/persistence/getSortedValues')  # Usually expects POST.
 def _(self: web_server_handler) -> bool:
     '''
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/datastoreservice.py#L162
     '''
     form_content = str(self.read_content(), encoding='utf-8')
     form_data = dict(urllib.parse.parse_qsl(form_content))
-    database = self.server.database.persistence
+    database = self.server.storage.persistence
 
     return_data = []
     for starting_count in itertools.count(0):

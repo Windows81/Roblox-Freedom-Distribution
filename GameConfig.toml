@@ -19,19 +19,20 @@ creator_name = 'ÒÓ'
 icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 # Runs at the CoreScript security level whenever a new *server* is started.
-startup_script = 'game.workspace.FilteringEnabled = false'
+# startup_script = 'game.workspace.FilteringEnabled = false'
+startup_script = ''
 
 [game_setup.place_file]
 # Can be a file path or an online resource through HTTP(S).
-uri = 'd:\Users\username\Documents\SyntaxPlaces\16431 - ROBLOX High School (Modified).rbxl'
-# uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
+rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\Roblox High\_.rbxl'
+# rbxl_uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
 
-# When game:SavePlace() is called, overwrites the place at `.path`.
-# Doesn't work if `uri` points to an online resource.
+# When game:SavePlace() is called, overwrites the place at `rbxl_uri`.
+# Doesn't work if `rbxl_uri` points to an online resource.
 enable_saveplace = false
 
-[game_setup.database]
-path = '_.sqlite'
+[game_setup.persistence]
+sqlite_path = '_.sqlite'
 clear_on_start = false
 
 [server_core]
@@ -142,17 +143,62 @@ function(user_code) -- str -> str
 end
 '''
 
+retrieve_funds = '''
+function(user_code) -- str -> int
+    return 6969
+end
+'''
+
 chat_style = 'ClassicAndBubble'
 
 [[remote_data.badges]]
 id_num = 757
 name = 'uuuuu'
+price = 1
 icon = 0
 
 [[remote_data.gamepasses]]
-id_num = 757
-name = 'uuuuu'
+id_num = 163231044
+name = 'EnforcersPowers'
+price = 1
 icon = 0
+
+[[remote_data.gamepasses]]
+id_num = 163230957
+name = 'DoubleCash'
+price = 1
+icon = 0
+
+[[remote_data.gamepasses]]
+id_num = 163230779
+name = 'DriversLicense'
+price = 1
+icon = 0
+
+[[remote_data.gamepasses]]
+id_num = 163231101
+name = 'ClubRed'
+price = 1
+icon = 0
+
+[[remote_data.gamepasses]]
+id_num = 170212491
+name = 'UnrestrictedDJ'
+price = 1
+icon = 0
+
+[[remote_data.gamepasses]]
+id_num = 170211728
+name = 'House'
+price = 1
+icon = 0
+
+[[remote_data.gamepasses]]
+id_num = 203877255
+name = 'VIP'
+price = 1
+icon = 0
+
 
 [server_assignment]
 players.maximum = 4096

@@ -32,7 +32,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         '''
         config = self.game_config
 
-        from_uri = config.game_setup.place_file.uri
+        from_uri = config.game_setup.place_file.rbxl_uri
         if from_uri is None:
             return
         to_path = config.asset_cache.get_asset_num_path(const.DEFAULT_PLACE_ID)

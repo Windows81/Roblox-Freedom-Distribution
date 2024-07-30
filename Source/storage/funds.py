@@ -17,7 +17,7 @@ class database(_logic.sqlite_connector_base):
                 {self.field.FUNDS.value} INTEGER NOT NULL,
                 PRIMARY KEY(
                     {self.field.USER_ID_NUM.value}
-                ) ON CONFLICT REPLACE
+                ) ON CONFLICT IGNORE
             );
             """,
         )
@@ -27,9 +27,22 @@ class database(_logic.sqlite_connector_base):
         self.sqlite.execute(
             f"""
             UPDATE "{self.TABLE_NAME}"
-            SET {self.field.FUNDS.value} = "{self.TABLE_NAME}".{self.field.FUNDS.value} + {delta}
+            SET {self.field.FUNDS.value} = {self.field.FUNDS.value} + {delta}
             WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
             """
+        )
+        self.sqlite.commit()
+
+    def init(self, user_id_num: int, value: int) -> None:
+        self.sqlite.execute(
+            f"""
+            INSERT INTO "{self.TABLE_NAME}"
+            VALUES (?, ?)
+            """,
+            (
+                user_id_num,
+                value,
+            ),
         )
         self.sqlite.commit()
 

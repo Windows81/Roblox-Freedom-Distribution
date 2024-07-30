@@ -23,13 +23,13 @@ class obj_type(structure.config_type, _logic.base_type):
             **self.data_dict,
         )
 
-        self.database = storage.storager(
-            self.game_setup.database.path,
-            force_init=self.game_setup.database.clear_on_start,
+        self.storage = storage.storager(
+            self.game_setup.persistence.sqlite_path,
+            force_init=self.game_setup.persistence.clear_on_start,
         )
 
         self.asset_cache = assets.asseter(
-            dir_path=self.game_setup.asset_cache.path,
+            dir_path=self.game_setup.asset_cache.dir_path,
             clear_on_start=self.game_setup.asset_cache.clear_on_start,
         )
 
