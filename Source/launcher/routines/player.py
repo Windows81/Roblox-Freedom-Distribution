@@ -50,6 +50,7 @@ class obj_type(logic.bin_ssl_entry):
         self.save_ssl_cert()
 
         time.sleep(self.local_args.launch_delay)
+        self.local_args.finalise_user_code()
         base_url = self.local_args.get_base_url()
         self.make_popen([
             self.get_versioned_path('RobloxPlayerBeta.exe'),
@@ -82,15 +83,16 @@ class arg_type(logic.bin_ssl_arg_type, logic.host_arg_type):
     user_code: str | None = None
     launch_delay: float = 0
 
-    def sanitise_user_code(self):
+    def finalise_user_code(self) -> None:
+        '''
+        This method is seaprate from `sanitise` because
+        it needs to be executed after `launch_delay` seconds.
+        The `sanitise` method gets executed before that delay.
+        '''
         if self.user_code:
             return
         res = self.send_request('/rfd/default-user-code')
         self.user_code = str(res.read(), encoding='utf-8')
-
-    def sanitise(self):
-        super().sanitise()
-        self.sanitise_user_code()
 
     def get_base_url(self) -> str:
         return \
