@@ -16,9 +16,11 @@ import launcher.subparsers._logic as sub_logic
 
 import traceback
 import argparse
+import shlex
+import sys
 
 
-def parse_args(args: list[str] | None) -> list:
+def parse_arg_list(args: list[str] | None) -> list:
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
@@ -67,7 +69,7 @@ def parse_args(args: list[str] | None) -> list:
 
     # Completes populating the argument namespace, with errors being thrown if an argument is invalid.
     try:
-        args_namespace = parser.parse_args()
+        args_namespace = parser.parse_args(args)
     except argparse.ArgumentError as x:
         print(x)
         chosen_sub_parser.print_help()
@@ -95,9 +97,19 @@ def perform_routine(routine_args_list: list) -> routine_logic.routine:
 
 
 def process(args: list[str] | None = None) -> None:
+    '''
+    Highest-level main function which takes a list of arguments
+    and does everything in one go.
+    '''
+    if args is None:
+        args = sys.argv[1:]
+
+    if len(args) == 0:
+        args = shlex.split(input("Enter your command-line arguments: "))
+
     routine = None
     try:
-        arg_list = parse_args(args)
+        arg_list = parse_arg_list(args)
         routine = perform_routine(arg_list)
         routine.wait()
     except KeyboardInterrupt:
