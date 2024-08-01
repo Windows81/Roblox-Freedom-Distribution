@@ -21,7 +21,8 @@ class obj_type(logic.server_entry):
         *args, **kwargs,
     ) -> None:
         hts = [
-            web_server.make_server(*args, port, game_config, **kwargs) #type: ignore
+            web_server.make_server(
+                *args, port, game_config, **kwargs)  # type: ignore
             for port in web_ports
         ]
         self.httpds.extend(hts)

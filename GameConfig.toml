@@ -9,7 +9,7 @@ metadata.config_version_wildcard = "*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2018'
+roblox_version = '2021'
 
 title = 'òó'
 description = ''
@@ -24,7 +24,7 @@ startup_script = ''
 
 [game_setup.place_file]
 # Can be a file path or an online resource through HTTP(S).
-rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\Roblox High\_.rbxl'
+rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\VideoTest.rbxl'
 # rbxl_uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
 
 # When game:SavePlace() is called, overwrites the place at `rbxl_uri`.
@@ -169,36 +169,9 @@ name = 'DoubleCash'
 price = 1
 icon = 0
 
-[[remote_data.gamepasses]]
-id_num = 163230779
-name = 'DriversLicense'
-price = 1
-icon = 0
-
-[[remote_data.gamepasses]]
-id_num = 163231101
-name = 'ClubRed'
-price = 1
-icon = 0
-
-[[remote_data.gamepasses]]
-id_num = 170212491
-name = 'UnrestrictedDJ'
-price = 1
-icon = 0
-
-[[remote_data.gamepasses]]
-id_num = 170211728
-name = 'House'
-price = 1
-icon = 0
-
-[[remote_data.gamepasses]]
-id_num = 203877255
-name = 'VIP'
-price = 1
-icon = 0
-
+[[remote_data.asset_redirects]]
+id_num = 13
+uri = 'https://archive.org/download/youtube-7_WNm7Bg_NY/7_WNm7Bg_NY.mp4'
 
 [server_assignment]
 players.maximum = 4096

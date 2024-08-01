@@ -1,6 +1,6 @@
 from typing_extensions import Callable
 
-from .types import wrappers, structs
+from util.types import structs, wrappers
 from . import allocateable
 import util.versions
 import util.resource
@@ -92,4 +92,5 @@ class config_type(allocateable.obj_type):
 
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses
+        asset_redirects: structs.asset_redirects
         badges: structs.badges

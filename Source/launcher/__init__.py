@@ -114,8 +114,8 @@ def process(args: list[str] | None = None) -> None:
         routine.wait()
     except KeyboardInterrupt:
         pass
-    except Exception as e:
-        traceback.print_exc()
+    # except Exception as e:
+        # traceback.print_exc()
         # print(e)
     finally:
         del routine

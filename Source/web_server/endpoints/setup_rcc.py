@@ -60,12 +60,12 @@ def _(self: web_server_handler) -> bool:
         return True
 
     # Returns an error if the thing trying to be accessed isn't the place we're in.
-    if asset_id != util.const.DEFAULT_PLACE_ID:
+    if asset_id != util.const.PLACE_ID_CONST:
         self.send_error(404)
         return True
 
     self.send_json({
-        'AssetId': util.const.DEFAULT_PLACE_ID,
+        'AssetId': util.const.PLACE_ID_CONST,
         'ProductId': 13831621,
         'Name': self.game_config.game_setup.title,
         'Description': self.game_config.game_setup.description,

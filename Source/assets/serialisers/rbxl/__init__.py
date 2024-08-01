@@ -1,21 +1,34 @@
+from functools import partial
+import enum
+
 from . import (
     _logic,
-    downdate_font,
+    fonts,
     script_disabled,
     skip_bytecode,
     roblox_links,
 )
 
 
-def parse(data: bytes) -> bytes:
-    parser = _logic.rbxl_parser(data)
-    return parser.parse_file([
-        downdate_font.replace,
-        # script_disabled.replace, # Not useful yet; `rbxl` files still store scripts' `Disabled` property internally.
-        roblox_links.replace,
-        skip_bytecode.replace,
-    ])
+class method(enum.Enum):
+    # Why `partial`?
+    # https://stackoverflow.com/a/58714331/6879778
+    fonts = partial(fonts.replace)
+    # Not useful yet; `rbxl` files still store scripts' `Disabled` property internally.
+    # script_disabled = partial(script_disabled.replace)
+    roblox_links = partial(roblox_links.replace)
+    skip_bytecode = partial(skip_bytecode.replace)
 
 
 def check(data: bytes) -> bool:
     return data.startswith(_logic.HEADER_SIGNATURE)
+
+
+def parse(data: bytes, methods: set[method] = set(method)) -> bytes:
+    if not check(data):
+        return data
+    parser = _logic.rbxl_parser(data)
+    return parser.parse_file([
+        m.value
+        for m in methods
+    ])

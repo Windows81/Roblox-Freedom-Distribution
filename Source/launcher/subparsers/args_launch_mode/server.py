@@ -52,19 +52,19 @@ def subparse(
 
     skip_mutex = subparser.add_mutually_exclusive_group()
     skip_mutex.add_argument(
-        '--skip_rcc',
-        action='store_true',
-        help='Only runs the webserver, skipping the RCC binary completely.',
+        "--skip_rcc",
+        action="store_true",
+        help="Only runs the webserver, skipping the RCC binary completely.",
     )
     skip_mutex.add_argument(
-        '--skip_rcc_popen',
-        action='store_true',
-        help='Runs the webserver and initialises RCC configuration, but doesn\'t execute RCCService.exe.',
+        "--skip_rcc_popen",
+        action="store_true",
+        help="Runs the webserver and initialises RCC configuration, but doesn't execute `RCCService.exe`.",
     )
     skip_mutex.add_argument(
-        '--skip_web',
-        action='store_true',
-        help='Only runs the RCC binary, skipping hosting the webserver.',
+        "--skip_web",
+        action="store_true",
+        help="Only runs the RCC binary, skipping hosting the webserver.",
     )
 
 

@@ -5,7 +5,7 @@ import enum
 
 @functools.total_ordering
 class rōblox(enum.Enum):
-    # v271 = '2016L'
+    # v271 = ('2016L', '2016',)
     v348 = ('2018M', '2018',)
     v463 = ('2021E', '2021',)
 

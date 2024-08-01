@@ -4,13 +4,6 @@ import enum
 
 
 @dataclasses.dataclass
-class badge:
-    id_num: int
-    name: str
-    icon: int
-
-
-@dataclasses.dataclass
 class gamepass:
     id_num: int
     name: str
@@ -18,11 +11,28 @@ class gamepass:
     icon: int
 
 
+@dataclasses.dataclass
+class badge:
+    id_num: int
+    name: str
+    icon: int
+
+
+@dataclasses.dataclass
+class asset_redirect:
+    id_num: int | str
+    uri: wrappers.uri_obj
+
+
 class gamepasses(wrappers.dicter[gamepass, int]):
     key_name = 'id_num'
 
 
 class badges(wrappers.dicter[badge, int]):
+    key_name = 'id_num'
+
+
+class asset_redirects(wrappers.dicter[asset_redirect, int | str]):
     key_name = 'id_num'
 
 

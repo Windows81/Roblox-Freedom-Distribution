@@ -68,7 +68,7 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         'BaseUrl':
             self.hostname,
         'PlaceId':
-            util.const.DEFAULT_PLACE_ID,
+            util.const.PLACE_ID_CONST,
         'UserName':
             username,
         'DisplayName':
@@ -134,7 +134,7 @@ def _(self: web_server_handler) -> bool:
         'GameLocale': 'en_us#RobloxTranslateAbTest2',
         'SuperSafeChat': True,
         'ClientTicket': '2022-03-26T05:13:05.7649319Z;dj09X5iTmYtOPwh0hbEC8yvSO1t99oB3Yh5qD/sinDFszq3hPPaL6hH16TvtCen6cABIycyDv3tghW7k8W+xuqW0/xWvs0XJeiIWstmChYnORzM1yCAVnAh3puyxgaiIbg41WJSMALRSh1hoRiVFOXw4BKjSKk7DrTTcL9nOG1V5YwVnmAJKY7/m0yZ81xE99QL8UVdKz2ycK8l8JFvfkMvgpqLNBv0APRNykGDauEhAx283vARJFF0D9UuSV69q6htLJ1CN2kXL0Saxtt/kRdoP3p3Nhj2VgycZnGEo2NaG25vwc/KzOYEFUV0QdQPC8Vs2iFuq8oK+fXRc3v6dnQ==;BO8oP7rzmnIky5ethym6yRECd6H14ojfHP3nHxSzfTs=;XsuKZL4TBjh8STukr1AgkmDSo5LGgQKQbvymZYi/80TYPM5/MXNr5HKoF3MOT3Nfm0MrubracyAtg5O3slIKBg==;6',
-        'GameId': 1818,
+        'GameId': util.const.PLACE_ID_CONST,
         'CreatorId': 4372130,
         'CreatorTypeEnum': 'Group',
         'MembershipType': 'None',

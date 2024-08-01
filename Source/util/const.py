@@ -1,7 +1,7 @@
 GIT_RELEASE_VERSION = '''2024-07-23T0943Z'''
 GIT_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Filtering-Disabled/releases/download/%s/%s.%s.7z'
 
-DEFAULT_PLACE_ID = 1818
+PLACE_ID_CONST = 1818
 
 ALLOWED_MD5_HASHES = {
     "data": [

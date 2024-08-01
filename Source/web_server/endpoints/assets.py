@@ -9,28 +9,25 @@ import util.const
 @server_path("/.127.0.0.1/asset/")
 def _(self: web_server_handler) -> bool:
     assets = self.server.game_config.asset_cache
+    asset_redirects = self.server.game_config.remote_data.asset_redirects
+
+    # Paramater can either be `id` or `assetversionid`.
     asset_id = assets.resolve_asset_query(self.query)
 
-    if isinstance(asset_id, str):
-        asset = assets.load_asset_str(asset_id)
+    asset_redirect = asset_redirects.get(asset_id)
 
-    elif isinstance(asset_id, int):
-        if (
-            asset_id == util.const.DEFAULT_PLACE_ID
-            and self.domain != 'localhost'
-        ):
-            self.send_error(
-                403,
-                "Server hosters don't tend to like exposing their place files.",
-            )
-            return True
-        asset = assets.load_asset_num(asset_id)
+    if (
+        asset_id == util.const.PLACE_ID_CONST
+        and self.domain != 'localhost'
+    ):
+        self.send_error(
+            403,
+            "Server hosters don't tend to like exposing their place files.  " +
+            "Ask them if they'd be willing to lend this one to you.",
+        )
+        return True
 
-    # Branch case for if the asset id was invalidly passed.
-    # Returns false so that other `@server_path` functions can use it.
-    else:
-        return False
-
+    asset = assets.load_asset(asset_id)
     if asset is None:
         self.send_error(404)
         return True

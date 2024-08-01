@@ -1,5 +1,4 @@
-from typing_extensions import Self, Type, TypeVar, get_args
-from .._logic import base_type as config_base_type
+from typing_extensions import Self, TypeVar, get_args
 import util.const as const
 import fnmatch
 import os
@@ -34,9 +33,8 @@ class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
 
 
 class path_str(str):
-    def __new__(cls, value: str, config: config_base_type) -> Self:
-        root = os.path.dirname(config.config_path)
-        return str.__new__(cls, os.path.join(root, value))
+    def __new__(cls, value: str, dir_root: str) -> Self:
+        return str.__new__(cls, os.path.join(dir_root, value))
 
 
 class uri_obj:
@@ -47,14 +45,14 @@ class uri_obj:
     is_online: bool
     value: str
 
-    def __init__(self, input: str, config: config_base_type) -> None:
+    def __init__(self, input: str, dir_root: str) -> None:
         if input.startswith('http://') or input.startswith('https://'):
             self.is_online = True
             self.value = input
             return
 
         self.is_online = False
-        self.value = path_str(input, config)
+        self.value = path_str(input, dir_root)
 
 
 class rfd_version_check(str):

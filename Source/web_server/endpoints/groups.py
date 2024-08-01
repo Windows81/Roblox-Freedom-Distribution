@@ -3,7 +3,7 @@ import util.versions as versions
 import re
 
 
-@server_path('/Game/LuaWebService/HandleSocialRequest.ashx')
+@server_path('/Game/LuaWebService/HandleSocialRequest.ashx', versions={versions.rōblox.v348})
 def _(self: web_server_handler) -> bool:
     match self.query['method']:
         case 'GetGroupRank':
@@ -34,7 +34,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/v2/users/([0-9]+)/groups/roles', regex=True)
+@server_path('/v2/users/([0-9]+)/groups/roles', regex=True, versions={versions.rōblox.v463})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     database = self.server.storage.players
     user_id_num = int(match.group(1))
@@ -53,7 +53,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
         "data": [
             {
                 "group": {
-                    "id": group_id,
+                    "id": int(group_id),
                     "name": "string",
                     "memberCount": 0,
                     "hasVerifiedBadge": True,

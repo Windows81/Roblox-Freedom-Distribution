@@ -1,10 +1,11 @@
 from typing_extensions import Callable, Union, Any
 from .._logic import base_type as config_base_type
-from . import wrappers
+from util.types import wrappers
 import util.resource
 import util.versions
 import dataclasses
 import functools
+import os
 
 
 @functools.cache
@@ -47,6 +48,10 @@ def _type_call_with_config(value, config: config_base_type, typ: type, path: str
     return typ(value, config, *args, **kwargs)
 
 
+def _type_call_path_str(value, config: config_base_type, typ: type, path: str, *args, **kwargs) -> Any:
+    return typ(value, os.path.dirname(config.config_path), *args, **kwargs)
+
+
 def _type_call_rōblox_version(value, config: config_base_type, typ: type, path: str) -> util.versions.rōblox:
     return util.versions.rōblox.from_name(value)
 
@@ -73,20 +78,24 @@ def _type_call_dataclass_as_dict(value, config: config_base_type, typ: type, pat
     '''
     fields = getattr(typ, dataclasses._FIELDS)  # type: ignore
     casted_values = {
-        field_name: field.type(value[field_name])
+        field_name: get_type_call(field.type)(
+            value[field_name],
+            config,
+            field.type,
+            path,
+        )
         for field_name, field in fields.items()
     }
     return typ(**casted_values)
 
 
 def _type_call_union(value, config: config_base_type, typ: type, path: str) -> Any | None:
-    for t in typ.__args__:
+    for sub_typ in typ.__args__:
         try:
-            type_call = get_type_call(t)
-            return type_call(
+            return get_type_call(sub_typ)(
                 value,
                 config,
-                typ,
+                sub_typ,
                 path,
             )
         except Exception:
@@ -106,9 +115,9 @@ type_calls = {
     Union:
         _type_call_union,
     wrappers.path_str:
-        _type_call_with_config,
+        _type_call_path_str,
     wrappers.uri_obj:
-        _type_call_with_config,
+        _type_call_path_str,
     wrappers.dicter:
         _type_call_dicter,
     dataclasses.dataclass:

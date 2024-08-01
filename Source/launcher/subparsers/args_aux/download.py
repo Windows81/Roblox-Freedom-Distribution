@@ -17,7 +17,7 @@ def _(
     subparser.add_argument(
         '--skip_download',
         action='store_true',
-        help='Disables auto-download of RFD binaries from the internet. '
+        help='Disables auto-download of RFD binaries from the internet.'
     )
 
 

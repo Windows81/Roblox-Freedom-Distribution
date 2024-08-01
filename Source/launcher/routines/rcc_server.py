@@ -1,11 +1,10 @@
-import urllib3
 import web_server._logic as web_server_logic
 import web_server as web_server
 
 from ..startup_scripts import rcc_server
-import assets.serialisers.rbxl as rbxl
 from . import _logic as logic
 import util.const as const
+import assets.serialisers
 import config.structure
 import util.resource
 import util.versions
@@ -13,6 +12,7 @@ import dataclasses
 import subprocess
 import functools
 import util.ssl
+import urllib3
 import config
 import json
 import os
@@ -32,30 +32,35 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         '''
         config = self.game_config
 
+        def parse(data: bytes) -> bytes:
+            return assets.serialisers.parse(
+                data, {assets.serialisers.method.rbxl}
+            )
+
         from_uri = config.game_setup.place_file.rbxl_uri
         if from_uri is None:
             return
-        to_path = config.asset_cache.get_asset_num_path(const.DEFAULT_PLACE_ID)
+        to_path = config.asset_cache.get_asset_num_path(const.PLACE_ID_CONST)
 
         if not from_uri.is_online:
             with open(from_uri.value, 'rb') as rf, open(to_path, 'wb') as wf:
-                wf.write(rbxl.parse(rf.read()))
+                wf.write(parse(rf.read()))
+            return
 
-        else:
-            if config.game_setup.place_file.enable_saveplace:
-                print(
-                    'Warning: config option "enable_saveplace" is redundant ' +
-                    'when the place file is an online resource.'
-                )
+        http = urllib3.PoolManager()
+        response = http.request('GET', from_uri.value)
 
-            http = urllib3.PoolManager()
-            response = http.request('GET', from_uri.value)
+        if response.status != 200:
+            raise FileNotFoundError("Place file couldn't be loaded.")
 
-            if response.status != 200 or not rbxl.check(response.data):
-                raise FileNotFoundError("Place file couldn't be loaded.")
+        with open(to_path, 'wb') as wf:
+            wf.write(parse(response.data))
 
-            with open(to_path, 'wb') as wf:
-                wf.write(rbxl.parse(response.data))
+        if config.game_setup.place_file.enable_saveplace:
+            print(
+                'Warning: config option "enable_saveplace" is redundant ' +
+                'when the place file is an online resource.'
+            )
 
     def save_app_setting(self) -> str:
         '''
@@ -96,13 +101,13 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                     "Type":
                         "Avatar",
                     "PlaceId":
-                        const.DEFAULT_PLACE_ID,
+                        const.PLACE_ID_CONST,
                     "GameId":
                         "Test",
                     "MachineAddress":
                         base_url,
                     "PlaceFetchUrl":
-                        f"{base_url}/asset/?id={const.DEFAULT_PLACE_ID}",
+                        f"{base_url}/asset/?id={const.PLACE_ID_CONST}",
                     "MaxPlayers":
                         server_assignment.players.maximum,
                     "PreferredPlayerCapacity":
@@ -145,7 +150,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             [
                 self.get_versioned_path('RCCService.exe'),
 
-                f'-placeid:{const.DEFAULT_PLACE_ID}',
+                f'-placeid:{const.PLACE_ID_CONST}',
 
                 '-localtest', self.get_versioned_path(
                     'GameServer.json',
