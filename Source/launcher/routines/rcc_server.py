@@ -40,11 +40,11 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         from_uri = config.game_setup.place_file.rbxl_uri
         if from_uri is None:
             return
-        to_path = config.asset_cache.get_asset_num_path(const.PLACE_ID_CONST)
+        cache = config.asset_cache
 
         if not from_uri.is_online:
-            with open(from_uri.value, 'rb') as rf, open(to_path, 'wb') as wf:
-                wf.write(parse(rf.read()))
+            with open(from_uri.value, 'rb') as rf:
+                cache.add_asset(const.PLACE_ID_CONST, parse(rf.read()))
             return
 
         http = urllib3.PoolManager()
@@ -53,9 +53,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         if response.status != 200:
             raise FileNotFoundError("Place file couldn't be loaded.")
 
-        with open(to_path, 'wb') as wf:
-            wf.write(parse(response.data))
-
+        cache.add_asset(const.PLACE_ID_CONST, parse(response.data))
         if config.game_setup.place_file.enable_saveplace:
             print(
                 'Warning: config option "enable_saveplace" is redundant ' +
@@ -175,14 +173,16 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         self.save_starter_scripts()
         self.save_place_file()
         self.save_app_setting()
-        self.save_ssl_cert()
+        self.save_ssl_cert(
+            include_system_certs=True,
+        )
 
         self.save_gameserver()
         if not self.local_args.skip_popen:
             self.make_rcc_popen()
 
 
-@dataclasses.dataclass
+@ dataclasses.dataclass
 class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
 
@@ -190,12 +190,11 @@ class arg_type(logic.bin_ssl_arg_type):
     rcc_port_num: int = 2005
     skip_popen: bool = False
     verbose: bool = False
-    web_port: web_server_logic.port_typ = \
-        web_server_logic.port_typ(
-            port_num=80,
-            is_ssl=False,
-            is_ipv6=False,
-        ),  # type: ignore
+    web_port: web_server_logic.port_typ = web_server_logic.port_typ(
+        port_num=80,
+        is_ssl=False,
+        is_ipv6=False,
+    ),  # type: ignore
 
     def get_base_url(self) -> str:
         return \

@@ -1,9 +1,16 @@
-from . import cache
+from util.types import structs, wrappers
+from . import extract, returns
 
 
 class asseter:
-    def __init__(self, dir_path: str, clear_on_start: bool = False) -> None:
-        self.cache = cache.cacher(
+    def __init__(
+        self,
+        dir_path: str,
+        redirects: structs.asset_redirects,
+        clear_on_start: bool,
+    ) -> None:
+        self.redirects = redirects
+        self.cache = extract.extractor(
             dir_path=dir_path,
             clear_on_start=clear_on_start,
         )
@@ -33,15 +40,25 @@ class asseter:
             result = func(prop_val)
             if result is not None:
                 return result
-
         for (prop_val, func) in funcs:
             if prop_val is not None:
                 return prop_val
-
         raise ValueError()
 
-    def load_asset(self, asset_id) -> bytes | None:
-        if isinstance(asset_id, str):
-            return self.cache.load_asset_str(asset_id)
-        elif isinstance(asset_id, int):
-            return self.cache.load_asset_num(asset_id)
+    def redirect_asset(self, redir_uri: wrappers.uri_obj) -> returns.base_type:
+        if redir_uri.is_online:
+            return returns.construct(redirect_url=redir_uri.value)
+        with open(redir_uri.value, 'rb') as f:
+            return returns.construct(data=f.read())
+
+    def get_asset(self, asset_id: int | str) -> returns.base_type:
+        redirect = self.redirects.get(asset_id)
+        if redirect is not None:
+            return self.redirect_asset(redirect.uri)
+        return returns.construct(data=self.cache.load_asset(asset_id))
+
+    def add_asset(self, asset_id: int | str, data: bytes) -> None:
+        redirect = self.redirects.get(asset_id)
+        if redirect is not None:
+            raise FileExistsError()
+        self.cache.save_asset(asset_id, data)

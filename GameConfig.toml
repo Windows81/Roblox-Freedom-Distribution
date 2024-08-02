@@ -171,7 +171,7 @@ icon = 0
 
 [[remote_data.asset_redirects]]
 id_num = 13
-uri = 'https://archive.org/download/youtube-7_WNm7Bg_NY/7_WNm7Bg_NY.mp4'
+uri = 'https://archive.org/download/youtube-ew2AlgHG3D8/ew2AlgHG3D8.webm'
 
 [server_assignment]
 players.maximum = 4096

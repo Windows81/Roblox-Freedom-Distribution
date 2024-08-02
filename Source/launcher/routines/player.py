@@ -47,7 +47,9 @@ class obj_type(logic.bin_ssl_entry):
     def process(self) -> None:
         self.save_app_setting()
         self.enable_mutex()
-        self.save_ssl_cert()
+        self.save_ssl_cert(
+            include_system_certs=False,
+        )
 
         time.sleep(self.local_args.launch_delay)
         self.local_args.finalise_user_code()

@@ -1,4 +1,4 @@
-GIT_RELEASE_VERSION = '''2024-07-23T0943Z'''
+GIT_RELEASE_VERSION = '''2024-08-02T0718Z'''
 GIT_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Filtering-Disabled/releases/download/%s/%s.%s.7z'
 
 PLACE_ID_CONST = 1818

@@ -17,6 +17,9 @@ def get_type_call(object_type: type) -> Callable:
     if getattr(object_type, '__origin__', None) == getattr(Callable, '__origin__'):
         return type_calls[Callable]
 
+    if type(object_type) == type(str | None):
+        return type_calls[Union]
+
     for k in object_type.mro():
         if k not in type_calls:
             continue

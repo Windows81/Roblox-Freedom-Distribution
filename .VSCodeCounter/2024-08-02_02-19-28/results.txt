@@ -1,0 +1,172 @@
+Date : 2024-08-02 02:19:28
+Directory : c:\Users\USERNAME\Documents\Projects\FilteringDisabled
+Total : 101 files,  8018 codes, 169 comments, 1667 blanks, all 9854 lines
+
+Languages
++------------------+------------+------------+------------+------------+------------+
+| language         | files      | code       | comment    | blank      | total      |
++------------------+------------+------------+------------+------------+------------+
+| Python           |         73 |      5,438 |        109 |      1,147 |      6,694 |
+| Markdown         |         17 |      1,141 |          0 |        435 |      1,576 |
+| JSON             |          2 |      1,075 |          0 |          0 |      1,075 |
+| TOML             |          2 |        225 |         20 |         46 |        291 |
+| Shell Script     |          5 |         80 |         38 |         32 |        150 |
+| PowerShell       |          1 |         51 |          2 |          7 |         60 |
+| pip requirements |          1 |          8 |          0 |          0 |          8 |
++------------------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                           | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                              |        101 |      8,018 |        169 |      1,667 |      9,854 |
+| . (Files)                                                                                                      |          6 |        895 |         16 |        245 |      1,156 |
+| Guides                                                                                                         |         11 |      1,422 |          0 |        144 |      1,566 |
+| Guides (Files)                                                                                                 |          1 |          2 |          0 |          2 |          4 |
+| Guides\AddStrings2021E                                                                                         |          1 |         24 |          0 |         23 |         47 |
+| Guides\DataModelPatch                                                                                          |          1 |        107 |          0 |         46 |        153 |
+| Guides\MakeAssetUrlsPermissive                                                                                 |          1 |          2 |          0 |          2 |          4 |
+| Guides\PatchMaterials                                                                                          |          4 |      1,099 |          0 |          5 |      1,104 |
+| Guides\PortAgnosticness                                                                                        |          1 |          3 |          0 |          1 |          4 |
+| Guides\SavePlace                                                                                               |          1 |         85 |          0 |         37 |        122 |
+| Guides\Worships2021EGuide                                                                                      |          1 |        100 |          0 |         28 |        128 |
+| Source                                                                                                         |         77 |      5,507 |        109 |      1,213 |      6,829 |
+| Source (Files)                                                                                                 |          2 |         11 |          0 |          2 |         13 |
+| Source\assets                                                                                                  |         16 |      1,887 |         41 |        355 |      2,283 |
+| Source\assets (Files)                                                                                          |          4 |        142 |          2 |         42 |        186 |
+| Source\assets\material                                                                                         |          2 |        363 |          7 |         19 |        389 |
+| Source\assets\serialisers                                                                                      |         10 |      1,382 |         32 |        294 |      1,708 |
+| Source\assets\serialisers (Files)                                                                              |          1 |         13 |          2 |          6 |         21 |
+| Source\assets\serialisers\mesh                                                                                 |          2 |        922 |         14 |        200 |      1,136 |
+| Source\assets\serialisers\rbxl                                                                                 |          6 |        439 |         16 |         83 |        538 |
+| Source\assets\serialisers\redirect                                                                             |          1 |          8 |          0 |          5 |         13 |
+| Source\config                                                                                                  |          6 |        308 |          3 |         73 |        384 |
+| Source\config (Files)                                                                                          |          5 |        208 |          2 |         48 |        258 |
+| Source\config\types                                                                                            |          1 |        100 |          1 |         25 |        126 |
+| Source\data_transfer                                                                                           |          2 |         68 |          1 |         21 |         90 |
+| Source\launcher                                                                                                |         20 |      1,271 |         19 |        325 |      1,615 |
+| Source\launcher (Files)                                                                                        |          2 |        151 |          9 |         71 |        231 |
+| Source\launcher\downloader                                                                                     |          1 |         17 |          0 |          5 |         22 |
+| Source\launcher\routines                                                                                       |          7 |        660 |          6 |        152 |        818 |
+| Source\launcher\startup_scripts                                                                                |          1 |         37 |          0 |          9 |         46 |
+| Source\launcher\subparsers                                                                                     |          9 |        406 |          4 |         88 |        498 |
+| Source\launcher\subparsers (Files)                                                                             |          1 |         54 |          1 |         18 |         73 |
+| Source\launcher\subparsers\args_aux                                                                            |          4 |        127 |          1 |         35 |        163 |
+| Source\launcher\subparsers\args_launch_mode                                                                    |          4 |        225 |          2 |         35 |        262 |
+| Source\storage                                                                                                 |          7 |        356 |          0 |         64 |        420 |
+| Source\util                                                                                                    |          6 |        328 |         16 |        100 |        444 |
+| Source\util (Files)                                                                                            |          4 |        232 |         13 |         65 |        310 |
+| Source\util\types                                                                                              |          2 |         96 |          3 |         35 |        134 |
+| Source\web_server                                                                                              |         18 |      1,278 |         29 |        273 |      1,580 |
+| Source\web_server (Files)                                                                                      |          3 |        289 |          7 |         75 |        371 |
+| Source\web_server\endpoints                                                                                    |         15 |        989 |         22 |        198 |      1,209 |
+| WineBootstrapper                                                                                               |          7 |        194 |         44 |         65 |        303 |
++----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| filename                                                                                                       | language         | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\GameConfig.toml                                         | TOML             |        139 |         14 |         27 |        180 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\AddStrings2021E\README.md                        | Markdown         |         24 |          0 |         23 |         47 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\DataModelPatch\README.md                         | Markdown         |        107 |          0 |         46 |        153 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\MakeAssetUrlsPermissive\README.md                | Markdown         |          2 |          0 |          2 |          4 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PatchMaterials\MaterialPacks.json                | JSON             |        510 |          0 |          0 |        510 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PatchMaterials\MaterialPacks2.json               | JSON             |        565 |          0 |          0 |        565 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PatchMaterials\README.md                         | Markdown         |          1 |          0 |          1 |          2 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PatchMaterials\_.py                              | Python           |         23 |          0 |          4 |         27 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PortAgnosticness\README.md                       | Markdown         |          3 |          0 |          1 |          4 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\README.md                                        | Markdown         |          2 |          0 |          2 |          4 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\SavePlace\README.md                              | Markdown         |         85 |          0 |         37 |        122 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\Worships2021EGuide\README.md                     | Markdown         |        100 |          0 |         28 |        128 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\LEGAL.md                                                | Markdown         |         19 |          0 |         17 |         36 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\LICENSE.md                                              | Markdown         |        564 |          0 |        112 |        676 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\README.md                                               | Markdown         |        100 |          0 |         69 |        169 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\ROADMAP.md                                              | Markdown         |         22 |          0 |         13 |         35 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\ReleaseNewVersion.ps1                                   | PowerShell       |         51 |          2 |          7 |         60 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\_main.py                                         | Python           |          3 |          0 |          2 |          5 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\__init__.py                               | Python           |         51 |          2 |         10 |         63 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\download.py                               | Python           |         18 |          0 |          5 |         23 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\extract.py                                | Python           |         55 |          0 |         16 |         71 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\material\__init__.py                      | Python           |         37 |          7 |         15 |         59 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\material\const.py                         | Python           |        326 |          0 |          4 |        330 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\returns.py                                | Python           |         18 |          0 |         11 |         29 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\__init__.py                   | Python           |         13 |          2 |          6 |         21 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\mesh\__init__.py              | Python           |         10 |          0 |          4 |         14 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\mesh\rbxmesh.py               | Python           |        912 |         14 |        196 |      1,122 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\__init__.py              | Python           |         23 |          4 |          8 |         35 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\_logic.py                | Python           |        297 |          3 |         52 |        352 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\fonts.py                 | Python           |         73 |          5 |          7 |         85 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\roblox_links.py          | Python           |         11 |          2 |          4 |         17 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\script_disabled.py       | Python           |         22 |          1 |          8 |         31 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\skip_bytecode.py         | Python           |         13 |          1 |          4 |         18 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\redirect\__init__.py          | Python           |          8 |          0 |          5 |         13 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\README.md                                 | Markdown         |          3 |          0 |          0 |          3 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\__init__.py                               | Python           |         34 |          0 |          8 |         42 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\_logic.py                                 | Python           |         10 |          0 |          4 |         14 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\allocateable.py                           | Python           |         86 |          2 |         14 |        102 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\structure.py                              | Python           |         75 |          0 |         22 |         97 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\types\__init__.py                         | Python           |        100 |          1 |         25 |        126 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\data_transfer\README.md                          | Markdown         |          5 |          0 |          5 |         10 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\data_transfer\__init__.py                        | Python           |         63 |          1 |         16 |         80 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\README.md                               | Markdown         |         60 |          0 |         49 |        109 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\__init__.py                             | Python           |         91 |          9 |         22 |        122 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\downloader\__init__.py                  | Python           |         17 |          0 |          5 |         22 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\_logic.py                      | Python           |        227 |          4 |         62 |        293 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\clear_appdata.py               | Python           |         52 |          0 |         15 |         67 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\download.py                    | Python           |         23 |          0 |         10 |         33 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\player.py                      | Python           |         91 |          0 |         15 |        106 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\rcc_server.py                  | Python           |        175 |          2 |         30 |        207 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\studio.py                      | Python           |         42 |          0 |          9 |         51 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\web_server.py                  | Python           |         50 |          0 |         11 |         61 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\startup_scripts\rcc_server.py           | Python           |         37 |          0 |          9 |         46 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\_logic.py                    | Python           |         54 |          1 |         18 |         73 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_aux\_logic.py           | Python           |         16 |          0 |          5 |         21 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_aux\clear_appdata.py    | Python           |         40 |          0 |         11 |         51 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_aux\debug.py            | Python           |         42 |          0 |         11 |         53 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_aux\download.py         | Python           |         29 |          1 |          8 |         38 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_launch_mode\download.py | Python           |         40 |          0 |          6 |         46 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_launch_mode\player.py   | Python           |         53 |          0 |          8 |         61 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_launch_mode\server.py   | Python           |        110 |          2 |         14 |        126 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\subparsers\args_launch_mode\studio.py   | Python           |         22 |          0 |          7 |         29 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\requirements.txt                                 | pip requirements |          8 |          0 |          0 |          8 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\__init__.py                              | Python           |         26 |          0 |          6 |         32 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\_logic.py                                | Python           |         16 |          0 |          6 |         22 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\badges.py                                | Python           |         52 |          0 |          9 |         61 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\funds.py                                 | Python           |         62 |          0 |         11 |         73 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\gamepasses.py                            | Python           |         52 |          0 |          9 |         61 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\persistence.py                           | Python           |         63 |          0 |          9 |         72 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\players.py                               | Python           |         85 |          0 |         14 |         99 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\const.py                                    | Python           |         43 |          0 |          5 |         48 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\resource.py                                 | Python           |         58 |          2 |         22 |         82 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\ssl.py                                      | Python           |         99 |          8 |         26 |        133 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\types\structs.py                            | Python           |         47 |          0 |         21 |         68 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\types\wrappers.py                           | Python           |         49 |          3 |         14 |         66 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\versions.py                                 | Python           |         32 |          3 |         12 |         47 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\README.md                             | Markdown         |         16 |          0 |         16 |         32 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\__init__.py                           | Python           |         12 |          1 |          4 |         17 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\_logic.py                             | Python           |        261 |          6 |         55 |        322 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\__init__.py                 | Python           |         21 |          0 |          4 |         25 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\assets.py                   | Python           |         36 |          1 |          9 |         46 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\avatar.py                   | Python           |        179 |          0 |         15 |        194 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\badges.py                   | Python           |         23 |          0 |          6 |         29 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\data_transfer.py            | Python           |         12 |          0 |          5 |         17 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\funds.py                    | Python           |         38 |          3 |         12 |         53 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\gamepasses.py               | Python           |         62 |          0 |         12 |         74 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\groups.py                   | Python           |         60 |          0 |         12 |         72 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\joinscript.py               | Python           |        157 |          6 |         19 |        182 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\persistence.py              | Python           |         63 |          2 |         16 |         81 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\player_info.py              | Python           |         44 |          1 |         15 |         60 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\save_place.py               | Python           |         63 |          5 |         13 |         81 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\setup_player.py             | Python           |        110 |          2 |         35 |        147 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\setup_rcc.py                | Python           |         86 |          1 |         14 |        101 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\text_filter.py              | Python           |         35 |          1 |         11 |         47 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\GameConfig.toml                        | TOML             |         86 |          6 |         19 |        111 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\README.md                              | Markdown         |         28 |          0 |         14 |         42 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\host.sh                                | Shell Script     |          7 |          2 |          3 |         12 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\join.sh                                | Shell Script     |         11 |          2 |          4 |         17 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\menu.sh                                | Shell Script     |         19 |          7 |          5 |         31 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\setup.sh                               | Shell Script     |         42 |         27 |         19 |         88 |
+| c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\stop-all.sh                            | Shell Script     |          1 |          0 |          1 |          2 |
+| Total                                                                                                          |                  |      8,018 |        169 |      1,667 |      9,854 |
++----------------------------------------------------------------------------------------------------------------+------------------+------------+------------+------------+------------+

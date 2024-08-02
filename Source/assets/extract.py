@@ -1,11 +1,10 @@
-from .. import material, serialisers
-from . import grabber
+from . import download, material, serialisers
 import util.const
 import shutil
 import os
 
 
-class cacher:
+class extractor:
     def __init__(self, dir_path: str,  clear_on_start: bool = False) -> None:
         self.dir_path = dir_path
         os.makedirs(dir_path, exist_ok=True)
@@ -19,31 +18,30 @@ class cacher:
         return os.path.join(self.dir_path, aid)
 
     def load_online_asset(self, asset_id: int) -> bytes | None:
-        data = grabber.load_rōblox_asset(asset_id)
+        data = download.download_rōblox_asset(asset_id)
         if data is None:
             return None
 
         data = serialisers.parse(data)
         return data
 
-    def load_local_asset(self, path: str) -> bytes | None:
+    def load_file(self, path: str) -> bytes | None:
         if not os.path.isfile(path):
             return None
 
         with open(path, 'rb') as f:
             return f.read()
 
-    def save_local_asset(self, path: str, data: bytes) -> None:
+    def save_file(self, path: str, data: bytes) -> None:
         with open(path, 'wb') as f:
             f.write(data)
 
     def load_asset_num(self, asset_id: int) -> bytes | None:
         '''
-        Loads cached asset by ID, else load from online.
+        Loads cached asset by ID, else download from online and save in the asset cache folder.
         '''
-
         path = self.get_asset_num_path(asset_id)
-        local_data = self.load_local_asset(path)
+        local_data = self.load_file(path)
         if local_data:
             return local_data
 
@@ -51,7 +49,7 @@ class cacher:
         if online_data is None:
             return None
 
-        self.save_local_asset(path, online_data)
+        self.save_file(path, online_data)
         return online_data
 
     def load_asset_str(self, asset_id: str) -> bytes | None:
@@ -59,7 +57,7 @@ class cacher:
         if path == self.get_asset_num_path(util.const.PLACE_ID_CONST):
             return None
 
-        local_data = self.load_local_asset(path)
+        local_data = self.load_file(path)
         if local_data:
             return local_data
 
@@ -70,3 +68,16 @@ class cacher:
             else:
                 id_num = material.transform_to_id_num(asset_id)
                 return self.load_asset_num(id_num)
+
+    def load_asset(self, asset_id: int | str) -> bytes | None:
+        if isinstance(asset_id, str):
+            return self.load_asset_str(asset_id)
+        elif isinstance(asset_id, int):
+            return self.load_asset_num(asset_id)
+
+    def save_asset(self, asset_id: int | str, data: bytes) -> None:
+        if isinstance(asset_id, str):
+            path = self.get_asset_str_path(asset_id)
+        elif isinstance(asset_id, int):
+            path = self.get_asset_num_path(asset_id)
+        self.save_file(path, data)

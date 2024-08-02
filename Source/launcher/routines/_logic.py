@@ -240,18 +240,19 @@ class bin_ssl_entry(bin_entry):
         ctx.verify_mode = ssl.CERT_NONE
         return ctx
 
-    def save_ssl_cert(self, query_args: dict = {}) -> None:
+    def save_ssl_cert(self, include_system_certs: bool = False) -> None:
         if not self.local_args.web_port.is_ssl:
             return
 
         res = self.local_args.send_request(f'/rfd/certificate')
         path = self.get_versioned_path('SSL', 'cacert.pem')
 
+        cert_content = res.read().decode()
+        if include_system_certs:
+            cert_content += certifi.contents()
+
         with open(path, 'w') as f:
-            f.write(''.join([
-                res.read().decode(),
-                certifi.contents(),
-            ]))
+            f.write(cert_content)
 
 
 class server_entry(entry):

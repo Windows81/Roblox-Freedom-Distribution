@@ -1,4 +1,5 @@
 from web_server._logic import web_server_handler, server_path
+import assets.returns as returns
 import util.const
 
 
@@ -9,12 +10,9 @@ import util.const
 @server_path("/.127.0.0.1/asset/")
 def _(self: web_server_handler) -> bool:
     assets = self.server.game_config.asset_cache
-    asset_redirects = self.server.game_config.remote_data.asset_redirects
 
     # Paramater can either be `id` or `assetversionid`.
     asset_id = assets.resolve_asset_query(self.query)
-
-    asset_redirect = asset_redirects.get(asset_id)
 
     if (
         asset_id == util.const.PLACE_ID_CONST
@@ -27,13 +25,19 @@ def _(self: web_server_handler) -> bool:
         )
         return True
 
-    asset = assets.load_asset(asset_id)
-    if asset is None:
+    asset = assets.get_asset(asset_id)
+    if isinstance(asset, returns.ret_data):
+        self.send_data(asset.data)
+        return True
+    elif isinstance(asset, returns.ret_none):
         self.send_error(404)
         return True
-
-    self.send_data(asset)
-    return True
+    elif isinstance(asset, returns.ret_redirect):
+        self.send_response(301)
+        self.send_header("Location", asset.url)
+        self.end_headers()
+        return True
+    return False
 
 
 @server_path('/ownership/hasasset', commands={'GET'})

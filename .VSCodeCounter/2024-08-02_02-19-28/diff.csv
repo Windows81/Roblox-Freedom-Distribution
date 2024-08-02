@@ -1,0 +1,65 @@
+"filename", "language", "Markdown", "Python", "Shell Script", "TOML", "JSON", "PowerShell", "comment", "blank", "total"
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\GameConfig.toml", "TOML", 0, 0, 0, 139, 0, 0, 14, 27, 180
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\AddStrings2021E\README.md", "Markdown", 24, 0, 0, 0, 0, 0, 0, 23, 47
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\DataModelPatch\README.md", "Markdown", 107, 0, 0, 0, 0, 0, 0, 46, 153
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\MakeAssetUrlsPermissive\README.md", "Markdown", 2, 0, 0, 0, 0, 0, 0, 2, 4
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PatchMaterials\MaterialPacks.json", "JSON", 0, 0, 0, 0, 510, 0, 0, 0, 510
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PatchMaterials\MaterialPacks2.json", "JSON", 0, 0, 0, 0, 565, 0, 0, 0, 565
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PatchMaterials\README.md", "Markdown", 1, 0, 0, 0, 0, 0, 0, 1, 2
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PatchMaterials\_.py", "Python", 0, 23, 0, 0, 0, 0, 0, 4, 27
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\PortAgnosticness\README.md", "Markdown", 3, 0, 0, 0, 0, 0, 0, 1, 4
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\README.md", "Markdown", 2, 0, 0, 0, 0, 0, 0, 2, 4
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\SavePlace\README.md", "Markdown", 85, 0, 0, 0, 0, 0, 0, 37, 122
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Guides\Worships2021EGuide\README.md", "Markdown", 100, 0, 0, 0, 0, 0, 0, 28, 128
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\LEGAL.md", "Markdown", 19, 0, 0, 0, 0, 0, 0, 17, 36
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\LICENSE.md", "Markdown", 564, 0, 0, 0, 0, 0, 0, 112, 676
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\README.md", "Markdown", 100, 0, 0, 0, 0, 0, 0, 69, 169
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\ROADMAP.md", "Markdown", 22, 0, 0, 0, 0, 0, 0, 13, 35
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\ReleaseNewVersion.ps1", "PowerShell", 0, 0, 0, 0, 0, 51, 2, 7, 60
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\__init__.py", "Python", 0, -35, 0, 0, 0, 0, -1, -11, -47
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\download.py", "Python", 0, 18, 0, 0, 0, 0, 0, 5, 23
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\extract.py", "Python", 0, 55, 0, 0, 0, 0, 0, 16, 71
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\grabber.py", "Python", 0, -15, 0, 0, 0, 0, 0, -4, -19
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\material\__init__.py", "Python", 0, 20, 0, 0, 0, 0, 5, 7, 32
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\returns.py", "Python", 0, 18, 0, 0, 0, 0, 0, 11, 29
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\__init__.py", "Python", 0, 13, 0, 0, 0, 0, 2, 6, 21
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\__init__.py", "Python", 0, 7, 0, 0, 0, 0, 3, 3, 13
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\downdate_font.py", "Python", 0, -73, 0, 0, 0, 0, -5, -7, -85
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\rbxl\fonts.py", "Python", 0, 73, 0, 0, 0, 0, 5, 7, 85
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\assets\serialisers\redirect\__init__.py", "Python", 0, 8, 0, 0, 0, 0, 0, 5, 13
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\__init__.py", "Python", 0, 1, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\structure.py", "Python", 0, 29, 0, 0, 0, 0, 0, 9, 38
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\types\__init__.py", "Python", 0, 22, 0, 0, 0, 0, 0, 5, 27
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\types\structs.py", "Python", 0, -31, 0, 0, 0, 0, 0, -11, -42
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\config\types\wrappers.py", "Python", 0, -31, 0, 0, 0, 0, 0, -9, -40
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\__init__.py", "Python", 0, 8, 0, 0, 0, 0, 2, 2, 12
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\player.py", "Python", 0, 3, 0, 0, 0, 0, 0, -1, 2
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\rcc_server.py", "Python", 0, 4, 0, 0, 0, 0, 0, 1, 5
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\launcher\routines\web_server.py", "Python", 0, 1, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\__init__.py", "Python", 0, 8, 0, 0, 0, 0, 0, 1, 9
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\funds.py", "Python", 0, 62, 0, 0, 0, 0, 0, 11, 73
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\gamepasses.py", "Python", 0, 52, 0, 0, 0, 0, 0, 9, 61
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\storage\players.py", "Python", 0, 14, 0, 0, 0, 0, 0, 3, 17
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\types\structs.py", "Python", 0, 47, 0, 0, 0, 0, 0, 21, 68
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\util\types\wrappers.py", "Python", 0, 49, 0, 0, 0, 0, 3, 14, 66
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\_logic.py", "Python", 0, 5, 0, 0, 0, 0, 0, 0, 5
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\__init__.py", "Python", 0, 3, 0, 0, 0, 0, 0, 0, 3
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\assets.py", "Python", 0, 6, 0, 0, 0, 0, -1, 1, 6
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\avatar.py", "Python", 0, 3, 0, 0, 0, 0, 0, 0, 3
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\funds.py", "Python", 0, 38, 0, 0, 0, 0, 3, 12, 53
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\gamepasses.py", "Python", 0, 62, 0, 0, 0, 0, 0, 12, 74
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\groups.py", "Python", 0, 60, 0, 0, 0, 0, 0, 12, 72
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\joinscript.py", "Python", 0, 9, 0, 0, 0, 0, 3, 3, 15
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\persistence.py", "Python", 0, -15, 0, 0, 0, 0, 0, -2, -17
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\player_info.py", "Python", 0, -44, 0, 0, 0, 0, -8, -9, -61
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\setup_player.py", "Python", 0, -1, 0, 0, 0, 0, 2, -1, 0
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\setup_rcc.py", "Python", 0, 23, 0, 0, 0, 0, 0, 2, 25
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\Source\web_server\endpoints\text_filter.py", "Python", 0, -2, 0, 0, 0, 0, 0, 0, -2
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\GameConfig.toml", "TOML", 0, 0, 0, 86, 0, 0, 6, 19, 111
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\README.md", "Markdown", 28, 0, 0, 0, 0, 0, 0, 14, 42
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\host.sh", "Shell Script", 0, 0, 7, 0, 0, 0, 2, 3, 12
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\join.sh", "Shell Script", 0, 0, 11, 0, 0, 0, 2, 4, 17
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\menu.sh", "Shell Script", 0, 0, 19, 0, 0, 0, 7, 5, 31
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\setup.sh", "Shell Script", 0, 0, 42, 0, 0, 0, 27, 19, 88
+"c:\Users\USERNAME\Documents\Projects\FilteringDisabled\WineBootstrapper\stop-all.sh", "Shell Script", 0, 0, 1, 0, 0, 0, 0, 1, 2
+"Total", "-", 1057, 497, 80, 225, 1075, 51, 73, 577, 3635
