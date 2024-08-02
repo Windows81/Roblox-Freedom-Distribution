@@ -1,3 +1,4 @@
+from .. import download
 from . import const
 import urllib3
 
@@ -55,4 +56,5 @@ def load_asset(asset_id: str) -> bytes | None:
         if response.status == 200:
             return response.data
 
-    return None
+    id_num = transform_to_id_num(asset_id)
+    return download.download_rōblox_asset(id_num)

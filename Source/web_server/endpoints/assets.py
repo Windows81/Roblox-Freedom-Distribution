@@ -14,9 +14,10 @@ def _(self: web_server_handler) -> bool:
     # Paramater can either be `id` or `assetversionid`.
     asset_id = assets.resolve_asset_query(self.query)
 
+    is_priviledged = self.domain == 'localhost'
     if (
-        asset_id == util.const.PLACE_ID_CONST
-        and self.domain != 'localhost'
+        asset_id == util.const.PLACE_ID_CONST and
+        not is_priviledged
     ):
         self.send_error(
             403,
@@ -25,7 +26,11 @@ def _(self: web_server_handler) -> bool:
         )
         return True
 
-    asset = assets.get_asset(asset_id)
+    asset = assets.get_asset(
+        asset_id,
+        bypass_blacklist=is_priviledged,
+    )
+
     if isinstance(asset, returns.ret_data):
         self.send_data(asset.data)
         return True
@@ -40,7 +45,7 @@ def _(self: web_server_handler) -> bool:
     return False
 
 
-@server_path('/ownership/hasasset', commands={'GET'})
+@ server_path('/ownership/hasasset', commands={'GET'})
 def _(self: web_server_handler) -> bool:
     '''
     Typically used to check if players own specific catalogue items.

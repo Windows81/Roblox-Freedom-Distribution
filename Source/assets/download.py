@@ -1,7 +1,7 @@
 import urllib3
 
 
-def download_asset(url: str) -> bytes | None:
+def download_item(url: str) -> bytes | None:
     try:
         http = urllib3.PoolManager()
         response = http.request('GET', url)
@@ -14,7 +14,7 @@ def download_asset(url: str) -> bytes | None:
 
 def download_rōblox_asset(asset_id: int) -> bytes | None:
     for key in {'id'}:
-        result = download_asset(
+        result = download_item(
             f'https://assetdelivery.roblox.com/v1/asset/?%s=%s' %
             (key, asset_id)
         )

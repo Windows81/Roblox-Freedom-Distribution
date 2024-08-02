@@ -91,6 +91,6 @@ class config_type(allocateable.obj_type):
         filter_text: Callable[[str, str], str]
 
     class remote_data(allocateable.obj_type):
-        gamepasses: structs.gamepasses
-        asset_redirects: structs.asset_redirects
-        badges: structs.badges
+        gamepasses: structs.gamepasses = []  # type: ignore
+        asset_redirects: structs.asset_redirects = []  # type: ignore
+        badges: structs.badges = []  # type: ignore

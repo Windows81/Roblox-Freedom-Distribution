@@ -50,7 +50,7 @@ end
 
 retrieve_avatar_type = '''
 function(user_code) -- str -> str
-    return 'R6'
+    return 'R15'
 end
 '''
 
@@ -171,7 +171,7 @@ icon = 0
 
 [[remote_data.asset_redirects]]
 id_num = 13
-uri = 'https://archive.org/download/youtube-ew2AlgHG3D8/ew2AlgHG3D8.webm'
+uri = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 
 [server_assignment]
 players.maximum = 4096

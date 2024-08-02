@@ -51,11 +51,11 @@ class asseter:
         with open(redir_uri.value, 'rb') as f:
             return returns.construct(data=f.read())
 
-    def get_asset(self, asset_id: int | str) -> returns.base_type:
+    def get_asset(self, asset_id: int | str, bypass_blacklist: bool = False) -> returns.base_type:
         redirect = self.redirects.get(asset_id)
         if redirect is not None:
             return self.redirect_asset(redirect.uri)
-        return returns.construct(data=self.cache.load_asset(asset_id))
+        return returns.construct(data=self.cache.load_asset(asset_id, bypass_blacklist))
 
     def add_asset(self, asset_id: int | str, data: bytes) -> None:
         redirect = self.redirects.get(asset_id)
