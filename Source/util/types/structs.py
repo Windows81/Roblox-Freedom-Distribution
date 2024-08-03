@@ -20,8 +20,18 @@ class badge:
 
 @dataclasses.dataclass
 class asset_redirect:
-    id_num: int | str
-    uri: wrappers.uri_obj
+    def __post_init__(self):
+        if sum([
+            self.cmd_line is not None,
+            self.uri is not None,
+        ]) > 1:
+            raise Exception(
+                'Entries for `asset_redirects` should not have '
+                'both a URI and a pipeable command-line.'
+            )
+    id_val: int | str
+    uri: wrappers.uri_obj | None = None
+    cmd_line: str | None = None
 
 
 class gamepasses(wrappers.dicter[gamepass, int]):
@@ -33,7 +43,7 @@ class badges(wrappers.dicter[badge, int]):
 
 
 class asset_redirects(wrappers.dicter[asset_redirect, int | str]):
-    key_name = 'id_num'
+    key_name = 'id_val'
 
 
 @dataclasses.dataclass

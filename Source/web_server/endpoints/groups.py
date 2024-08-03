@@ -44,8 +44,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
         user_id_num,
         database.player_field.USER_CODE,
     )
-    if not user_code:
-        return False
+    assert user_code
 
     groups = self.server.game_config.server_core.retrieve_groups(user_code)
 

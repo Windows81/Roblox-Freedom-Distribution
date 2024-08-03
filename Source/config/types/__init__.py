@@ -82,7 +82,7 @@ def _type_call_dataclass_as_dict(value, config: config_base_type, typ: type, pat
     fields = getattr(typ, dataclasses._FIELDS)  # type: ignore
     casted_values = {
         field_name: get_type_call(field.type)(
-            value[field_name],
+            value.get(field_name, field.default),
             config,
             field.type,
             path,
@@ -93,7 +93,10 @@ def _type_call_dataclass_as_dict(value, config: config_base_type, typ: type, pat
 
 
 def _type_call_union(value, config: config_base_type, typ: type, path: str) -> Any | None:
-    for sub_typ in typ.__args__:
+    type_args: tuple[type] = typ.__args__
+    if type_args[-1] == type(None):
+        type_args = (type_args[-1], *type_args[:-1])
+    for sub_typ in type_args:
         try:
             return get_type_call(sub_typ)(
                 value,
@@ -104,10 +107,15 @@ def _type_call_union(value, config: config_base_type, typ: type, path: str) -> A
         except Exception:
             pass
 
-    raise ValueError(
+    raise Exception(
         'Value "%s" is not of any of the following types: %s.' %
         (value, *', '.join(typ.__args__)),
     )
+
+
+def _type_call_none_type(value, config: config_base_type, typ: type, path: str) -> None:
+    if value is not None:
+        raise Exception("Nothing can be `None`.")
 
 
 type_calls = {
@@ -115,8 +123,6 @@ type_calls = {
         _type_call_callable,
     util.versions.rōblox:
         _type_call_rōblox_version,
-    Union:
-        _type_call_union,
     wrappers.path_str:
         _type_call_path_str,
     wrappers.uri_obj:
@@ -125,4 +131,8 @@ type_calls = {
         _type_call_dicter,
     dataclasses.dataclass:
         _type_call_dataclass_as_dict,
+    Union:
+        _type_call_union,
+    type(None):
+        _type_call_none_type,
 }

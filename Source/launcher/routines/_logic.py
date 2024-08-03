@@ -67,7 +67,7 @@ class bin_ssl_arg_type(bin_arg_type):
                 timeout=timeout,
             )
         except urllib.error.URLError as e:
-            raise urllib.error.URLError(
+            raise Exception(
                 'No server is currently running on %s:%d (%s).' %
                 (self.web_host, self.web_port.port_num, path),
             )
@@ -221,7 +221,7 @@ class bin_entry(ver_entry, popen_entry):
             downloader.download_binary(self.rōblox_version, self.BIN_SUBTYPE)
             print('Download completed!')
         else:
-            raise FileNotFoundError(
+            raise Exception(
                 'Zipped file "%s" not found for Rōblox version %s.' %
                 (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
             )

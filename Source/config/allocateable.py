@@ -69,7 +69,7 @@ class obj_type:
                 return self.kwargs[key]
             if hasattr(current_typ, key):
                 return getattr(current_typ, key)
-            raise IndexError(
+            raise Exception(
                 'Unable to find setting "%s" in config file.' %
                 (key,)
             )

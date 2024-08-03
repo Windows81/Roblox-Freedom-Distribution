@@ -26,9 +26,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
         id_num,
         database.player_field.USERNAME,
     )
-
-    if username is None:
-        return False
+    assert username is not None
 
     self.send_json({'Username': username})
     return True
@@ -44,9 +42,7 @@ def _(self: web_server_handler) -> bool:
         username,
         database.player_field.ID_NUMBER,
     )
-
-    if id_num is None:
-        return False
+    assert id_num is not None
 
     self.send_data(id_num)
     return True

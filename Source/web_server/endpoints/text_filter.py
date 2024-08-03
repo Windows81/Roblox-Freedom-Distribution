@@ -26,9 +26,7 @@ def _(self: web_server_handler) -> bool:
         id_num,
         database.player_field.USER_CODE,
     )
-
-    if user_code is None:
-        return False
+    assert user_code is not None
 
     mod_text = self.game_config.server_core.filter_text(
         user_code,

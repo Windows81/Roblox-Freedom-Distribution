@@ -19,8 +19,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/rfd/certificate')
 def _(self: web_server_handler) -> bool:
-    if not isinstance(self.server, web_server_ssl):
-        return False
+    assert isinstance(self.server, web_server_ssl)
     self.server.add_identities(self.ip_addr)
     self.send_data(self.server.ssl_mutable.get_client_cert())
     return True

@@ -170,7 +170,11 @@ price = 1
 icon = 0
 
 [[remote_data.asset_redirects]]
-id_num = 13
+id_val = 13
+cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
+
+[[remote_data.asset_redirects]]
+id_val = 14
 uri = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 
 [server_assignment]

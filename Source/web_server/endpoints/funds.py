@@ -28,8 +28,7 @@ def _(self: web_server_handler) -> bool:
 
     # The item being purchased isn't a gamepass.
     gamepass = self.server.game_config.remote_data.gamepasses.get(gamepass_id)
-    if gamepass is None:
-        return False
+    assert gamepass is not None
 
     storage = self.server.storage
     if storage.gamepasses.check(user_id_num, gamepass_id):

@@ -28,9 +28,7 @@ def _(self: web_server_handler) -> bool:
         id_num,
         database.player_field.USER_CODE,
     )
-
-    if user_code is None:
-        return False
+    assert user_code is not None
 
     avatar = avatar_data(self.game_config, user_code)
     self.send_json({
@@ -76,9 +74,7 @@ def _(self: web_server_handler) -> bool:
         id_num,
         database.player_field.USER_CODE,
     )
-
-    if user_code is None:
-        return False
+    assert user_code is not None
 
     avatar = avatar_data(self.game_config, user_code)
     self.send_json({

@@ -60,8 +60,7 @@ def _(self: web_server_handler) -> bool:
         return False
 
     place_config = self.server.game_config.game_setup.place_file
-    if not place_config.enable_saveplace:
-        return False
+    assert place_config.enable_saveplace
 
     # Don't save place if the URI is from online.
     if place_config.rbxl_uri.is_online:

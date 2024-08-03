@@ -43,22 +43,26 @@ class asseter:
         for (prop_val, func) in funcs:
             if prop_val is not None:
                 return prop_val
-        raise ValueError()
+        raise Exception('Unable to extract asset id from URL query.')
 
-    def redirect_asset(self, redir_uri: wrappers.uri_obj) -> returns.base_type:
-        if redir_uri.is_online:
-            return returns.construct(redirect_url=redir_uri.value)
-        with open(redir_uri.value, 'rb') as f:
-            return returns.construct(data=f.read())
+    def redirect_asset(self, redir: structs.asset_redirect) -> returns.base_type:
+        if redir.uri is not None:
+            if redir.uri.is_online:
+                return returns.construct(redirect_url=redir.uri.value)
+            with open(redir.uri.value, 'rb') as f:
+                return returns.construct(data=f.read())
+        if redir.cmd_line is not None:
+            return returns.construct(cmd_line=redir.cmd_line)
+        return returns.construct()
 
     def get_asset(self, asset_id: int | str, bypass_blacklist: bool = False) -> returns.base_type:
         redirect = self.redirects.get(asset_id)
         if redirect is not None:
-            return self.redirect_asset(redirect.uri)
+            return self.redirect_asset(redirect)
         return returns.construct(data=self.cache.load_asset(asset_id, bypass_blacklist))
 
     def add_asset(self, asset_id: int | str, data: bytes) -> None:
         redirect = self.redirects.get(asset_id)
         if redirect is not None:
-            raise FileExistsError()
+            raise Exception('File does not exist.')
         self.cache.save_asset(asset_id, data)

@@ -51,7 +51,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         response = http.request('GET', from_uri.value)
 
         if response.status != 200:
-            raise FileNotFoundError("Place file couldn't be loaded.")
+            raise Exception("Place file couldn't be loaded.")
 
         cache.add_asset(const.PLACE_ID_CONST, parse(response.data))
         if config.game_setup.place_file.enable_saveplace:
