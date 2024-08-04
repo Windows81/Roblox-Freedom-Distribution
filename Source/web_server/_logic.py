@@ -306,7 +306,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             fn = os.path.join(fn, 'index.php')
         mime_type = mimetypes.guess_type(fn)[0]
 
-        if os.path.exists(fn):
+        if os.path.isfile(fn):
             self.send_header('content-type', mime_type)
             self.send_data(open(fn, "rb").read())
             return True

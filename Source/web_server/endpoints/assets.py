@@ -37,15 +37,6 @@ def _(self: web_server_handler) -> bool:
     elif isinstance(asset, returns.ret_none):
         self.send_error(404)
         return True
-    elif isinstance(asset, returns.ret_cmd_stdout):
-        self.send_response(200)
-        self.end_headers()
-        try:
-            while not asset.is_closed():
-                self.wfile.write(asset.read())
-        except Exception as e:
-            del asset
-        return True
     elif isinstance(asset, returns.ret_relocate):
         self.send_response(301)
         self.send_header("Location", asset.url)

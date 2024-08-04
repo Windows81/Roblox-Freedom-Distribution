@@ -1,4 +1,4 @@
-from .. import download
+from .. import extract
 from . import const
 import urllib3
 
@@ -57,4 +57,4 @@ def load_asset(asset_id: str) -> bytes | None:
             return response.data
 
     id_num = transform_to_id_num(asset_id)
-    return download.download_rōblox_asset(id_num)
+    return extract.download_rōblox_asset(id_num)

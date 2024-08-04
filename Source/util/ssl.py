@@ -90,7 +90,7 @@ class ssl_mutable:
         suffix = f'{count:03d}'
 
         path = get_path(f'{prefix}{suffix}.{ext}')
-        if os.path.exists(path):
+        if os.path.isfile(path):
             os.remove(path)
         return path
 

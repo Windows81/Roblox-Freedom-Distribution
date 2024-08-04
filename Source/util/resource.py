@@ -58,7 +58,7 @@ def make_dirs(full_path: str) -> None:
         pieces.append(head)
 
     for head in reversed(pieces):
-        if not os.path.exists(head):
+        if not os.path.isdir(head):
             os.mkdir(head)
 
 
