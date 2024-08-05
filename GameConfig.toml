@@ -175,7 +175,8 @@ icon = 0
 
 [[remote_data.asset_redirects]]
 id_val = 13
-cmd_line = '''ffmpeg -i "https://archive.org/download/youtube-DMtOlxH7JQo/DMtOlxH7JQo.mp4" -c:v libvpx -b:v 3000k -speed 16 -c:a libvorbis -b:a 128k -ar 44100 -f webm -'''
+uri = 'https://archive.org/download/youtube-f3AD_dk7MgQ/f3AD_dk7MgQ.webm'
+#cmd_line = '''sh -c 'ffmpeg -i $(yt-dlp -g -f b "ykS9ooPccq4") -c:v libvpx -b:v 3000k -speed 16 -c:a libvorbis -b:a 128k -ar 44100 -f webm -''''
 
 [[remote_data.asset_redirects]]
 id_val = 14
