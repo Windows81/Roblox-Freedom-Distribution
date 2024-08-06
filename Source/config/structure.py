@@ -87,7 +87,7 @@ class config_type(allocateable.obj_type):
         '''
 
         retrieve_account_age: Callable[[str], int]
-        retrieve_funds: Callable[[str], int]
+        retrieve_default_funds: Callable[[str], int]
         filter_text: Callable[[str, str], str]
 
     class remote_data(allocateable.obj_type):

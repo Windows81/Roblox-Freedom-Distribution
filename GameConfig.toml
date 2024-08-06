@@ -2,9 +2,6 @@
 # PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
 # Some arguments are provided as absolute paths and only work on my machine.
 
-# Wildcard which matches against the `GIT_RELEASE_VERSION`.
-# Useful for protecting changes in config structure between RFD versions.
-# If not included, the value is "*".
 metadata.config_version_wildcard = "*"
 
 [game_setup]
@@ -23,12 +20,9 @@ icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 startup_script = ''
 
 [game_setup.place_file]
-# Can be a file path or an online resource through HTTP(S).
 rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\VideoTest.rbxl'
 # rbxl_uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
 
-# When game:SavePlace() is called, overwrites the place at `rbxl_uri`.
-# Doesn't work if `rbxl_uri` points to an online resource.
 enable_saveplace = false
 
 [game_setup.persistence]
@@ -147,7 +141,7 @@ function(user_code) -- str -> str
 end
 '''
 
-retrieve_funds = '''
+retrieve_default_funds = '''
 function(user_code) -- str -> int
     return 6969
 end
@@ -159,19 +153,16 @@ chat_style = 'ClassicAndBubble'
 id_num = 757
 name = 'uuuuu'
 price = 1
-icon = 0
 
 [[remote_data.gamepasses]]
 id_num = 163231044
 name = 'EnforcersPowers'
 price = 1
-icon = 0
 
 [[remote_data.gamepasses]]
 id_num = 163230957
 name = 'DoubleCash'
 price = 1
-icon = 0
 
 [[remote_data.asset_redirects]]
 id_val = 13

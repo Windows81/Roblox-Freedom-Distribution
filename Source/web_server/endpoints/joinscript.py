@@ -17,7 +17,7 @@ def init_player(self: web_server_handler, user_code: str) -> tuple[str, int, str
     )
     # This method only affects a player's fund balance if they're joining for the first time.
     self.server.storage.funds.init(
-        id_num,  config.server_core.retrieve_funds(user_code),
+        id_num,  config.server_core.retrieve_default_funds(user_code),
     )
     return (user_code, id_num, username)
 

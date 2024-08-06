@@ -38,9 +38,7 @@ def _(self: web_server_handler) -> bool:
         self.send_error(404)
         return True
     elif isinstance(asset, returns.ret_relocate):
-        self.send_response(301)
-        self.send_header("Location", asset.url)
-        self.end_headers()
+        self.send_redirect(asset.url)
         return True
     return False
 

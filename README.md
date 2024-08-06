@@ -72,7 +72,9 @@ py Source/_main.py player -rh 172.88.194.43 -rp 2005 -wp 2006
 
 ### `server`
 
-Game-specific options are specified in the `--config_path` argument, which defaults to `./GameConfig.toml`. **Please review each option in the config file before starting your server up.**
+Game-specific options are specified in the `--config_path` argument, which defaults to `./GameConfig.toml`.
+
+[**Please review each option in the config file before starting your server up.**](#config-file-structure)
 
 | Option                 | Type         | Default             |
 | ---------------------- | ------------ | ------------------- |
@@ -161,6 +163,310 @@ Where `...` is [your command-line prefix](#installation),
 
 ```shell
 ... player -rh 172.88.194.43 -rp 2005 -wp 2006
+```
+
+## Config File Structure
+
+This is current as of 2024-08-06. Some options might be different in future versions.
+
+#### `metadata.config_version_wildcard`
+
+Resolves to a wildcard.
+
+_Wildcard_ which matches against the `GIT_RELEASE_VERSION` internal constant. Useful for protecting changes in config structure between RFD versions. If not included, the value is "\*".
+
+#### `server_assignment.players.maximum`
+
+Resolves to type `int`.
+
+#### `server_assignment.players.preferred`
+
+Resolves to type `int`.
+
+#### `server_assignment.instances.count`
+
+Resolves to type `int`.
+
+#### `game_setup.roblox_version`
+
+The following are valid version strings.
+
+```
+"v348", "2018M", "2018"
+"v463", "2021E", "2021"
+```
+
+All entries on the same line are aliases for the same version.
+
+#### `game_setup.startup_script`
+
+Resolves to type `str`.
+
+Runs at the CoreScript security level whenever a new _server_ is started.
+
+```
+startup_script = 'game.workspace.FilteringEnabled = false'
+```
+
+#### `game_setup.title`
+
+Resolves to type `str`.
+
+#### `game_setup.description`
+
+Resolves to type `str`.
+
+#### `game_setup.creator_name`
+
+Resolves to type `str`.
+
+#### `game_setup.icon_path`
+
+Resolves to type `path_str`. Relative paths are traced from the directory where the config file is placed.
+
+```
+rbxl_uri = 'c:\Users\USERNAME\Documents\Baseplate.rbxl'
+```
+
+#### `game_setup.place_file.rbxl_uri`
+
+Resolves to type `uri_obj`.
+
+Can resolve to either a relative or absolute local path.
+Can also be extracted from a remote URL.
+
+```
+rbxl_uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
+```
+
+#### `game_setup.place_file.enable_saveplace`
+
+Resolves to type `bool`.
+
+When game:SavePlace() is called, overwrites the place at `rbxl_uri`. Doesn't work if `rbxl_uri` points to an online resource.
+
+#### `game_setup.asset_cache.dir_path`
+
+Resolves to type `path_str`. Relative paths are traced from the directory where the config file is placed.
+
+#### `game_setup.persistence.clear_on_start`
+
+Resolves to type `bool`.
+
+#### `game_setup.persistence.sqlite_path`
+
+Resolves to type `path_str`. Relative paths are traced from the directory where the config file is placed.
+
+#### `server_core.chat_style`
+
+Corresponds to Rōblox [`Enum.ChatStyle`](https://create.roblox.com/docs/reference/engine/enums/ChatStyle). Can either be `"Classic"`, `"Bubble"`, or `"ClassicAndBubble"`.
+
+#### `server_core.retrieve_default_user_code`
+
+Resolves to type `function ($1) -> $2`.
+
+If the client doesn't include a user code whilst connecting to the server, this function is called. Should be a randomly-generated value.
+
+```
+retrieve_default_user_code = '''
+function(tick) -- float -> str
+    return string.format('Player%d', tick)
+end
+```
+
+#### `server_core.check_user_allowed`
+
+Resolves to type `(str) -> bool`.
+
+#### `server_core.retrieve_username`
+
+Resolves to type `(str) -> str`.
+
+Only gets called the first time a new user joins. Otherwise, RFD checks for a cached value in [the `sqlite` database](#game_setuppersistencesqlite_path).
+
+#### `server_core.retrieve_user_id`
+
+Resolves to type `(str) -> int`.
+
+Only gets called the first time a new user joins. Otherwise, RFD checks for a cached value in [the `sqlite` database](#game_setuppersistencesqlite_path).
+
+#### `server_core.retrieve_avatar_type`
+
+Resolves to type `(str) -> Enum.HumanoidRigType`.
+
+Where Rōblox [`Enum.HumanoidRigType`](https://create.roblox.com/docs/reference/engine/enums/HumanoidRigType) can either be `"R6"` or `"R15"`.
+
+```
+retrieve_avatar_type = '''
+function(user_code) -- str -> str
+    return 'R15'
+end
+'''
+```
+
+#### `server_core.retrieve_avatar_items`
+
+Resolves to type `(str) -> list[int]`.
+
+```
+retrieve_avatar_items = '''
+function(user_code) -- str -> [str]
+    return {
+        10726856854,
+        9482991343,
+        9481782649,
+        9120251003,
+        4381817635,
+        6969309778,
+        5731052645,
+        2846257298,
+        121390054,
+        261826995,
+        154386348,
+        201733574,
+        48474294,
+        6340101,
+        192483960,
+        190245296,
+        183808364,
+        34247191,
+    }
+end
+'''
+```
+
+#### `server_core.retrieve_avatar_scales`
+
+Resolves to type `(str) -> util.types.structs.avatar_scales`.
+
+```
+retrieve_avatar_scales = '''
+function(user_code) -- str -> {[str]: number}
+    return {
+        height = 1,
+        width = 0.8,
+        head = 1,
+        depth = 0.8,
+        proportion = 0,
+        body_type = 0,
+    }
+end
+'''
+```
+
+#### `server_core.retrieve_avatar_colors`
+
+Resolves to type `(str) -> util.types.structs.avatar_colors`.
+
+```
+retrieve_avatar_colors = '''
+function(user_code) -- str -> {[str]: number}
+    return {
+        head = 315,
+        left_arm = 315,
+        left_leg = 315,
+        right_arm = 315,
+        right_leg = 315,
+        torso = 315,
+    }
+end
+'''
+```
+
+#### `server_core.retrieve_groups`
+
+Resolves to type `(str) -> dict[str, int]`.
+
+Key is the group id. Value is the rank.
+
+```
+retrieve_groups = '''
+function(user_code) -- str -> str
+    return {
+        ['1200769'] = 255;
+        ['2868472'] = 255;
+        ['4199740'] = 255;
+        ['4265462'] = 255;
+        ['4265456'] = 255;
+        ['4265443'] = 255;
+        ['4265449'] = 255;
+    }
+end
+'''
+```
+
+#### `server_core.retrieve_account_age`
+
+Resolves to type `(str) -> int`.
+
+#### `server_core.retrieve_default_funds`
+
+Resolves to type `(str) -> int`.
+
+Established the amount of funds that a player receives when they join a server for the first time. These funds can only be spent on [server-defined gamepasses](#remote_datagamepasses).
+
+```
+retrieve_default_funds = '''
+function(user_code) -- str -> int
+    return 6969
+end
+'''
+```
+
+#### `server_core.filter_text`
+
+Resolves to type `(str, str) -> str`.
+
+#### `remote_data.gamepasses`
+
+Resolves to a data dictionary.
+
+```
+[[remote_data.gamepasses]]
+id_num = 163231044
+name = 'EnforcersPowers'
+price = 100
+```
+
+#### `remote_data.asset_redirects`
+
+Resolves to a data dictionary.
+
+When an RFD server receives a request to load an asset by id, it does so from Roblox.com by default.
+
+However, entries in [`asset_redirects`](#remote_dataasset_redirects) override that default and
+
+Through the `uri` field, assets can load either from a local or remote resource.
+
+```
+[[remote_data.asset_redirects]]
+id_val = 13
+uri = 'c:\Users\USERNAME\Pictures\Image.jpg'
+```
+
+You can include a `cmd_line` field if you want the loaded asset to literally come from the `stdout` of a program.
+
+```
+[[remote_data.asset_redirects]]
+id_val = 14
+uri = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
+```
+
+```
+[[remote_data.asset_redirects]]
+id_val = 15
+cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
+```
+
+#### `remote_data.badges`
+
+Resolves to a data dictionary.
+
+```
+[[remote_data.badges]]
+id_num = 757
+name = 'Awardable Badge'
+price = 1
 ```
 
 ---

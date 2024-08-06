@@ -8,14 +8,14 @@ class gamepass:
     id_num: int
     name: str
     price: int
-    icon: int
+    icon: wrappers.uri_obj | None = None
 
 
 @dataclasses.dataclass
 class badge:
     id_num: int
     name: str
-    icon: int
+    icon: wrappers.uri_obj | None = None
 
 
 @dataclasses.dataclass

@@ -265,6 +265,11 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             # A `ssl.SSLEOFError` is likely thrown whenever a request is interrupted.
             pass
 
+    def send_redirect(self, url: str) -> None:
+        self.send_response(301)
+        self.send_header("Location", url)
+        self.end_headers()
+
     def __open_from_static(self) -> bool:
         key = server_func_key(
             mode=func_mode.STATIC,
