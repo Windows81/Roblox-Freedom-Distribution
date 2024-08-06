@@ -171,9 +171,9 @@ This is current as of 2024-08-06. Some options might be different in future vers
 
 #### `metadata.config_version_wildcard`
 
-Resolves to a wildcard.
+Resolves to a wildcard; defaults to `"*"`.
 
-_Wildcard_ which matches against the `GIT_RELEASE_VERSION` internal constant. Useful for protecting changes in config structure between RFD versions. If not included, the value is "\*".
+Matches against the `GIT_RELEASE_VERSION` internal constant. Useful for protecting changes in config structure between RFD versions.
 
 #### `server_assignment.players.maximum`
 
@@ -241,7 +241,7 @@ rbxl_uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Robl
 
 #### `game_setup.place_file.enable_saveplace`
 
-Resolves to type `bool`.
+Resolves to type `bool`; defaults to false.
 
 When game:SavePlace() is called, overwrites the place at `rbxl_uri`. Doesn't work if `rbxl_uri` points to an online resource.
 
@@ -249,9 +249,17 @@ When game:SavePlace() is called, overwrites the place at `rbxl_uri`. Doesn't wor
 
 Resolves to type `path_str`. Relative paths are traced from the directory where the config file is placed.
 
+#### `game_setup.asset_cache.clear_on_start`
+
+Resolves to type `bool`; defaults to false.
+
+If true, deletes cache from assets which should redirect so that the config file remains correct.
+
 #### `game_setup.persistence.clear_on_start`
 
-Resolves to type `bool`.
+Resolves to type `bool`; defaults to false.
+
+If true, clears all persistent data before starting a new server.
 
 #### `game_setup.persistence.sqlite_path`
 
@@ -278,17 +286,41 @@ end
 
 Resolves to type `(str) -> bool`.
 
+```
+check_user_allowed = '''
+function(user_code) -- string -> bool
+    return true
+end
+'''
+```
+
 #### `server_core.retrieve_username`
 
 Resolves to type `(str) -> str`.
 
 Only gets called the first time a new user joins. Otherwise, RFD checks for a cached value in [the `sqlite` database](#game_setuppersistencesqlite_path).
 
+```
+retrieve_username = '''
+function(user_code)
+    return user_code
+end
+'''
+```
+
 #### `server_core.retrieve_user_id`
 
 Resolves to type `(str) -> int`.
 
 Only gets called the first time a new user joins. Otherwise, RFD checks for a cached value in [the `sqlite` database](#game_setuppersistencesqlite_path).
+
+```
+retrieve_user_id = '''
+function(user_code)
+    return math.random(1, 16777216)
+end
+'''
+```
 
 #### `server_core.retrieve_avatar_type`
 
@@ -298,7 +330,7 @@ Where Rōblox [`Enum.HumanoidRigType`](https://create.roblox.com/docs/reference/
 
 ```
 retrieve_avatar_type = '''
-function(user_code) -- str -> str
+function(user_code)
     return 'R15'
 end
 '''
@@ -306,11 +338,11 @@ end
 
 #### `server_core.retrieve_avatar_items`
 
-Resolves to type `(str) -> list[int]`.
+Resolves to type `(str) -> [int]`.
 
 ```
 retrieve_avatar_items = '''
-function(user_code) -- str -> [str]
+function(user_code)
     return {
         10726856854,
         9482991343,
@@ -341,7 +373,7 @@ Resolves to type `(str) -> util.types.structs.avatar_scales`.
 
 ```
 retrieve_avatar_scales = '''
-function(user_code) -- str -> {[str]: number}
+function(user_code)
     return {
         height = 1,
         width = 0.8,
@@ -360,7 +392,7 @@ Resolves to type `(str) -> util.types.structs.avatar_colors`.
 
 ```
 retrieve_avatar_colors = '''
-function(user_code) -- str -> {[str]: number}
+function(user_code)
     return {
         head = 315,
         left_arm = 315,
@@ -381,7 +413,7 @@ Key is the group id. Value is the rank.
 
 ```
 retrieve_groups = '''
-function(user_code) -- str -> str
+function(user_code)
     return {
         ['1200769'] = 255;
         ['2868472'] = 255;
@@ -399,6 +431,14 @@ end
 
 Resolves to type `(str) -> int`.
 
+```
+retrieve_account_age = '''
+function(user_code) -- str -> int
+    return 6969
+end
+'''
+```
+
 #### `server_core.retrieve_default_funds`
 
 Resolves to type `(str) -> int`.
@@ -407,7 +447,7 @@ Established the amount of funds that a player receives when they join a server f
 
 ```
 retrieve_default_funds = '''
-function(user_code) -- str -> int
+function(user_code)
     return 6969
 end
 '''

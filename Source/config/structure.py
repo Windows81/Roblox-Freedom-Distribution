@@ -32,7 +32,7 @@ class config_type(allocateable.obj_type):
 
         class persistence(allocateable.obj_type):
             sqlite_path: wrappers.path_str
-            clear_on_start: bool
+            clear_on_start: bool = False
 
         roblox_version: util.versions.rōblox
         startup_script: str = ''
