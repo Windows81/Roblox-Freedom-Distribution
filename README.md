@@ -191,10 +191,10 @@ Resolves to type `int`.
 
 The following are valid version strings.
 
-```
-"v348", "2018M", "2018"
-"v463", "2021E", "2021"
-```
+|          |           |          |
+| -------- | --------- | -------- |
+| `"v348"` | `"2018M"` | `"2018"` |
+| `"v463"` | `"2021E"` | `"2021"` |
 
 All entries on the same line are aliases for the same version.
 
@@ -212,38 +212,45 @@ startup_script = 'game.workspace.FilteringEnabled = false'
 
 Resolves to type `str`.
 
+Shows up when a player joins the server.
+
 #### `game_setup.description`
 
 Resolves to type `str`.
+
+Shows up when a player joins the server.
 
 #### `game_setup.creator_name`
 
 Resolves to type `str`.
 
+Shows up when a player joins the server.
+
 #### `game_setup.icon_path`
 
 Resolves to type `path_str`. Relative paths are traced from the directory where the config file is placed.
+
+Shows up when a player joins the server.
+
+#### `game_setup.place_file.rbxl_uri`
+
+Resolves to type `uri_obj`. Files must be encoded in the binary `rbxl` format and not in the human-readable `rbxlx` format.
+
+Can resolve to either a relative or absolute local path -- or extracted from a remote URL.
 
 ```
 rbxl_uri = 'c:\Users\USERNAME\Documents\Baseplate.rbxl'
 ```
 
-#### `game_setup.place_file.rbxl_uri`
-
-Resolves to type `uri_obj`.
-
-Can resolve to either a relative or absolute local path.
-Can also be extracted from a remote URL.
-
 ```
-rbxl_uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
+rbxl_uri = 'https://archive.org/download/robloxBR1/RBR1/RBR1.rbxl'
 ```
 
 #### `game_setup.place_file.enable_saveplace`
 
 Resolves to type `bool`; defaults to false.
 
-When game:SavePlace() is called, overwrites the place at `rbxl_uri`. Doesn't work if `rbxl_uri` points to an online resource.
+When `game:SavePlace()` is called and `enable_saveplace` is true, the file at [`rbxl_uri`](#game_setupplace_filerbxl_uri) is overwritten. It won't work if `rbxl_uri` points to a remote resource.
 
 #### `game_setup.asset_cache.dir_path`
 
@@ -273,7 +280,7 @@ Corresponds to Rōblox [`Enum.ChatStyle`](https://create.roblox.com/docs/referen
 
 Resolves to type `function ($1) -> $2`.
 
-If the client doesn't include a user code whilst connecting to the server, this function is called. Should be a randomly-generated value.
+If the client doesn't include a [`-u` user code](#player) whilst connecting to the server, this function is called. Should be a randomly-generated value.
 
 ```
 retrieve_default_user_code = '''

@@ -57,4 +57,6 @@ UpdateZippedDirVersion
 UpdateAndPush
 CreateBinary
 CreateZippedDirs
-gh release create "$release_name" --notes "" $files -p
+
+$title = (Read-Host "Version title?")
+gh release create "$release_name" --notes "" $files --title $title -p
