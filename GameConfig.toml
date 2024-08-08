@@ -6,7 +6,7 @@ metadata.config_version_wildcard = "*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2018'
+roblox_version = '2021'
 
 title = 'òó'
 description = ''
@@ -19,7 +19,7 @@ icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
-rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\Town of Exploitation.rbxl'
+rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\F3X Test.rbxl'
 
 enable_saveplace = false
 
