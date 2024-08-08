@@ -160,13 +160,13 @@ Where `...` is [your command-line prefix](#installation),
 ### Server
 
 ```shell
-... server -rp 2005 --config ./GameConfig.toml
+... server -p 2005 --config ./GameConfig.toml
 ```
 
 ### Player
 
 ```shell
-... player -rh 172.88.194.43 -rp 2005
+... player -rh 172.88.194.43 -p 2005
 ```
 
 ## Config File Structure
