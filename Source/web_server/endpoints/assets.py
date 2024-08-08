@@ -43,7 +43,7 @@ def _(self: web_server_handler) -> bool:
     return False
 
 
-@ server_path('/ownership/hasasset', commands={'GET'})
+@server_path('/ownership/hasasset', commands={'GET'})
 def _(self: web_server_handler) -> bool:
     '''
     Typically used to check if players own specific catalogue items.

@@ -12,28 +12,38 @@ def _(
 ) -> None:
 
     subparser.add_argument(
-        '--rcc_host', '-rh', type=str,
-        default=None, nargs='?',
+        '--rcc_host', '-rh', '-h',
+        type=str,
+        nargs='?',
+        default=None,
         help='Hostname or IP address to connect this program to the RCC server.',
     )
     subparser.add_argument(
-        '--rcc_port', '-rp', type=int,
-        default=2005, nargs='?',
+        '--rcc_port', '-rp', '-p',
+        type=int,
+        nargs='?',
+        default=None,
         help='Port number to connect this program to the RCC server.',
     )
     subparser.add_argument(
-        '--web_host', '-wh', type=str,
-        default=None, nargs='?',
+        '--web_host', '-wh',
+        type=str,
+        nargs='?',
+        default=None,
         help='Hostname or IP address to connect this program to the web server.',
     )
     subparser.add_argument(
-        '--web_port', '-wp', type=int,
-        default=2006, nargs='?',
+        '--web_port', '-wp',
+        type=int,
+        nargs='?',
+        default=None,
         help='Port number to connect this program to the web server.',
     )
     subparser.add_argument(
         '--user_code', '-u',
-        type=str, nargs='?',
+        type=str,
+        nargs='?',
+        default=None,
     )
 
 
@@ -43,8 +53,15 @@ def _(
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
 
-    if not (args.web_host or args.rcc_host):
-        parser.error('No hostname requested; add --web_host or --rcc_host.')
+    if args.web_host is None:
+        args.web_host = args.rcc_host or 'localhost'
+    if args.rcc_host is None:
+        args.rcc_host = args.web_host or 'localhost'
+
+    if args.web_port is None:
+        args.web_port = args.rcc_port or 2005
+    if args.rcc_port is None:
+        args.rcc_port = args.web_port or 2005
 
     return [
         player.arg_type(

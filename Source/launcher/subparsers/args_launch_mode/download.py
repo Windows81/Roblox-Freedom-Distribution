@@ -1,8 +1,7 @@
 import launcher.subparsers._logic as sub_logic
 import launcher.routines.download as download
-import launcher.routines.rcc_server as rcc_server
+from ...routines import _logic as logic, rcc
 import launcher.routines.player as player
-from ...routines import _logic as logic
 import util.resource
 import util.versions
 import argparse
@@ -23,7 +22,7 @@ def _(
         type=util.resource.bin_subtype,
         choices=[
             player.obj_type.BIN_SUBTYPE.value,
-            rcc_server.obj_type.BIN_SUBTYPE.value,
+            rcc.obj_type.BIN_SUBTYPE.value,
         ],
         help='Directories to download.',
         nargs='+',

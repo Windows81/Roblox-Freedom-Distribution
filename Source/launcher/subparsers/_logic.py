@@ -7,14 +7,12 @@ class launch_mode(enum.Enum):
     ALWAYS = 'always'
     SERVER = 'server'
     PLAYER = 'player'
-    STUDIO = 'studio'
     DOWNLOAD = 'download'
 
 
 ENABLED_LAUNCH_MODES = {
     launch_mode.SERVER,
     launch_mode.PLAYER,
-    # launch_mode.STUDIO, TODO: get some Studio binaries.
     launch_mode.DOWNLOAD,
 }
 

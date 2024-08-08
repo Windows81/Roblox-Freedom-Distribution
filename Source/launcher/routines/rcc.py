@@ -1,6 +1,4 @@
 import web_server._logic as web_server_logic
-import web_server as web_server
-
 from ..startup_scripts import rcc_server
 from . import _logic as logic
 import util.const as const
@@ -148,17 +146,16 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             [
                 self.get_versioned_path('RCCService.exe'),
 
-                f'-placeid:{const.PLACE_ID_CONST}',
+                f'-PlaceId:{const.PLACE_ID_CONST}',
 
-                '-localtest', self.get_versioned_path(
+                '-LocalTest', self.get_versioned_path(
                     'GameServer.json',
                 ),
 
-                '-settingsfile', self.get_versioned_path(
+                '-SettingsFile', self.get_versioned_path(
                     'DevSettingsFile.json',
                 ),
 
-                '-port 64989',
                 *(('-verbose',) if self.local_args.verbose else ()),
             ],
             stdin=subprocess.PIPE,
@@ -182,12 +179,12 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             self.make_rcc_popen()
 
 
-@ dataclasses.dataclass
+@dataclasses.dataclass
 class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
 
+    rcc_port_num: int | None
     game_config: config.obj_type
-    rcc_port_num: int = 2005
     skip_popen: bool = False
     verbose: bool = False
     web_port: web_server_logic.port_typ = web_server_logic.port_typ(

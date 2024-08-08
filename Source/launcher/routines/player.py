@@ -1,6 +1,4 @@
 import web_server._logic as web_server_logic
-import web_server as web_server
-
 from . import _logic as logic
 import urllib.request
 import util.resource
@@ -74,14 +72,10 @@ class obj_type(logic.bin_ssl_entry):
 class arg_type(logic.bin_ssl_arg_type, logic.host_arg_type):
     obj_type = obj_type
 
-    rcc_host: str = 'localhost'
-    rcc_port_num: int = 2005
-    web_host: str | None = None
-    web_port: web_server_logic.port_typ = web_server_logic.port_typ(
-        port_num=80,
-        is_ssl=False,
-        is_ipv6=False,
-    ),  # type: ignore
+    rcc_host: str
+    rcc_port_num: int
+    web_host: str
+    web_port: web_server_logic.port_typ
     user_code: str | None = None
     launch_delay: float = 0
 
@@ -91,7 +85,7 @@ class arg_type(logic.bin_ssl_arg_type, logic.host_arg_type):
         it needs to be executed after `launch_delay` seconds.
         The `sanitise` method gets executed before that delay.
         '''
-        if self.user_code:
+        if self.user_code is not None:
             return
         res = self.send_request('/rfd/default-user-code')
         self.user_code = str(res.read(), encoding='utf-8')

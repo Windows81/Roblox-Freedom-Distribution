@@ -18,10 +18,8 @@ import re
 import os
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(unsafe_hash=True)
 class port_typ:
-    def __hash__(self) -> int:
-        return self.port_num
     port_num: int
     is_ssl: bool = True
     is_ipv6: bool = False
@@ -30,21 +28,6 @@ class port_typ:
 class func_mode(enum.Enum):
     STATIC = 0
     REGEX = 1
-
-
-class holder(dict[versions.rōblox, Any]):
-    def __add_pred(self, func: Callable[[int], bool], obj):
-        for v in versions.rōblox:
-            if not func(v.get_number()):
-                continue
-            super().__setitem__(v, obj)
-        return obj
-
-    def add_min(self, obj, min_version: int):
-        return self.__add_pred(lambda n: n >= min_version, obj)
-
-    def add_all(self, obj):
-        return self.__add_pred(lambda n: True, obj)
 
 
 @dataclasses.dataclass(frozen=True)

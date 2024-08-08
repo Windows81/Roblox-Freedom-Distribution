@@ -2,7 +2,6 @@ from .subparsers.args_launch_mode import (
     download,
     player,
     server,
-    studio,
 )
 
 from .subparsers.args_aux import (

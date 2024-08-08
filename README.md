@@ -80,7 +80,7 @@ Game-specific options are specified in the `--config_path` argument, which defau
 | ---------------------- | ------------ | ------------------- |
 | `--config_path`, `-cp` | `int`        | `./GameConfig.toml` |
 | `--rcc_port`, `-rp`    | `int`        | 2005                |
-| `--web_port`, `-wp`    | `int`        | 2006                |
+| `--web_port`, `-wp`    | `int`        | 2005                |
 | `--run_client`, `-rc`  | `store_true` | N/A                 |
 | `--skip_rcc`           | `store_true` | N/A                 |
 | `--skip_rcc_popen`     | `store_true` | N/A                 |
@@ -88,13 +88,13 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 ### `player`
 
-| Option              | Type  | Default |
-| ------------------- | ----- | ------- |
-| `--rcc_host`, `-rh` | `str` | None    |
-| `--rcc_port`, `-rp` | `int` | 2005    |
-| `--web_host`, `-wh` | `str` | N/A     |
-| `--web_port`, `-wp` | `int` | 2006    |
-| `--user_code`, `-u` | `str` | N/A     |
+| Option                    | Type  | Default |
+| ------------------------- | ----- | ------- |
+| `--rcc_host`, `-rh`, `-h` | `str` | None    |
+| `--rcc_port`, `-rp`, `-p` | `int` | 2005    |
+| `--web_host`, `-wh`       | `str` | N/A     |
+| `--web_port`, `-wp`       | `int` | 2005    |
+| `--user_code`, `-u`       | `str` | N/A     |
 
 ### Misc.
 
@@ -102,15 +102,19 @@ Command syntaxes for `studio` and `download` also exists, but haven't been adequ
 
 ## Network Ports in Use
 
-Anyone can host a server and must leave **two** network ports of their choice accessible.
+**To keep it simple: just open port 2005 on both TCP and UDP.**
+
+Anyone can host a server and must leave _both a TCP and UDP network port_ of their choice accessible.
+
+It's possible to connect to a webserver and an RCC server from different hosts. However, I wouldn't recommend it.
 
 ### RCC (UDP)
 
-RCC is an acronym for 'Rōblox Cloud Compute', which is the `exe` program we use to run the Rōblox servers. It leaves one (maybe two) relevant port open.
+RCC is an acronym for 'Rōblox Cloud Compute', which is the `exe` program we use to run the Rōblox servers. The UDP-based protocol it communicated with built under [RakNet](http://www.raknet.com/).
 
 Host is specified by the `--rcc_host` or `-rh` option.
 
-Port is specified by the `--rcc_port` or `-rp` option **(defaults to 2005)**.
+Port is specified by the `--rcc_port` or `-rp` option.
 
 ### Webserver (HTTPS)
 
@@ -118,7 +122,7 @@ The webserver is responsible for facilitating player connections and loading in-
 
 Host is optionally specified by the `--webserver_host` or `-wh` option, in case RCC is hosted elsewhere.
 
-Port is specified by the `--webserver_port` or `-wp` option **(defaults to 2006)**.
+Port is specified by the `--webserver_port` or `-wp` option.
 
 ## Studio?
 
@@ -156,13 +160,13 @@ Where `...` is [your command-line prefix](#installation),
 ### Server
 
 ```shell
-... server -rp 2005 -wp 2006 --config ./GameConfig.toml
+... server -rp 2005 --config ./GameConfig.toml
 ```
 
 ### Player
 
 ```shell
-... player -rh 172.88.194.43 -rp 2005 -wp 2006
+... player -rh 172.88.194.43 -rp 2005
 ```
 
 ## Config File Structure
