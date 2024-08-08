@@ -59,4 +59,4 @@ UpdateAndPush
 CreateBinary
 CreateZippedDirs
 
-gh release create "$release_name" --notes "" $files -p
+gh release create "$commit_name" --notes "" --title "$release_name" $files -p
