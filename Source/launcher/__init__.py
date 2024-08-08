@@ -61,7 +61,7 @@ def parse_arg_list(args: list[str] | None) -> list:
     # Adds '--help' argument manually after the super parser called 'parse_known_args'.
     # Otherwise, the program would stop earlier and the help-text would be incomplete.
     chosen_sub_parser.add_argument(
-        '--help', '-h',
+        '--help', '-?',
         help='show this help message and exit',
         action='help',
     )

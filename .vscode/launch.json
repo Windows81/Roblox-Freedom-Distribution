@@ -86,12 +86,10 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"player",
-				"-rh",
+				"-h",
 				"treatment-col.gl.at.ply.gg",
-				"-rp",
+				"-p",
 				"56288",
-				"-wp",
-				"56829",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true

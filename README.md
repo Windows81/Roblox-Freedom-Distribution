@@ -76,15 +76,15 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 [**Please review each option in the config file before starting your server up.**](#config-file-structure)
 
-| Option                 | Type         | Default             |
-| ---------------------- | ------------ | ------------------- |
-| `--config_path`, `-cp` | `int`        | `./GameConfig.toml` |
-| `--rcc_port`, `-rp`    | `int`        | 2005                |
-| `--web_port`, `-wp`    | `int`        | 2005                |
-| `--run_client`, `-rc`  | `store_true` | N/A                 |
-| `--skip_rcc`           | `store_true` | N/A                 |
-| `--skip_rcc_popen`     | `store_true` | N/A                 |
-| `--skip_web`           | `store_true` | N/A                 |
+| Option                    | Type         | Default             |
+| ------------------------- | ------------ | ------------------- |
+| `--config_path`, `-cp`    | `int`        | `./GameConfig.toml` |
+| `--rcc_port`, `-rp`, `-p` | `int`        | 2005                |
+| `--web_port`, `-wp`       | `int`        | 2005                |
+| `--run_client`, `-rc`     | `store_true` | N/A                 |
+| `--skip_rcc`              | `store_true` | N/A                 |
+| `--skip_rcc_popen`        | `store_true` | N/A                 |
+| `--skip_web`              | `store_true` | N/A                 |
 
 ### `player`
 
