@@ -27,7 +27,7 @@ def subparse(
         help='Game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up.',
     )
     subparser.add_argument(
-        '--rcc_port', '-rp',
+        '--rcc_port', '-rp', '-p',
         type=int,
         nargs='?',
         default=None,

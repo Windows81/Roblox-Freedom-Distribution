@@ -43,7 +43,7 @@ curl https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/do
 To launch RFD, your command line will look something like this:
 
 ```
-./RFD.exe player -rh 172.88.194.43 -rp 2005 -wp 2006
+./RFD.exe player -h 172.88.194.43 -p 2005
 ```
 
 #### For GNU/Linux
@@ -65,7 +65,7 @@ pip install -r ./Source/requirements.txt
 To launch RFD, your command line will look something like this:
 
 ```
-py Source/_main.py player -rh 172.88.194.43 -rp 2005 -wp 2006
+py Source/_main.py player -h 172.88.194.43 -p 2005
 ```
 
 ## Command Syntax
@@ -112,9 +112,9 @@ It's possible to connect to a webserver and an RCC server from different hosts. 
 
 RCC is an acronym for 'Rōblox Cloud Compute', which is the `exe` program we use to run the Rōblox servers. The UDP-based protocol it communicated with built under [RakNet](http://www.raknet.com/).
 
-Host is specified by the `--rcc_host` or `-rh` option.
+Host is specified by the `-h` option (also by `--rcc_host` or `-rh`).
 
-Port is specified by the `--rcc_port` or `-rp` option.
+Port is specified by the `-p` option (also by `--rcc_port` or `-rp`).
 
 ### Webserver (HTTPS)
 
