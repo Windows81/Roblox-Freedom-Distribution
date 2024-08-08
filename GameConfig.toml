@@ -6,7 +6,7 @@ metadata.config_version_wildcard = "*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
-roblox_version = '2021'
+roblox_version = '2018'
 
 title = 'òó'
 description = ''
@@ -16,12 +16,10 @@ creator_name = 'ÒÓ'
 icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 # Runs at the CoreScript security level whenever a new *server* is started.
-# startup_script = 'game.workspace.FilteringEnabled = false'
-startup_script = ''
+startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
-rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\VideoTest.rbxl'
-# rbxl_uri = 'https://archive.org/download/uncopylocked-roblox/Uncopylocked%20Roblox.zip/Uncopylocked%20Roblox%2FOpen%20Source%20Free%202016%2FZeekerss%2FDoodle.rbxl'
+rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\Town of Exploitation.rbxl'
 
 enable_saveplace = false
 
@@ -41,19 +39,25 @@ end
 '''
 
 check_user_allowed = '''
-function(user_code) -- string -> bool
+function(user_id_num, user_code) -- string -> bool
+    return true
+end
+'''
+
+check_user_has_admin = '''
+function(user_id_num, user_code) -- string -> bool
     return true
 end
 '''
 
 retrieve_avatar_type = '''
-function(user_code) -- str -> str
-    return 'R15'
+function(user_id_num, user_code) -- str -> str
+    return 'R6'
 end
 '''
 
 retrieve_avatar_items = '''
-function(user_code) -- str -> [str]
+function(user_id_num, user_code) -- str -> [str]
     return {
         10726856854,
         9482991343,
@@ -78,7 +82,7 @@ end
 '''
 
 retrieve_avatar_colors = '''
-function(user_code) -- str -> {[str]: number}
+function(user_id_num, user_code) -- str -> {[str]: number}
     return {
         head = 315,
         left_arm = 315,
@@ -91,12 +95,12 @@ end
 '''
 
 retrieve_avatar_scales = '''
-function(user_code) -- str -> {[str]: number}
+function(user_id_num, user_code) -- str -> {[str]: number}
     return {
-        height = 1,
-        width = 0.8,
+        height = 1.25,
+        width = 1,
         head = 1,
-        depth = 0.8,
+        depth = 1,
         proportion = 0,
         body_type = 0,
     }
@@ -116,19 +120,19 @@ end
 '''
 
 retrieve_account_age = '''
-function(user_code) -- str -> int
+function(user_id_num, user_code) -- str -> int
     return 6969
 end
 '''
 
 filter_text = '''
-function(user_code, text)
+function(text, user_id_num, user_code)
     return text:gsub('oo','òó'):gsub('OO','ÒÓ'):gsub('ee','èé'):gsub('EE','ÈÉ'):gsub('Roblox','Rōblox'):gsub('ROBLOX','RŌBLOX')
 end
 '''
 
 retrieve_groups = '''
-function(user_code) -- str -> str
+function(user_id_num, user_code) -- str -> str
     return {
         ['1200769'] = 255;
         ['2868472'] = 255;
@@ -142,7 +146,7 @@ end
 '''
 
 retrieve_default_funds = '''
-function(user_code) -- str -> int
+function(user_id_num, user_code) -- str -> int
     return 6969
 end
 '''

@@ -19,7 +19,7 @@ def _(self: web_server_handler) -> bool:
     self.query = dict(urllib.parse.parse_qsl(field_data))
 
     orig_text = self.query['text']
-    id_num = self.query['userId']
+    id_num = int(self.query['userId'])
 
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
@@ -29,8 +29,9 @@ def _(self: web_server_handler) -> bool:
     assert user_code is not None
 
     mod_text = self.game_config.server_core.filter_text(
-        user_code,
         orig_text,
+        id_num,
+        user_code,
     )
 
     self.send_json({

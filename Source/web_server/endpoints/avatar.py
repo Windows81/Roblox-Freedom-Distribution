@@ -3,16 +3,28 @@ import util.versions as versions
 from config import obj_type
 
 
+def get_user_code(id_num: int, game_config: obj_type) -> str:
+    database = game_config.storage.players
+    user_code = database.get_player_field_from_index(
+        database.player_field.ID_NUMBER,
+        id_num,
+        database.player_field.USER_CODE,
+    )
+    assert user_code is not None
+    return user_code
+
+
 class avatar_data:
-    def __init__(self, game_config: obj_type, user_code: str) -> None:
+    def __init__(self, id_num: int, game_config: obj_type) -> None:
+        user_code = get_user_code(id_num, game_config)
         self.type = game_config.server_core\
-            .retrieve_avatar_type(user_code)
+            .retrieve_avatar_type(id_num, user_code)
         self.items = game_config.server_core\
-            .retrieve_avatar_items(user_code)
+            .retrieve_avatar_items(id_num, user_code)
         self.scales = game_config.server_core\
-            .retrieve_avatar_scales(user_code)
+            .retrieve_avatar_scales(id_num, user_code)
         self.colors = game_config.server_core\
-            .retrieve_avatar_colors(user_code)
+            .retrieve_avatar_colors(id_num, user_code)
 
 
 @server_path('/v1.1/avatar-fetch/', versions={versions.rōblox.v348})
@@ -20,17 +32,9 @@ def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
     '''
-    database = self.server.storage.players
+    id_num = int(self.query['userId'])
+    avatar = avatar_data(id_num, self.game_config)
 
-    id_num = self.query['userId']
-    user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
-        id_num,
-        database.player_field.USER_CODE,
-    )
-    assert user_code is not None
-
-    avatar = avatar_data(self.game_config, user_code)
     self.send_json({
         "animations": {},
         "resolvedAvatarType": avatar.type.name,
@@ -66,17 +70,9 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     TODO: properly implement avatars.
     '''
-    database = self.server.storage.players
+    id_num = int(self.query['userId'])
+    avatar = avatar_data(id_num, self.game_config)
 
-    id_num = self.query['userId']
-    user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
-        id_num,
-        database.player_field.USER_CODE,
-    )
-    assert user_code is not None
-
-    avatar = avatar_data(self.game_config, user_code)
     self.send_json({
         "resolvedAvatarType": avatar.type.name,
         "equippedGearVersionIds": [],

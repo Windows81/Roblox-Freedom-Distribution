@@ -7,17 +7,16 @@ import util.ssl
 import json
 
 
-def init_player(self: web_server_handler, user_code: str) -> tuple[str, int, str]:
+def init_player(self: web_server_handler, user_code: str, id_num: int) -> tuple[str, int, str]:
     config = self.server.game_config
     username = config.server_core.retrieve_username(user_code)
-    id_num = config.server_core.retrieve_user_id(user_code)
 
     (user_code, id_num, username) = self.server.storage.players.add_player(
         user_code, id_num, username,
     )
     # This method only affects a player's fund balance if they're joining for the first time.
     self.server.storage.funds.init(
-        id_num,  config.server_core.retrieve_default_funds(user_code),
+        id_num,  config.server_core.retrieve_default_funds(id_num, user_code),
     )
     return (user_code, id_num, username)
 
@@ -44,13 +43,16 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         self.send_error(404)
         return {}
 
-    # This function will also be called after the player is added.
-    # It's called a second time elsewhere (potentially) for additional protection.
-    if not server_core.check_user_allowed(user_code):
+    config = self.server.game_config
+    id_num = config.server_core.retrieve_user_id(user_code)
+
+    # The `check_user_allowed` function will also be called after the player is added.
+    # (Potentially) for additional protection.
+    if not server_core.check_user_allowed(id_num, user_code):
         self.send_error(403)
         return {}
 
-    (user_code, id_num, username) = init_player(self, user_code)
+    (user_code, id_num, username) = init_player(self, user_code, id_num)
 
     join_data = {
         'ServerConnections': [
@@ -74,7 +76,7 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         'DisplayName':
             username,
         'AccountAge':
-            server_core.retrieve_account_age(user_code),
+            server_core.retrieve_account_age(id_num, user_code),
         'ChatStyle':
             server_core.chat_style.value,
         'characterAppearanceId':

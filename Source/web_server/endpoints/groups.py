@@ -1,33 +1,36 @@
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
+from config import obj_type
 import re
+
+
+def get_rank_dict(user_id_num: int, game_config: obj_type) -> dict[str, int]:
+    database = game_config.storage.players
+    user_code = database.get_player_field_from_index(
+        database.player_field.ID_NUMBER,
+        user_id_num,
+        database.player_field.USER_CODE,
+    )
+    assert user_code is not None
+
+    return game_config.server_core.retrieve_groups(
+        user_id_num, user_code,
+    )
 
 
 @server_path('/Game/LuaWebService/HandleSocialRequest.ashx', versions={versions.rōblox.v348})
 def _(self: web_server_handler) -> bool:
     match self.query['method']:
         case 'GetGroupRank':
-            def get_rank() -> int:
-                group_id_str = self.query['groupid']
-                user_id_str = self.query['playerid']
+            group_id_str = self.query['groupid']
+            user_id_num = int(self.query['playerid'])
+            rank_dict = get_rank_dict(user_id_num, self.server.game_config)
+            rank = rank_dict.get(group_id_str, 0)
 
-                database = self.server.storage.players
-                user_code = database.get_player_field_from_index(
-                    database.player_field.ID_NUMBER,
-                    user_id_str,
-                    database.player_field.USER_CODE,
-                )
-
-                if user_code is None:
-                    return 0
-                return self.server.game_config.server_core.retrieve_groups(user_code).get(group_id_str, 0)
-
-            self.send_data(bytes(
-                '<Value Type="integer">' +
-                str(get_rank()) +
-                '</Value>',
-                encoding='utf-8'
-            ))
+            self.send_data(
+                b'<Value Type="integer">%d</Value>' %
+                (rank),
+            )
             return True
 
     self.send_json({})
@@ -36,17 +39,8 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/v2/users/([0-9]+)/groups/roles', regex=True, versions={versions.rōblox.v463})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
-    database = self.server.storage.players
     user_id_num = int(match.group(1))
-
-    user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
-        user_id_num,
-        database.player_field.USER_CODE,
-    )
-    assert user_code
-
-    groups = self.server.game_config.server_core.retrieve_groups(user_code)
+    groups = get_rank_dict(user_id_num, self.server.game_config)
 
     self.send_json({
         "data": [

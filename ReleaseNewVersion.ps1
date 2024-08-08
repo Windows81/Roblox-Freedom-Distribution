@@ -1,13 +1,14 @@
+$release_name = (Read-Host "Version title?")
 $confirmation = (Read-Host "Save zipped files? (y?)") -eq "y"
 
 # Packs Rōblox executables into GitHub releases that can be downloaded.
-$release_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" (curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
+$commit_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" (curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
 $root = "$PSScriptRoot"
 $files = New-Object System.Collections.Generic.List[System.Object]
 
 function UpdateAndPush() {
 	git add .
-	git commit -m $release_name
+	git commit -m $commit_name
 	git push
 }
 
@@ -58,5 +59,4 @@ UpdateAndPush
 CreateBinary
 CreateZippedDirs
 
-$title = (Read-Host "Version title?")
-gh release create "$release_name" --notes "" $files --title $title -p
+gh release create "$release_name" --notes "" $files -p

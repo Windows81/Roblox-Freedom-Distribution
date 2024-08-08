@@ -191,12 +191,12 @@ Resolves to type `int`.
 
 The following are valid version strings.
 
-|          |           |          |
-| -------- | --------- | -------- |
-| `"v348"` | `"2018M"` | `"2018"` |
-| `"v463"` | `"2021E"` | `"2021"` |
+| `"v348"`  | `"v463"`  |
+| --------- | --------- |
+| `"2018M"` | `"2021E"` |
+| `"2018"`  | `"2021"`  |
 
-All entries on the same line are aliases for the same version.
+All entries on the same column are aliases for the same version.
 
 #### `game_setup.startup_script`
 
@@ -212,25 +212,25 @@ startup_script = 'game.workspace.FilteringEnabled = false'
 
 Resolves to type `str`.
 
-Shows up when a player joins the server.
+Shows up on the loading screen when a player joins the server.
 
 #### `game_setup.description`
 
 Resolves to type `str`.
 
-Shows up when a player joins the server.
+Shows up on the loading screen when a player joins the server.
 
 #### `game_setup.creator_name`
 
 Resolves to type `str`.
 
-Shows up when a player joins the server.
+Shows up on the loading screen when a player joins the server.
 
 #### `game_setup.icon_path`
 
 Resolves to type `path_str`. Relative paths are traced from the directory where the config file is placed.
 
-Shows up when a player joins the server.
+Shows up on the loading screen when a player joins the server.
 
 #### `game_setup.place_file.rbxl_uri`
 
@@ -291,11 +291,23 @@ end
 
 #### `server_core.check_user_allowed`
 
-Resolves to type `(str) -> bool`.
+Resolves to type `(int, str) -> bool`.
 
 ```
 check_user_allowed = '''
-function(user_code) -- string -> bool
+function(user_id_num, user_code) -- string -> bool
+    return true
+end
+'''
+```
+
+#### `server_core.check_user_has_admin`
+
+Resolves to type `(int, str) -> bool`.
+
+```
+check_user_has_admin = '''
+function(user_id_num, user_code) -- string -> bool
     return true
 end
 '''
@@ -331,13 +343,13 @@ end
 
 #### `server_core.retrieve_avatar_type`
 
-Resolves to type `(str) -> Enum.HumanoidRigType`.
+Resolves to type `(int, str) -> Enum.HumanoidRigType`.
 
 Where Rōblox [`Enum.HumanoidRigType`](https://create.roblox.com/docs/reference/engine/enums/HumanoidRigType) can either be `"R6"` or `"R15"`.
 
 ```
 retrieve_avatar_type = '''
-function(user_code)
+function(user_id_num, user_code)
     return 'R15'
 end
 '''
@@ -345,11 +357,13 @@ end
 
 #### `server_core.retrieve_avatar_items`
 
-Resolves to type `(str) -> [int]`.
+Resolves to type `(int, str) -> [int]`.
+
+The returned list contains asset idens from the Rōblox catalogue.
 
 ```
 retrieve_avatar_items = '''
-function(user_code)
+function(user_id_num, user_code)
     return {
         10726856854,
         9482991343,
@@ -376,11 +390,11 @@ end
 
 #### `server_core.retrieve_avatar_scales`
 
-Resolves to type `(str) -> util.types.structs.avatar_scales`.
+Resolves to type `(int, str) -> util.types.structs.avatar_scales`.
 
 ```
 retrieve_avatar_scales = '''
-function(user_code)
+function(user_id_num, user_code)
     return {
         height = 1,
         width = 0.8,
@@ -395,11 +409,11 @@ end
 
 #### `server_core.retrieve_avatar_colors`
 
-Resolves to type `(str) -> util.types.structs.avatar_colors`.
+Resolves to type `(int, str) -> util.types.structs.avatar_colors`.
 
 ```
 retrieve_avatar_colors = '''
-function(user_code)
+function(user_id_num, user_code)
     return {
         head = 315,
         left_arm = 315,
@@ -414,13 +428,13 @@ end
 
 #### `server_core.retrieve_groups`
 
-Resolves to type `(str) -> dict[str, int]`.
+Resolves to type `(int, str) -> dict[str, int]`.
 
 Key is the group id. Value is the rank.
 
 ```
 retrieve_groups = '''
-function(user_code)
+function(user_id_num, user_code)
     return {
         ['1200769'] = 255;
         ['2868472'] = 255;
@@ -436,11 +450,11 @@ end
 
 #### `server_core.retrieve_account_age`
 
-Resolves to type `(str) -> int`.
+Resolves to type `(int, str) -> int`.
 
 ```
 retrieve_account_age = '''
-function(user_code) -- str -> int
+function(user_id_num, user_code) -- str -> int
     return 6969
 end
 '''
@@ -448,13 +462,13 @@ end
 
 #### `server_core.retrieve_default_funds`
 
-Resolves to type `(str) -> int`.
+Resolves to type `(int, str) -> int`.
 
 Established the amount of funds that a player receives when they join a server for the first time. These funds can only be spent on [server-defined gamepasses](#remote_datagamepasses).
 
 ```
 retrieve_default_funds = '''
-function(user_code)
+function(user_id_num, user_code)
     return 6969
 end
 '''
@@ -462,7 +476,15 @@ end
 
 #### `server_core.filter_text`
 
-Resolves to type `(str, str) -> str`.
+Resolves to type `(str, int, str) -> str`.
+
+```
+filter_text = '''
+function(text, user_id_num, user_code)
+    return text:gsub('oo','òó'):gsub('OO','ÒÓ'):gsub('ee','èé'):gsub('EE','ÈÉ'):gsub('Roblox','Rōblox'):gsub('ROBLOX','RŌBLOX')
+end
+'''
+```
 
 #### `remote_data.gamepasses`
 

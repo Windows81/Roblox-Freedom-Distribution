@@ -44,51 +44,33 @@ class config_type(allocateable.obj_type):
 
     class server_core(allocateable.obj_type):
         chat_style: structs.chat_style
-        retrieve_default_user_code: Callable[[float], str]
-        '''
-        If the client doesn't include a user code whilst
-        connecting to the server, this function is called.
-        Should be a randomly-generated value.
-        '''
 
-        check_user_allowed: Callable[[str], bool] = \
+        retrieve_default_user_code: Callable[[float], str]
+
+        check_user_allowed: Callable[[int, str], bool] = \
             'function() return true end'  # type: ignore
 
+        check_user_has_admin: Callable[[int, str], bool] = \
+            'function() return false end'  # type: ignore
+
         retrieve_username: Callable[[str], str]
-        '''
-        Only gets called the first time a new user joins.
-        Otherwise, RFD checks for a cached value in the `sqlite` database.
-        '''
 
         retrieve_user_id: Callable[[str], int]
-        '''
-        Only gets called the first time a new user joins.
-        Otherwise, RFD checks for a cached value in the `sqlite` database.
-        '''
 
-        retrieve_avatar_type: Callable[[str], structs.avatar_type]
-        '''
-        Should return either `"R6"` or `"R15"` as a string.
-        '''
+        retrieve_avatar_type: Callable[[int, str], structs.avatar_type]
 
-        retrieve_avatar_items: Callable[[str], list[int]]
-        '''
-        List contains catalogue asset ids.
-        '''
+        retrieve_avatar_items: Callable[[int, str], list[int]]
 
-        retrieve_avatar_scales: Callable[[str], structs.avatar_scales]
+        retrieve_avatar_scales: Callable[[int, str], structs.avatar_scales]
 
-        retrieve_avatar_colors: Callable[[str], structs.avatar_colors]
+        retrieve_avatar_colors: Callable[[int, str], structs.avatar_colors]
 
-        retrieve_groups: Callable[[str], dict[str, int]] = \
+        retrieve_groups: Callable[[int, str], dict[str, int]] = \
             'function() return {} end'  # type: ignore
-        '''
-        Key is the group id.  Value is the rank.
-        '''
 
-        retrieve_account_age: Callable[[str], int]
-        retrieve_default_funds: Callable[[str], int]
-        filter_text: Callable[[str, str], str]
+        retrieve_account_age: Callable[[int, str], int]
+        retrieve_default_funds: Callable[[int, str], int]
+        filter_text: Callable[[str, int, str], str]
 
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses = []  # type: ignore

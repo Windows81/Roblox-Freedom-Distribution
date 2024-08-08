@@ -29,7 +29,7 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     database = self.server.storage.players
 
-    id_num = self.query['userId']
+    id_num = int(self.query['userId'])
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
         id_num,
@@ -42,7 +42,7 @@ def _(self: web_server_handler) -> bool:
 
     # This function was also called during joinscript creation.
     # It's called a second time here (potentially) for additional protection.
-    if self.server.game_config.server_core.check_user_allowed(user_code):
+    if self.server.game_config.server_core.check_user_allowed(id_num, user_code):
         self.send_data(b'true')
         return True
 
@@ -141,5 +141,22 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path('/v1/user/([0-9]+)/is-admin-developer-console-enabled', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
-    self.send_json({"isAdminDeveloperConsoleEnabled": True})
+    database = self.server.storage.players
+
+    id_num = int(self.query['userId'])
+    user_code = database.get_player_field_from_index(
+        database.player_field.ID_NUMBER,
+        id_num,
+        database.player_field.USER_CODE,
+    )
+
+    if user_code is None:
+        result = False
+    else:
+        result = self.server.game_config.server_core.check_user_has_admin(
+            id_num, user_code,
+        )
+
+    self.send_json(
+        {"isAdminDeveloperConsoleEnabled": result})
     return True

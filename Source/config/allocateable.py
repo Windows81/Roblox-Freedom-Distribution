@@ -71,7 +71,7 @@ class obj_type:
                 return getattr(current_typ, key)
             raise Exception(
                 'Unable to find setting "%s" in config file.' %
-                (key,)
+                (key),
             )
 
         # Iterates through individual settings in this section.
