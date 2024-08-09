@@ -19,7 +19,7 @@ icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
-rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\F3X Test.rbxl'
+rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\Kubla Khan.rbxl'
 
 enable_saveplace = false
 

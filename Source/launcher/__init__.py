@@ -58,8 +58,9 @@ def parse_arg_list(args: list[str] | None) -> list:
         chosen_sub_parser,
     )
 
-    # Adds '--help' argument manually after the super parser called 'parse_known_args'.
+    # Adds '--help' argument manually after the high-level parser called 'parse_known_args'.
     # Otherwise, the program would stop earlier and the help-text would be incomplete.
+    # The `-h` flag is replaced with `-?` here because we're using `-h` to signify `--rcc_host`.
     chosen_sub_parser.add_argument(
         '--help', '-?',
         help='show this help message and exit',
