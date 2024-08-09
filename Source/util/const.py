@@ -1,5 +1,5 @@
-GIT_RELEASE_VERSION = '''0.47.1'''
-GIT_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Filtering-Disabled/releases/download/%s/%s.%s.7z'
+GIT_RELEASE_VERSION = '''0.47.0'''
+GIT_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/%s/%s.%s.7z'
 
 PLACE_ID_CONST = 1818
 
