@@ -20,7 +20,7 @@ _This README is optimised for viewing on [GitHub](https://github.com/Windows81/R
 
 ## Copyright Acknowledgement
 
-My use of Rōblox's binaries are unlikely to fall into fair use. Be wary of any potential copyright takedowns.
+My use of Rōblox's binaries are prone to copyright-infringement issues. Be wary of any potential copyright takedowns.
 
 In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Consider using other means. Also consult this [document](./LEGAL.md) if you want to know why I believe I'm protected under fair-use law.
 
@@ -193,13 +193,13 @@ function(toil_int, daf_qbool)
         return {
             evil = 666,
         }
-    elseif toil_int == 420 then
-        return {
-            uwu = 3,
-        }
     elseif daf_qbool == true then
         return {
             owo = 7,
+        }
+    elseif toil_int == 420 and daf_qbool == false then
+        return {
+            uwu = 3,
         }
     end
     return {
@@ -220,13 +220,13 @@ def f(toil_int: int, daf_qbool: bool):
         return {
             "evil": 666,
         }
-    if toil_int == 420:
-        return {
-            "uwu": 3,
-        }
     elif daf_qbool == True:
         return {
             "owo": 7,
+        }
+    elif toil_int == 420 and daf_qbool == False:
+        return {
+            "uwu": 3,
         }
     return {
         "camera_man": 1,
@@ -244,11 +244,11 @@ skibidi_plugin_call_mode = "dict"
 skibidi_plugin.666 = {
     "evil": 666,
 }
-skibidi_plugin.420 = {
-    "uwu": 3,
-}
 skibidi_plugin.True = {
     "owo": 7,
+}
+skibidi_plugin.420-False = {
+    "uwu": 3,
 }
 skibidi_plugin.default = {
     "camera_man": 1,
@@ -373,7 +373,7 @@ Corresponds to Rōblox [`Enum.ChatStyle`](https://create.roblox.com/docs/referen
 
 #### `server_core.retrieve_default_user_code`
 
-Resolves to [function](#functions) type ` ($1) -> $2`.
+Resolves to [function](#functions) type `(float) -> str`.
 
 If the client doesn't include a [`-u` user code](#player) whilst connecting to the server, this function is called. Should be a randomly-generated value.
 
