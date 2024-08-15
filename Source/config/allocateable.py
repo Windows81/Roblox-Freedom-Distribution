@@ -1,5 +1,5 @@
+from .types import get_type_call, type_call_data
 from typing_extensions import Any
-from .types import get_type_call
 from . import _logic
 import dataclasses
 import functools
@@ -26,10 +26,14 @@ class obj_type:
             return rep
         type_call = get_type_call(typ)
         return type_call(
-            rep,  # value
-            self.root,  # config
-            typ,
-            path,
+            rep,
+            type_call_data(
+                config=self.root,
+                sibling_kwargs=self.kwargs,
+                typ=typ,
+                key=key,
+                path=path,
+            )
         )
 
     def __init__(
@@ -74,7 +78,7 @@ class obj_type:
                 (key),
             )
 
-        # Iterates through individual settings in this section.
+        # Creates `annotation` objects through individual settings in this section.
         self.annotations = [
             annotation(
                 key=key,

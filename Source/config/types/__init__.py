@@ -1,6 +1,6 @@
 from typing_extensions import Callable, Union, Any
-from .._logic import base_type as config_base_type
-from util.types import wrappers
+from ._logic import type_call_data
+from . import wrappers, callable
 import util.resource
 import util.versions
 import dataclasses
@@ -13,10 +13,6 @@ def get_type_call(object_type: type) -> Callable:
     if dataclasses.is_dataclass(object_type):
         return type_calls[dataclasses.dataclass]
 
-    # Through `getattr`, hacky method to get callables.
-    if getattr(object_type, '__origin__', None) == getattr(Callable, '__origin__'):
-        return type_calls[Callable]
-
     if type(object_type) == type(str | None):
         return type_calls[Union]
 
@@ -28,98 +24,111 @@ def get_type_call(object_type: type) -> Callable:
         return _type_call_default
 
 
-def _type_call_default(value, config: config_base_type, typ: type, path: str, *args, **kwargs) -> Any:
-    return typ(value, *args, **kwargs)
+def _type_call_default(value, data: type_call_data, *args, **kwargs) -> Any:
+    return data.typ(value, *args, **kwargs)
 
 
-def _type_call_dicter(value: list, config: config_base_type, typ: type, path: str) -> Any:
-    item_type: type = typ.item_type
+def _type_call_dicter(value: list, data: type_call_data) -> Any:
+    item_type: type = data.typ.item_type
     type_call = get_type_call(item_type)
+    new_data = dataclasses.replace(data, typ=item_type)
     item_list = [
-        type_call(
-            item,
-            config,
-            item_type,
-            path,
-        )
+        type_call(item, new_data)
         for item in value
     ]
-    return typ(item_list)
+    return data.typ(item_list)
 
 
-def _type_call_with_config(value, config: config_base_type, typ: type, path: str, *args, **kwargs) -> Any:
-    return typ(value, config, *args, **kwargs)
+def _type_call_with_config(value, data: type_call_data, *args, **kwargs) -> Any:
+    return data.typ(value, data.config, *args, **kwargs)
 
 
-def _type_call_path_str(value, config: config_base_type, typ: type, path: str, *args, **kwargs) -> Any:
-    return typ(value, os.path.dirname(config.config_path), *args, **kwargs)
+def _type_call_path_str(value, data: type_call_data, *args, **kwargs) -> Any:
+    return data.typ(value, os.path.dirname(data.config.file_path), *args, **kwargs)
 
 
-def _type_call_rōblox_version(value, config: config_base_type, typ: type, path: str) -> util.versions.rōblox:
+def _type_call_rōblox_version(value, data: type_call_data) -> util.versions.rōblox:
     return util.versions.rōblox.from_name(value)
 
 
-def _type_call_callable(value, config: config_base_type, typ: type, path: str) -> Callable:
-    result_typ = typ.__args__[-1]
+def _type_call_callable(value, data: type_call_data) -> Callable:
+    result_typ = data.typ.__args__[-1]
     result_type_call = get_type_call(result_typ)
 
-    def call(*args):
-        return result_type_call(
-            config.data_transferer.call(path, config, *args),
-            config,
-            result_typ,
-            path,
+    call_mode_key = f'{data.key}_call_mode'
+    call_mode_str = data.sibling_kwargs.get(call_mode_key)
+
+    if isinstance(call_mode_str, str):
+        call_mode = callable.call_mode_enum(call_mode_str)
+    elif call_mode_str is None:
+        call_mode = callable.call_mode_enum.assume
+    else:
+        raise Exception(
+            "Config property `%s` is not a string "
         )
-    return call
+
+    def caster(result):
+        return result_type_call(
+            result,
+            dataclasses.replace(data, typ=result_typ),
+        )
+
+    return callable.obj_type(
+        rep=value,
+        path=data.path,
+        config=data.config,
+        call_mode=call_mode,
+        caster_func=caster,
+    )
 
 
-def _type_call_dataclass_as_dict(value, config: config_base_type, typ: type, path: str) -> Callable:
+def _type_call_dataclass_as_dict(value, data: type_call_data) -> Callable:
     '''
     Entries which are typed as `dataclass` in-program
     should be written as Python `dict` objects in the config file.
     This snippet is responsible for casting the `dict` to  a `dataclass`.
     '''
-    fields = getattr(typ, dataclasses._FIELDS)  # type: ignore
+    fields = getattr(data.typ, dataclasses._FIELDS)  # type: ignore
     casted_values = {
         field_name: get_type_call(field.type)(
             value.get(field_name, field.default),
-            config,
-            field.type,
-            path,
+            dataclasses.replace(data, typ=field.type),
         )
         for field_name, field in fields.items()
     }
-    return typ(**casted_values)
+    return data.typ(**casted_values)
 
 
-def _type_call_union(value, config: config_base_type, typ: type, path: str) -> Any | None:
-    type_args: tuple[type] = typ.__args__
+def _type_call_union(value, data: type_call_data) -> Any | None:
+    type_args: tuple[type] = data.typ.__args__
     if type_args[-1] == type(None):
         type_args = (type_args[-1], *type_args[:-1])
     for sub_typ in type_args:
         try:
             return get_type_call(sub_typ)(
                 value,
-                config,
-                sub_typ,
-                path,
+                dataclasses.replace(data, typ=sub_typ),
             )
         except Exception:
             pass
 
     raise Exception(
         'Value "%s" is not of any of the following types: %s.' %
-        (value, *', '.join(typ.__args__)),
+        (value, *', '.join(data.typ.__args__)),
     )
 
 
-def _type_call_none_type(value, config: config_base_type, typ: type, path: str) -> None:
+def _type_call_none_type(value, data: type_call_data) -> None:
     if value is not None:
-        raise Exception("Nothing can be `None`.")
+        raise Exception(
+            "Nothing that isn't `None` in `%s` can be `None`." %
+            (data.path),
+        )
+    return None
 
 
 type_calls = {
-    Callable:
+    callable.obj_type:
         _type_call_callable,
     util.versions.rōblox:
         _type_call_rōblox_version,

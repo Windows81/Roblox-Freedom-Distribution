@@ -171,7 +171,98 @@ Where `...` is [your command-line prefix](#installation),
 
 ## Config File Structure
 
-This is current as of 2024-08-06. Some options might be different in future versions.
+This is current as of 0.48.0. Some options might be different in future versions.
+
+### Special Types
+
+#### Functions
+
+Function-type options are very flexible in RFD. _Way_ too flexible if you're asking me.
+
+Look out for `{OPTION}_call_mode`, where `{OPTION}` is the name of the option you're modifying. If `{OPTION}_call_mode` is not specified, RFD tries to assume on its own.
+
+Following is a hypothetical option called `skibidi_plugin`. The examples all do the same thing.
+
+##### Lua Mode
+
+```toml
+skibidi_plugin_call_mode = "lua"
+skibidi_plugin = '''
+function(toil_int, daf_qbool)
+    if toil_int == 666 then
+        return {
+            evil = 666,
+        }
+    elseif toil_int == 420 then
+        return {
+            uwu = 3,
+        }
+    elseif daf_qbool == true then
+        return {
+            owo = 7,
+        }
+    end
+    return {
+        camera_man = 1,
+        ohio = 2,
+    }
+end
+'''
+```
+
+##### Python Mode
+
+```toml
+skibidi_plugin_call_mode = "python"
+skibidi_plugin = '''
+def f(toil_int: int, daf_qbool: bool):
+    if toil_int == 666:
+        return {
+            "evil": 666,
+        }
+    if toil_int == 420:
+        return {
+            "uwu": 3,
+        }
+    elif daf_qbool == True:
+        return {
+            "owo": 7,
+        }
+    return {
+        "camera_man": 1,
+        "ohio": 2,
+    }
+'''
+```
+
+Nobody cares what you call the function. RFD should be smart enough to figure out what you're using.
+
+##### Dict Mode
+
+```toml
+skibidi_plugin_call_mode = "dict"
+skibidi_plugin.666 = {
+    "evil": 666,
+}
+skibidi_plugin.420 = {
+    "uwu": 3,
+}
+skibidi_plugin.True = {
+    "owo": 7,
+}
+skibidi_plugin.default = {
+    "camera_man": 1,
+    "ohio": 2,
+}
+```
+
+Dict keys are access in the following order of precedence:
+
+1. Each of the individual stringified arguments in positional order,
+1. The joined string of all arguments with string separators `_`, `,`, then `, `,
+1. Then the static key `default`.
+
+### Options
 
 #### `metadata.config_version_wildcard`
 
@@ -208,7 +299,7 @@ Resolves to type `str`.
 
 Runs at the CoreScript security level whenever a new _server_ is started.
 
-```
+```toml
 startup_script = 'game.workspace.FilteringEnabled = false'
 ```
 
@@ -238,15 +329,15 @@ Shows up on the loading screen when a player joins the server.
 
 #### `game_setup.place_file.rbxl_uri`
 
-Resolves to type `uri_obj`. Files must be encoded in the binary `rbxl` format and not in the human-readable `rbxlx` format.
+Resolves to internal type `uri_obj`. Files must be encoded in the binary `rbxl` format and not in the human-readable `rbxlx` format.
 
 Can resolve to either a relative or absolute local path -- or extracted from a remote URL.
 
-```
+```toml
 rbxl_uri = 'c:\Users\USERNAME\Documents\Baseplate.rbxl'
 ```
 
-```
+```toml
 rbxl_uri = 'https://archive.org/download/robloxBR1/RBR1/RBR1.rbxl'
 ```
 
@@ -282,11 +373,12 @@ Corresponds to Rōblox [`Enum.ChatStyle`](https://create.roblox.com/docs/referen
 
 #### `server_core.retrieve_default_user_code`
 
-Resolves to type `function ($1) -> $2`.
+Resolves to [function](#functions) type ` ($1) -> $2`.
 
 If the client doesn't include a [`-u` user code](#player) whilst connecting to the server, this function is called. Should be a randomly-generated value.
 
-```
+```toml
+retrieve_default_user_code_call_mode = "lua"
 retrieve_default_user_code = '''
 function(tick) -- float -> str
     return string.format('Player%d', tick)
@@ -295,9 +387,10 @@ end
 
 #### `server_core.check_user_allowed`
 
-Resolves to type `(int, str) -> bool`.
+Resolves to [function](#functions) type `(int, str) -> bool`.
 
-```
+```toml
+check_user_allowed_call_mode = "lua"
 check_user_allowed = '''
 function(user_id_num, user_code) -- string -> bool
     return true
@@ -307,9 +400,10 @@ end
 
 #### `server_core.check_user_has_admin`
 
-Resolves to type `(int, str) -> bool`.
+Resolves to [function](#functions) type `(int, str) -> bool`.
 
-```
+```toml
+check_user_has_admin_call_mode = "lua"
 check_user_has_admin = '''
 function(user_id_num, user_code) -- string -> bool
     return true
@@ -319,11 +413,12 @@ end
 
 #### `server_core.retrieve_username`
 
-Resolves to type `(str) -> str`.
+Resolves to [function](#functions) type `(str) -> str`.
 
 Only gets called the first time a new user joins. Otherwise, RFD checks for a cached value in [the `sqlite` database](#game_setuppersistencesqlite_path).
 
-```
+```toml
+retrieve_username_call_mode = "lua"
 retrieve_username = '''
 function(user_code)
     return user_code
@@ -333,11 +428,12 @@ end
 
 #### `server_core.retrieve_user_id`
 
-Resolves to type `(str) -> int`.
+Resolves to [function](#functions) type `(str) -> int`.
 
 Only gets called the first time a new user joins. Otherwise, RFD checks for a cached value in [the `sqlite` database](#game_setuppersistencesqlite_path).
 
-```
+```toml
+retrieve_user_id_call_mode = "lua"
 retrieve_user_id = '''
 function(user_code)
     return math.random(1, 16777216)
@@ -347,11 +443,12 @@ end
 
 #### `server_core.retrieve_avatar_type`
 
-Resolves to type `(int, str) -> Enum.HumanoidRigType`.
+Resolves to [function](#functions) type `(int, str) -> Enum.HumanoidRigType`.
 
 Where Rōblox [`Enum.HumanoidRigType`](https://create.roblox.com/docs/reference/engine/enums/HumanoidRigType) can either be `"R6"` or `"R15"`.
 
-```
+```toml
+retrieve_avatar_type_call_mode = "lua"
 retrieve_avatar_type = '''
 function(user_id_num, user_code)
     return 'R15'
@@ -361,11 +458,12 @@ end
 
 #### `server_core.retrieve_avatar_items`
 
-Resolves to type `(int, str) -> [int]`.
+Resolves to [function](#functions) type `(int, str) -> [int]`.
 
 The returned list contains asset idens from the Rōblox catalogue.
 
-```
+```toml
+retrieve_avatar_items_call_mode = "lua"
 retrieve_avatar_items = '''
 function(user_id_num, user_code)
     return {
@@ -394,9 +492,10 @@ end
 
 #### `server_core.retrieve_avatar_scales`
 
-Resolves to type `(int, str) -> util.types.structs.avatar_scales`.
+Resolves to [function](#functions) type `(int, str) -> util.types.structs.avatar_scales`.
 
-```
+```toml
+retrieve_avatar_scales_call_mode = "lua"
 retrieve_avatar_scales = '''
 function(user_id_num, user_code)
     return {
@@ -413,9 +512,10 @@ end
 
 #### `server_core.retrieve_avatar_colors`
 
-Resolves to type `(int, str) -> util.types.structs.avatar_colors`.
+Resolves to [function](#functions) type `(int, str) -> util.types.structs.avatar_colors`.
 
-```
+```toml
+retrieve_avatar_colors_call_mode = "lua"
 retrieve_avatar_colors = '''
 function(user_id_num, user_code)
     return {
@@ -432,11 +532,12 @@ end
 
 #### `server_core.retrieve_groups`
 
-Resolves to type `(int, str) -> dict[str, int]`.
+Resolves to [function](#functions) type `(int, str) -> dict[str, int]`.
 
 Key is the group id. Value is the rank.
 
-```
+```toml
+retrieve_groups_call_mode = "lua"
 retrieve_groups = '''
 function(user_id_num, user_code)
     return {
@@ -454,9 +555,10 @@ end
 
 #### `server_core.retrieve_account_age`
 
-Resolves to type `(int, str) -> int`.
+Resolves to [function](#functions) type `(int, str) -> int`.
 
-```
+```toml
+retrieve_account_age_call_mode = "lua"
 retrieve_account_age = '''
 function(user_id_num, user_code) -- str -> int
     return 6969
@@ -466,11 +568,12 @@ end
 
 #### `server_core.retrieve_default_funds`
 
-Resolves to type `(int, str) -> int`.
+Resolves to [function](#functions) type `(int, str) -> int`.
 
 Established the amount of funds that a player receives when they join a server for the first time. These funds can only be spent on [server-defined gamepasses](#remote_datagamepasses).
 
-```
+```toml
+retrieve_default_funds_call_mode = "lua"
 retrieve_default_funds = '''
 function(user_id_num, user_code)
     return 6969
@@ -480,9 +583,10 @@ end
 
 #### `server_core.filter_text`
 
-Resolves to type `(str, int, str) -> str`.
+Resolves to [function](#functions) type `(str, int, str) -> str`.
 
-```
+```toml
+filter_text_call_mode = "lua"
 filter_text = '''
 function(text, user_id_num, user_code)
     return text:gsub('oo','òó'):gsub('OO','ÒÓ'):gsub('ee','èé'):gsub('EE','ÈÉ'):gsub('Roblox','Rōblox'):gsub('ROBLOX','RŌBLOX')
@@ -494,7 +598,7 @@ end
 
 Resolves to a data dictionary.
 
-```
+```toml
 [[remote_data.gamepasses]]
 id_num = 163231044
 name = 'EnforcersPowers'
@@ -511,7 +615,7 @@ However, entries in [`asset_redirects`](#remote_dataasset_redirects) override th
 
 Through the `uri` field, assets can load either from a local or remote resource.
 
-```
+```toml
 [[remote_data.asset_redirects]]
 id_val = 13
 uri = 'c:\Users\USERNAME\Pictures\Image.jpg'
@@ -519,13 +623,13 @@ uri = 'c:\Users\USERNAME\Pictures\Image.jpg'
 
 You can include a `cmd_line` field if you want the loaded asset to literally come from the `stdout` of a program.
 
-```
+```toml
 [[remote_data.asset_redirects]]
 id_val = 14
 uri = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 ```
 
-```
+```toml
 [[remote_data.asset_redirects]]
 id_val = 15
 cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
@@ -535,7 +639,7 @@ cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.we
 
 Resolves to a data dictionary.
 
-```
+```toml
 [[remote_data.badges]]
 id_num = 757
 name = 'Awardable Badge'

@@ -19,7 +19,7 @@ icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
-rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\Kubla Khan.rbxl'
+rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\Roblox Hacked Place Database 2 - MrManchot\Building game.rbxl'
 
 enable_saveplace = false
 
@@ -39,10 +39,15 @@ end
 '''
 
 check_user_allowed = '''
-function(user_id_num, user_code) -- string -> bool
-    return true
-end
+def f(user_id_num, user_code):
+    return True
 '''
+
+#check_user_allowed = '''
+#function(user_id_num, user_code) -- string -> bool
+#    return true
+#end
+#'''
 
 check_user_has_admin = '''
 function(user_id_num, user_code) -- string -> bool

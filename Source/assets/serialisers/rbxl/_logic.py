@@ -9,6 +9,10 @@ HEADER_SIGNATURE = b'\x3c\x72\x6f\x62\x6c\x6f\x78\x21\x89\xff\x0d\x0a\x1a\x0a'
 
 
 class string_replacer:
+    '''
+    Rōblox has its own way of storing variable-length strings.
+    This class gracefully replaces instances of one such string with another.
+    '''
     INT_SIZE = 4
 
     @dataclasses.dataclass
@@ -26,17 +30,18 @@ class string_replacer:
         pattern: bytes,
         replacement_func: Callable[[re.Match[bytes]], bytes],
         chunk_data: bytes,
-        num_replacements: int | None = None,
+        max_replacements: int | None = None,
         prepend_new_length: bool = True,
     ) -> None:
         self.data = chunk_data
 
         self.pattern = pattern
         self.replacement_func = replacement_func
-        self.num_replacements = num_replacements
+        self.max_replacements = max_replacements
         self.prepend_new_length = prepend_new_length
 
     def calc(self) -> bytes:
+        # Data on where existing strings are.
         infos = [
             info
             for match in itertools.islice(
@@ -44,10 +49,11 @@ class string_replacer:
                     br'(.{%d})(?=%s)' % (self.INT_SIZE, self.pattern),
                     self.data,
                 ),
-                self.num_replacements,
+                self.max_replacements,
             )
             if (info := self.get_input_info(match))
         ]
+
         splits: list[tuple[int, string_replacer.input_info | None]] = [
             (0, None),
             *[

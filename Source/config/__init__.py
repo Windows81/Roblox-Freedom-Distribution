@@ -1,4 +1,5 @@
 from . import _logic, structure
+import data_transfer.transferer
 import util.resource
 import util.versions
 import functools
@@ -27,6 +28,8 @@ class obj_type(structure.config_type, _logic.base_type):
             self.game_setup.persistence.sqlite_path,
             force_init=self.game_setup.persistence.clear_on_start,
         )
+
+        self.data_transferer = data_transfer.transferer.obj_type()
 
         self.asset_cache = assets.asseter(
             dir_path=self.game_setup.asset_cache.dir_path,

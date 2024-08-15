@@ -1,6 +1,5 @@
-from typing_extensions import Callable
-
-from util.types import structs, wrappers
+from .types.callable import obj_type as callable
+from .types import structs, wrappers
 from . import allocateable
 import util.versions
 import util.resource
@@ -45,32 +44,32 @@ class config_type(allocateable.obj_type):
     class server_core(allocateable.obj_type):
         chat_style: structs.chat_style
 
-        retrieve_default_user_code: Callable[[float], str]
+        retrieve_default_user_code: callable[[float], str]
 
-        check_user_allowed: Callable[[int, str], bool] = \
+        check_user_allowed: callable[[int, str], bool] = \
             'function() return true end'  # type: ignore
 
-        check_user_has_admin: Callable[[int, str], bool] = \
+        check_user_has_admin: callable[[int, str], bool] = \
             'function() return false end'  # type: ignore
 
-        retrieve_username: Callable[[str], str]
+        retrieve_username: callable[[str], str]
 
-        retrieve_user_id: Callable[[str], int]
+        retrieve_user_id: callable[[str], int]
 
-        retrieve_avatar_type: Callable[[int, str], structs.avatar_type]
+        retrieve_avatar_type: callable[[int, str], structs.avatar_type]
 
-        retrieve_avatar_items: Callable[[int, str], list[int]]
+        retrieve_avatar_items: callable[[int, str], list[int]]
 
-        retrieve_avatar_scales: Callable[[int, str], structs.avatar_scales]
+        retrieve_avatar_scales: callable[[int, str], structs.avatar_scales]
 
-        retrieve_avatar_colors: Callable[[int, str], structs.avatar_colors]
+        retrieve_avatar_colors: callable[[int, str], structs.avatar_colors]
 
-        retrieve_groups: Callable[[int, str], dict[str, int]] = \
+        retrieve_groups: callable[[int, str], dict[str, int]] = \
             'function() return {} end'  # type: ignore
 
-        retrieve_account_age: Callable[[int, str], int]
-        retrieve_default_funds: Callable[[int, str], int]
-        filter_text: Callable[[str, int, str], str]
+        retrieve_account_age: callable[[int, str], int]
+        retrieve_default_funds: callable[[int, str], int]
+        filter_text: callable[[str, int, str], str]
 
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses = []  # type: ignore

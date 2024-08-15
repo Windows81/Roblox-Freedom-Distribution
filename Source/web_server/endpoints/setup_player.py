@@ -143,7 +143,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     database = self.server.storage.players
 
-    id_num = int(self.query['userId'])
+    id_num = int(match.group(1))
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
         id_num,

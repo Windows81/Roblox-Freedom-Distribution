@@ -1,5 +1,5 @@
 from . import extract, returns, material, serialisers, queue
-from util.types import structs, wrappers
+from config.types import structs, wrappers
 import util.const
 import functools
 import shutil
@@ -77,18 +77,18 @@ class asseter:
         return self.resolve_asset_id(id_str)
 
     def resolve_asset_query(self, query: dict[str, str]) -> int | str:
-        funcs = [
+        candidate_funcs = [
             (query.get('id'), self.resolve_asset_id),
             (query.get('assetversionid'), self.resolve_asset_version_id),
         ]
 
-        for (prop_val, func) in funcs:
+        for (prop_val, func) in candidate_funcs:
             if prop_val is None:
                 continue
             result = func(prop_val)
             if result is not None:
                 return result
-        for (prop_val, func) in funcs:
+        for (prop_val, func) in candidate_funcs:
             if prop_val is not None:
                 return prop_val
         raise Exception('Unable to extract asset id from URL query.')

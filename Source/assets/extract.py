@@ -1,4 +1,3 @@
-from util.types import structs, wrappers
 import subprocess
 import urllib3
 
@@ -17,7 +16,7 @@ def download_item(url: str) -> bytes | None:
 def download_rōblox_asset(asset_id: int) -> bytes | None:
     for key in {'id'}:
         result = download_item(
-            f'https://assetdelivery.roblox.com/v1/asset/?%s=%s' %
+            'https://assetdelivery.roblox.com/v1/asset/?%s=%s' %
             (key, asset_id)
         )
         if result is not None:

@@ -3,6 +3,7 @@ import util.const as const
 import fnmatch
 import os
 
+
 item_typ = TypeVar('item_typ')
 key_typ = TypeVar('key_typ')
 
@@ -11,7 +12,8 @@ class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
     '''
     Inputs a list of `item_typ` values.
     Acts a subclass of `dict[key_typ, item_typ]`,
-    where each key is equal to `getattr(item, 'key_name')`'''
+    where each key is equal to `getattr(item, 'key_name')`
+    '''
     key_name: str
     item_type: type
     key_type: type
