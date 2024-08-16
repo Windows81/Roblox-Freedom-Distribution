@@ -71,7 +71,7 @@ class obj_type(Generic[P, R]):
                 )
                 return next(
                     v
-                    for v in local_vars.values()
+                    for v in reversed(local_vars.values())
                     if callable(v)
                 )
             case call_mode_enum.dicted:

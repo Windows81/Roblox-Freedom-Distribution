@@ -27,9 +27,8 @@ class asset_redirect:
         ]) > 1:
             raise Exception(
                 'Entries for `asset_redirects` should not have '
-                'both a URI and a pipeable command-line.'
+                'both a `uri` and a pipeable `cmd_line`.'
             )
-    id_val: int | str
     uri: wrappers.uri_obj | None = None
     cmd_line: str | None = None
 
@@ -40,10 +39,6 @@ class gamepasses(wrappers.dicter[gamepass, int]):
 
 class badges(wrappers.dicter[badge, int]):
     key_name = 'id_num'
-
-
-class asset_redirects(wrappers.dicter[asset_redirect, int | str]):
-    key_name = 'id_val'
 
 
 @dataclasses.dataclass

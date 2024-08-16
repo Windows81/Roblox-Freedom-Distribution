@@ -1,5 +1,6 @@
+from genericpath import isfile
 from . import extract, returns, material, serialisers, queue
-from config.types import structs, wrappers
+from config.types import structs, wrappers, callable
 import util.const
 import functools
 import shutil
@@ -10,11 +11,12 @@ class asseter:
     def __init__(
         self,
         dir_path: str,
-        redirects: structs.asset_redirects,
+        redirect_func: callable.obj_type[[int | str], structs.asset_redirect | None],
         clear_on_start: bool,
     ) -> None:
         self.dir_path = dir_path
-        self.redirects = redirects
+        self.redirect_func = redirect_func
+        self.redirect_iden_flags = set[int | str]()
         self.queuer = queue.queuer()
 
         if os.path.isdir(dir_path):
@@ -23,13 +25,6 @@ class asseter:
                 os.makedirs(dir_path)
         else:
             os.makedirs(dir_path)
-
-        if not clear_on_start:
-            # Deletes cache from assets which should redirect so that the config file remains correct.
-            for redir_id in redirects:
-                path = self.get_asset_path(redir_id)
-                if os.path.isfile(path):
-                    os.remove(path)
 
     @functools.cache
     def get_asset_path(self, asset_id: int | str) -> str:
@@ -94,9 +89,9 @@ class asseter:
         raise Exception('Unable to extract asset id from URL query.')
 
     def add_asset(self, asset_id: int | str, data: bytes) -> None:
-        redirect = self.redirects.get(asset_id)
-        if redirect is not None:
-            raise Exception('File does not exist.')
+        redirect_info = self.redirect_func(asset_id)
+        if redirect_info is not None:
+            raise Exception('Asset already has a redirect per config file.')
         path = self.get_asset_path(asset_id)
         self._save_file(path, data)
 
@@ -119,7 +114,21 @@ class asseter:
             return material.load_asset(asset_id)
         return None
 
-    def _load_redir_asset(self, redirect: structs.asset_redirect) -> returns.base_type:
+    def _load_redir_asset(self, asset_id: int | str, redirect: structs.asset_redirect) -> returns.base_type:
+        asset_path = self.get_asset_path(asset_id)
+
+        # Checks if it's the first time for a redirect to be called.
+        # If it is, remove any file it might point to from the cache.
+        # This is done dynamically to keep redirects compliant with config.
+        if asset_id not in self.redirect_iden_flags:
+            if os.path.isfile(asset_path):
+                os.remove(asset_path)
+            self.redirect_iden_flags.add(asset_id)
+        else:
+            local_data = self._load_file(asset_path)
+            if local_data is not None:
+                return returns.construct(data=local_data)
+
         if redirect.uri is not None:
             if redirect.uri.is_online:
                 return returns.construct(
@@ -142,9 +151,15 @@ class asseter:
             return returns.construct()
 
     def _load_asset(self, asset_id: int | str) -> returns.base_type:
-        redirect = self.redirects.get(asset_id)
-        if redirect is not None:
-            return self._load_redir_asset(redirect)
+        redirect_info = self.redirect_func(asset_id)
+        if redirect_info is not None:
+            return self._load_redir_asset(asset_id, redirect_info)
+
+        asset_path = self.get_asset_path(asset_id)
+        local_data = self._load_file(asset_path)
+        if local_data is not None:
+            return returns.construct(data=local_data)
+
         if isinstance(asset_id, str):
             return returns.construct(data=self._load_asset_str(asset_id))
         elif isinstance(asset_id, int):
@@ -155,11 +170,8 @@ class asseter:
             return returns.construct()
 
         asset_path = self.get_asset_path(asset_id)
-        local_data = self._load_file(asset_path)
-        if local_data:
-            return returns.construct(data=local_data)
-
         result_data = self._load_asset(asset_id)
+
         if isinstance(result_data, returns.ret_data):
             self._save_file(asset_path, result_data.data)
         return result_data

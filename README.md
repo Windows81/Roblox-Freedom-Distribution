@@ -607,32 +607,46 @@ price = 100
 
 #### `remote_data.asset_redirects`
 
-Resolves to a data dictionary.
+Resolves to [function](#functions) type `(int | str) -> asset_redirect`.
 
 When an RFD server receives a request to load an asset by id, it does so from Roblox.com by default.
 
-However, entries in [`asset_redirects`](#remote_dataasset_redirects) override that default and
+However, entries in [`asset_redirects`](#remote_dataasset_redirects) override that default.
 
 Through the `uri` field, assets can load either from a local or remote resource.
 
+The following examples notate the structure into the [dict mode](#dict-mode) syntax:
+
 ```toml
-[[remote_data.asset_redirects]]
-id_val = 13
+[remote_data.asset_redirects.13] # asset id 13
 uri = 'c:\Users\USERNAME\Pictures\Image.jpg'
+```
+
+```toml
+[remote_data.asset_redirects.14] # asset id 14
+uri = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 ```
 
 You can include a `cmd_line` field if you want the loaded asset to literally come from the `stdout` of a program.
 
 ```toml
-[[remote_data.asset_redirects]]
-id_val = 14
-uri = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
+[remote_data.asset_redirects.15] # asset id 15
+cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
 ```
 
+This should also work. It redirects asset iden strings starting wtih `time_music_` to static files on the internet.
+
 ```toml
-[[remote_data.asset_redirects]]
-id_val = 15
-cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
+remote_data.asset_redirects = "python"
+remote_data.asset_redirects = '''
+def f(asset_iden):
+    PREFIX = "time_music_"
+    if asset_iden.startswith(PREFIX):
+        h = int(asset_iden[len(PREFIX):])
+        return {
+            "uri": "https://github.com/Windows81/Time-Is-Musical/blob/main/hour_%02d.wav" % (h % 24)
+        }
+    return None
 ```
 
 #### `remote_data.badges`

@@ -83,16 +83,16 @@ def get_path(*paths: str) -> str:
 class ssl_mutable:
     CONTEXT_COUNTS = {}
 
-    def prepare_file_path(self, prefix: str, ext: str) -> str:
-        count_key = f'{prefix}.{ext}'
-        count = ssl_mutable.CONTEXT_COUNTS.setdefault(count_key, 0)
+    def prepare_file_path(self, name_prefix: str, ext: str) -> str:
+        count_key = f'{name_prefix}.{ext}'
+        context_count = ssl_mutable.CONTEXT_COUNTS.setdefault(count_key, 0)
         ssl_mutable.CONTEXT_COUNTS[count_key] += 1
-        suffix = f'{count:03d}'
+        name_sufix = f'{context_count:03d}'
 
-        path = get_path(f'{prefix}{suffix}.{ext}')
-        if os.path.isfile(path):
-            os.remove(path)
-        return path
+        ssl_file_path = get_path(f'{name_prefix}{name_sufix}.{ext}')
+        if os.path.isfile(ssl_file_path):
+            os.remove(ssl_file_path)
+        return ssl_file_path
 
     def __init__(self) -> None:
         self.ca = trustme.CA()

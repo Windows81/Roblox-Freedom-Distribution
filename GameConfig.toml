@@ -19,7 +19,7 @@ icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
-rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\Roblox Hacked Place Database 2 - MrManchot\Building game.rbxl'
+rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\VideoTest.rbxl'
 
 enable_saveplace = false
 
@@ -29,7 +29,7 @@ clear_on_start = false
 
 [game_setup.asset_cache]
 dir_path = './AssetCache'
-clear_on_start = true
+clear_on_start = false
 
 [server_core]
 retrieve_default_user_code = '''
@@ -39,15 +39,10 @@ end
 '''
 
 check_user_allowed = '''
-def f(user_id_num, user_code):
-    return True
+function(user_id_num, user_code) -- string -> bool
+   return true
+end
 '''
-
-#check_user_allowed = '''
-#function(user_id_num, user_code) -- string -> bool
-#    return true
-#end
-#'''
 
 check_user_has_admin = '''
 function(user_id_num, user_code) -- string -> bool
@@ -57,7 +52,7 @@ end
 
 retrieve_avatar_type = '''
 function(user_id_num, user_code) -- str -> str
-    return 'R6'
+    return 'R15'
 end
 '''
 
@@ -173,17 +168,14 @@ id_num = 163230957
 name = 'DoubleCash'
 price = 1
 
-[[remote_data.asset_redirects]]
-id_val = 13
+[remote_data.asset_redirects.13]
 uri = 'https://archive.org/download/youtube-f3AD_dk7MgQ/f3AD_dk7MgQ.webm'
 #cmd_line = '''sh -c 'ffmpeg -i $(yt-dlp -g -f b "ykS9ooPccq4") -c:v libvpx -b:v 3000k -speed 16 -c:a libvorbis -b:a 128k -ar 44100 -f webm -''''
 
-[[remote_data.asset_redirects]]
-id_val = 14
+[remote_data.asset_redirects.14]
 uri = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 
-[[remote_data.asset_redirects]]
-id_val = 15
+[remote_data.asset_redirects.15]
 cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
 
 [server_assignment]

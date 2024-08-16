@@ -73,5 +73,6 @@ class config_type(allocateable.obj_type):
 
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses = []  # type: ignore
-        asset_redirects: structs.asset_redirects = []  # type: ignore
+        asset_redirects: callable[[int | str], structs.asset_redirect | None] = \
+            'function() return nil end'  # type: ignore
         badges: structs.badges = []  # type: ignore
