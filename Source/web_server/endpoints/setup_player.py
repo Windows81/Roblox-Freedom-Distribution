@@ -157,6 +157,5 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
             id_num, user_code,
         )
 
-    self.send_json(
-        {"isAdminDeveloperConsoleEnabled": result})
+    self.send_json({"isAdminDeveloperConsoleEnabled": result})
     return True

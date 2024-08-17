@@ -647,6 +647,7 @@ def f(asset_iden):
             "uri": "https://github.com/Windows81/Time-Is-Musical/blob/main/hour_%02d.wav" % (h % 24)
         }
     return None
+'''
 ```
 
 #### `remote_data.badges`

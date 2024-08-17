@@ -1,11 +1,9 @@
-OldRFD/
-OldLauncher/
-AssetCache/
-Roblox/
-RobloxHidden/
-PyInstallerWork/
-Binaries/
-TestFolder/
+*/**
+!.vscode/
+!Guides/
+!Source/
+!WineBootstrapper/
+
 *.spec
 *.sqlite
 Source/ssl/?*.*
