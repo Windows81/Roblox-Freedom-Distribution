@@ -19,7 +19,7 @@ icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 startup_script = 'game.workspace.FilteringEnabled = false'
 
 [game_setup.place_file]
-rbxl_uri = 'c:\Users\USERNAME\Documents\Roblox Files\VideoTest.rbxl'
+rbxl_uri = 'maps\2007Crossroads.rbxl'
 
 enable_saveplace = false
 
