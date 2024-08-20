@@ -21,7 +21,7 @@ function CreateBinary() {
 		--distpath "$root/Binaries" `
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec" `
-		--exclude-modules "pandas,pandas.core"
+		--exclude-module "pandas,pandas.core"
 	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
 		$files.Add($file)
 	}
