@@ -22,7 +22,7 @@ class obj_type(logic.bin_entry):
         self.bin_subtype = bin_subtype
 
     def process(self) -> None:
-        downloader.download_binary(
+        downloader.bootstrap_binary(
             self.rōblox_version,
             self.BIN_SUBTYPE,
         )
