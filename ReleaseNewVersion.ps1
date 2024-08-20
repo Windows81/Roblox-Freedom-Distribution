@@ -22,7 +22,9 @@ function CreateBinary() {
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec" `
 		--exclude-module "tqdm.std" `
-		--exclude-module "tqdm.gui"
+		--exclude-module "tqdm.gui" `
+		--exclude-module "tqdm.notebook" `
+		--exclude-module "tqdm._tqdm_pandas"
 	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
 		$files.Add($file)
 	}
