@@ -6,6 +6,7 @@
 
 *.spec
 *.sqlite
+GameConfig.toml
 Source/ssl/?*.*
 
 

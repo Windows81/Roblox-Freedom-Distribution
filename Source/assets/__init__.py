@@ -147,6 +147,10 @@ class asseter:
                     extract.process_command_line,
                 ),
             )
+        elif redirect.raw_data is not None:
+            return returns.construct(
+                data=redirect.raw_data,
+            )
         else:
             return returns.construct()
 

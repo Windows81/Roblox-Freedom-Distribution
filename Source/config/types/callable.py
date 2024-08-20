@@ -1,5 +1,5 @@
-from re import S
 from typing import ParamSpec, TypeVar, Generic
+import textwrap
 import enum
 
 
@@ -56,26 +56,34 @@ class obj_type(Generic[P, R]):
     def get_call(self):
         match self.call_mode:
             case call_mode_enum.lua:
-                def call(*args):
+                def call_lua(*args):
                     return self.config.data_transferer.call(
                         self.field_path, self.config, *args,
                     )
-                return call
+                return call_lua
             case call_mode_enum.python:
                 assert isinstance(self.rep, str)
                 local_vars = {}
+                modded_rep = (
+                    textwrap.dedent("""\
+                    def func():
+                    %s
+                        return next(
+                            v
+                            for v in reversed(locals().values())
+                            if callable(v)
+                        )
+                    """) %
+                    (textwrap.indent(self.rep, ' ' * 4),)
+                )
                 exec(
-                    self.rep,  # source
+                    modded_rep,  # source
                     {},  # globals
                     local_vars,  # locals
                 )
-                return next(
-                    v
-                    for v in reversed(local_vars.values())
-                    if callable(v)
-                )
+                return local_vars['func']()
             case call_mode_enum.dicted:
-                def call(*args):
+                def call_dicted(*args):
                     assert isinstance(self.rep, dict)
                     arg_strs = [str(a) for a in args]
                     candidate_keys = [
@@ -94,7 +102,7 @@ class obj_type(Generic[P, R]):
                         ),
                         None,
                     )
-                return call
+                return call_dicted
             case _:
                 raise Exception(
                     "Config option `%s` doesn't seem to be in a valid format." %

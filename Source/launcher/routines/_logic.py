@@ -212,7 +212,7 @@ class bin_entry(ver_entry, popen_entry):
                 'Downloading zipped "%s" for Rōblox version %s...' %
                 (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
             )
-            downloader.download_binary(self.rōblox_version, self.BIN_SUBTYPE)
+            downloader.bootstrap_binary(self.rōblox_version, self.BIN_SUBTYPE)
             print('Download completed!')
         else:
             raise Exception(
