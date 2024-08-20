@@ -22,7 +22,12 @@ function CreateBinary() {
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec" `
 		--exclude-module "pandas" `
-		--exclude-module "pandas.core"
+		--exclude-module "pandas.core" `
+		--exclude-module 'pandas.core.common' `
+		--exclude-module 'pandas.core.frame' `
+		--exclude-module 'pandas.core.groupby' `
+		--exclude-module 'pandas.core.series' `
+		--exclude-module 'pandas.core.window'
 	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
 		$files.Add($file)
 	}
