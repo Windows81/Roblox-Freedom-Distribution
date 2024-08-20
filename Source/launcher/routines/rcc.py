@@ -167,8 +167,6 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         )
 
     def process(self) -> None:
-        print("Initializing Rōblox Cloud Compute...")
-
         self.save_starter_scripts()
         self.save_place_file()
         self.save_app_setting()

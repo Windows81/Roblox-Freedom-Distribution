@@ -6,4 +6,3 @@ urllib3
 tomli
 py7zr
 lz4
-tqdm

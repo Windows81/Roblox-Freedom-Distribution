@@ -3,7 +3,6 @@ from .types import structs, wrappers
 from . import allocateable
 import util.versions
 import util.resource
-import textwrap
 
 
 class config_type(allocateable.obj_type):
@@ -43,93 +42,37 @@ class config_type(allocateable.obj_type):
         icon_path: wrappers.path_str = ''  # type:ignore
 
     class server_core(allocateable.obj_type):
-        chat_style: structs.chat_style = structs.chat_style.CLASSIC_CHAT
+        chat_style: structs.chat_style
 
-        retrieve_default_user_code: callable[[float], str] = textwrap.dedent('''\
-        def f(tick):
-            return 'Player%d' % tick
-        ''')  # type: ignore
+        retrieve_default_user_code: callable[[float], str]
 
-        check_user_allowed: callable[[int, str], bool] = textwrap.dedent('''\
-        def f(*a):
-            return True
-        ''')  # type: ignore
+        check_user_allowed: callable[[int, str], bool] = \
+            'function() return true end'  # type: ignore
 
-        check_user_has_admin: callable[[int, str], bool] = textwrap.dedent('''\
-        def f(*a):
-            return False
-        ''')  # type: ignore
+        check_user_has_admin: callable[[int, str], bool] = \
+            'function() return false end'  # type: ignore
 
-        retrieve_username: callable[[str], str] = textwrap.dedent('''\
-        def f(t, *a):
-            return t
-        ''')  # type: ignore
+        retrieve_username: callable[[str], str]
 
-        retrieve_user_id: callable[[str], int] = textwrap.dedent('''\
-        count = 0
-        def f(*a):
-            count += 1
-            return count
-        ''')  # type: ignore
+        retrieve_user_id: callable[[str], int]
 
-        retrieve_avatar_type: callable[[int, str], structs.avatar_type] = textwrap.dedent('''\
-        def f():
-            return 'R6'
-        ''')  # type: ignore
+        retrieve_avatar_type: callable[[int, str], structs.avatar_type]
 
-        retrieve_avatar_items: callable[[int, str], list[int]] = textwrap.dedent('''\
-        def f():
-            return []
-        ''')  # type: ignore
+        retrieve_avatar_items: callable[[int, str], list[int]]
 
-        retrieve_avatar_scales: callable[[int, str], structs.avatar_scales] = textwrap.dedent('''\
-        def f():
-            return {
-                "height": 1,
-                "width": 1,
-                "head": 1,
-                "depth": 1,
-                "proportion": 0,
-                "body_type": 0,
-            }
-        ''')  # type: ignore
+        retrieve_avatar_scales: callable[[int, str], structs.avatar_scales]
 
-        retrieve_avatar_colors: callable[[int, str], structs.avatar_colors] = textwrap.dedent('''\
-        def f():
-            return {
-                "head": 1,
-                "left_arm": 1,
-                "left_leg": 1,
-                "right_arm": 1,
-                "right_leg": 1,
-                "torso": 1,
-            }
-        ''')  # type: ignore
+        retrieve_avatar_colors: callable[[int, str], structs.avatar_colors]
 
-        retrieve_groups: callable[[int, str], dict[str, int]] = textwrap.dedent('''\
-        def f(*a):
-            return []
-        ''')  # type: ignore
+        retrieve_groups: callable[[int, str], dict[str, int]] = \
+            'function() return {} end'  # type: ignore
 
-        retrieve_account_age: callable[[int, str], int] = textwrap.dedent('''\
-        def f(*a):
-            return 0
-        ''')  # type: ignore
-
-        retrieve_default_funds: callable[[int, str], int] = textwrap.dedent('''\
-        def f(*a):
-            return 0
-        ''')  # type: ignore
-
-        filter_text: callable[[str, int, str], str] = textwrap.dedent('''\
-        def f(t, *a):
-            return t
-        ''')  # type: ignore
+        retrieve_account_age: callable[[int, str], int]
+        retrieve_default_funds: callable[[int, str], int]
+        filter_text: callable[[str, int, str], str]
 
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses = []  # type: ignore
-        asset_redirects: callable[[int | str], structs.asset_redirect | None] = textwrap.dedent('''\
-        def f(*a):
-            return None
-        ''')  # type: ignore
+        asset_redirects: callable[[int | str], structs.asset_redirect | None] = \
+            'function() return nil end'  # type: ignore
         badges: structs.badges = []  # type: ignore

@@ -1,9 +1,7 @@
 import data_transfer
-import textwrap
 import config
 
-BASE_SCRIPT_FORMAT = """\
-%(rcc_snippet)s
+BASE_SCRIPT_FORMAT = """%(rcc_snippet)s
 local BaseUrl = game:GetService("ContentProvider").BaseUrl:lower()
 local HttpRbxApiService = game:GetService("HttpRbxApiService")
 local HttpService = game:GetService("HttpService")

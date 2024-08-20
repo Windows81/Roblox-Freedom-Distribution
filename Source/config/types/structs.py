@@ -23,15 +23,13 @@ class asset_redirect:
     def __post_init__(self):
         if sum([
             self.cmd_line is not None,
-            self.raw_data is not None,
             self.uri is not None,
         ]) > 1:
             raise Exception(
                 'Entries for `asset_redirects` should not have '
-                'more than one of a `uri`, a pipeable `cmd_line`, or a `raw_data` chunk.'
+                'both a `uri` and a pipeable `cmd_line`.'
             )
     uri: wrappers.uri_obj | None = None
-    raw_data: bytes | None = None
     cmd_line: str | None = None
 
 

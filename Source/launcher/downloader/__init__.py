@@ -1,5 +1,3 @@
-import py7zr.exceptions
-from tqdm import tqdm
 import urllib.request
 import util.resource
 import util.versions
@@ -16,43 +14,8 @@ def get_remote_link(rōblox_version: util.versions.rōblox, bin_type: util.resou
     )
 
 
-def download(link: str) -> io.BytesIO:
-    with urllib.request.urlopen(link) as response:
-        if response.status != 200:
-            raise Exception(
-                "Failed to download: HTTP Status %d" %
-                (response.status),
-            )
-
-        total_size = int(response.info().get('Content-Length').strip())
-        response = io.BytesIO()
-
-        with tqdm(
-            total=total_size,
-            unit='B',
-            unit_scale=True,
-            unit_divisor=1024,
-            desc="Downloading",
-        ) as bar:
-            while True:
-                chunk = response.read(1024)
-                if not chunk:
-                    break
-                response.write(chunk)
-                bar.update(len(chunk))
-
-    response.seek(0)
-    return response
-
-
-def bootstrap_binary(rōblox_version: util.versions.rōblox, bin_type: util.resource.bin_subtype) -> None:
+def download_binary(rōblox_version: util.versions.rōblox, bin_type: util.resource.bin_subtype) -> None:
     link = get_remote_link(rōblox_version, bin_type)
-    response = download(link)
-
-    full_dir = util.resource.retr_rōblox_full_path(
-        rōblox_version, bin_type,
-    )
-
-    print(f"Extracting to {full_dir}...")
-    py7zr.unpack_7zarchive(response, full_dir)
-    print("Done.")
+    res = urllib.request.urlopen(link).read()
+    full_dir = util.resource.retr_rōblox_full_path(rōblox_version,  bin_type)
+    py7zr.unpack_7zarchive(io.BytesIO(res), full_dir)
