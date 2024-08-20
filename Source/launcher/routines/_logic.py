@@ -205,6 +205,7 @@ class bin_entry(ver_entry, popen_entry):
         Check if Rōblox is not downloaded; else skip.
         '''
         if os.path.isdir(self.get_versioned_path()):
+            print("Rōblox installation exists, skipping...")
             return
         elif self.local_args.auto_download:
             print(

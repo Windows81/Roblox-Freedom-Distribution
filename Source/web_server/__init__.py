@@ -12,5 +12,6 @@ def make_server(
     *args,
     **kwargs,
 ) -> web_server_logic.web_server:
+    print("Initializing Web-Server...")
     cls = web_server_logic.web_server_ssl if port.is_ssl else web_server_logic.web_server
     return cls(port, game_config, *args, **kwargs)
