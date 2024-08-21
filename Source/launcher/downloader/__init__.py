@@ -1,5 +1,5 @@
+import tqdm_vendored as tqdm
 import py7zr.exceptions
-import tqdm.std as tqdm
 import urllib.request
 import util.resource
 import util.versions
