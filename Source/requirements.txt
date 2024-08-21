@@ -6,4 +6,4 @@ urllib3
 tomli
 py7zr
 lz4
-tqdm
+git+https://github.com/Windows81/Vendored-Tqdm
