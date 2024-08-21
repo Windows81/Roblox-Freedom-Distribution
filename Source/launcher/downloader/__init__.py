@@ -1,5 +1,5 @@
 import py7zr.exceptions
-from tqdm import tqdm
+import tqdm.std as tqdm
 import urllib.request
 import util.resource
 import util.versions
@@ -27,7 +27,7 @@ def download(link: str) -> io.BytesIO:
         total_size = int(response.info().get('Content-Length').strip())
         response = io.BytesIO()
 
-        with tqdm(
+        with tqdm.tqdm(
             total=total_size,
             unit='B',
             unit_scale=True,
