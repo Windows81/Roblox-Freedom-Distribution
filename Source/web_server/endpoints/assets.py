@@ -14,7 +14,11 @@ def _(self: web_server_handler) -> bool:
     # Paramater can either be `id` or `assetversionid`.
     asset_id = assets.resolve_asset_query(self.query)
 
+    # TODO: use a proper allow-listing system.
+    # RFD is designed to allow you to run a webserver separately from RCC.
+    # This limitation breaks that design.
     is_priviledged = self.domain == 'localhost'
+
     if (
         asset_id == util.const.PLACE_ID_CONST and
         not is_priviledged
