@@ -21,7 +21,6 @@ function CreateBinary() {
 		--distpath "$root/Binaries" `
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec" `
-		--exclude-module "tqdm.std" `
 		--exclude-module "tqdm.gui" `
 		--exclude-module "tqdm.notebook"
 	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
