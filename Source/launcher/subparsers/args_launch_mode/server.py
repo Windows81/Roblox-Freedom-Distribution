@@ -53,9 +53,9 @@ def subparse(
         help='If -run_client is passed in, .',
     )
     subparser.add_argument(
-        '--verbose', '-v',
-        action='store_true',
-        help='Makes console output from RCC verbose.',
+        '--quiet', '-q',
+        action='store_false',
+        help='Suppresses console output from RCC.',
     )
 
     skip_mutex = subparser.add_mutually_exclusive_group()
@@ -119,7 +119,7 @@ def _(
             web.arg_type(
                 # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
                 web_ports=web_port_servers,
-                verbose=args.verbose,
+                quiet=args.quiet,
                 game_config=game_config,
             ),
         ])
@@ -130,7 +130,7 @@ def _(
                 rcc_port_num=args.rcc_port,
                 # since RCC only really connects to 127.0.0.1.
                 web_port=web_port_ipv4,
-                verbose=args.verbose,
+                quiet=args.quiet,
                 skip_popen=args.skip_rcc_popen,
                 game_config=game_config,
             ),

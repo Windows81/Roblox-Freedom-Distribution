@@ -1,10 +1,18 @@
-$release_name = (Read-Host "Version title?")
-$confirmation = (Read-Host "Save zipped files? (y?)") -eq "y"
+$mode = (Read-Host "@
+1. Build EXE
+2. Build EXE and publish artefacts
+3. Build EXE and ZIP, then publish artefects
+")
 
-# Packs Rōblox executables into GitHub releases that can be downloaded.
-$commit_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" (curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
 $root = "$PSScriptRoot"
 $files = New-Object System.Collections.Generic.List[System.Object]
+
+function RetrieveInput() {
+	$script:release_name = (Read-Host "Version title?")
+	# Packs Rōblox executables into GitHub releases that can be downloaded.
+	$script:commit_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" (curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
+}
+
 
 function UpdateAndPush() {
 	git add .
@@ -47,16 +55,27 @@ function CreateZippedDirs() {
 	}
 }
 
-if (-not $confirmation) {
-	UpdateAndPush
-	CreateBinary
+function ReleaseToGitHub() {
 	gh release create "$release_name" --notes "" $files -p
-	return
 }
 
-UpdateZippedDirVersion
-UpdateAndPush
-CreateBinary
-CreateZippedDirs
-
-gh release create "$release_name" --notes "" $files -p
+switch ($mode) {
+	'1' {
+		CreateBinary
+	}
+	'2' {
+		RetrieveInput
+		UpdateAndPush
+		CreateBinary
+		ReleaseToGitHub
+	}
+	'3' {
+		RetrieveInput
+		UpdateZippedDirVersion
+		UpdateAndPush
+		CreateBinary
+		CreateZippedDirs
+		ReleaseToGitHub
+	}
+	Default {}
+}

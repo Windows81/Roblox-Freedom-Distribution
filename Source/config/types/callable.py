@@ -43,7 +43,7 @@ class obj_type(Generic[P, R]):
             checked = rep.strip()
             if checked.startswith('function'):
                 return call_mode_enum.lua
-            elif checked.startswith('def'):
+            elif 'def ' in checked:
                 return call_mode_enum.python
             return call_mode_enum.lua
         if isinstance(rep, dict):

@@ -39,7 +39,7 @@ class obj_type(logic.server_entry):
         self.server_running = True
         self.__run_servers(
             web_ports=self.local_args.web_ports,
-            print_http_log=self.local_args.verbose,
+            print_http_log=not self.local_args.quiet,
             game_config=self.game_config,
         )
 
@@ -58,4 +58,4 @@ class arg_type(logic.arg_type):
     web_ports: list[web_server_logic.port_typ] = dataclasses.field(
         default_factory=list,
     )
-    verbose: bool = False
+    quiet: bool = False

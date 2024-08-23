@@ -163,7 +163,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
 
             # This suppresses the "To enable debug output, run with the -verbose flag"
             # which prints if verbosity is disabled.
-            stdout=None if self.local_args.verbose else subprocess.PIPE,
+            stdout=subprocess.PIPE if self.local_args.quiet else None,
         )
 
     def process(self) -> None:
@@ -188,7 +188,7 @@ class arg_type(logic.bin_ssl_arg_type):
     rcc_port_num: int | None
     game_config: config.obj_type
     skip_popen: bool = False
-    verbose: bool = False
+    quiet: bool = False
     web_port: web_server_logic.port_typ = web_server_logic.port_typ(
         port_num=80,
         is_ssl=False,
