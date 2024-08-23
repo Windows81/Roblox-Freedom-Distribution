@@ -156,7 +156,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                     'DevSettingsFile.json',
                 ),
 
-                *(('-verbose',) if self.local_args.verbose else ()),
+                *(() if self.local_args.quiet else ('-verbose',)),
             ],
             stdin=subprocess.PIPE,
             cwd=self.get_versioned_path(),

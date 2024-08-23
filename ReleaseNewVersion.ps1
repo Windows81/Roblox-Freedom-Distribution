@@ -10,7 +10,8 @@ $files = New-Object System.Collections.Generic.List[System.Object]
 function RetrieveInput() {
 	$script:release_name = (Read-Host "Version title?")
 	# Packs Rōblox executables into GitHub releases that can be downloaded.
-	$script:commit_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" (curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
+	$script:commit_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" `
+		(curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
 }
 
 
@@ -28,7 +29,8 @@ function CreateBinary() {
 		--workpath "$root/PyInstallerWork" `
 		--distpath "$root/Binaries" `
 		--icon "$root/Source/Icon.ico" `
-		--specpath "$root/PyInstallerWork/Spec"
+		--specpath "$root/PyInstallerWork/Spec" `
+		--hidden-import requests
 	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
 		$files.Add($file.FullName)
 	}

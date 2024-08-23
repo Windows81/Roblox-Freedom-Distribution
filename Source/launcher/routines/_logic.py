@@ -213,7 +213,7 @@ class bin_entry(ver_entry, popen_entry):
                 (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
             )
             downloader.bootstrap_binary(self.rōblox_version, self.BIN_SUBTYPE)
-            print('Download completed!')
+            print('Installation completed!')
         else:
             raise Exception(
                 'Zipped file "%s" not found for Rōblox version %s.' %
