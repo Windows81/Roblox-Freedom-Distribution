@@ -30,7 +30,7 @@ function CreateBinary() {
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec"
 	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
-		$files.Add($file)
+		$files.Add($file.FullName)
 	}
 }
 
