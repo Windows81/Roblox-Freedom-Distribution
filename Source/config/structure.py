@@ -68,6 +68,7 @@ class config_type(allocateable.obj_type):
         retrieve_user_id: callable[[str], int] = textwrap.dedent('''\
         count = 0
         def f(*a):
+            nonlocal count
             count += 1
             return count
         ''')  # type: ignore

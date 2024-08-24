@@ -54,4 +54,3 @@ def bootstrap_binary(rōblox_version: util.versions.rōblox, bin_type: util.reso
 
     print(f"Extracting to {full_dir}...")
     py7zr.unpack_7zarchive(response, full_dir)
-    print("Done.")

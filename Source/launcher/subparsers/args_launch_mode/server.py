@@ -54,7 +54,7 @@ def subparse(
     )
     subparser.add_argument(
         '--quiet', '-q',
-        action='store_false',
+        action='store_true',
         help='Suppresses console output from RCC.',
     )
 

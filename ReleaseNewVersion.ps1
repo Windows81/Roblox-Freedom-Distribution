@@ -30,7 +30,7 @@ function CreateBinary() {
 		--distpath "$root/Binaries" `
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec" `
-		--hidden-import requests
+		--hidden-import requests # Allows functions in config to use the `requests` library (1 MiB addition)
 	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
 		$files.Add($file.FullName)
 	}
