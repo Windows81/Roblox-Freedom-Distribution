@@ -1,4 +1,3 @@
-from genericpath import isfile
 from . import extract, returns, material, serialisers, queue
 from config.types import structs, wrappers, callable
 import util.const

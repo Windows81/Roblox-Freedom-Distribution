@@ -47,14 +47,19 @@ class uri_obj:
     is_online: bool
     value: str
 
-    def __init__(self, input: str, dir_root: str) -> None:
-        if input.startswith('http://') or input.startswith('https://'):
+    def __init__(self, value: str | bytes, dir_root: str) -> None:
+        if isinstance(value, bytes):
+            value_str = value.decode(encoding='utf-8')
+        elif isinstance(value, str):
+            value_str = value
+
+        if value_str.startswith('http://') or value_str.startswith('https://'):
             self.is_online = True
-            self.value = input
+            self.value = value_str
             return
 
         self.is_online = False
-        self.value = path_str(input, dir_root)
+        self.value = path_str(value_str, dir_root)
 
 
 class rfd_version_check(str):

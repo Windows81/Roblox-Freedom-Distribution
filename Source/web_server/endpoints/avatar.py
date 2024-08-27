@@ -68,7 +68,6 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v463.
-    TODO: properly implement avatars.
     '''
     id_num = int(self.query['userId'])
     avatar = avatar_data(id_num, self.game_config)

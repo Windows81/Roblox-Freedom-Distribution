@@ -109,8 +109,8 @@ def _type_call_union(value, data: type_call_data) -> Any | None:
                 value,
                 dataclasses.replace(data, typ=sub_typ),
             )
-        except Exception as e:
-            ex = e
+        except Exception:
+            pass
 
     raise Exception(
         'Value "%s" is not of any of the following types: %s.' %

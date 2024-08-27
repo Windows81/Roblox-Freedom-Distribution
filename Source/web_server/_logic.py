@@ -5,6 +5,7 @@ from urllib import parse
 import OpenSSL.crypto
 import http.server
 import dataclasses
+import traceback
 import mimetypes
 import functools
 import util.ssl
@@ -266,7 +267,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return False
         try:
             return func(self)
-        except Exception:
+        except ssl.SSLEOFError:
+            return False
+        except Exception as e:
+            print(traceback.format_exc())
             return False
 
     def __open_from_regex(self) -> bool:

@@ -624,7 +624,7 @@ uri = 'c:\Users\USERNAME\Pictures\Image.jpg'
 
 ```toml
 [remote_data.asset_redirects.14] # asset id 14
-uri = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
+raw_data = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 ```
 
 You can include a `cmd_line` field if you want the loaded asset to literally come from the `stdout` of a program.
@@ -632,6 +632,13 @@ You can include a `cmd_line` field if you want the loaded asset to literally com
 ```toml
 [remote_data.asset_redirects.15] # asset id 15
 cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
+```
+
+A `raw_data` field works here too. That literally encapsuates the binary data that will be sent as an asset.
+
+```toml
+[remote_data.asset_redirects.16] # asset id 15
+raw_data = '\0'
 ```
 
 This should also work. It redirects asset iden strings starting wtih `time_music_` to static files on the internet.

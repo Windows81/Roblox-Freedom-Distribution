@@ -15,11 +15,11 @@ class config_type(allocateable.obj_type):
 
     class server_assignment(allocateable.obj_type):
         class players(allocateable.obj_type):
-            maximum: int
-            preferred: int
+            maximum: int = 1024
+            preferred: int = 1024
 
         class instances(allocateable.obj_type):
-            count: int
+            count: int = 1
 
     class game_setup(allocateable.obj_type):
         class place_file(allocateable.obj_type):
@@ -31,15 +31,15 @@ class config_type(allocateable.obj_type):
             clear_on_start: bool = False
 
         class persistence(allocateable.obj_type):
-            sqlite_path: wrappers.path_str
+            sqlite_path: wrappers.path_str = '_.sqlite'  # type:ignore
             clear_on_start: bool = False
 
         roblox_version: util.versions.rōblox
         startup_script: str = ''
 
-        title: str
-        description: str
-        creator_name: str
+        title: str = 'Untitled'
+        description: str = ''
+        creator_name: str = 'RFD'
         icon_path: wrappers.path_str = ''  # type:ignore
 
     class server_core(allocateable.obj_type):
