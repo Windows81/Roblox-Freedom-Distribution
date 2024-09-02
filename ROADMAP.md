@@ -35,6 +35,7 @@ This document outlines the planned features and improvements for our project. Pl
 
 ### Other
 - [ ] Write documentation about asset packs.
+- [ ] Switch to GitLab?
 - [ ] Polish the default config.
 - [ ] Fix the auth fail error (might already be fixed, unsure)
 - [ ] Android support (is planned iirc)
