@@ -46,8 +46,11 @@ class asseter:
             return f.read()
 
     def _save_file(self, path: str, data: bytes) -> None:
-        with open(path, 'wb') as f:
-            f.write(data)
+        try:
+            with open(path, 'wb') as f:
+                f.write(data)
+        except OSError:  # Might occur when the asset iden is too long.
+            pass
 
     def _load_online_asset(self, asset_id: int) -> bytes | None:
         data = self.queuer.get(asset_id, extract.download_rōblox_asset)

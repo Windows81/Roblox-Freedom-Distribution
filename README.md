@@ -26,6 +26,8 @@ In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Con
 
 ## Installation
 
+RFD is natively supported on Windows. Additional testing needs to done on GNU/Linux systems with `wine`. No plans for native MacOS support so far.
+
 ### As an [Executable](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe)
 
 This is good for if you want to deploy quickly on any machine _with_ connection to the internet.
@@ -48,11 +50,23 @@ To launch RFD, your command line will look something like this:
 
 #### For GNU/Linux
 
-Consult [`./WineBootstrapper/README.md`](./WineBootstrapper/README.md)
+To bootstrap the compiled `exe`, run:
+
+```
+mkdir rfd
+cd rfd
+curl https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe --output RFD.exe
+```
+
+To launch RFD, your command line will look something like this:
+
+```
+wine RFD.exe player -h 172.88.194.43 -p 2005
+```
 
 ### From [Source](https://github.com/Windows81/Roblox-Freedom-Distribution/archive/refs/heads/main.zip)
 
-This is good for if you already have Python installed on your machine. Do you want to help contribute to RFD? Use this.
+This is good for if you already have Python installed on your machine. Do you want to help contribute to RFD? \*Use this.
 
 To install _from source_, run:
 
@@ -235,7 +249,13 @@ def f(toil_int: int, daf_qbool: bool):
 '''
 ```
 
-Nobody cares what you call the function. RFD should be smart enough to figure out what you're using.
+Nobody cares what name you give the function. RFD should be smart enough to figure out what you're using.
+
+In Python mode, RFD assigns global constants for your convenience.
+
+| Variable     | Description                      |
+| ------------ | -------------------------------- |
+| `CONFIG_DIR` | the config file's directory path |
 
 ##### Dict Mode
 

@@ -1,5 +1,6 @@
 from typing import ParamSpec, TypeVar, Generic
 import textwrap
+import os.path
 import enum
 
 
@@ -67,18 +68,21 @@ class obj_type(Generic[P, R]):
                 modded_rep = (
                     textwrap.dedent("""\
                     def func():
-                    %s
+                    %(func_body)s
                         return next(
                             v
                             for v in reversed(locals().values())
                             if callable(v)
                         )
-                    """) %
-                    (textwrap.indent(self.rep, ' ' * 4),)
+                    """) % {
+                        'func_body': textwrap.indent(self.rep, ' ' * 4),
+                    }
                 )
                 exec(
                     modded_rep,  # source
-                    {},  # globals
+                    {  # globals
+                        'CONFIG_DIR': os.path.dirname(self.config.file_path),
+                    },
                     local_vars,  # locals
                 )
                 return local_vars['func']()
