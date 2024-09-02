@@ -32,3 +32,11 @@ This document outlines the planned features and improvements for our project. Pl
 - [ ] Add support for connecting clients that are up to 100 versions apart.
 - [ ] Ensure backward compatibility with clients from earlier years, e.g., ~2016, ~2013, etc.
 - [x] Implement version negotiation and compatibility checks for seamless cross-version interactions.
+
+### Other
+- [ ] Write documentation about asset packs.
+- [ ] Polish the default config.
+- [ ] Fix the auth fail error (might already be fixed, unsure)
+- [ ] Android support (is planned iirc)
+- [ ] IOS support (might not happen)
+- [x] Linux/MacOS support (playable thanks to wine🍷) (Use heroic games launcher)
