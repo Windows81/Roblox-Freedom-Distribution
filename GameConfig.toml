@@ -36,29 +36,3 @@ function(user_id_num, user_code) -- string -> bool
 return true
 end
 '''
-
-retrieve_avatar_items_call_mode = "lua"
-retrieve_avatar_items = 'VisualPlugin'
-function(user_id_num, user_code)
-    return {
-        10726856854,
-        9482991343,
-        9481782649,
-        9120251003,
-        4381817635,
-        6969309778,
-        5731052645,
-        2846257298,
-        121390054,
-        261826995,
-        154386348,
-        201733574,
-        48474294,
-        6340101,
-        192483960,
-        190245296,
-        183808364,
-        34247191,
-    }
-end
-'''
