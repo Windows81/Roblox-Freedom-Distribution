@@ -1,13 +1,13 @@
 #Working config (at least it should be working with the latest version)
-server_assignment.players.maximum = 2
-server_assignment.players.preferred = 2
+server_assignment.players.maximum = 32
+server_assignment.players.preferred = 32
 server_assignment.instances.count = 1
 game_setup.place_file.rbxl_uri = 'https://github.com/Windows81/Roblox-Freedom-Distribution/raw/main/2007Crossroads.rbxl'
 game_setup.roblox_version = "v348"
 game_setup.persistence.sqlite_path = "./db.db"
-game_setup.title = "N/A"
-game_setup.description = "N/A"
-game_setup.creator_name = "N/A"
+game_setup.title = "Crossroads"
+game_setup.description = "The classic Roblox map."
+game_setup.creator_name = "David Baszucki, Erik Cassel"
 
 retrieve_default_user_code_call_mode = "lua"
 retrieve_default_user_code = '''
