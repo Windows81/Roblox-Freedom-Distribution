@@ -34,7 +34,7 @@ This document outlines the planned features and improvements for our project. Pl
 - [x] Implement version negotiation and compatibility checks for seamless cross-version interactions.
 
 ### Other
-- [ ] Write documentation about asset packs.
+- [x] Write documentation about asset packs.
 - [x] Polish the default config.
 - [ ] Switch to GitLab?
 - [ ] Fix the auth fail error (might already be fixed, unsure)
