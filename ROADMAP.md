@@ -35,8 +35,8 @@ This document outlines the planned features and improvements for our project. Pl
 
 ### Other
 - [ ] Write documentation about asset packs.
-- [ ] Polish the default config.
-- [ ] - [ ] Switch to GitLab?
+- [x] Polish the default config.
+- [ ] Switch to GitLab?
 - [ ] Fix the auth fail error (might already be fixed, unsure)
 - [ ] Android support (native support is planned iirc) (u play with Winlator as of rn)
 - [ ] IOS support (might not happen)
