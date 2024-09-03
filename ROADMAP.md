@@ -35,9 +35,9 @@ This document outlines the planned features and improvements for our project. Pl
 
 ### Other
 - [ ] Write documentation about asset packs.
-- [ ] Switch to GitLab?
 - [ ] Polish the default config.
+- [ ] - [ ] Switch to GitLab?
 - [ ] Fix the auth fail error (might already be fixed, unsure)
-- [ ] Android support (is planned iirc)
+- [ ] Android support (native support is planned iirc) (u play with Winlator as of rn)
 - [ ] IOS support (might not happen)
 - [x] Linux/MacOS support (playable thanks to wine🍷) (Use heroic games launcher)
