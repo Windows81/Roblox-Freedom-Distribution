@@ -17,7 +17,7 @@ function RetrieveInput() {
 
 function UpdateAndPush() {
 	git add .
-	git commit -m $commit_name
+	git commit -m $script:commit_name
 	git push
 }
 
@@ -38,7 +38,7 @@ function CreateBinary() {
 
 function UpdateZippedDirVersion() {
 	$const_file = "$root/Source/util/const.py"
-	$const_txt = (Get-Content $const_file) -replace 'GIT_RELEASE_VERSION =.+', "GIT_RELEASE_VERSION = '''$release_name'''"
+	$const_txt = (Get-Content $const_file) -replace 'GIT_RELEASE_VERSION =.+', "GIT_RELEASE_VERSION = '''$script:release_name'''"
 	$const_txt | Set-Content $const_file
 }
 
@@ -58,7 +58,7 @@ function CreateZippedDirs() {
 }
 
 function ReleaseToGitHub() {
-	gh release create "$release_name" --notes "" $files -p
+	gh release create "$release_name" --notes "" $files
 }
 
 switch ($mode) {

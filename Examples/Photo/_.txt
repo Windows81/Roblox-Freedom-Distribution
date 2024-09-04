@@ -1,0 +1,154 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+    <Meta name="ExplicitAutoJoints">true</Meta>
+    <External>null</External>
+    <External>nil</External>
+    <Item class="Part">
+        <Properties>
+            <bool name="Anchored">false</bool>
+            <bool name="CanCollide">false</bool>
+            <bool name="CastShadow">true</bool>
+            <Color3uint8 name="Color3uint8">4288914085</Color3uint8>
+            <bool name="Locked">false</bool>
+            <bool name="Massless">false</bool>
+            <token name="Material">272</token>
+            <string name="Name">Part</string>
+            <float name="Reflectance">0</float>
+            <float name="Transparency">0</float>
+            <Vector3 name="size">
+                <X>%(width)s</X>
+                <Y>%(height)s</Y>
+                <Z>0.0000001</Z>
+            </Vector3>
+        </Properties>
+        <Item class="SurfaceGui">
+            <Properties>
+                <bool name="Active">true</bool>
+                <Ref name="Adornee">null</Ref>
+                <bool name="AlwaysOnTop">false</bool>
+                <bool name="AutoLocalize">true</bool>
+                <float name="Brightness">1</float>
+                <Vector2 name="CanvasSize">
+                    <X>800</X>
+                    <Y>600</Y>
+                </Vector2>
+                <bool name="ClipsDescendants">true</bool>
+                <bool name="DefinesCapabilities">false</bool>
+                <bool name="Enabled">true</bool>
+                <token name="Face">5</token>
+                <float name="LightInfluence">1</float>
+                <string name="Name">SurfaceGui</string>
+                <float name="PixelsPerStud">50</float>
+                <bool name="SelectionGroup">false</bool>
+                <token name="SizingMode">1</token>
+                <float name="ToolPunchThroughDistance">0</float>
+                <token name="ZIndexBehavior">1</token>
+                <float name="ZOffset">0</float>
+            </Properties>
+            <Item class="ImageLabel">
+                <Properties>
+                    <bool name="Active">false</bool>
+                    <Vector2 name="AnchorPoint">
+                        <X>0.5</X>
+                        <Y>0.5</Y>
+                    </Vector2>
+                    <bool name="AutoLocalize">true</bool>
+                    <token name="AutomaticSize">0</token>
+                    <float name="BackgroundTransparency">1</float>
+                    <int name="BorderSizePixel">0</int>
+                    <bool name="ClipsDescendants">false</bool>
+                    <Content name="Image"><url>%(url)s</url></Content>
+                    <Color3 name="ImageColor3">
+                        <R>1</R>
+                        <G>1</G>
+                        <B>1</B>
+                    </Color3>
+                    <float name="ImageTransparency">0</float>
+                    <int name="LayoutOrder">0</int>
+                    <string name="Name">ImageLabel</string>
+                    <UDim2 name="Position">
+                        <XS>0.5</XS>
+                        <XO>0</XO>
+                        <YS>0.5</YS>
+                        <YO>0</YO>
+                    </UDim2>
+                    <token name="ResampleMode">0</token>
+                    <float name="Rotation">0</float>
+                    <token name="ScaleType">0</token>
+                    <UDim2 name="Size">
+                        <XS>1</XS>
+                        <XO>0</XO>
+                        <YS>1</YS>
+                        <YO>0</YO>
+                    </UDim2>
+                    <bool name="Visible">true</bool>
+                    <int name="ZIndex">1</int>
+                </Properties>
+            </Item>
+        </Item>
+        <Item class="SurfaceGui">
+            <Properties>
+                <bool name="Active">true</bool>
+                <Ref name="Adornee">null</Ref>
+                <bool name="AlwaysOnTop">false</bool>
+                <bool name="AutoLocalize">true</bool>
+                <float name="Brightness">1</float>
+                <Vector2 name="CanvasSize">
+                    <X>800</X>
+                    <Y>600</Y>
+                </Vector2>
+                <bool name="ClipsDescendants">true</bool>
+                <bool name="DefinesCapabilities">false</bool>
+                <bool name="Enabled">true</bool>
+                <token name="Face">2</token>
+                <float name="LightInfluence">1</float>
+                <string name="Name">SurfaceGui</string>
+                <float name="PixelsPerStud">50</float>
+                <bool name="SelectionGroup">false</bool>
+                <token name="SizingMode">1</token>
+                <float name="ToolPunchThroughDistance">0</float>
+                <token name="ZIndexBehavior">1</token>
+                <float name="ZOffset">0</float>
+            </Properties>
+            <Item class="ImageLabel">
+                <Properties>
+                    <bool name="Active">false</bool>
+                    <Vector2 name="AnchorPoint">
+                        <X>0.5</X>
+                        <Y>0.5</Y>
+                    </Vector2>
+                    <bool name="AutoLocalize">true</bool>
+                    <token name="AutomaticSize">0</token>
+                    <float name="BackgroundTransparency">1</float>
+                    <int name="BorderSizePixel">0</int>
+                    <bool name="ClipsDescendants">false</bool>
+                    <Content name="Image"><url>%(url)s</url></Content>
+                    <Color3 name="ImageColor3">
+                        <R>1</R>
+                        <G>1</G>
+                        <B>1</B>
+                    </Color3>
+                    <float name="ImageTransparency">0</float>
+                    <int name="LayoutOrder">0</int>
+                    <string name="Name">ImageLabel</string>
+                    <UDim2 name="Position">
+                        <XS>0.5</XS>
+                        <XO>0</XO>
+                        <YS>0.5</YS>
+                        <YO>0</YO>
+                    </UDim2>
+                    <token name="ResampleMode">0</token>
+                    <float name="Rotation">0</float>
+                    <token name="ScaleType">0</token>
+                    <UDim2 name="Size">
+                        <XS>1</XS>
+                        <XO>0</XO>
+                        <YS>1</YS>
+                        <YO>0</YO>
+                    </UDim2>
+                    <bool name="Visible">true</bool>
+                    <int name="ZIndex">1</int>
+                </Properties>
+            </Item>
+        </Item>
+    </Item>
+</roblox>

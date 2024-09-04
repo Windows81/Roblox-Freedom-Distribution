@@ -3,6 +3,7 @@
 !Guides/
 !Source/
 !Examples/
+!Examples/**
 
 *.spec
 *.sqlite
