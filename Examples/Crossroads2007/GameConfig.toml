@@ -1,0 +1,38 @@
+#Working config (at least it should be working with the latest version)
+server_assignment.players.maximum = 32
+server_assignment.players.preferred = 32
+server_assignment.instances.count = 1
+game_setup.place_file.rbxl_uri = './2007Crossroads.rbxl'
+game_setup.roblox_version = "v348"
+game_setup.persistence.sqlite_path = "./_.db"
+game_setup.title = "Crossroads"
+game_setup.description = "The classic Roblox map"
+game_setup.creator_name = "David Baszucki, Erik Cassel"
+
+retrieve_default_user_code_call_mode = "lua"
+retrieve_default_user_code = '''
+function(tick) -- float -> str
+return string.format('Player%d', tick)
+end
+'''
+
+retrieve_username_call_mode = "lua"
+retrieve_username = '''
+function(user_code)
+return user_code
+end
+'''
+
+retrieve_user_id_call_mode = "lua"
+retrieve_user_id = '''
+function(user_code)
+return math.random(1, 16777216)
+end
+'''
+
+check_user_allowed_call_mode = "lua"
+check_user_allowed = '''
+function(user_id_num, user_code) -- string -> bool
+return true
+end
+'''
