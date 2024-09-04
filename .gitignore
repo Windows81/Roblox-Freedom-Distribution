@@ -3,6 +3,7 @@
 !Guides/
 !Source/
 !WineBootstrapper/
+!Examples/
 
 *.spec
 *.sqlite
