@@ -250,7 +250,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             pass
 
     def send_redirect(self, url: str) -> None:
-        self.send_response(301)
+        self.send_response(307)
         self.send_header("Location", url)
         self.end_headers()
 

@@ -6,6 +6,7 @@
 !Examples/**
 Examples/**/AssetCache/
 
+**/*.lock
 *.spec
 *.sqlite
 GameConfig.toml
