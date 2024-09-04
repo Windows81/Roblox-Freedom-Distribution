@@ -66,7 +66,7 @@ wine RFD.exe player -h 172.88.194.43 -p 2005
 
 ### From [Source](https://github.com/Windows81/Roblox-Freedom-Distribution/archive/refs/heads/main.zip)
 
-This is good for if you already have Python installed on your machine. Do you want to help contribute to RFD? \*Use this.
+This is good for if you already have Python installed on your machine. Do you want to help contribute to RFD? Use this.
 
 To install _from source_, run:
 
@@ -88,7 +88,7 @@ py Source/_main.py player -h 172.88.194.43 -p 2005
 
 Game-specific options are specified in the `--config_path` argument, which defaults to `./GameConfig.toml`.
 
-[**Please review each option in the config file before starting your server up.**](#config-file-structure)
+[**Please review each option in the config file before starting your server up.**](#gameconfigtoml-structure)
 
 | Option                    | Type         | Default             |
 | ------------------------- | ------------ | ------------------- |
@@ -138,6 +138,10 @@ Host is optionally specified by the `--webserver_host` or `-wh` option, in case 
 
 Port is specified by the `--webserver_port` or `-wp` option.
 
+## Asset Packs
+
+Assets are automatically cached server-side in directory `./AssetCache`. To manually add assets, create the If it doesn't exist create it yourself and it should work.
+
 ## Studio?
 
 You can modify `rbxl` file in current-day Studio as of July 2024. For compatibility with older clients, _RFD comes with its own [serialiser suite](./Source/assets/serialisers/)_. Objects transformed include:
@@ -183,9 +187,9 @@ Where `...` is [your command-line prefix](#installation),
 ... player -rh 172.88.194.43 -p 2005
 ```
 
-## Config File Structure
+## `GameConfig.toml` Structure
 
-This is current as of 0.48.0. Some options might be different in future versions.
+This specification is current as of 0.50.3. Some options might be different in future versions.
 
 ### Special Types
 
@@ -381,7 +385,7 @@ If true, deletes cache from assets which should redirect so that the config file
 
 Resolves to type `bool`; defaults to false.
 
-If true, clears all persistent data before starting a new server.
+If true, clears [the `sqlite` database](#game_setuppersistencesqlite_path) before starting a new server.
 
 #### `game_setup.persistence.sqlite_path`
 
@@ -554,7 +558,7 @@ end
 
 Resolves to [function](#functions) type `(int, str) -> dict[str, int]`.
 
-Key is the group id. Value is the rank.
+Key is the group iden number written as a string; value is the rank value from 0 to 255.
 
 ```toml
 retrieve_groups_call_mode = "lua"
@@ -638,26 +642,26 @@ Through the `uri` field, assets can load either from a local or remote resource.
 The following examples notate the structure into the [dict mode](#dict-mode) syntax:
 
 ```toml
-[remote_data.asset_redirects.13] # asset id 13
+[remote_data.asset_redirects.13] # asset iden 13
 uri = 'c:\Users\USERNAME\Pictures\Image.jpg'
 ```
 
 ```toml
-[remote_data.asset_redirects.14] # asset id 14
+[remote_data.asset_redirects.14] # asset iden 14
 raw_data = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 ```
 
 You can include a `cmd_line` field if you want the loaded asset to literally come from the `stdout` of a program.
 
 ```toml
-[remote_data.asset_redirects.15] # asset id 15
+[remote_data.asset_redirects.15] # asset iden 15
 cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
 ```
 
 A `raw_data` field works here too. That literally encapsuates the binary data that will be sent as an asset.
 
 ```toml
-[remote_data.asset_redirects.16] # asset id 15
+[remote_data.asset_redirects.16] # asset iden 15
 raw_data = '\0'
 ```
 
