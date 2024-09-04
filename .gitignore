@@ -2,7 +2,6 @@
 !.vscode/
 !Guides/
 !Source/
-!WineBootstrapper/
 !Examples/
 
 *.spec
