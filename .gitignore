@@ -4,6 +4,7 @@
 !Source/
 !Examples/
 !Examples/**
+Examples/**/AssetCache/
 
 *.spec
 *.sqlite
