@@ -1,0 +1,124 @@
+# EXAMPLE GAME CONFIGURATION FILE.
+# PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
+# Some arguments are provided as absolute paths and only work on my machine.
+
+metadata.config_version_wildcard = "0.50.*"
+
+[server_assignment]
+players.maximum = 4096
+players.preferred = 666
+instances.count = 1
+
+[game_setup]
+# Aliases for "v348" is "2018M", "v463" is "2021E".
+roblox_version = '2018M'
+
+# Stretches to 16:9.
+icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+
+title = 'Lumber Tycoon 2'
+description = ''
+creator.name = 'ÒÓ'
+startup_script = 'game.workspace.FilteringEnabled = true'
+
+[game_setup.place_file]
+rbxl_uri = 'Lumber Tycoon 2.rbxl'
+# When game:SavePlace() is called, overwirtes the place at `.place_path`
+enable_saveplace = false
+
+[game_setup.database]
+sqlite_path = '_.sqlite'
+clear_on_start = false
+
+
+[server_core]
+retrieve_default_user_code = '''
+function(tick) -- float -> str
+    return string.format('Tick %d', tick)
+end
+'''
+
+check_user_allowed = '''
+function(user_code) -- string -> bool
+    return true
+end
+'''
+
+retrieve_avatar_type = '''
+function(user_code) -- str -> str
+    return 'R6'
+end
+'''
+
+retrieve_avatar_items = '''
+function(user_code) -- str -> [str]
+    return {
+    }
+end
+'''
+
+retrieve_avatar_colors = '''
+function(user_id_num, user_code)
+    return {
+        head = 315,
+        left_arm = 315,
+        left_leg = 315,
+        right_arm = 315,
+        right_leg = 315,
+        torso = 315,
+    }
+end
+'''
+
+retrieve_avatar_scales = '''
+function(user_id_num, user_code)
+    return {
+        height = 1,
+        width = 0.8,
+        head = 1,
+        depth = 0.8,
+        proportion = 0,
+        body_type = 0,
+    }
+end
+'''
+
+retrieve_username = '''
+function(user_code) -- str -> str
+    return user_code
+end
+'''
+
+retrieve_user_id = '''
+function(user_code) -- str -> int
+    return math.random(1, 16777216)
+end
+'''
+
+retrieve_account_age = '''
+function(user_code) -- str -> int
+    return 6969
+end
+'''
+
+filter_text = '''
+function(text, ...)
+    return text:gsub('oo','òó'):gsub('OO','ÒÓ'):gsub('ee','èé'):gsub('EE','ÈÉ'):gsub('Roblox','Rōblox'):gsub('ROBLOX','RŌBLOX')
+end
+'''
+
+chat_style = 'ClassicAndBubble'
+
+
+[remote_data]
+asset_redirects_call_mode = 'python'
+asset_redirects = '''
+import requests
+redirs = requests.get('https://ia800509.us.archive.org/5/items/roblox-asset-hash-archive/asset_dump_merged.json').json()
+def f(asset_iden):
+    asset_iden = str(asset_iden)
+    if asset_iden in redirs:
+        return {
+            'raw_data': requests.get(redirs[asset_iden]).content,
+        }
+'''

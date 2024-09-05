@@ -1,0 +1,199 @@
+[server_assignment]
+players.maximum = 4096
+players.preferred = 666
+instances.count = 1
+
+[game_setup]
+# Aliases for "v348" is "2018M", "v463" is "2021E".
+roblox_version = '2021'
+
+title = 'F3X'
+description = ''
+creator.name = 'ÒÓ'
+
+startup_script = '''
+local ASSET_IDS = {
+    17171717171, -- F3X
+}
+local Tools = {}
+for i, id in next, ASSET_IDS do
+    local asset = game.InsertService:LoadAsset(id)
+    for i, tool in next, asset:GetChildren() do
+        print('Tool loaded:', id, tool)
+        table.insert(Tools, tool)
+    end
+end
+
+function setupPlayer(player)
+    player.CharacterAdded:connect(function(char)
+        for i, tool in next, Tools do
+            tool:Clone().Parent = player.Backpack
+        end
+    end)
+end
+
+game.Players.PlayerAdded:connect(setupPlayer)
+for i, player in next, game.Players:GetChildren() do
+    setupPlayer(player)
+end
+
+local SaveInterval = game.ReplicatedStorage.SaveInterval
+spawn(function()
+    local save_delta = 0
+    game["Run Service"].Heartbeat:Connect(function(delta)
+        save_delta = save_delta + delta
+		if save_delta < SaveInterval.Value then
+            return
+        end
+
+        save_delta = 0
+		game:SavePlace()
+		print(os.date('Place saved: %Y-%m-%d %H:%M:%S'))
+	end)
+end)
+
+game:BindToClose(function()
+	game:SavePlace()
+end)
+'''
+
+[game_setup.place_file]
+path = '_.rbxl'
+# When game:SavePlace() is called, overwirtes the place at `.place_path`
+enable_saveplace = true
+
+[game_setup.database]
+path = '_.sqlite'
+clear_on_start = false
+
+[game_setup.icon]
+# Stretches to 16:9.
+path = '_.png'
+
+
+[server_core]
+retrieve_default_user_code = '''
+function(tick) -- float -> str
+    return string.format('Tick %d', tick)
+end
+'''
+
+check_user_allowed = '''
+function(user_code) -- string -> bool
+    print(user_code, 'joined from IP address', ip_addr)
+    return true
+end
+'''
+
+retrieve_avatar_type = '''
+function(user_code) -- str -> str
+    return 'R15'
+end
+'''
+
+retrieve_avatar_items = '''
+function(user_code) -- str -> [str]
+    if user_code:find('Mary') then
+        return {
+            8746101819,
+            12546881897,
+            9571743205,
+            10714877787,
+            6775120568,
+            5945433814,
+            144075659,
+            746767604,
+            376547633,
+            376546668,
+            376547341,
+            376547092,
+            86499666,
+            8863219600,
+            14318768992,
+            14318770705,
+        }
+    end
+    return {
+        10726856854,
+        9482991343,
+        9481782649,
+        9120251003,
+        4381817635,
+        6969309778,
+        5731052645,
+        2846257298,
+        121390054,
+        261826995,
+        154386348,
+        201733574,
+        48474294,
+        6340101,
+        192483960,
+        190245296,
+        183808364,
+        34247191,
+    }
+end
+'''
+
+retrieve_avatar_colors = '''
+function(user_code) -- str -> {[str]: number}
+    return {
+        head = 315,
+        left_arm = 315,
+        left_leg = 315,
+        right_arm = 315,
+        right_leg = 315,
+        torso = 315,
+    }
+end
+'''
+
+retrieve_avatar_scales = '''
+function(user_code) -- str -> {[str]: number}
+    if user_code:find('Mary') then
+        return {
+            height = 0.95,
+            width = 0.95,
+            head = 0.95,
+            depth = 0.95,
+            proportion = 0.1,
+            body_type = 0.25,
+        }
+    end
+    return {
+        height = 1,
+        width = 1,
+        head = 1,
+        depth = 1,
+        proportion = 1,
+        body_type = 1,
+    }
+end
+'''
+
+retrieve_username = '''
+function(user_code) -- str -> str
+    return user_code
+end
+'''
+
+retrieve_user_id = '''
+function(user_code) -- str -> int
+    return math.random(1, 16777216)
+end
+'''
+
+retrieve_account_age = '''
+function(user_code) -- str -> int
+    return 6969
+end
+'''
+
+filter_text = '''
+function(user_code, text)
+    return text:gsub('oo','òó'):gsub('OO','ÒÓ'):gsub('ee','èé'):gsub('EE','ÈÉ'):gsub('Roblox','Rōblox'):gsub('ROBLOX','RŌBLOX')
+end
+'''
+
+chat_style = 'ClassicAndBubble'

@@ -9,7 +9,7 @@ Examples/**/AssetCache/
 **/*.lock
 *.spec
 *.sqlite
-GameConfig.toml
+./GameConfig.toml
 Source/ssl/?*.*
 
 # Created by https://www.toptal.com/developers/gitignore/api/python
