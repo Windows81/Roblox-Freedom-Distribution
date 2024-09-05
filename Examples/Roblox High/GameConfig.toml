@@ -14,7 +14,7 @@ startup_script = 'game.workspace.FilteringEnabled = true'
 
 [game_setup.place_file]
 # Can be a file path or an online resource through HTTP(S).
-rbxl_uri = './_.rbxl'
+rbxl_uri = 'https://github.com/Windows81/Roblox-Freedom-Distribution/raw/main/Examples/Roblox%20High/_.rbxl'
 
 # When game:SavePlace() is called, overwrites the place at `rbxl_uri`.
 # Doesn't work if `rbxl_uri` points to an online resource.
