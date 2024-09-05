@@ -6,10 +6,10 @@ metadata.config_version_wildcard = "0.51.*"
 roblox_version = '2018'
 
 title = 'Crossroads'
-description = 'The classic Roblox map.'
+description = 'The classic Rōblox map.'
 creator_name = 'David Baszucki, Erik Cassel'
 
-icon_url = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+icon_url = 'https://ia600506.us.archive.org/34/items/soundcloud-1509042007/1509042007.jpg'
 
 startup_script = 'game.workspace.FilteringEnabled = true'
 
