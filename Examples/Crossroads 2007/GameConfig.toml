@@ -1,38 +1,152 @@
-#Working config (at least it should be working with the latest version)
-server_assignment.players.maximum = 32
-server_assignment.players.preferred = 32
-server_assignment.instances.count = 1
-game_setup.place_file.rbxl_uri = './Crossroads.rbxl'
-game_setup.roblox_version = "v348"
-game_setup.persistence.sqlite_path = "./_.db"
-game_setup.title = "Crossroads"
-game_setup.description = "The classic Roblox map"
-game_setup.creator_name = "David Baszucki, Erik Cassel"
+metadata.config_version_wildcard = "0.50.*"
+#This is the most up to date conf
 
-retrieve_default_user_code_call_mode = "lua"
+[game_setup]
+# Aliases for "v348" is "2018M", "v463" is "2021E".
+roblox_version = '2018'
+
+title = 'Crossroads'
+description = 'The classic Roblox map.'
+creator_name = 'David Baszucki, Erik Cassel'
+
+icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+
+startup_script = 'game.workspace.FilteringEnabled = true'
+
+[game_setup.place_file]
+# Can be a file path or an online resource through HTTP(S).
+rbxl_uri = './Crossroads.rbxl'
+
+# When game:SavePlace() is called, overwrites the place at `rbxl_uri`.
+# Doesn't work if `rbxl_uri` points to an online resource.
+enable_saveplace = false
+
+[game_setup.persistence]
+sqlite_path = '_.sqlite'
+clear_on_start = false
+
+[server_core]
 retrieve_default_user_code = '''
 function(tick) -- float -> str
-return string.format('Player%d', tick)
+    return string.format('Player%d', tick)
 end
 '''
 
-retrieve_username_call_mode = "lua"
-retrieve_username = '''
-function(user_code)
-return user_code
-end
-'''
-
-retrieve_user_id_call_mode = "lua"
-retrieve_user_id = '''
-function(user_code)
-return math.random(1, 16777216)
-end
-'''
-
-check_user_allowed_call_mode = "lua"
 check_user_allowed = '''
-function(user_id_num, user_code) -- string -> bool
-return true
+function(user,iden, user_code) -- string -> bool
+    return true
 end
 '''
+
+retrieve_avatar_type = '''
+function(user,iden, user_code) -- str -> str
+    return 'R6'
+end
+'''
+
+retrieve_avatar_items = '''
+function(user,iden, user_code) -- str -> [str]
+    if user_code == 'VisualPlugin' then
+        return {
+            10726856854,
+            9482991343,
+            9481782649,
+            9120251003,
+            4381817635,
+            6969309778,
+            5731052645,
+            2846257298,
+            121390054,
+            261826995,
+            154386348,
+            201733574,
+            48474294,
+            6340101,
+            192483960,
+            190245296,
+            183808364,
+            34247191,
+        }
+    end
+    return {}
+end
+'''
+
+retrieve_avatar_colors = '''
+function(user,iden, user_code) -- str -> {[str]: number}
+    if user_code == 'VisualPlugin' then
+        return {
+            head = 315,
+            left_arm = 315,
+            left_leg = 315,
+            right_arm = 315,
+            right_leg = 315,
+            torso = 315,
+        }
+    end
+    return {
+        head = BrickColor.Random().Number,
+        left_arm = BrickColor.Random().Number,
+        left_leg = BrickColor.Random().Number,
+        right_arm = BrickColor.Random().Number,
+        right_leg = BrickColor.Random().Number,
+        torso = BrickColor.Random().Number,
+    }
+end
+'''
+
+retrieve_avatar_scales = '''
+def f():
+    return {
+        "height": 1,
+        "width": 1,
+        "head": 1,
+        "depth": 1,
+        "proportion": 0,
+        "body_type": 0,
+    }
+'''
+
+retrieve_username = '''
+def f(user_code):
+    return user_code
+'''
+
+filter_text = '''
+def f(text, user_id_num, user_code):
+    return (
+        text
+        .replace('oo','òó')
+        .replace('OO','ÒÓ')
+        .replace('ee','èé')
+        .replace('EE','ÈÉ')
+        .replace('Roblox','Rōblox')
+        .replace('ROBLOX','RŌBLOX')
+    )
+'''
+
+retrieve_groups = '''
+function(user,iden, user_code) -- str -> str
+    return {
+        ['1200769'] = 255;
+        ['2868472'] = 255;
+        ['4199740'] = 255;
+        ['4265462'] = 255;
+        ['4265456'] = 255;
+        ['4265443'] = 255;
+        ['4265449'] = 255;
+    }
+end
+'''
+
+retrieve_default_funds = '''
+def f(*a):
+    return 6969
+'''
+
+chat_style = 'ClassicAndBubble'
+
+[server_assignment]
+players.maximum = 4096
+players.preferred = 666
+instances.count = 1
