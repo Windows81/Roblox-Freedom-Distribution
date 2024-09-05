@@ -140,7 +140,15 @@ Port is specified by the `--webserver_port` or `-wp` option.
 
 ## Asset Packs
 
-Assets are automatically cached server-side in directory `./AssetCache`. To manually add assets, create the If it doesn't exist create it yourself and it should work.
+Assets are automatically cached server-side in directory `./AssetCache`. To manually add assets, place the raw data in a file named with the iden number or string _without_ any extension.
+
+The following are examples of asset idens resolving to cache files:
+
+| Asset Iden       | File Name        | Format |
+| ---------------- | ---------------- | ------ |
+| `1818`           | `./00000001818`  | `%11d` |
+| `1630228`        | `./00001630228`  | `%11d` |
+| `"custom-asset"` | `./custom-asset` | `%s`   |
 
 ## Studio?
 
