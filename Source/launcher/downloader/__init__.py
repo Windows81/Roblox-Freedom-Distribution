@@ -9,7 +9,7 @@ import io
 
 
 def get_remote_link(rōblox_version: util.versions.rōblox, bin_type: util.resource.bin_subtype) -> str:
-    return util.const.GIT_LINK_FORMAT % (
+    return util.const.ZIPPED_RELEASE_LINK_FORMAT % (
         util.const.GIT_RELEASE_VERSION,
         rōblox_version.name,
         bin_type.value,

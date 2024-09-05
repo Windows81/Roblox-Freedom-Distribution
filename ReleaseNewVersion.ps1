@@ -36,9 +36,11 @@ function CreateBinary() {
 	}
 }
 
-function UpdateZippedDirVersion() {
+function UpdateZippedReleaseVersion($labels) {
 	$const_file = "$root/Source/util/const.py"
-	$const_txt = (Get-Content $const_file) -replace 'GIT_RELEASE_VERSION =.+', "GIT_RELEASE_VERSION = '''$script:release_name'''"
+	foreach ($label in $labels) {
+		$const_txt = (Get-Content $const_file) -replace "$label =.+", "$label = '''$script:release_name'''"
+	}
 	$const_txt | Set-Content $const_file
 }
 
@@ -67,13 +69,14 @@ switch ($mode) {
 	}
 	'2' {
 		RetrieveInput
+		UpdateZippedReleaseVersion @("GIT_RELEASE_VERSION")
 		UpdateAndPush
 		CreateBinary
 		ReleaseToGitHub
 	}
 	'3' {
 		RetrieveInput
-		UpdateZippedDirVersion
+		UpdateZippedReleaseVersion @("GIT_RELEASE_VERSION", "ZIPPED_RELEASE_VERSION")
 		UpdateAndPush
 		CreateBinary
 		CreateZippedDirs
