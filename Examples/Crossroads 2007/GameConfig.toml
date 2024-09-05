@@ -96,7 +96,7 @@ end
 '''
 
 retrieve_avatar_scales = '''
-def f():
+def f(*a):
     return {
         "height": 1,
         "width": 1,
