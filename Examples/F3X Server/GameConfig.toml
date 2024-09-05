@@ -58,7 +58,7 @@ end)
 '''
 
 [game_setup.place_file]
-path = '_.rbxl'
+rbxl_uri = '_.rbxl'
 # When game:SavePlace() is called, overwirtes the place at `.place_path`
 enable_saveplace = true
 
@@ -86,13 +86,13 @@ end
 '''
 
 retrieve_avatar_type = '''
-function(user_iden, user_code) -- str -> str
+function(user_iden, user_code)
     return 'R15'
 end
 '''
 
 retrieve_avatar_items = '''
-function(user_iden, user_code) -- str -> [str]
+function(user_iden, user_code)
     if user_code:find('Mary') then
         return {
             8746101819,
@@ -137,7 +137,7 @@ end
 '''
 
 retrieve_avatar_colors = '''
-function(user_iden, user_code) -- str -> {[str]: number}
+function(user_iden, user_code)
     return {
         head = 315,
         left_arm = 315,
@@ -150,7 +150,7 @@ end
 '''
 
 retrieve_avatar_scales = '''
-function(user_iden, user_code) -- str -> {[str]: number}
+function(user_iden, user_code)
     if user_code:find('Mary') then
         return {
             height = 0.95,
@@ -173,19 +173,19 @@ end
 '''
 
 retrieve_username = '''
-function(user_iden, user_code) -- str -> str
+function(user_iden, user_code)
     return user_code
 end
 '''
 
 retrieve_user_id = '''
-function(user_iden, user_code) -- str -> int
+function(user_code)
     return math.random(1, 16777216)
 end
 '''
 
 retrieve_account_age = '''
-function(user_iden, user_code) -- str -> int
+function(user_iden, user_code)
     return 6969
 end
 '''

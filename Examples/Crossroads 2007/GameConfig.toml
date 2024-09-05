@@ -127,7 +127,7 @@ def f(*a):
 '''
 
 retrieve_username = '''
-def f(user_code):
+def f(user_id_num, user_code):
     return user_code
 '''
 

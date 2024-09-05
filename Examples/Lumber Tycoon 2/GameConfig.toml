@@ -84,7 +84,7 @@ end
 '''
 
 retrieve_username = '''
-function(user_code) -- str -> str
+function(user_id_num, user_code) -- str -> str
     return user_code
 end
 '''

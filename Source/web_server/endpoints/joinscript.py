@@ -9,14 +9,14 @@ import json
 
 def init_player(self: web_server_handler, user_code: str, id_num: int) -> tuple[str, int, str]:
     config = self.server.game_config
-    username = config.server_core.retrieve_username(user_code)
+    username = config.server_core.retrieve_username(id_num, user_code)
 
     (user_code, id_num, username) = self.server.storage.players.add_player(
         user_code, id_num, username,
     )
     # This method only affects a player's fund balance if they're joining for the first time.
     self.server.storage.funds.init(
-        id_num,  config.server_core.retrieve_default_funds(id_num, user_code),
+        id_num, config.server_core.retrieve_default_funds(id_num, user_code),
     )
     return (user_code, id_num, username)
 

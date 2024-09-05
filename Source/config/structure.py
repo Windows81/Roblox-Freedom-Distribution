@@ -60,9 +60,9 @@ class config_type(allocateable.obj_type):
             return False
         ''')  # type: ignore
 
-        retrieve_username: callable[[str], str] = textwrap.dedent('''\
-        def f(t, *a):
-            return t
+        retrieve_username: callable[[int, str], str] = textwrap.dedent('''\
+        def f(i, n, *a):
+            return n
         ''')  # type: ignore
 
         retrieve_user_id: callable[[str], int] = textwrap.dedent('''\
