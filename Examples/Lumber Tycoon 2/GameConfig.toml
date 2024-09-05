@@ -14,7 +14,7 @@ instances.count = 1
 roblox_version = '2018M'
 
 # Stretches to 16:9.
-icon_url = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+icon_uri = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 title = 'Lumber Tycoon 2'
 description = ''

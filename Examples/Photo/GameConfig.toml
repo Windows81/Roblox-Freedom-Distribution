@@ -7,7 +7,7 @@ title = 'òó'
 description = ''
 creator_name = 'ÒÓ'
 
-icon_url = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+icon_uri = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 startup_script = '''
 local PIXELS_PER_STUD = 100
