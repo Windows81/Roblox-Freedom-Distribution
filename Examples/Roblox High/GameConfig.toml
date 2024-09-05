@@ -1,4 +1,4 @@
-metadata.config_version_wildcard = "0.50.*"
+metadata.config_version_wildcard = "0.51.*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
@@ -8,7 +8,7 @@ title = 'òó'
 description = ''
 creator_name = 'ÒÓ'
 
-icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+icon_url = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 startup_script = 'game.workspace.FilteringEnabled = true'
 

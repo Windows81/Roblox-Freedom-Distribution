@@ -353,11 +353,11 @@ Resolves to type `str`.
 
 Shows up on the loading screen when a player joins the server.
 
-#### `game_setup.icon_path`
+#### `game_setup.icon_uri`
 
-Resolves to type `path_str`. Relative paths are traced from the directory where the config file is placed.
+Resolves to internal type `uri_obj`.
 
-Shows up on the loading screen when a player joins the server.
+Can resolve to either a relative or absolute local path -- or extracted from a remote URL.
 
 #### `game_setup.place_file.rbxl_uri`
 

@@ -1,4 +1,4 @@
-metadata.config_version_wildcard = "0.50.*"
+metadata.config_version_wildcard = "0.51.*"
 #This is the most up to date conf
 
 [game_setup]
@@ -9,7 +9,7 @@ title = 'Crossroads'
 description = 'The classic Roblox map.'
 creator_name = 'David Baszucki, Erik Cassel'
 
-icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+icon_url = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 startup_script = 'game.workspace.FilteringEnabled = true'
 
@@ -93,7 +93,7 @@ function(user_iden, user_code) -- str -> {[str]: number}
             right_leg = 315,
             torso = 315,
         }
-        elseif user_code == 'Twig' then
+    elseif user_code == 'Twig' then
         return {
             head = 361,
             left_arm = 361,

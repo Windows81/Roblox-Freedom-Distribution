@@ -9,10 +9,10 @@ import util.const
 @server_path("/v1/asset/")
 @server_path("/.127.0.0.1/asset/")
 def _(self: web_server_handler) -> bool:
-    assets = self.server.game_config.asset_cache
+    asset_cache = self.server.game_config.asset_cache
 
     # Paramater can either be `id` or `assetversionid`.
-    asset_id = assets.resolve_asset_query(self.query)
+    asset_id = asset_cache.resolve_asset_query(self.query)
 
     # TODO: use a proper allow-listing system.
     # RFD is designed to allow you to run a webserver separately from RCC.
@@ -30,7 +30,7 @@ def _(self: web_server_handler) -> bool:
         )
         return True
 
-    asset = assets.get_asset(
+    asset = asset_cache.get_asset(
         asset_id,
         bypass_blacklist=is_priviledged,
     )

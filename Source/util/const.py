@@ -3,6 +3,8 @@ GIT_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Freedom-Distribution/rele
 
 PLACE_ID_CONST = 1818
 
+THUMBNAIL_ID_CONST = 'rfd-thumbnail'
+
 ALLOWED_MD5_HASHES = {
     "data": [
         "696224eb7537fbd4f684d05b30e7577b",

@@ -2,7 +2,7 @@
 # PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
 # Some arguments are provided as absolute paths and only work on my machine.
 
-metadata.config_version_wildcard = "0.50.*"
+metadata.config_version_wildcard = "0.51.*"
 
 [server_assignment]
 players.maximum = 4096
@@ -14,7 +14,7 @@ instances.count = 1
 roblox_version = '2018M'
 
 # Stretches to 16:9.
-icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+icon_url = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 title = 'Lumber Tycoon 2'
 description = ''

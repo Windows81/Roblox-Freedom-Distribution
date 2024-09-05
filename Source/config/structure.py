@@ -40,7 +40,7 @@ class config_type(allocateable.obj_type):
         title: str = 'Untitled'
         description: str = ''
         creator_name: str = 'RFD'
-        icon_path: wrappers.path_str = ''  # type:ignore
+        icon_uri: wrappers.uri_obj = ''  # type:ignore
 
     class server_core(allocateable.obj_type):
         chat_style: structs.chat_style = structs.chat_style.CLASSIC_CHAT

@@ -1,6 +1,7 @@
 from typing_extensions import Self, TypeVar, get_args
 import util.const as const
 import fnmatch
+import urllib3
 import os
 
 
@@ -60,6 +61,19 @@ class uri_obj:
 
         self.is_online = False
         self.value = path_str(value_str, dir_root)
+
+    def extract(self) -> bytes:
+        if not self.is_online:
+            with open(self.value, 'rb') as rf:
+                return rf.read()
+
+        http = urllib3.PoolManager()
+        response = http.request('GET', self.value)
+
+        if response.status != 200:
+            raise Exception("File couldn't be loaded.")
+
+        return response.data
 
 
 class rfd_version_check(str):

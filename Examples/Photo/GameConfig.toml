@@ -1,4 +1,4 @@
-metadata.config_version_wildcard = "0.50.*"
+metadata.config_version_wildcard = "0.51.*"
 
 [game_setup]
 roblox_version = '2021'
@@ -7,7 +7,7 @@ title = 'òó'
 description = ''
 creator_name = 'ÒÓ'
 
-icon_path = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
+icon_url = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 startup_script = '''
 local PIXELS_PER_STUD = 100

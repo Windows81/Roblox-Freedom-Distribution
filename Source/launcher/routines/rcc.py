@@ -38,21 +38,15 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         from_uri = config.game_setup.place_file.rbxl_uri
         if from_uri is None:
             return
+
         cache = config.asset_cache
+        rbxl_data = parse(from_uri.extract())
+        cache.add_asset(const.PLACE_ID_CONST, rbxl_data)
 
-        if not from_uri.is_online:
-            with open(from_uri.value, 'rb') as rf:
-                cache.add_asset(const.PLACE_ID_CONST, parse(rf.read()))
-            return
+        thumbnail_data = config.game_setup.icon_uri.extract()
+        cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
 
-        http = urllib3.PoolManager()
-        response = http.request('GET', from_uri.value)
-
-        if response.status != 200:
-            raise Exception("Place file couldn't be loaded.")
-
-        cache.add_asset(const.PLACE_ID_CONST, parse(response.data))
-        if config.game_setup.place_file.enable_saveplace:
+        if from_uri.is_online and config.game_setup.place_file.enable_saveplace:
             print(
                 'Warning: config option "enable_saveplace" is redundant ' +
                 'when the place file is an online resource.'

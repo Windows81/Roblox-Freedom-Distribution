@@ -1,9 +1,8 @@
 from web_server._logic import web_server_handler, server_path, web_server_ssl
-import util.versions as versions
+import assets.returns as returns
 import util.resource
 import util.const
 import util.ssl
-import json
 import time
 import re
 
@@ -111,8 +110,10 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/Thumbs/GameIcon.ashx')
 def _(self: web_server_handler) -> bool:
-    with open(self.game_config.game_setup.icon_path, 'rb') as f:
-        self.send_data(f.read())
+    asset_cache = self.server.game_config.asset_cache
+    thumbnail_data = asset_cache.get_asset(util.const.THUMBNAIL_ID_CONST)
+    if isinstance(thumbnail_data, returns.ret_data):
+        self.send_data(thumbnail_data.data)
     return True
 
 
