@@ -32,19 +32,19 @@ end
 '''
 
 check_user_allowed = '''
-function(user_code) -- string -> bool
+function(user_iden, user_code) -- string -> bool
     return true
 end
 '''
 
 retrieve_avatar_type = '''
-function(user_code) -- str -> str
+function(user_iden, user_code)
     return 'R6'
 end
 '''
 
 retrieve_avatar_items = '''
-function(user_code) -- str -> [str]
+function(user_iden, user_code)
     if user_code == 'VisualPlugin' then
         return {
             10726856854,
@@ -72,7 +72,7 @@ end
 '''
 
 retrieve_avatar_colors = '''
-function(user_code) -- str -> {[str]: number}
+function(user_iden, user_code)
     if user_code == 'VisualPlugin' then
         return {
             head = 315,
@@ -95,14 +95,14 @@ end
 '''
 
 retrieve_avatar_scales = '''
-def f():
+function(user_iden, user_code)
     return {
-        "height": 1,
-        "width": 1,
-        "head": 1,
-        "depth": 1,
-        "proportion": 0,
-        "body_type": 0,
+        height = 1,
+        width = 1,
+        head = 1,
+        depth = 1,
+        proportion = 1,
+        body_type = 1,
     }
 '''
 
@@ -125,7 +125,7 @@ def f(text, user_id_num, user_code):
 '''
 
 retrieve_groups = '''
-function(user_code) -- str -> str
+function(user_iden, user_code)
     return {
         ['1200769'] = 255;
         ['2868472'] = 255;
