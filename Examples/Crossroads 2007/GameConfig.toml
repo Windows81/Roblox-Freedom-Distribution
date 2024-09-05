@@ -40,7 +40,7 @@ end
 
 retrieve_avatar_type = '''
 function(user_iden, user_code) -- str -> str
-    return 'R6'
+    return 'R15'
 end
 '''
 
@@ -67,10 +67,20 @@ function(user_iden, user_code) -- str -> [str]
             183808364,
             34247191,
         }
+    elseif user_code == 'Twig' then
+        return {
+            301820642,
+            5243961918,
+            11857928130,
+            86487700,
+            16630147,
+        }
     end
     return {}
 end
 '''
+
+#Please refer to this page for avatar colors. https://create.roblox.com/docs/reference/engine/datatypes/BrickColor
 
 retrieve_avatar_colors = '''
 function(user_iden, user_code) -- str -> {[str]: number}
@@ -82,6 +92,15 @@ function(user_iden, user_code) -- str -> {[str]: number}
             right_arm = 315,
             right_leg = 315,
             torso = 315,
+        }
+        elseif user_code == 'Twig' then
+        return {
+            head = 361,
+            left_arm = 361,
+            left_leg = 361,
+            right_arm = 361,
+            right_leg = 361,
+            torso = 361,
         }
     end
     return {
