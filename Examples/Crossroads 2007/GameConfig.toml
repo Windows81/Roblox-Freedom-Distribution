@@ -1,4 +1,4 @@
-metadata.config_version_wildcard = "0.51.*"
+metadata.config_version_wildcard = "0.52.*"
 #This is the most up to date conf
 
 [game_setup]
