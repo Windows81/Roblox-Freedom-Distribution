@@ -1,4 +1,4 @@
-metadata.config_version_wildcard = "0.51.*"
+metadata.config_version_wildcard = "0.52.*"
 
 [game_setup]
 roblox_version = '2021'
