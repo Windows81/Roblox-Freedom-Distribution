@@ -2,7 +2,7 @@
 # PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
 # Some arguments are provided as absolute paths and only work on my machine.
 
-metadata.config_version_wildcard = "0.51.*"
+metadata.config_version_wildcard = "0.52.*"
 
 [server_assignment]
 players.maximum = 4096
