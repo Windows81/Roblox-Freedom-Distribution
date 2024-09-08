@@ -130,7 +130,7 @@ Host is specified by the `-h` option (also by `--rcc_host` or `-rh`).
 
 Port is specified by the `-p` option (also by `--rcc_port` or `-rp`).
 
-### Webserver (HTTPS)
+### Webserver (self-signed HTTPS)
 
 The webserver is responsible for facilitating player connections and loading in-game assets.
 
@@ -144,26 +144,26 @@ Assets are automatically cached server-side in directory `./AssetCache`. To manu
 
 The following are examples of asset idens resolving to cache files:
 
-| Asset Iden       | File Name        | Format |
-| ---------------- | ---------------- | ------ |
-| `1818`           | `./00000001818`  | `%11d` |
-| `1630228`        | `./00001630228`  | `%11d` |
-| `"custom-asset"` | `./custom-asset` | `%s`   |
+| Asset Iden                  | File Name        | Format |
+| --------------------------- | ---------------- | ------ |
+| `rbxassetid://1818`         | `./00000001818`  | `%11d` |
+| `rbxassetid://1630228`      | `./00001630228`  | `%11d` |
+| `rbxassetid://custom-asset` | `./custom-asset` | `%s`   |
 
 ## Studio?
 
-You can modify `rbxl` file in current-day Studio as of July 2024. For compatibility with older clients, _RFD comes with its own [serialiser suite](./Source/assets/serialisers/)_. Objects transformed include:
+You can modify `rbxl` file in current-day Studio as of September 2024. For compatibility with older clients, _RFD comes with its own [serialiser suite](./Source/assets/serialisers/)_. Objects transformed include:
 
 1. Fonts which existed in their respective versions,
 1. And meshes encoded with versions 4 or 5 _back_ to version 3.
 
-However, **union operations done in current-day Studio (CSG v3) are not supported**.
+However, **union operations done in current-day Studio (CSG v3) are not supported**. This is because CSG v2 support was likely completely removed in late 2022.
 
 In that case...
 
-[Rōblox Filtering Disabled](https://beepboopbap.itch.io/filtering-disabled) has a working Studio build from 2022.
-
 [Sodikm](https://archive.org/details/full-sodikm_202308) has a functional Studio build from 2018.
+
+[Rōblox Filtering Disabled](https://beepboopbap.itch.io/filtering-disabled) has a working Studio build from 2022.
 
 You can also use [this 2018M build](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2023-08-31T09%EA%9E%8910Z/v348.Studio.7z) whilst running the Rōblox Filtering Disabled webserver.
 
@@ -197,7 +197,7 @@ Where `...` is [your command-line prefix](#installation),
 
 ## `GameConfig.toml` Structure
 
-This specification is current as of 0.50.3. Some options might be different in future versions.
+This specification is current as of 0.52. Some options might be different in future versions.
 
 ### Special Types
 
@@ -445,14 +445,14 @@ end
 
 #### `server_core.retrieve_username`
 
-Resolves to [function](#functions) type `(str) -> str`.
+Resolves to [function](#functions) type `(int, str) -> str`.
 
 Only gets called the first time a new user joins. Otherwise, RFD checks for a cached value in [the `sqlite` database](#game_setuppersistencesqlite_path).
 
 ```toml
 retrieve_username_call_mode = "lua"
 retrieve_username = '''
-function(user_code)
+function(user_id_num, user_code)
     return user_code
 end
 '''
