@@ -2,7 +2,7 @@
 # PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
 # Some arguments are provided as absolute paths and only work on my machine.
 
-metadata.config_version_wildcard = "0.52.*"
+metadata.config_version_wildcard = "0.53.*"
 
 [server_assignment]
 players.maximum = 4096
@@ -13,25 +13,24 @@ instances.count = 1
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2018M'
 
-# Stretches to 16:9.
-icon_uri = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
-
-title = 'Lumber Tycoon 2'
-description = ''
-creator.name = 'ÒÓ'
-startup_script = 'game.workspace.FilteringEnabled = true'
-
-[game_setup.place_file]
-rbxl_uri = 'Lumber Tycoon 2.rbxl'
-# When game:SavePlace() is called, overwrites the place at `.place_path`
-enable_saveplace = false
-
 [game_setup.database]
 sqlite_path = '_.sqlite'
 clear_on_start = false
 
+[server_core.place_file]
+rbxl_uri = 'Lumber Tycoon 2.rbxl'
+# When game:SavePlace() is called, overwrites the place at `.place_path`
+enable_saveplace = false
+
+[server_core.metadata]
+title = 'Lumber Tycoon 2'
+description = ''
+creator.name = 'ÒÓ'
+icon_uri = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
 [server_core]
+startup_script = 'game.workspace.FilteringEnabled = true'
+
 retrieve_default_user_code = '''
 function(tick) -- float -> str
     return string.format('Tick %d', tick)

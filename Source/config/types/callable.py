@@ -78,6 +78,7 @@ class obj_type(Generic[P, R]):
                         'func_body': textwrap.indent(self.rep, ' ' * 4),
                     }
                 )
+                print('Python callable `%s` evaluating...' % self.field_path)
                 exec(
                     modded_rep,  # source
                     {  # globals
@@ -85,7 +86,9 @@ class obj_type(Generic[P, R]):
                     },
                     local_vars,  # locals
                 )
-                return local_vars['func']()
+                result = local_vars['func']()
+                print('Python callable `%s` evaluated.' % self.field_path)
+                return result
             case call_mode_enum.dicted:
                 def call_dicted(*args):
                     assert isinstance(self.rep, dict)

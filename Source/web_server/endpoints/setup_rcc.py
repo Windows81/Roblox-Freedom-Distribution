@@ -37,6 +37,7 @@ def _(self: web_server_handler) -> bool:
     asset_id = int(self.query['assetId'])
 
     gamepass_library = self.game_config.remote_data.gamepasses
+    metadata = self.game_config.server_core.metadata
     if asset_id in gamepass_library:
         gamepass_data = gamepass_library[asset_id]
         self.send_json({
@@ -52,7 +53,7 @@ def _(self: web_server_handler) -> bool:
             "IsPublicDomain": False,
             'Creator': {
                 'Id': 1,
-                'Name': self.game_config.game_setup.creator_name,
+                'Name': metadata.creator_name,
                 'CreatorType': 'User',
                 'CreatorTargetId': 1
             },
@@ -60,19 +61,19 @@ def _(self: web_server_handler) -> bool:
         return True
 
     # Returns an error if the thing trying to be accessed isn't the place we're in.
-    if asset_id != util.const.PLACE_ID_CONST:
+    if asset_id != util.const.PLACE_IDEN_CONST:
         self.send_error(404)
         return True
 
     self.send_json({
-        'AssetId': util.const.PLACE_ID_CONST,
+        'AssetId': util.const.PLACE_IDEN_CONST,
         'ProductId': 13831621,
-        'Name': self.game_config.game_setup.title,
-        'Description': self.game_config.game_setup.description,
+        'Name': metadata.title,
+        'Description': metadata.description,
         'AssetTypeId': 19,
         'Creator': {
             'Id': 1,
-            'Name': self.game_config.game_setup.creator_name,
+            'Name': metadata.creator_name,
             'CreatorType': 'User',
             'CreatorTargetId': 1
         },

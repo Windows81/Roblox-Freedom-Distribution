@@ -56,10 +56,10 @@ def _(self: web_server_handler) -> bool:
     '''
 
     # Returns false if the thing trying to be saved isn't the place we're in.
-    if self.query['assetId'] != str(util.const.PLACE_ID_CONST):
+    if self.query['assetId'] != str(util.const.PLACE_IDEN_CONST):
         return False
 
-    place_config = self.server.game_config.game_setup.place_file
+    place_config = self.server.game_config.server_core.place_file
     assert place_config.enable_saveplace
 
     # Don't save place if the URI is from online.

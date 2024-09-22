@@ -43,5 +43,5 @@ print('Initialised RFD server scripts.')
 def get_script(game_config: config.obj_type) -> str:
     return BASE_SCRIPT_FORMAT % {
         'rcc_snippet': data_transfer.get_rcc_snippet(game_config),
-        'startup_script': game_config.game_setup.startup_script,
+        'startup_script': game_config.server_core.startup_script,
     }

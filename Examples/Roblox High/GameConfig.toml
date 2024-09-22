@@ -1,18 +1,20 @@
-metadata.config_version_wildcard = "0.52.*"
+metadata.config_version_wildcard = "0.53.*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2018'
 
+[game_setup.persistence]
+sqlite_path = '_.sqlite'
+clear_on_start = false
+
+[server_core.metadata]
 title = 'òó'
 description = ''
 creator_name = 'ÒÓ'
-
 icon_uri = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
-startup_script = 'game.workspace.FilteringEnabled = true'
-
-[game_setup.place_file]
+[server_core.place_file]
 # Can be a file path or an online resource through HTTP(S).
 rbxl_uri = '_.rbxl'
 
@@ -20,11 +22,8 @@ rbxl_uri = '_.rbxl'
 # Doesn't work if `rbxl_uri` points to an online resource.
 enable_saveplace = false
 
-[game_setup.persistence]
-sqlite_path = '_.sqlite'
-clear_on_start = false
-
 [server_core]
+startup_script = 'game.workspace.FilteringEnabled = true'
 retrieve_default_user_code = '''
 function(tick) -- float -> str
     return string.format('Player%d', tick)

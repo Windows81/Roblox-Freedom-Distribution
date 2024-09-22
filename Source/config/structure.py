@@ -22,10 +22,6 @@ class config_type(allocateable.obj_type):
             count: int = 1
 
     class game_setup(allocateable.obj_type):
-        class place_file(allocateable.obj_type):
-            rbxl_uri: wrappers.uri_obj
-            enable_saveplace: bool = False
-
         class asset_cache(allocateable.obj_type):
             dir_path: wrappers.path_str = './AssetCache'  # type:ignore
             clear_on_start: bool = False
@@ -35,14 +31,20 @@ class config_type(allocateable.obj_type):
             clear_on_start: bool = False
 
         roblox_version: util.versions.rōblox
-        startup_script: str = ''
-
-        title: str = 'Untitled'
-        description: str = ''
-        creator_name: str = 'RFD'
-        icon_uri: wrappers.uri_obj = ''  # type:ignore
 
     class server_core(allocateable.obj_type):
+        class place_file(allocateable.obj_type):
+            rbxl_uri: wrappers.uri_obj
+            enable_saveplace: bool = False
+
+        startup_script: str = ''
+
+        class metadata(allocateable.obj_type):
+            title: str = 'Untitled'
+            description: str = ''
+            creator_name: str = 'RFD'
+            icon_uri: wrappers.uri_obj = ''  # type:ignore
+
         chat_style: structs.chat_style = structs.chat_style.CLASSIC_CHAT
 
         retrieve_default_user_code: callable[[float], str] = textwrap.dedent('''\

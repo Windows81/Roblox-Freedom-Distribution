@@ -20,7 +20,7 @@ def _(self: web_server_handler) -> bool:
     is_priviledged = self.domain == 'localhost'
 
     if (
-        asset_id == util.const.PLACE_ID_CONST and
+        asset_id == util.const.PLACE_IDEN_CONST and
         not is_priviledged
     ):
         self.send_error(

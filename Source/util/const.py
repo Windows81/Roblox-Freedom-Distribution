@@ -1,9 +1,9 @@
-GIT_RELEASE_VERSION = '''0.52.0'''
+GIT_RELEASE_VERSION = '''0.53.0'''
 
 ZIPPED_RELEASE_VERSION = '''0.50.0'''
 ZIPPED_RELEASE_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/%s/%s.%s.7z'
 
-PLACE_ID_CONST = 1818
+PLACE_IDEN_CONST = 1818
 
 THUMBNAIL_ID_CONST = 'rfd-thumbnail'
 

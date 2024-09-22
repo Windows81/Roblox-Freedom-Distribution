@@ -100,10 +100,10 @@ class asseter:
     @functools.cache
     def is_blocklisted(self, asset_id: int | str) -> bool:
         '''
-        This is to make sure that unauthorised clients can't get private files.
+        This is to make sure that unauthorised clients can't get private (i.e., place location) files.
         '''
         asset_path = self.get_asset_path(asset_id)
-        place_path = self.get_asset_path(util.const.PLACE_ID_CONST)
+        place_path = self.get_asset_path(util.const.PLACE_IDEN_CONST)
         if asset_path == place_path:
             return True
         return False

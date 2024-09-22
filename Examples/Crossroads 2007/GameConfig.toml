@@ -1,31 +1,28 @@
-metadata.config_version_wildcard = "0.52.*"
-#This is the most up to date conf
+metadata.config_version_wildcard = "0.53.*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2018'
 
-title = 'Crossroads'
-description = 'The classic Rōblox map.'
-creator_name = 'David Baszucki, Erik Cassel'
-
-icon_uri = 'https://ia600506.us.archive.org/34/items/soundcloud-1509042007/1509042007.jpg'
-
-startup_script = 'game.workspace.FilteringEnabled = true'
-
-[game_setup.place_file]
-# Can be a file path or an online resource through HTTP(S).
-rbxl_uri = './Crossroads.rbxl'
-
-# When game:SavePlace() is called, overwrites the place at `rbxl_uri`.
-# Doesn't work if `rbxl_uri` points to an online resource.
 enable_saveplace = false
 
 [game_setup.persistence]
 sqlite_path = '_.sqlite'
 clear_on_start = false
 
+[server_core.place_file]
+rbxl_uri = './Crossroads.rbxl'
+
+[server_core.metadata]
+title = 'Crossroads'
+description = 'The classic Rōblox map.'
+creator_name = 'David Baszucki, Erik Cassel'
+icon_uri = 'https://ia600506.us.archive.org/34/items/soundcloud-1509042007/1509042007.jpg'
+
+
 [server_core]
+startup_script = 'game.workspace.FilteringEnabled = true'
+
 retrieve_default_user_code = '''
 function(tick) -- float -> str
     return string.format('Player%d', tick)

@@ -43,9 +43,6 @@ class obj_type:
         path_prefix: str = '',
         **kwargs,
     ) -> None:
-        self.root = root
-        self.kwargs = kwargs
-
         # Iterates through sub-sections; makes recursive calls to this `__init__`.
         self.subsections = [
             subsection(
@@ -60,6 +57,9 @@ class obj_type:
             for key, typ in current_typ.__dict__.items()
             if isinstance(typ, type) and issubclass(typ, obj_type)
         ]
+
+        self.root = root
+        self.kwargs = kwargs
 
         for sub in self.subsections:
             setattr(self, sub.key, sub.val)

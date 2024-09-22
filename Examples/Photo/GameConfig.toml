@@ -1,14 +1,66 @@
-metadata.config_version_wildcard = "0.52.*"
+metadata.config_version_wildcard = "0.53.*"
 
 [game_setup]
 roblox_version = '2021'
 
+[game_setup.persistence]
+sqlite_path = '_.sqlite'
+clear_on_start = false
+
+[server_core.place_file]
+rbxl_uri = './_.rbxl'
+enable_saveplace = false
+
+[server_core.metadata]
 title = 'òó'
 description = ''
 creator_name = 'ÒÓ'
-
 icon_uri = 'c:\Users\USERNAME\Pictures\Byfron Icon.png'
 
+
+[remote_data]
+asset_redirects = '''
+import subprocess
+import os.path
+import base64
+
+RBXMX_DATA = open(f'{CONFIG_DIR}/_.txt').read()
+
+def f(asset_iden):
+    if not isinstance(asset_iden, str):
+        return
+    iden_parts = asset_iden.split('-')
+    if iden_parts[0] != 'photo':
+        return
+
+    url = base64.b64decode(
+        iden_parts[2],
+        altchars=b'+_',
+    ).decode('utf-8')
+
+    if iden_parts[1] == 'model':
+        data = subprocess.check_output(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height', '-of', 'csv=s=x:p=0', url]).decode('utf-8')
+        [width, height] = [int(v) for v in data.split('x')]
+        mult = min(3/width, 3/height, 1)
+        return {
+            'raw_data': bytes(
+                RBXMX_DATA % {
+                    'url': f'rbxassetid://photo-image-{iden_parts[2]}',
+                    'width': width * mult,
+                    'height': height * mult,
+                },
+                encoding='utf-8',
+            ),
+        }
+    elif iden_parts[1] == 'image':
+        data = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', url, '-f', 'apng', '-'])
+        return {
+            'raw_data': data,
+        }
+'''
+
+[server_core]
+chat_style = 'ClassicAndBubble'
 startup_script = '''
 local PIXELS_PER_STUD = 100
 
@@ -85,63 +137,6 @@ end
 game.ReplicatedStorage.LoadImage.OnServerInvoke = _G.generate_thing
 '''
 
-[remote_data]
-asset_redirects = '''
-import subprocess
-import os.path
-import base64
-
-RBXMX_DATA = open(f'{CONFIG_DIR}/_.txt').read()
-
-def f(asset_iden):
-    if not isinstance(asset_iden, str):
-        return
-    iden_parts = asset_iden.split('-')
-    if iden_parts[0] != 'photo':
-        return
-
-    url = base64.b64decode(
-        iden_parts[2],
-        altchars=b'+_',
-    ).decode('utf-8')
-
-    if iden_parts[1] == 'model':
-        data = subprocess.check_output(['ffprobe', '-v', 'error', '-select_streams', 'v:0', '-show_entries', 'stream=width,height', '-of', 'csv=s=x:p=0', url]).decode('utf-8')
-        [width, height] = [int(v) for v in data.split('x')]
-        mult = min(3/width, 3/height, 1)
-        return {
-            'raw_data': bytes(
-                RBXMX_DATA % {
-                    'url': f'rbxassetid://photo-image-{iden_parts[2]}',
-                    'width': width * mult,
-                    'height': height * mult,
-                },
-                encoding='utf-8',
-            ),
-        }
-    elif iden_parts[1] == 'image':
-        data = subprocess.check_output(['ffmpeg', '-v', 'error', '-i', url, '-f', 'apng', '-'])
-        return {
-            'raw_data': data,
-        }
-'''
-
-chat_style = 'ClassicAndBubble'
-[server_assignment]
-players.maximum = 4096
-players.preferred = 666
-instances.count = 1
-
-
-[game_setup.place_file]
-rbxl_uri = './_.rbxl'
-enable_saveplace = false
-
-[game_setup.persistence]
-sqlite_path = '_.sqlite'
-clear_on_start = false
-
-[server_core]
 filter_text = '''
 function(text, user_id_num, user_code)
     if text:find('^https?://') then

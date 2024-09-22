@@ -10,7 +10,6 @@ import dataclasses
 import subprocess
 import functools
 import util.ssl
-import urllib3
 import config
 import json
 import os
@@ -35,21 +34,21 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                 data, {assets.serialisers.method.rbxl}
             )
 
-        place_uri = config.game_setup.place_file.rbxl_uri
+        place_uri = config.server_core.place_file.rbxl_uri
         if place_uri is None:
             return
 
         cache = config.asset_cache
         rbxl_data = parse(place_uri.extract())
-        cache.add_asset(const.PLACE_ID_CONST, rbxl_data)
+        cache.add_asset(self.local_args.place_iden, rbxl_data)
 
         try:
-            thumbnail_data = config.game_setup.icon_uri.extract()
+            thumbnail_data = config.server_core.icon_uri.extract()
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
         except Exception as e:
             pass
 
-        if place_uri.is_online and config.game_setup.place_file.enable_saveplace:
+        if place_uri.is_online and config.server_core.place_file.enable_saveplace:
             print(
                 'Warning: config option "enable_saveplace" is redundant ' +
                 'when the place file is an online resource.'
@@ -94,13 +93,13 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                     "Type":
                         "Avatar",
                     "PlaceId":
-                        const.PLACE_ID_CONST,
+                        self.local_args.place_iden,
                     "GameId":
                         "Test",
                     "MachineAddress":
                         base_url,
                     "PlaceFetchUrl":
-                        f"{base_url}/asset/?id={const.PLACE_ID_CONST}",
+                        f"{base_url}/asset/?id={self.local_args.place_iden}",
                     "MaxPlayers":
                         server_assignment.players.maximum,
                     "PreferredPlayerCapacity":
@@ -143,7 +142,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             [
                 self.get_versioned_path('RCCService.exe'),
 
-                f'-PlaceId:{const.PLACE_ID_CONST}',
+                f'-PlaceId:{self.local_args.place_iden}',
 
                 '-LocalTest', self.get_versioned_path(
                     'GameServer.json',
@@ -186,6 +185,8 @@ class arg_type(logic.bin_ssl_arg_type):
     game_config: config.obj_type
     skip_popen: bool = False
     quiet: bool = False
+    # TODO: fix the way place idens work.
+    place_iden: int = const.PLACE_IDEN_CONST
     web_port: web_server_logic.port_typ = web_server_logic.port_typ(
         port_num=80,
         is_ssl=False,
