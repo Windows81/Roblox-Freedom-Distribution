@@ -1,22 +1,8 @@
 from .types import get_type_call, type_call_data
+from .types._logic import annotation, subsection
 from typing_extensions import Any
 import dataclasses
 import functools
-
-
-@dataclasses.dataclass
-class subsection:
-    key: str
-    val: Any
-
-
-@dataclasses.dataclass
-class annotation:
-    key: str
-    typ: type
-    path: str
-    rep: Any  # As in 'Pythonic representation'.  Needs to be clarified.
-    val: Any
 
 
 class obj_type:
@@ -37,7 +23,7 @@ class obj_type:
 
     def __init__(
         self,
-        root: Any,
+        root: 'obj_type',
         current_typ: type,
         path_prefix: str = '',
         **kwargs,

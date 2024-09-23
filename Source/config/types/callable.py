@@ -27,7 +27,7 @@ class obj_type(Generic[P, R]):
         self.config = config
         self.field_path = path
         self.caster_func = caster_func
-        self.data_transferer = config.game_data.data_transferer
+        self.data_transferer = config.data_transferer
         self.call_mode = (
             self.assume_call_mode()
             if call_mode == call_mode_enum.assume else

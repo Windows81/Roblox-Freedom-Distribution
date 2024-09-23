@@ -3,6 +3,7 @@ import util.versions as versions
 import util.const as const
 from urllib import parse
 import OpenSSL.crypto
+import game_container
 import http.server
 import dataclasses
 import traceback
@@ -11,7 +12,6 @@ import functools
 import util.ssl
 import base64
 import socket
-import game
 import enum
 import json
 import ssl
@@ -88,7 +88,7 @@ class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
         port: port_typ,
-        game_data: game.obj_type,
+        game_data: game_container.obj_type,
         print_http_log: bool = False,
         *args, **kwargs,
     ) -> None:

@@ -1,10 +1,10 @@
 from web_server._logic import web_server_handler, server_path
-from game import obj_type as game
+from game_container import obj_type as game_container
 import util.versions as versions
 import re
 
 
-def get_rank_dict(user_id_num: int, game_data: game) -> dict[str, int]:
+def get_rank_dict(user_id_num: int, game_data: game_container) -> dict[str, int]:
     database = game_data.storage.players
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,

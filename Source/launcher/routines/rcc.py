@@ -4,13 +4,13 @@ from . import _logic as logic
 from launcher.startup_scripts import rcc_server
 import util.const as const
 import assets.serialisers
+import game_container
 import util.resource
 import util.versions
 import dataclasses
 import subprocess
 import functools
 import util.ssl
-import game
 import json
 import os
 
@@ -181,7 +181,7 @@ class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
 
     rcc_port_num: int | None
-    game_data: game.obj_type
+    game_data: game_container.obj_type
     skip_popen: bool = False
     quiet: bool = False
     # TODO: fix the way place idens work.

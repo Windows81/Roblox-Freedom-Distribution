@@ -197,7 +197,7 @@ Where `...` is [your command-line prefix](#installation),
 
 ## `GameConfig.toml` Structure
 
-This specification is current as of 0.52. Some options might be different in future versions.
+This specification is current as of 0.53. Some options might be different in future versions.
 
 ### Special Types
 
@@ -302,30 +302,7 @@ Resolves to a wildcard; defaults to `"*"`.
 
 Matches against the `GIT_RELEASE_VERSION` internal constant. Useful for protecting changes in config structure between RFD versions.
 
-#### `server_assignment.players.maximum`
-
-Resolves to type `int`.
-
-#### `server_assignment.players.preferred`
-
-Resolves to type `int`.
-
-#### `server_assignment.instances.count`
-
-Resolves to type `int`.
-
-#### `game_setup.roblox_version`
-
-The following are valid version strings.
-
-| `"v348"`  | `"v463"`  |
-| --------- | --------- |
-| `"2018M"` | `"2021E"` |
-| `"2018"`  | `"2021"`  |
-
-All entries on the same column are aliases for the same version.
-
-#### `game_setup.startup_script`
+#### `server_core.startup_script`
 
 Resolves to type `str`.
 
@@ -335,31 +312,31 @@ Runs at the CoreScript security level whenever a new _server_ is started.
 startup_script = 'game.workspace.FilteringEnabled = false'
 ```
 
-#### `game_setup.title`
+#### `server_core.metadata.title`
 
 Resolves to type `str`.
 
 Shows up on the loading screen when a player joins the server.
 
-#### `game_setup.description`
+#### `server_core.metadata.description`
 
 Resolves to type `str`.
 
 Shows up on the loading screen when a player joins the server.
 
-#### `game_setup.creator_name`
+#### `server_core.metadata.creator_name`
 
 Resolves to type `str`.
 
 Shows up on the loading screen when a player joins the server.
 
-#### `game_setup.icon_uri`
+#### `server_core.metadata.icon_uri`
 
 Resolves to internal type `uri_obj`.
 
 Can resolve to either a relative or absolute local path -- or extracted from a remote URL.
 
-#### `game_setup.place_file.rbxl_uri`
+#### `server_core.place_file.rbxl_uri`
 
 Resolves to internal type `uri_obj`. Files must be encoded in the binary `rbxl` format and not in the human-readable `rbxlx` format.
 
@@ -373,11 +350,22 @@ rbxl_uri = 'c:\Users\USERNAME\Documents\Baseplate.rbxl'
 rbxl_uri = 'https://archive.org/download/robloxBR1/RBR1/RBR1.rbxl'
 ```
 
-#### `game_setup.place_file.enable_saveplace`
+#### `server_core.place_file.enable_saveplace`
 
 Resolves to type `bool`; defaults to false.
 
 When `game:SavePlace()` is called and `enable_saveplace` is true, the file at [`rbxl_uri`](#game_setupplace_filerbxl_uri) is overwritten. It won't work if `rbxl_uri` points to a remote resource.
+
+#### `game_setup.roblox_version`
+
+The following are valid version strings.
+
+| `"v348"`  | `"v463"`  |
+| --------- | --------- |
+| `"2018M"` | `"2021E"` |
+| `"2018"`  | `"2021"`  |
+
+All entries on the same column are aliases for the same version.
 
 #### `game_setup.asset_cache.dir_path`
 

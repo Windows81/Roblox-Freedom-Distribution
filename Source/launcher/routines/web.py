@@ -1,21 +1,21 @@
 import web_server._logic as web_server_logic
 from . import _logic as logic
 
+import game_container
 import dataclasses
 import web_server
 import threading
-import game
 
 
 class obj_type(logic.server_entry):
-    game_data: game.obj_type
+    game_data: game_container.obj_type
     httpds = list[web_server_logic.web_server]()
     local_args: 'arg_type'
 
     def __run_servers(
         self,
         web_ports: list[web_server_logic.port_typ],
-        game_data: game.obj_type,
+        game_data: game_container.obj_type,
         *args, **kwargs,
     ) -> None:
         hts = [
@@ -54,7 +54,7 @@ class obj_type(logic.server_entry):
 class arg_type(logic.arg_type):
     obj_type = obj_type
 
-    game_data: game.obj_type
+    game_data: game_container.obj_type
     web_ports: list[web_server_logic.port_typ] = dataclasses.field(
         default_factory=list,
     )

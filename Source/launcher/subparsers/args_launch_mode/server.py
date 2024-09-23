@@ -3,10 +3,10 @@ from launcher.routines import rcc, web
 from launcher.routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
 from web_server._logic import port_typ
+import game_container
 import util.resource
 import util.versions
 import argparse
-import game
 
 from launcher.routines import (
     download,
@@ -33,14 +33,14 @@ def subparse(
         type=int,
         nargs='?',
         default=None,
-        help='Hostname or IP address to connect this program to the web server.',
+        help='Port number for the RCC server to run from.',
     )
     subparser.add_argument(
         '--web_port', '-wp',
         type=int,
         nargs='?',
         default=None,
-        help='Port number to connect this program to the web server.',
+        help='Port number for the web server to run from.',
     )
     subparser.add_argument(
         '--run_client', '-rc', '--run_player',
@@ -83,7 +83,7 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
-    data = game.get_cached_game(args.config_path)
+    data = game_container.get_cached_game(args.config_path)
     routine_args = []
 
     if args.web_port is None:

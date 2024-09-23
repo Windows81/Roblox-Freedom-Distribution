@@ -1,5 +1,5 @@
+import game_container
 import data_transfer
-import game
 
 BASE_SCRIPT_FORMAT = """\
 %(rcc_snippet)s
@@ -39,7 +39,7 @@ print('Initialised RFD server scripts.')
 """
 
 
-def get_script(game_data: game.obj_type) -> str:
+def get_script(game_data: game_container.obj_type) -> str:
     return BASE_SCRIPT_FORMAT % {
         'rcc_snippet': data_transfer.get_rcc_snippet(game_data),
         'startup_script': game_data.config.server_core.startup_script,

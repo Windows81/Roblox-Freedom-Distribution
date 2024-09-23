@@ -1,12 +1,11 @@
 import web_server._logic as web_server_logic
 from .. import downloader as downloader
-import config.structure
 import urllib.request
+import game_container
 import util.versions
 import util.resource
 import urllib.error
 import urllib.parse
-import game
 import http.client
 import subprocess
 import threading
@@ -39,7 +38,7 @@ class popen_arg_type(arg_type):
 
 
 class server_arg_type(arg_type):
-    game_data: game.obj_type
+    game_data: game_container.obj_type
 
 
 class bin_arg_type(popen_arg_type):
