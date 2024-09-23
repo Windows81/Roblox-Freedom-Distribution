@@ -1,9 +1,9 @@
 from web_server._logic import web_server_handler, server_path
+from game import obj_type as game
 import util.versions as versions
-from game_storer import obj_type
 
 
-def get_user_code(id_num: int, game_data: obj_type) -> str:
+def get_user_code(id_num: int, game_data: game) -> str:
     database = game_data.storage.players
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
@@ -15,7 +15,7 @@ def get_user_code(id_num: int, game_data: obj_type) -> str:
 
 
 class avatar_data:
-    def __init__(self, id_num: int, game_data: obj_type) -> None:
+    def __init__(self, id_num: int, game_data: game) -> None:
         user_code = get_user_code(id_num, game_data)
         self.type = game_data.config.server_core\
             .retrieve_avatar_type(id_num, user_code)

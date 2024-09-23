@@ -59,7 +59,7 @@ def _(self: web_server_handler) -> bool:
     if self.query['assetId'] != str(util.const.PLACE_IDEN_CONST):
         return False
 
-    place_config = self.server.game_config.server_core.place_file
+    place_config = self.game_data.config.server_core.place_file
     assert place_config.enable_saveplace
 
     # Don't save place if the URI is from online.

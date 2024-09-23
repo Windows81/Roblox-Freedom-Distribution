@@ -8,12 +8,16 @@ import json
 
 
 def init_player(self: web_server_handler, user_code: str, id_num: int) -> tuple[str, int, str]:
-    config = self.server.game_config
-    username = config.server_core.retrieve_username(id_num, user_code)
+    config = self.game_data.config
+
+    username = config.server_core.retrieve_username(
+        id_num, user_code,
+    )
 
     (user_code, id_num, username) = self.server.storage.players.add_player(
         user_code, id_num, username,
     )
+
     # This method only affects a player's fund balance if they're joining for the first time.
     self.server.storage.funds.first_init(
         id_num, config.server_core.retrieve_default_funds(id_num, user_code),
@@ -29,7 +33,7 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     Some methods (such as retrieving a user fund balance or rejoining in 2021E)
     need data from `Roblox-Session-Id`.
     '''
-    config = self.game_config
+    config = self.game_data.config
     server_core = config.server_core
     query_args = json.loads(
         self.headers.get('Roblox-Session-Id', '{}'),

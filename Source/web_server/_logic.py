@@ -8,11 +8,10 @@ import dataclasses
 import traceback
 import mimetypes
 import functools
-import game_storer
 import util.ssl
 import base64
-import config
 import socket
+import game
 import enum
 import json
 import ssl
@@ -89,14 +88,13 @@ class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
         port: port_typ,
-        game_data: game_storer.obj_type,
+        game_data: game.obj_type,
         print_http_log: bool = False,
         *args, **kwargs,
     ) -> None:
-        self.game_data = game_data
-        self.game_config = game_data.config
         self.data_transferer = game_data.data_transferer
         self.storage = game_data.storage
+        self.game_data = game_data
 
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
@@ -163,9 +161,8 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         if host is None:
             return False
 
-        self.is_valid_request = True
         self.game_data = self.server.game_data
-        self.game_config = self.server.game_config
+        self.is_valid_request = True
 
         host_part, port_part = host.rsplit(':', 1)
         self.sockname = (host_part, int(port_part))
@@ -258,9 +255,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def __open_from_static(self) -> bool:
+        rōblox_version = self.game_data.config.game_setup.roblox_version
         key = server_func_key(
             mode=func_mode.STATIC,
-            version=self.game_config.game_setup.roblox_version,
+            version=rōblox_version,
             path=self.url_split.path,
             command=self.command,
         )
@@ -313,4 +311,4 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return
         # if not self.requestline.startswith('\x16\x03'):
             # super().log_message(format, *args)
-        print(self.url)
+        print('%s\n' % self.url, end='')

@@ -27,7 +27,7 @@ def _(self: web_server_handler) -> bool:
     user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
 
     # The item being purchased isn't a gamepass.
-    gamepass = self.server.game_config.remote_data.gamepasses.get(gamepass_id)
+    gamepass = self.game_data.config.remote_data.gamepasses.get(gamepass_id)
     assert gamepass is not None
 
     storage = self.server.storage

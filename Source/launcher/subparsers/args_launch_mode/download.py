@@ -1,7 +1,8 @@
+from launcher.routines import rcc, player, download
+
+from launcher.routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
-import launcher.routines.download as download
-from ...routines import _logic as logic, rcc
-import launcher.routines.player as player
+
 import util.resource
 import util.versions
 import argparse

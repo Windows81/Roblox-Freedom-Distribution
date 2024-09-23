@@ -9,7 +9,8 @@ import re
 
 @server_path('/rfd/default-user-code')
 def _(self: web_server_handler) -> bool:
-    result = self.game_config.server_core.retrieve_default_user_code(
+    config = self.game_data.config
+    result = config.server_core.retrieve_default_user_code(
         time.time(),
     )
     self.send_data(bytes(result, encoding='utf-8'))
@@ -41,7 +42,7 @@ def _(self: web_server_handler) -> bool:
 
     # This function was also called during joinscript creation.
     # It's called a second time here (potentially) for additional protection.
-    if self.server.game_config.server_core.check_user_allowed(id_num, user_code):
+    if self.game_data.config.server_core.check_user_allowed(id_num, user_code):
         self.send_data(b'true')
         return True
 
@@ -54,7 +55,7 @@ def _(self: web_server_handler) -> bool:
     '''
     Used by clients to automatically detect which version to run.
     '''
-    version = self.server.game_config.game_setup.roblox_version
+    version = self.game_data.config.game_setup.roblox_version
     self.send_data(bytes(version.name, encoding='utf-8'))
     return True
 
@@ -110,7 +111,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/Thumbs/GameIcon.ashx')
 def _(self: web_server_handler) -> bool:
-    asset_cache = self.server.game_config.asset_cache
+    asset_cache = self.game_data.asset_cache
     thumbnail_data = asset_cache.get_asset(util.const.THUMBNAIL_ID_CONST)
     if isinstance(thumbnail_data, returns.ret_data):
         self.send_data(thumbnail_data.data)
@@ -154,7 +155,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     if user_code is None:
         result = False
     else:
-        result = self.server.game_config.server_core.check_user_has_admin(
+        result = self.game_data.config.server_core.check_user_has_admin(
             id_num, user_code,
         )
 

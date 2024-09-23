@@ -1,6 +1,7 @@
 import web_server._logic as web_server_logic
-from ..startup_scripts import rcc_server
 from . import _logic as logic
+
+from launcher.startup_scripts import rcc_server
 import util.const as const
 import assets.serialisers
 import util.resource
@@ -9,8 +10,7 @@ import dataclasses
 import subprocess
 import functools
 import util.ssl
-import config
-import game_storer
+import game
 import json
 import os
 
@@ -181,7 +181,7 @@ class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
 
     rcc_port_num: int | None
-    game_data: game_storer.obj_type
+    game_data: game.obj_type
     skip_popen: bool = False
     quiet: bool = False
     # TODO: fix the way place idens work.

@@ -1,6 +1,5 @@
 import web_server._logic as web_server_logic
-import config.structure
-import game_storer
+import game
 
 # Make sure all API endpoints are working without taking anything therefrom.
 from .endpoints import _
@@ -8,7 +7,7 @@ from .endpoints import _
 
 def make_server(
     port: web_server_logic.port_typ,
-    game_data: game_storer.obj_type,
+    game_data: game.obj_type,
     *args,
     **kwargs,
 ) -> web_server_logic.web_server:

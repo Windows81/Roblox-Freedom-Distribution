@@ -6,7 +6,7 @@ import util.versions
 import util.resource
 import urllib.error
 import urllib.parse
-import game_storer
+import game
 import http.client
 import subprocess
 import threading
@@ -39,7 +39,7 @@ class popen_arg_type(arg_type):
 
 
 class server_arg_type(arg_type):
-    game_data: game_storer.obj_type
+    game_data: game.obj_type
 
 
 class bin_arg_type(popen_arg_type):

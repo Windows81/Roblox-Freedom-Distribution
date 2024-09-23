@@ -28,7 +28,8 @@ def _(self: web_server_handler) -> bool:
     )
     assert user_code is not None
 
-    mod_text = self.game_config.server_core.filter_text(
+    config = self.game_data.config
+    mod_text = config.server_core.filter_text(
         orig_text,
         id_num,
         user_code,
