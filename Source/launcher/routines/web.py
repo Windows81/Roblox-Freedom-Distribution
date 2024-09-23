@@ -3,26 +3,27 @@ import web_server
 
 from . import _logic as logic
 import config.structure
-import config
-import config
 import dataclasses
 import threading
+import game_storer
 
 
 class obj_type(logic.server_entry):
-    game_config: config.obj_type
+    game_data: game_storer.obj_type
     httpds = list[web_server_logic.web_server]()
     local_args: 'arg_type'
 
     def __run_servers(
         self,
         web_ports: list[web_server_logic.port_typ],
-        game_config: config.obj_type,
+        game_data: game_storer.obj_type,
         *args, **kwargs,
     ) -> None:
         hts = [
             web_server.make_server(
-                *args, port, game_config, **kwargs)  # type: ignore
+                port, game_data,
+                *args, **kwargs,
+            )
             for port in web_ports
         ]
         self.httpds.extend(hts)
@@ -40,7 +41,7 @@ class obj_type(logic.server_entry):
         self.__run_servers(
             web_ports=self.local_args.web_ports,
             print_http_log=not self.local_args.quiet,
-            game_config=self.game_config,
+            game_data=self.game_data,
         )
 
     def __del__(self) -> None:
@@ -54,7 +55,7 @@ class obj_type(logic.server_entry):
 class arg_type(logic.arg_type):
     obj_type = obj_type
 
-    game_config: config.obj_type
+    game_data: game_storer.obj_type
     web_ports: list[web_server_logic.port_typ] = dataclasses.field(
         default_factory=list,
     )

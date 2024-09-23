@@ -182,9 +182,3 @@ price = 1
 id_num = 203877255
 name = 'VIP'
 price = 1
-
-
-[server_assignment]
-players.maximum = 4096
-players.preferred = 666
-instances.count = 1

@@ -6,6 +6,7 @@ import util.versions
 import util.resource
 import urllib.error
 import urllib.parse
+import game_storer
 import http.client
 import subprocess
 import threading
@@ -38,7 +39,7 @@ class popen_arg_type(arg_type):
 
 
 class server_arg_type(arg_type):
-    game_config: config.obj_type
+    game_data: game_storer.obj_type
 
 
 class bin_arg_type(popen_arg_type):
@@ -253,12 +254,11 @@ class server_entry(entry):
     '''
     Routine entry class that corresponds to a server-sided component.
     '''
-    game_config: config.obj_type
     local_args: server_arg_type
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.game_config = self.local_args.game_config
+        self.game_data = self.local_args.game_data
 
 
 class routine:

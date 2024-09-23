@@ -1,10 +1,10 @@
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
-from config import obj_type
+from game_storer import obj_type
 
 
-def get_user_code(id_num: int, game_config: obj_type) -> str:
-    database = game_config.storage.players
+def get_user_code(id_num: int, game_data: obj_type) -> str:
+    database = game_data.storage.players
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
         id_num,
@@ -15,15 +15,15 @@ def get_user_code(id_num: int, game_config: obj_type) -> str:
 
 
 class avatar_data:
-    def __init__(self, id_num: int, game_config: obj_type) -> None:
-        user_code = get_user_code(id_num, game_config)
-        self.type = game_config.server_core\
+    def __init__(self, id_num: int, game_data: obj_type) -> None:
+        user_code = get_user_code(id_num, game_data)
+        self.type = game_data.config.server_core\
             .retrieve_avatar_type(id_num, user_code)
-        self.items = game_config.server_core\
+        self.items = game_data.config.server_core\
             .retrieve_avatar_items(id_num, user_code)
-        self.scales = game_config.server_core\
+        self.scales = game_data.config.server_core\
             .retrieve_avatar_scales(id_num, user_code)
-        self.colors = game_config.server_core\
+        self.colors = game_data.config.server_core\
             .retrieve_avatar_colors(id_num, user_code)
 
 
@@ -33,7 +33,7 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v348.
     '''
     id_num = int(self.query['userId'])
-    avatar = avatar_data(id_num, self.game_config)
+    avatar = avatar_data(id_num, self.game_data)
 
     self.send_json({
         "animations": {},
@@ -70,7 +70,7 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     '''
     id_num = int(self.query['userId'])
-    avatar = avatar_data(id_num, self.game_config)
+    avatar = avatar_data(id_num, self.game_data)
 
     self.send_json({
         "resolvedAvatarType": avatar.type.name,

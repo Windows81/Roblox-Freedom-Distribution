@@ -1,6 +1,5 @@
 from .types import get_type_call, type_call_data
 from typing_extensions import Any
-from . import _logic
 import dataclasses
 import functools
 
@@ -38,7 +37,7 @@ class obj_type:
 
     def __init__(
         self,
-        root: _logic.base_type,
+        root: Any,
         current_typ: type,
         path_prefix: str = '',
         **kwargs,

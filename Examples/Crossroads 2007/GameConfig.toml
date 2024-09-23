@@ -161,8 +161,3 @@ def f(*a):
 '''
 
 chat_style = 'ClassicAndBubble'
-
-[server_assignment]
-players.maximum = 4096
-players.preferred = 666
-instances.count = 1

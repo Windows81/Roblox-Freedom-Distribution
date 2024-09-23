@@ -8,6 +8,7 @@ import dataclasses
 import traceback
 import mimetypes
 import functools
+import game_storer
 import util.ssl
 import base64
 import config
@@ -88,13 +89,14 @@ class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
         port: port_typ,
-        game_config: config.obj_type,
+        game_data: game_storer.obj_type,
         print_http_log: bool = False,
         *args, **kwargs,
     ) -> None:
-        self.game_config = game_config
-        self.data_transferer = game_config.data_transferer
-        self.storage = game_config.storage
+        self.game_data = game_data
+        self.game_config = game_data.config
+        self.data_transferer = game_data.data_transferer
+        self.storage = game_data.storage
 
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
@@ -162,6 +164,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return False
 
         self.is_valid_request = True
+        self.game_data = self.server.game_data
         self.game_config = self.server.game_config
 
         host_part, port_part = host.rsplit(':', 1)

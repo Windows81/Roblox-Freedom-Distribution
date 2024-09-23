@@ -1,21 +1,22 @@
-from . import _logic, structure
-import data_transfer.transferer
+from . import structure
 import util.resource
 import util.versions
-import functools
-import storage
-import assets
+import tomli
 
 
-class obj_type(structure.config_type, _logic.base_type):
-    def __init__(self, path: str = util.resource.DEFAULT_CONFIG_PATH) -> None:
+class obj_type(structure.config_type):
+    def __init__(
+        self,
+        game_data,
+        path: str = util.resource.DEFAULT_CONFIG_PATH,
+    ) -> None:
         '''
         High-level call: reads the game configuration data from a file and serialises it.
         '''
-        _logic.base_type.__init__(
-            self,
-            path=path,
-        )
+        self.game_data = game_data
+        self.file_path = util.resource.retr_config_full_path(path)
+        with open(self.file_path, 'rb') as f:
+            self.data_dict: dict = tomli.load(f)
 
         structure.config_type.__init__(
             self,
@@ -23,22 +24,3 @@ class obj_type(structure.config_type, _logic.base_type):
             current_typ=structure.config_type,
             **self.data_dict,
         )
-
-        self.storage = storage.storager(
-            self.game_setup.persistence.sqlite_path,
-            force_init=self.game_setup.persistence.clear_on_start,
-        )
-
-        self.data_transferer = data_transfer.transferer.obj_type()
-
-        self.asset_cache = assets.asseter(
-            dir_path=self.game_setup.asset_cache.dir_path,
-            redirect_func=self.remote_data.asset_redirects,
-            clear_on_start=self.game_setup.asset_cache.clear_on_start,
-        )
-
-
-@functools.cache
-def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
-    obj = obj_type(path)
-    return obj

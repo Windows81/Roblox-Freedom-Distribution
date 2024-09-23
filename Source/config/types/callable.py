@@ -27,6 +27,7 @@ class obj_type(Generic[P, R]):
         self.config = config
         self.field_path = path
         self.caster_func = caster_func
+        self.data_transferer = config.game_data.data_transferer
         self.call_mode = (
             self.assume_call_mode()
             if call_mode == call_mode_enum.assume else
@@ -58,7 +59,7 @@ class obj_type(Generic[P, R]):
         match self.call_mode:
             case call_mode_enum.lua:
                 def call_lua(*args):
-                    return self.config.data_transferer.call(
+                    return self.data_transferer.call(
                         self.field_path, self.config, *args,
                     )
                 return call_lua

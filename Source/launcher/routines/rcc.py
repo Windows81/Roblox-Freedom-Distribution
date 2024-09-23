@@ -3,7 +3,6 @@ from ..startup_scripts import rcc_server
 from . import _logic as logic
 import util.const as const
 import assets.serialisers
-import config.structure
 import util.resource
 import util.versions
 import dataclasses
@@ -11,6 +10,7 @@ import subprocess
 import functools
 import util.ssl
 import config
+import game_storer
 import json
 import os
 
@@ -21,13 +21,13 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
 
     @functools.cache
     def retr_version(self) -> util.versions.rōblox:
-        return self.game_config.game_setup.roblox_version
+        return self.game_data.config.game_setup.roblox_version
 
     def save_place_file(self) -> None:
         '''
         Parses and copies the place file (specified in the config file) to the asset cache.
         '''
-        config = self.game_config
+        config = self.game_data.config
 
         def parse(data: bytes) -> bytes:
             return assets.serialisers.parse(
@@ -38,12 +38,12 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         if place_uri is None:
             return
 
-        cache = config.asset_cache
+        cache = self.game_data.asset_cache
         rbxl_data = parse(place_uri.extract())
         cache.add_asset(self.local_args.place_iden, rbxl_data)
 
         try:
-            thumbnail_data = config.server_core.icon_uri.extract()
+            thumbnail_data = config.server_core.metadata.icon_uri.extract()
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
         except Exception as e:
             pass
@@ -77,13 +77,12 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             'RFDStarterScript.lua',
         ))
         with open(server_path, 'w', encoding='utf-8') as f:
-            rcc_script = rcc_server.get_script(self.game_config)
+            rcc_script = rcc_server.get_script(self.game_data)
             f.write(rcc_script)
 
     def save_gameserver(self) -> str:
         base_url = self.local_args.get_base_url()
         path = self.get_versioned_path('GameServer.json')
-        server_assignment = self.game_config.server_assignment
 
         with open(path, 'w', encoding='utf-8') as f:
             json.dump({
@@ -101,13 +100,13 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                     "PlaceFetchUrl":
                         f"{base_url}/asset/?id={self.local_args.place_iden}",
                     "MaxPlayers":
-                        server_assignment.players.maximum,
+                        int(1e9),
                     "PreferredPlayerCapacity":
-                        server_assignment.players.preferred,
+                        int(1e9),
                     "CharacterAppearance":
                         f"{base_url}/v1.1/avatar-fetch",
                     "MaxGameInstances":
-                        server_assignment.instances.count,
+                        1,
                     "GsmInterval":
                         5,
                     "ApiKey":
@@ -182,7 +181,7 @@ class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
 
     rcc_port_num: int | None
-    game_config: config.obj_type
+    game_data: game_storer.obj_type
     skip_popen: bool = False
     quiet: bool = False
     # TODO: fix the way place idens work.

@@ -9,7 +9,7 @@ import util.const
 @server_path("/v1/asset/")
 @server_path("/.127.0.0.1/asset/")
 def _(self: web_server_handler) -> bool:
-    asset_cache = self.server.game_config.asset_cache
+    asset_cache = self.server.game_data.asset_cache
 
     # Paramater can either be `id` or `assetversionid`.
     asset_id = asset_cache.resolve_asset_query(self.query)

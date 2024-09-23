@@ -1,10 +1,10 @@
 from ...routines import _logic as logic, rcc, web
 from web_server._logic import port_typ
 from .. import _logic as sub_logic
-import config as config
 import util.resource
 import util.versions
 import argparse
+import game_storer
 
 from launcher.routines import (
     download,
@@ -81,7 +81,7 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
-    game_config = config.get_cached_config(args.config_path)
+    data = game_storer.get_cached_game(args.config_path)
     routine_args = []
 
     if args.web_port is None:
@@ -101,7 +101,7 @@ def _(
         is_ipv6=True,
     )
 
-    if game_config.game_setup.roblox_version in {
+    if data.config.game_setup.roblox_version in {
         util.versions.rōblox.v463,
     }:
         # Only 2021E support IPv6.
@@ -120,7 +120,7 @@ def _(
                 # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
                 web_ports=web_port_servers,
                 quiet=args.quiet,
-                game_config=game_config,
+                game_data=data,
             ),
         ])
 
@@ -132,7 +132,7 @@ def _(
                 web_port=web_port_ipv4,
                 quiet=args.quiet,
                 skip_popen=args.skip_rcc_popen,
-                game_config=game_config,
+                game_data=data,
             ),
         ])
 

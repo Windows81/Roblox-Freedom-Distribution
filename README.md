@@ -169,6 +169,16 @@ You can also use [this 2018M build](https://github.com/Windows81/Roblox-Freedom-
 
 If you need any help, please shoot me an issue on GitHub or a message to an account with some form of 'VisualPlugin' elsewhere.
 
+## Credits
+
+_iknowidontexistbutwhatifwin_ for making initial patches to the v463 (early 2021) binaries.
+
+_Jetray_ and others for engineering the original [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) server in PHP.
+
+_Twig6843_ for the orange RFD icon and [`./WineBootstrapper`](https://github.com/Windows81/Roblox-Freedom-Distribution/tree/wine-bootstrappable/WineBootstrapper).
+
+**More to come...**
+
 ## Examples
 
 Where `...` is [your command-line prefix](#installation),

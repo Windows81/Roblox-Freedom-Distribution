@@ -15,7 +15,7 @@ def init_player(self: web_server_handler, user_code: str, id_num: int) -> tuple[
         user_code, id_num, username,
     )
     # This method only affects a player's fund balance if they're joining for the first time.
-    self.server.storage.funds.init(
+    self.server.storage.funds.first_init(
         id_num, config.server_core.retrieve_default_funds(id_num, user_code),
     )
     return (user_code, id_num, username)
@@ -29,7 +29,8 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     Some methods (such as retrieving a user fund balance or rejoining in 2021E)
     need data from `Roblox-Session-Id`.
     '''
-    server_core = self.game_config.server_core
+    config = self.game_config
+    server_core = config.server_core
     query_args = json.loads(
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
@@ -43,7 +44,6 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         self.send_error(404)
         return {}
 
-    config = self.server.game_config
     id_num = config.server_core.retrieve_user_id(user_code)
 
     # The `check_user_allowed` function will also be called after the player is added.
