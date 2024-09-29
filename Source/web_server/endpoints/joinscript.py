@@ -7,20 +7,24 @@ import util.ssl
 import json
 
 
-def init_player(self: web_server_handler, user_code: str, id_num: int) -> tuple[str, int, str]:
-    config = self.game_data.config
+def init_player(
+    self: web_server_handler,
+    user_code: str, id_num: int,
+) -> tuple[str, int, str]:
+    server_core = self.game_data.config.server_core
+    storage_cache = self.game_data.storage_cache
 
-    username = config.server_core.retrieve_username(
+    username = server_core.retrieve_username(
         id_num, user_code,
     )
 
-    (user_code, id_num, username) = self.server.storage.players.add_player(
+    (user_code, id_num, username) = storage_cache.players.add_player(
         user_code, id_num, username,
     )
 
     # This method only affects a player's fund balance if they're joining for the first time.
-    self.server.storage.funds.first_init(
-        id_num, config.server_core.retrieve_default_funds(id_num, user_code),
+    storage_cache.funds.first_init(
+        id_num, server_core.retrieve_default_funds(id_num, user_code),
     )
     return (user_code, id_num, username)
 
@@ -34,13 +38,12 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     need data from `Roblox-Session-Id`.
     '''
     config = self.game_data.config
-    server_core = config.server_core
     query_args = json.loads(
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
 
     rcc_host_addr = query_args.get('rcc-host-addr', self.hostname)
-    rcc_port = query_args.get('rcc-port')
+    rcc_port = int(query_args.get('rcc-port'))
     user_code = query_args.get('user-code')
 
     # Very hacky to call `send_error` when the webserver will later call `send_json`.
@@ -52,11 +55,13 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
 
     # The `check_user_allowed` function will also be called after the player is added.
     # (Potentially) for additional protection.
-    if not server_core.check_user_allowed(id_num, user_code):
+    if not config.server_core.check_user_allowed(id_num, user_code):
         self.send_error(403)
         return {}
 
-    (user_code, id_num, username) = init_player(self, user_code, id_num)
+    (user_code, id_num, username) = init_player(
+        self, user_code, id_num,
+    )
 
     join_data = {
         'ServerConnections': [
@@ -80,9 +85,9 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         'DisplayName':
             username,
         'AccountAge':
-            server_core.retrieve_account_age(id_num, user_code),
+            config.server_core.retrieve_account_age(id_num, user_code),
         'ChatStyle':
-            server_core.chat_style.value,
+            config.server_core.chat_style.value,
         'characterAppearanceId':
             id_num,
         'CharacterAppearanceId':
@@ -128,7 +133,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/game/join.ashx', versions={versions.rōblox.v463})
+@server_path('/game/join.ashx', versions={versions.rōblox.v463, None})
 def _(self: web_server_handler) -> bool:
     self.send_json(perform_join(self) | {
         'ClientPort': 0,
@@ -140,7 +145,7 @@ def _(self: web_server_handler) -> bool:
         'GameLocale': 'en_us#RobloxTranslateAbTest2',
         'SuperSafeChat': True,
         'ClientTicket': '2022-03-26T05:13:05.7649319Z;dj09X5iTmYtOPwh0hbEC8yvSO1t99oB3Yh5qD/sinDFszq3hPPaL6hH16TvtCen6cABIycyDv3tghW7k8W+xuqW0/xWvs0XJeiIWstmChYnORzM1yCAVnAh3puyxgaiIbg41WJSMALRSh1hoRiVFOXw4BKjSKk7DrTTcL9nOG1V5YwVnmAJKY7/m0yZ81xE99QL8UVdKz2ycK8l8JFvfkMvgpqLNBv0APRNykGDauEhAx283vARJFF0D9UuSV69q6htLJ1CN2kXL0Saxtt/kRdoP3p3Nhj2VgycZnGEo2NaG25vwc/KzOYEFUV0QdQPC8Vs2iFuq8oK+fXRc3v6dnQ==;BO8oP7rzmnIky5ethym6yRECd6H14ojfHP3nHxSzfTs=;XsuKZL4TBjh8STukr1AgkmDSo5LGgQKQbvymZYi/80TYPM5/MXNr5HKoF3MOT3Nfm0MrubracyAtg5O3slIKBg==;6',
-        'GameId': util.const.PLACE_IDEN_CONST,
+        'GameId': 0,
         'CreatorId': 4372130,
         'CreatorTypeEnum': 'Group',
         'MembershipType': 'None',

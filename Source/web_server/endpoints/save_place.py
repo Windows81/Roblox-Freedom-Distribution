@@ -54,17 +54,16 @@ def _(self: web_server_handler) -> bool:
     '''
     game:SavePlace()
     '''
+    assert self.is_privileged
 
-    # Returns false if the thing trying to be saved isn't the place we're in.
-    if self.query['assetId'] != str(util.const.PLACE_IDEN_CONST):
-        return False
+    # Raises if the thing trying to be saved isn't a place that we're in.
+    assert self.game_data.place.place_iden == int(self.query['assetId'])
 
     place_config = self.game_data.config.server_core.place_file
     assert place_config.enable_saveplace
 
     # Don't save place if the URI is from online.
-    if place_config.rbxl_uri.is_online:
-        return False
+    assert not place_config.rbxl_uri.is_online
 
     # Backups are important in case RFD crashes mid-save.
     place_path = place_config.rbxl_uri.value

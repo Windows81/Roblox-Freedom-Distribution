@@ -1,5 +1,4 @@
-from typing import Callable
-import typing_extensions
+from typing_extensions import Callable
 import enum
 
 
@@ -54,17 +53,17 @@ def call_subparser(args_table: dict[launch_mode, list[Callable]], l_mode: launch
 
 
 def add_args(launch_mode: launch_mode):
-    def inner(f):
-        ADD_MODE_ARGS[launch_mode].append(f)
-        return f
+    def inner(func):
+        ADD_MODE_ARGS[launch_mode].append(func)
+        return func
     return inner
 
 
 def serialise_args(launch_mode: launch_mode, types: set[type]):
     resolved_types = {t for typ in types for t in typ.mro()}
 
-    def inner(f):
+    def inner(func):
         SERIALISE_TYPE_SETS[launch_mode].update(resolved_types)
-        SERIALISE_ARGS[launch_mode].append(f)
-        return f
+        SERIALISE_ARGS[launch_mode].append(func)
+        return func
     return inner

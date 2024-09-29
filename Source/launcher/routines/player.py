@@ -99,3 +99,9 @@ class arg_type(logic.bin_ssl_arg_type, logic.host_arg_type):
         return \
             f'http{"s" if self.web_port.is_ssl else ""}://' + \
             f'{self.app_host}:{self.web_port.port_num}'
+
+    def send_request(self, path: str, timeout: float = 7):
+        return super().send_request(
+            f'{path}?rcc-port={self.rcc_port_num}',
+            timeout,
+        )

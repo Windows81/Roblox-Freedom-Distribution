@@ -1,10 +1,10 @@
 from web_server._logic import web_server_handler, server_path
-from game_container import obj_type as game_container
 import util.versions as versions
+import game_container
 
 
-def get_user_code(id_num: int, game_data: game_container) -> str:
-    database = game_data.storage.players
+def get_user_code(id_num: int, game_data: game_container.obj_type) -> str:
+    database = game_data.storage_cache.players
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
         id_num,
@@ -15,7 +15,7 @@ def get_user_code(id_num: int, game_data: game_container) -> str:
 
 
 class avatar_data:
-    def __init__(self, id_num: int, game_data: game_container) -> None:
+    def __init__(self, id_num: int, game_data: game_container.obj_type) -> None:
         user_code = get_user_code(id_num, game_data)
         self.type = game_data.config.server_core\
             .retrieve_avatar_type(id_num, user_code)

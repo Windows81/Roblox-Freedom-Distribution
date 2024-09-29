@@ -1,7 +1,7 @@
 from launcher.routines import player
 
-from launcher.routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
+from launcher.routines import _logic as logic
 from web_server._logic import port_typ
 import argparse
 

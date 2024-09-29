@@ -23,10 +23,10 @@ class rōblox(enum.Enum):
         ]
 
     @staticmethod
-    def from_name(value: str | int):
+    def from_name(value: int | str) -> "rōblox":
         return VERSION_MAP[str(value)]
 
-    def __lt__(self, other: typing_extensions.Self):
+    def __lt__(self, other: typing_extensions.Self) -> bool:
         return self.get_number() < other.get_number()
 
 

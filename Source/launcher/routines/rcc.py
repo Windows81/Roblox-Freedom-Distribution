@@ -19,36 +19,46 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
 
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.rcc_index = self.local_args.rcc_index
+        self.game_data = self.local_args.game_data_group.containers[self.rcc_index]
+        self.place_data = self.game_data.config.server_core
+        self.place_iden = self.game_data_group.place_group.register_rcc(
+            self.rcc_index,
+            self.local_args.rcc_port_num,
+        ).place_iden
+
     @functools.cache
     def retr_version(self) -> util.versions.rōblox:
-        return self.game_data.config.game_setup.roblox_version
+        rcc_index = self.local_args.rcc_index
+        game_data = self.local_args.game_data_group.containers[rcc_index]
+        return game_data.config.game_setup.roblox_version
 
     def save_place_file(self) -> None:
         '''
         Parses and copies the place file (specified in the config file) to the asset cache.
         '''
-        config = self.game_data.config
-
         def parse(data: bytes) -> bytes:
             return assets.serialisers.parse(
                 data, {assets.serialisers.method.rbxl}
             )
 
-        place_uri = config.server_core.place_file.rbxl_uri
+        place_uri = self.place_data.place_file.rbxl_uri
         if place_uri is None:
             return
 
         cache = self.game_data.asset_cache
         rbxl_data = parse(place_uri.extract())
-        cache.add_asset(self.local_args.place_iden, rbxl_data)
+        cache.add_asset(self.place_iden, rbxl_data)
 
         try:
-            thumbnail_data = config.server_core.metadata.icon_uri.extract()
+            thumbnail_data = self.place_data.metadata.icon_uri.extract()
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
         except Exception as e:
             pass
 
-        if place_uri.is_online and config.server_core.place_file.enable_saveplace:
+        if place_uri.is_online and self.place_data.place_file.enable_saveplace:
             print(
                 'Warning: config option "enable_saveplace" is redundant ' +
                 'when the place file is an online resource.'
@@ -82,8 +92,8 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
 
     def save_gameserver(self) -> str:
         base_url = self.local_args.get_base_url()
-        path = self.get_versioned_path('GameServer.json')
 
+        path = self.get_versioned_path('GameServer.json')
         with open(path, 'w', encoding='utf-8') as f:
             json.dump({
                 "Mode": "GameServer",
@@ -92,13 +102,13 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                     "Type":
                         "Avatar",
                     "PlaceId":
-                        self.local_args.place_iden,
+                        self.place_iden,
                     "GameId":
                         "Test",
                     "MachineAddress":
                         base_url,
                     "PlaceFetchUrl":
-                        f"{base_url}/asset/?id={self.local_args.place_iden}",
+                        f"{base_url}/asset/?id={self.place_iden}",
                     "MaxPlayers":
                         int(1e9),
                     "PreferredPlayerCapacity":
@@ -141,7 +151,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             [
                 self.get_versioned_path('RCCService.exe'),
 
-                f'-PlaceId:{self.local_args.place_iden}',
+                f'-PlaceId:{self.place_iden}',
 
                 '-LocalTest', self.get_versioned_path(
                     'GameServer.json',
@@ -177,25 +187,33 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
 
 
 @dataclasses.dataclass
-class arg_type(logic.bin_ssl_arg_type):
+class arg_type(logic.bin_ssl_arg_type, logic.server_arg_type):
     obj_type = obj_type
 
-    rcc_port_num: int | None
-    game_data: game_container.obj_type
-    skip_popen: bool = False
-    quiet: bool = False
-    # TODO: fix the way place idens work.
-    place_iden: int = const.PLACE_IDEN_CONST
+    game_data_group: game_container.group_type
+    rcc_port_num: int = 0
+    rcc_index: int = 0
+
+    web_host: str = 'localhost'
     web_port: web_server_logic.port_typ = web_server_logic.port_typ(
         port_num=80,
         is_ssl=False,
         is_ipv6=False,
     ),  # type: ignore
 
+    skip_popen: bool = False
+    quiet: bool = False
+
     def get_base_url(self) -> str:
         return \
             f'http{"s" if self.web_port.is_ssl else ""}://' + \
-            f'localhost:{self.web_port.port_num}'
+            f'{self.web_host}:{self.web_port.port_num}'
 
     def get_app_base_url(self) -> str:
         return f'{self.get_base_url()}/'
+
+    def send_request(self, path: str, timeout: float = 7):
+        return super().send_request(
+            f'{path}?rcc-port={self.rcc_port_num}',
+            timeout,
+        )

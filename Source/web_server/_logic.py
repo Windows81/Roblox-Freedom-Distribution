@@ -34,7 +34,7 @@ class func_mode(enum.Enum):
 @dataclasses.dataclass(frozen=True)
 class server_func_key:
     mode: func_mode
-    version: versions.rōblox
+    version: versions.rōblox | None
     path: str
     command: str
 
@@ -45,7 +45,7 @@ SERVER_FUNCS = dict[server_func_key, Callable]()
 def server_path(
     path: str,
     regex: bool = False,
-    versions: set[versions.rōblox] = set(versions.rōblox),
+    versions: set[versions.rōblox | None] = set(versions.rōblox).union({None}),
     commands: set[str] = {'POST', 'GET'}
 ):
     def inner(func):
@@ -88,13 +88,13 @@ class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
         port: port_typ,
-        game_data: game_container.obj_type,
+        game_data_group: game_container.group_type,
         print_http_log: bool = False,
         *args, **kwargs,
     ) -> None:
-        self.data_transferer = game_data.data_transferer
-        self.storage = game_data.storage
-        self.game_data = game_data
+        self.data_transferers = game_data_group.data_transferer_group
+        self.storages = game_data_group.storage_group
+        self.game_data_group = game_data_group
 
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
@@ -161,7 +161,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         if host is None:
             return False
 
-        self.game_data = self.server.game_data
+        self.game_data_group = self.server.game_data_group
         self.is_valid_request = True
 
         host_part, port_part = host.rsplit(':', 1)
@@ -181,6 +181,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             f'http{"s" if isinstance(self.server, web_server_ssl) else ""}://' + \
             f'{self.domain}:{self.sockname[1]}'
 
+        # Some endpoints should only allow the RCC to do stuff.
+        # TODO: use a proper allow-listing system.
+        self.is_privileged = self.domain == 'localhost'
+
         self.url = f'{self.hostname}{self.path}'
         self.url_split = parse.urlsplit(self.url)
 
@@ -192,7 +196,20 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             i: v[0]
             for i, v in self.query_lists.items()
         }
+
+        try:
+            self.rcc_index = self.determine_rcc_index()
+            self.game_data = self.game_data_group.containers[self.rcc_index]
+            self.rōblox_version = self.game_data.config.game_setup.roblox_version
+        except:
+            self.rcc_index = None
+            self.game_data = None
+            self.rōblox_version = None
         return True
+
+    def determine_rcc_index(self) -> int:
+        rcc_port = int(self.query.get('rcc-port', 0))
+        return self.game_data_group.place_group.index_from_port[rcc_port]
 
     def handle_rcc_request(self) -> None:
         if self.__open_from_static():
@@ -255,10 +272,9 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
 
     def __open_from_static(self) -> bool:
-        rōblox_version = self.game_data.config.game_setup.roblox_version
         key = server_func_key(
             mode=func_mode.STATIC,
-            version=rōblox_version,
+            version=self.rōblox_version,
             path=self.url_split.path,
             command=self.command,
         )

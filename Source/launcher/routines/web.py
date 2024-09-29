@@ -8,19 +8,19 @@ import threading
 
 
 class obj_type(logic.server_entry):
-    game_data: game_container.obj_type
+    game_data_group: game_container.group_type
     httpds = list[web_server_logic.web_server]()
     local_args: 'arg_type'
 
     def __run_servers(
         self,
         web_ports: list[web_server_logic.port_typ],
-        game_data: game_container.obj_type,
+        game_data_group: game_container.group_type,
         *args, **kwargs,
     ) -> None:
         hts = [
             web_server.make_server(
-                port, game_data,
+                port, game_data_group,
                 *args, **kwargs,
             )
             for port in web_ports
@@ -40,7 +40,7 @@ class obj_type(logic.server_entry):
         self.__run_servers(
             web_ports=self.local_args.web_ports,
             print_http_log=not self.local_args.quiet,
-            game_data=self.game_data,
+            game_data_group=self.game_data_group,
         )
 
     def __del__(self) -> None:
@@ -51,10 +51,10 @@ class obj_type(logic.server_entry):
 
 
 @dataclasses.dataclass
-class arg_type(logic.arg_type):
+class arg_type(logic.server_arg_type):
     obj_type = obj_type
 
-    game_data: game_container.obj_type
+    game_data_group: game_container.group_type
     web_ports: list[web_server_logic.port_typ] = dataclasses.field(
         default_factory=list,
     )

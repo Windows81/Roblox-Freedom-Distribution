@@ -1,11 +1,12 @@
 from launcher.routines import rcc, web
 
-from launcher.routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
+from launcher.routines import _logic as logic
 from web_server._logic import port_typ
 import game_container
 import util.resource
 import util.versions
+import util.const
 import argparse
 
 from launcher.routines import (
@@ -83,7 +84,7 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
-    data = game_container.get_cached_game(args.config_path)
+    game_data_group = game_container.group_type(args.config_path)
     routine_args = []
 
     if args.web_port is None:
@@ -103,10 +104,14 @@ def _(
         is_ipv6=True,
     )
 
-    if data.config.game_setup.roblox_version in {
-        util.versions.rōblox.v463,
-    }:
-        # Only 2021E support IPv6.
+    # Only 2021E supports IPv6.
+    # So, if any servers happen to support IPv6, open a webserver for IPv6.
+    if any(
+        game_data.config.game_setup.roblox_version in {
+            util.versions.rōblox.v463,
+        }
+        for game_data in game_data_group.containers
+    ):
         web_port_servers = [
             web_port_ipv4,
             web_port_ipv6,
@@ -122,20 +127,22 @@ def _(
                 # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
                 web_ports=web_port_servers,
                 quiet=args.quiet,
-                game_data=data,
+                game_data_group=game_data_group,
             ),
         ])
 
     if not args.skip_rcc:
         routine_args.extend([
             rcc.arg_type(
-                rcc_port_num=args.rcc_port,
+                rcc_index=offset,
+                rcc_port_num=args.rcc_port+offset,
                 # since RCC only really connects to 127.0.0.1.
                 web_port=web_port_ipv4,
                 quiet=args.quiet,
                 skip_popen=args.skip_rcc_popen,
-                game_data=data,
-            ),
+                game_data_group=game_data_group,
+            )
+            for offset, game_data in enumerate(game_data_group.containers)
         ])
 
     if args.run_client:

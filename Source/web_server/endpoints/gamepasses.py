@@ -13,7 +13,7 @@ def _(self: web_server_handler) -> bool:
             def check() -> bool:
                 gamepass_id = int(self.query['PassID'])
                 user_id = int(self.query['UserID'])
-                return self.server.storage.gamepasses.check(user_id, gamepass_id) is not None
+                return self.server.storages.gamepasses.check(user_id, gamepass_id) is not None
 
             self.send_data(bytes(
                 '<Value Type="boolean">' +
@@ -34,9 +34,9 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     user_id_num = int(match.group(1))
     gamepass_id = int(match.group(2))
-    gamepass_catalogue = self.game_data.config.remote_data.gamepasses
+    gamepass_catalogue = self.game_data_group.configs.remote_data.gamepasses
 
-    has_gamepass = self.server.storage.gamepasses.check(
+    has_gamepass = self.server.storages.gamepasses.check(
         user_id_num,
         gamepass_id,
     )

@@ -2,7 +2,7 @@
 # PLEASE REVIEW AND MODIFY IF YOU WISH TO RUN YOUR OWN SERVERS!
 # Some arguments are provided as absolute paths and only work on my machine.
 
-metadata.config_version_wildcard = "0.53.*"
+metadata.config_version_wildcard = "0.54.*"
 
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".

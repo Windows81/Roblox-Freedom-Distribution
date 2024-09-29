@@ -12,7 +12,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/api.GetAllowedSecurityVersions/')
 def _(self: web_server_handler) -> bool:
-    config = self.game_data.config
+    config = self.game_data_group.configs
     self.send_json({
         'data': config.game_setup.roblox_version.security_versions(),
     })
@@ -36,7 +36,7 @@ def _(self: web_server_handler) -> bool:
 @server_path('/marketplace/productinfo')
 def _(self: web_server_handler) -> bool:
     asset_id = int(self.query['assetId'])
-    config = self.game_data.config
+    config = self.game_data_group.configs
 
     gamepass_library = config.remote_data.gamepasses
     metadata = config.server_core.metadata

@@ -1,5 +1,5 @@
+from game_container import data_transfer
 import game_container
-import data_transfer
 
 BASE_SCRIPT_FORMAT = """\
 %(rcc_snippet)s
@@ -8,7 +8,7 @@ local HttpRbxApiService = game:GetService("HttpRbxApiService")
 local HttpService = game:GetService("HttpService")
 
 spawn(function()
-    local Url = BaseUrl .. "rfd/data-transfer"
+    local Url = BaseUrl .. "rfd/data-transfer?placeId=" .. game.PlaceId
     local Results = {}
     local Calls = {}
 
@@ -40,7 +40,8 @@ print('Initialised RFD server scripts.')
 
 
 def get_script(game_data: game_container.obj_type) -> str:
+    server_data = game_data.config.server_core
     return BASE_SCRIPT_FORMAT % {
         'rcc_snippet': data_transfer.get_rcc_snippet(game_data),
-        'startup_script': game_data.config.server_core.startup_script,
+        'startup_script': server_data.startup_script,
     }

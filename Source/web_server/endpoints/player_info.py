@@ -18,7 +18,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     GetUsernameFromUserId
     '''
-    database = self.server.storage.players
+    database = self.server.storages.players
 
     id_num = match.group(1)
     username = database.get_player_field_from_index(
@@ -34,7 +34,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path("/users/get-by-username")
 def _(self: web_server_handler) -> bool:
-    database = self.server.storage.players
+    database = self.server.storages.players
 
     username = self.query['username']
     id_num = database.get_player_field_from_index(

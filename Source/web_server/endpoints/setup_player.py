@@ -27,7 +27,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/rfd/is-player-allowed')
 def _(self: web_server_handler) -> bool:
-    database = self.server.storage.players
+    database = self.game_data.storage_cache.players
 
     id_num = int(self.query['userId'])
     user_code = database.get_player_field_from_index(
@@ -143,7 +143,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path('/v1/user/([0-9]+)/is-admin-developer-console-enabled', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
-    database = self.server.storage.players
+    database = self.game_data.storage_cache.players
 
     id_num = int(match.group(1))
     user_code = database.get_player_field_from_index(

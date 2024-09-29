@@ -11,7 +11,7 @@ def _(self: web_server_handler) -> bool:
     '''
     form_content = str(self.read_content(), encoding='utf-8')
     form_data = dict(urllib.parse.parse_qsl(form_content))
-    database = self.server.storage.persistence
+    database = self.server.storages.persistence
 
     # TODO: implement sorted data stores.
     data_type = self.query.get('type')
@@ -37,7 +37,7 @@ def _(self: web_server_handler) -> bool:
     '''
     form_content = str(self.read_content(), encoding='utf-8')
     form_data = dict(urllib.parse.parse_qsl(form_content))
-    database = self.server.storage.persistence
+    database = self.server.storages.persistence
 
     return_data = []
     for starting_count in itertools.count(0):

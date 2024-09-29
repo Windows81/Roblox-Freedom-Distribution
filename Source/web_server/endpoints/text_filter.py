@@ -12,7 +12,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
 @server_path("/moderation/v2/filtertext")
 def _(self: web_server_handler) -> bool:
-    database = self.server.storage.players
+    database = self.server.storages.players
 
     # Manually parsing here since `self.query` isn't automatically populated prior.
     field_data = str(self.read_content(), encoding='utf-8')
@@ -28,7 +28,7 @@ def _(self: web_server_handler) -> bool:
     )
     assert user_code is not None
 
-    config = self.game_data.config
+    config = self.game_data_group.configs
     mod_text = config.server_core.filter_text(
         orig_text,
         id_num,

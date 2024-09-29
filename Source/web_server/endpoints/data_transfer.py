@@ -4,7 +4,10 @@ import json
 
 @server_path("/rfd/data-transfer")
 def _(self: web_server_handler) -> bool:
-    transferer = self.server.data_transferer
+    assert self.is_privileged
+
+    place_iden = int(self.query['placeId'])
+    transferer = self.server.data_transferer.get_transferer(place_iden)
     assert transferer is not None
 
     input_data = json.loads(self.read_content())

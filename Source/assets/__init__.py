@@ -1,21 +1,25 @@
+from game_container.config.types import structs, wrappers, callable
 from . import extract, returns, material, serialisers, queue
-from config.types import structs, wrappers, callable
-import util.const
+from collections import defaultdict
+import game_container.places
+import game_container
 import functools
 import shutil
 import os
 
 
-class asseter:
+class obj_type:
     def __init__(
         self,
         dir_path: str,
         redirect_func: callable.obj_type[[int | str], structs.asset_redirect | None],
+        place_cache: game_container.places.group_type,
         clear_on_start: bool,
     ) -> None:
         self.dir_path = dir_path
         self.redirect_func = redirect_func
         self.redirect_iden_flags = set[int | str]()
+        self.place_cache = place_cache
         self.queuer = queue.queuer()
 
         if os.path.isdir(dir_path):
@@ -93,20 +97,20 @@ class asseter:
     def add_asset(self, asset_id: int | str, data: bytes) -> None:
         redirect_info = self.redirect_func(asset_id)
         if redirect_info is not None:
-            raise Exception('Asset already has a redirect per config file.')
+            raise Exception(
+                'Asset already has a redirect per config file.')
         path = self.get_asset_path(asset_id)
         self._save_file(path, data)
 
-    @functools.cache
     def is_blocklisted(self, asset_id: int | str) -> bool:
         '''
-        This is to make sure that unauthorised clients can't get private (i.e., place location) files.
+        This is to make sure that unauthorised clients can't get private (i.e., place map) files.
         '''
         asset_path = self.get_asset_path(asset_id)
-        place_path = self.get_asset_path(util.const.PLACE_IDEN_CONST)
-        if asset_path == place_path:
-            return True
-        return False
+        return any(
+            asset_path == self.get_asset_path(c)
+            for c in self.place_cache.index_from_iden.keys()
+        )
 
     def _load_asset_num(self, asset_id: int) -> bytes | None:
         return self._load_online_asset(asset_id)
@@ -171,9 +175,9 @@ class asseter:
         elif isinstance(asset_id, int):
             return returns.construct(data=self._load_asset_num(asset_id))
 
-    def get_asset(self, asset_id: int | str, bypass_blacklist: bool = False) -> returns.base_type:
-        if not bypass_blacklist and self.is_blocklisted(asset_id):
-            return returns.construct()
+    def get_asset(self, asset_id: int | str, bypass_blocklist: bool = False) -> returns.base_type:
+        if not bypass_blocklist and self.is_blocklisted(asset_id):
+            return returns.construct(error='Asset is blocklisted.')
 
         asset_path = self.get_asset_path(asset_id)
         result_data = self._load_asset(asset_id)
@@ -181,3 +185,30 @@ class asseter:
         if isinstance(result_data, returns.ret_data):
             self._save_file(asset_path, result_data.data)
         return result_data
+
+
+class group_type:
+    def __init__(self) -> None:
+        self.is_used = set[str]()
+        self.redirecters = list[obj_type]()
+
+    def add(
+        self,
+        dir_path: str,
+        redirect_func: callable.obj_type[[int | str], structs.asset_redirect | None],
+        place_cache: game_container.places.group_type,
+        clear_on_start: bool,
+    ) -> obj_type:
+        if dir_path in self.is_used:
+            clear_on_start = False
+        self.is_used.add(dir_path)
+
+        # Checks if a storager is already assigned to the path; else make a new one.
+        result = obj_type(
+            dir_path,
+            redirect_func,
+            place_cache,
+            clear_on_start,
+        )
+        self.redirecters.append(result)
+        return result

@@ -1,5 +1,6 @@
 import web_server._logic as web_server_logic
 from .. import downloader as downloader
+from game_container import config
 import urllib.request
 import game_container
 import util.versions
@@ -10,7 +11,6 @@ import http.client
 import subprocess
 import threading
 import certifi
-import config
 import copy
 import ssl
 import os
@@ -38,7 +38,7 @@ class popen_arg_type(arg_type):
 
 
 class server_arg_type(arg_type):
-    game_data: game_container.obj_type
+    game_data_group: game_container.group_type
 
 
 class bin_arg_type(popen_arg_type):
@@ -257,15 +257,14 @@ class server_entry(entry):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.game_data = self.local_args.game_data
+        self.game_data_group = self.local_args.game_data_group
 
 
 class routine:
     '''
     Contains a list of `entry` objects.
     A routine is initialised with a list of argument data-class objects.
-    Each of these objects points to a class, whose `__init__` method is called with the data in that argument object.
-
+    Each of these objects points to a class whose `__init__` method is called with the data in that argument object.
     '''
     entries: list[entry]
 
