@@ -1,8 +1,3 @@
-[server_assignment]
-players.maximum = 4096
-players.preferred = 666
-instances.count = 1
-
 [game_setup]
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2021'
