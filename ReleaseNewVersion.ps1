@@ -38,9 +38,12 @@ function CreateBinary() {
 
 function UpdateZippedReleaseVersion($labels) {
 	$const_file = "$root/Source/util/const.py"
-	$const_text = (Get-Content $const_file)
-	foreach ($label in $labels) {
-		$const_txt = $const_text -replace "$label =.+", "$label = '''$script:release_name'''"
+	$const_txt = (Get-Content $const_file) | ForEach-Object {
+		$r = $_
+		foreach ($label in $labels) {
+			$r = $r -replace "$label =.+", "$label = '''$script:release_name'''"
+		}
+		return $r
 	}
 	$const_txt | Set-Content $const_file
 }

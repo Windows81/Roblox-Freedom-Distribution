@@ -173,7 +173,7 @@ class asseter:
 
     def get_asset(self, asset_id: int | str, bypass_blocklist: bool = False) -> returns.base_type:
         if not bypass_blocklist and self.is_blocklisted(asset_id):
-            returns.construct(error='Asset is blocklisted.')^
+            returns.construct(error='Asset is blocklisted.')
 
         asset_path = self.get_asset_path(asset_id)
         result_data = self._load_asset(asset_id)
