@@ -15,7 +15,7 @@ def init_player(self: web_server_handler, user_code: str, id_num: int) -> tuple[
         user_code, id_num, username,
     )
     # This method only affects a player's fund balance if they're joining for the first time.
-    self.server.storage.funds.init(
+    self.server.storage.funds.first_init(
         id_num, config.server_core.retrieve_default_funds(id_num, user_code),
     )
     return (user_code, id_num, username)
@@ -35,7 +35,7 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     ) | self.query
 
     rcc_host_addr = query_args.get('rcc-host-addr', self.hostname)
-    rcc_port = query_args.get('rcc-port')
+    rcc_port = int(query_args.get('rcc-port'))
     user_code = query_args.get('user-code')
 
     # Very hacky to call `send_error` when the webserver will later call `send_json`.
@@ -52,7 +52,9 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         self.send_error(403)
         return {}
 
-    (user_code, id_num, username) = init_player(self, user_code, id_num)
+    (user_code, id_num, username) = init_player(
+        self, user_code, id_num,
+    )
 
     join_data = {
         'ServerConnections': [

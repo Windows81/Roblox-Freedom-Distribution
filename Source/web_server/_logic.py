@@ -181,6 +181,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             f'http{"s" if isinstance(self.server, web_server_ssl) else ""}://' + \
             f'{self.domain}:{self.sockname[1]}'
 
+        # Some endpoints should only allow the RCC to do stuff.
+        # TODO: use a proper allow-listing system.
+        self.is_privileged = self.domain == 'localhost'
+
         self.url = f'{self.hostname}{self.path}'
         self.url_split = parse.urlsplit(self.url)
 

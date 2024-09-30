@@ -1,4 +1,4 @@
-from typing import ParamSpec, TypeVar, Generic
+from typing_extensions import ParamSpec, TypeVar, Generic
 import textwrap
 import os.path
 import enum

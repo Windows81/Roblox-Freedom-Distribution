@@ -100,7 +100,7 @@ class asseter:
     @functools.cache
     def is_blocklisted(self, asset_id: int | str) -> bool:
         '''
-        This is to make sure that unauthorised clients can't get private (i.e., place location) files.
+        This is to make sure that unauthorised clients can't get private (i.e., place map) files.
         '''
         asset_path = self.get_asset_path(asset_id)
         place_path = self.get_asset_path(util.const.PLACE_IDEN_CONST)
@@ -171,9 +171,9 @@ class asseter:
         elif isinstance(asset_id, int):
             return returns.construct(data=self._load_asset_num(asset_id))
 
-    def get_asset(self, asset_id: int | str, bypass_blacklist: bool = False) -> returns.base_type:
-        if not bypass_blacklist and self.is_blocklisted(asset_id):
-            return returns.construct()
+    def get_asset(self, asset_id: int | str, bypass_blocklist: bool = False) -> returns.base_type:
+        if not bypass_blocklist and self.is_blocklisted(asset_id):
+            returns.construct(error='Asset is blocklisted.')^
 
         asset_path = self.get_asset_path(asset_id)
         result_data = self._load_asset(asset_id)

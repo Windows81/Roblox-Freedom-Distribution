@@ -1,10 +1,13 @@
-from ...routines import _logic as logic, rcc, web
+from launcher.routines import player, web, rcc
+
+import launcher.subparsers._logic as sub_logic
+from launcher.routines import _logic as logic
 from web_server._logic import port_typ
-from .. import _logic as sub_logic
-import config as config
 import util.resource
 import util.versions
+import util.const
 import argparse
+import config
 
 from launcher.routines import (
     download,
@@ -31,14 +34,14 @@ def subparse(
         type=int,
         nargs='?',
         default=None,
-        help='Hostname or IP address to connect this program to the web server.',
+        help='Port number for the RCC server to run from.',
     )
     subparser.add_argument(
         '--web_port', '-wp',
         type=int,
         nargs='?',
         default=None,
-        help='Port number to connect this program to the web server.',
+        help='Port number for the web server to run from.',
     )
     subparser.add_argument(
         '--run_client', '-rc', '--run_player',

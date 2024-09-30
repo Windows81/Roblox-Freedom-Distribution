@@ -43,7 +43,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         cache.add_asset(self.local_args.place_iden, rbxl_data)
 
         try:
-            thumbnail_data = config.server_core.icon_uri.extract()
+            thumbnail_data = config.server_core.metadata.icon_uri.extract()
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
         except Exception as e:
             pass
@@ -83,7 +83,6 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def save_gameserver(self) -> str:
         base_url = self.local_args.get_base_url()
         path = self.get_versioned_path('GameServer.json')
-        server_assignment = self.game_config.server_assignment
 
         with open(path, 'w', encoding='utf-8') as f:
             json.dump({
@@ -101,13 +100,13 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                     "PlaceFetchUrl":
                         f"{base_url}/asset/?id={self.local_args.place_iden}",
                     "MaxPlayers":
-                        server_assignment.players.maximum,
+                        int(1e9),
                     "PreferredPlayerCapacity":
-                        server_assignment.players.preferred,
+                        int(1e9),
                     "CharacterAppearance":
                         f"{base_url}/v1.1/avatar-fetch",
                     "MaxGameInstances":
-                        server_assignment.instances.count,
+                        1,
                     "GsmInterval":
                         5,
                     "ApiKey":

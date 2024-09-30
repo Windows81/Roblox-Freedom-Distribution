@@ -23,9 +23,12 @@ class ret_relocate(base_type):
 def construct(
     data: bytes | None = None,
     redirect_url: str | None = None,
+    error: str | None = None,
 ) -> base_type:
     if data is not None:
         return ret_data(data)
     elif redirect_url is not None:
         return ret_relocate(redirect_url)
+    elif error is not None:
+        return ret_none(error)
     return ret_none()

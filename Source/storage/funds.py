@@ -33,7 +33,7 @@ class database(_logic.sqlite_connector_base):
         )
         self.sqlite.commit()
 
-    def init(self, user_id_num: int, value: int) -> None:
+    def first_init(self, user_id_num: int, value: int) -> None:
         self.sqlite.execute(
             f"""
             INSERT INTO "{self.TABLE_NAME}"

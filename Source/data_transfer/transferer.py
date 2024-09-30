@@ -1,4 +1,4 @@
-from typing import Any
+from typing_extensions import Any
 import dataclasses
 import itertools
 import queue

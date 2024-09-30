@@ -92,7 +92,7 @@ class database(_logic.sqlite_connector_base):
         ).fetchone()
         return result is not None
 
-    def sanitise_player_id_num(self, id_num: str | int | None) -> int | None:
+    def sanitise_player_id_num(self, id_num: int | str | None) -> int | None:
         if id_num is None:
             return None
         return int(id_num)

@@ -13,14 +13,6 @@ class config_type(allocateable.obj_type):
     class metadata(allocateable.obj_type):
         config_version_wildcard: wrappers.rfd_version_check = "*"  # type:ignore
 
-    class server_assignment(allocateable.obj_type):
-        class players(allocateable.obj_type):
-            maximum: int = 1024
-            preferred: int = 1024
-
-        class instances(allocateable.obj_type):
-            count: int = 1
-
     class game_setup(allocateable.obj_type):
         class asset_cache(allocateable.obj_type):
             dir_path: wrappers.path_str = './AssetCache'  # type:ignore

@@ -265,7 +265,7 @@ class routine:
     '''
     Contains a list of `entry` objects.
     A routine is initialised with a list of argument data-class objects.
-    Each of these objects points to a class, whose `__init__` method is called with the data in that argument object.
+    Each of these objects points to a class whose `__init__` method is called with the data in that argument object.
 
     '''
     entries: list[entry]

@@ -54,6 +54,7 @@ def _(self: web_server_handler) -> bool:
     '''
     game:SavePlace()
     '''
+    assert self.is_privileged
 
     # Returns false if the thing trying to be saved isn't the place we're in.
     if self.query['assetId'] != str(util.const.PLACE_IDEN_CONST):
