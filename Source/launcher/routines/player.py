@@ -91,11 +91,13 @@ class arg_type(logic.bin_ssl_arg_type, logic.host_arg_type):
         self.user_code = str(res.read(), encoding='utf-8')
 
     def get_base_url(self) -> str:
-        return \
-            f'http{"s" if self.web_port.is_ssl else ""}://' + \
+        return (
+            f'http{"s" if self.web_port.is_ssl else ""}://' +
             f'{self.web_host}:{self.web_port.port_num}'
+        )
 
     def get_app_base_url(self) -> str:
-        return \
-            f'http{"s" if self.web_port.is_ssl else ""}://' + \
+        return (
+            f'http{"s" if self.web_port.is_ssl else ""}://' +
             f'{self.app_host}:{self.web_port.port_num}'
+        )

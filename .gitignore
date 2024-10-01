@@ -6,6 +6,9 @@
 !Examples/**
 Examples/**/AssetCache/
 
+*.exe
+**/*.exe
+
 **/*.lock
 *.spec
 *.sqlite

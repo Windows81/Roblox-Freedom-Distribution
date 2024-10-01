@@ -5,11 +5,19 @@ import sys
 import os
 
 MADE_WITH_PYINSTALLER = hasattr(sys, '_MEIPASS')
-# TODO: don't make things depend on parent directories.
-TOP_DIR = \
-    os.path.dirname(sys.executable) \
-    if MADE_WITH_PYINSTALLER else \
-    os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+TOP_DIR = (
+    os.path.dirname(sys.executable)
+    if MADE_WITH_PYINSTALLER else
+    os.path.dirname(
+        # Path for `Source`.
+        os.path.dirname(
+            # Path for top-level `_main.py`.
+            sys.modules['__main__'].__file__ or
+            # Path for `~/util`
+            os.path.dirname(__file__)
+        )
+    )
+)
 
 
 class dir_type(enum.Enum):

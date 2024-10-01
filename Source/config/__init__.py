@@ -1,10 +1,10 @@
 from . import _logic, structure
 import data_transfer.transferer
+from assets import asseter
 import util.resource
 import util.versions
 import functools
 import storage
-import assets
 
 
 class obj_type(structure.config_type, _logic.base_type):
@@ -31,7 +31,7 @@ class obj_type(structure.config_type, _logic.base_type):
 
         self.data_transferer = data_transfer.transferer.obj_type()
 
-        self.asset_cache = assets.asseter(
+        self.asset_cache = asseter(
             dir_path=self.game_setup.asset_cache.dir_path,
             redirect_func=self.remote_data.asset_redirects,
             clear_on_start=self.game_setup.asset_cache.clear_on_start,

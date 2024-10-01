@@ -27,13 +27,11 @@ function CreateBinary() {
 		--onefile "$root/Source/_main.py" `
 		-p "$root/Source/" `
 		--workpath "$root/PyInstallerWork" `
-		--distpath "$root/Binaries" `
+		--distpath "$root" `
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec" `
 		--hidden-import requests # Allows functions in config to use the `requests` library (1 MiB addition)
-	foreach ($file in (Get-ChildItem "$root/Binaries/*")) {
-		$files.Add($file.FullName)
-	}
+	$files.Add("$root/RFD.exe")
 }
 
 function UpdateZippedReleaseVersion($labels) {

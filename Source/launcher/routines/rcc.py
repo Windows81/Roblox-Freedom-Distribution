@@ -193,9 +193,10 @@ class arg_type(logic.bin_ssl_arg_type):
     ),  # type: ignore
 
     def get_base_url(self) -> str:
-        return \
-            f'http{"s" if self.web_port.is_ssl else ""}://' + \
+        return (
+            f'http{"s" if self.web_port.is_ssl else ""}://' +
             f'localhost:{self.web_port.port_num}'
+        )
 
     def get_app_base_url(self) -> str:
         return f'{self.get_base_url()}/'
