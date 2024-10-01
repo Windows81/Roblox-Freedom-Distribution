@@ -2,6 +2,11 @@
 # Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2021'
 
+[server_core.place_file]
+rbxl_uri = '_.rbxl'
+# When game:SavePlace() is called, overwirtes the place at `.place_path`
+enable_saveplace = false
+
 [game_setup.database]
 path = '_.sqlite'
 clear_on_start = false
@@ -12,17 +17,16 @@ description = ''
 creator.name = 'ÒÓ'
 icon_uri = '_.png'
 
+[server_core]
 startup_script = '''
 local ASSET_IDS = {
-    17171717171, -- F3X
+    'game-asset-f3x.rbxm',
 }
 local Tools = {}
 for i, id in next, ASSET_IDS do
-    local asset = game.InsertService:LoadAsset(id)
-    for i, tool in next, asset:GetChildren() do
-        print('Tool loaded:', id, tool)
-        table.insert(Tools, tool)
-    end
+    local tool = game:GetObjects(string.format('rbxassetid://%s', id))[1]
+    print(string.format('Tool loaded: "%s" (%s)', id, tool.Name))
+    table.insert(Tools, tool)
 end
 
 function setupPlayer(player)
@@ -58,11 +62,6 @@ game:BindToClose(function()
 end)
 '''
 
-[server_core.place_file]
-rbxl_uri = '_.rbxl'
-# When game:SavePlace() is called, overwirtes the place at `.place_path`
-enable_saveplace = true
-
 
 retrieve_default_user_code = '''
 function(tick) -- float -> str
@@ -72,7 +71,6 @@ end
 
 check_user_allowed = '''
 function(user_iden, user_code) -- string -> bool
-    print(user_code, 'joined from IP address', ip_addr)
     return true
 end
 '''
