@@ -144,11 +144,12 @@ Assets are automatically cached server-side in directory `./AssetCache`. To manu
 
 The following are examples of asset idens resolving to cache files:
 
-| Asset Iden                  | File Name        | Format |
-| --------------------------- | ---------------- | ------ |
-| `rbxassetid://1818`         | `./00000001818`  | `%11d` |
-| `rbxassetid://1630228`      | `./00001630228`  | `%11d` |
-| `rbxassetid://custom-asset` | `./custom-asset` | `%s`   |
+| Asset Iden                    | File Name          | Format |
+| ----------------------------- | ------------------ | ------ |
+| `rbxassetid://1818`           | `./00000001818`    | `%11d` |
+| `rbxassetid://5950704`        | `./00005950704`    | `%11d` |
+| `rbxassetid://97646706196482` | `./97646706196482` | `%11d` |
+| `rbxassetid://custom-asset`   | `./custom-asset`   | `%s`   |
 
 ## Studio?
 
@@ -157,7 +158,9 @@ You can modify `rbxl` file in current-day Studio as of September 2024. For compa
 1. Fonts which existed in their respective versions,
 1. And meshes encoded with versions 4 or 5 _back_ to version 3.
 
-However, **union operations done in current-day Studio (CSG v3) are not supported**. This is because CSG v2 support was likely completely removed in late 2022.
+Some modern programs do weird things to client-sided scripts. They use `Script` classs objects, but with a [`RunContext`](https://robloxapi.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://robloxapi.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
+
+And, **union operations done in current-day Studio (CSG v3) are not supported**. This is because CSG v2 support was completely removed in late 2022.
 
 In that case...
 
@@ -187,7 +190,7 @@ Where `...` is [your command-line prefix](#installation),
 
 ## `GameConfig.toml` Structure
 
-This specification is current as of 0.52. Some options might be different in future versions.
+This specification is current as of 0.53. Some options might be different in future versions.
 
 ### Special Types
 
@@ -292,30 +295,7 @@ Resolves to a wildcard; defaults to `"*"`.
 
 Matches against the `GIT_RELEASE_VERSION` internal constant. Useful for protecting changes in config structure between RFD versions.
 
-#### `server_assignment.players.maximum`
-
-Resolves to type `int`.
-
-#### `server_assignment.players.preferred`
-
-Resolves to type `int`.
-
-#### `server_assignment.instances.count`
-
-Resolves to type `int`.
-
-#### `game_setup.roblox_version`
-
-The following are valid version strings.
-
-| `"v348"`  | `"v463"`  |
-| --------- | --------- |
-| `"2018M"` | `"2021E"` |
-| `"2018"`  | `"2021"`  |
-
-All entries on the same column are aliases for the same version.
-
-#### `game_setup.startup_script`
+#### `server_core.startup_script`
 
 Resolves to type `str`.
 
@@ -325,31 +305,31 @@ Runs at the CoreScript security level whenever a new _server_ is started.
 startup_script = 'game.workspace.FilteringEnabled = false'
 ```
 
-#### `game_setup.title`
+#### `server_core.metadata.title`
 
 Resolves to type `str`.
 
 Shows up on the loading screen when a player joins the server.
 
-#### `game_setup.description`
+#### `server_core.metadata.description`
 
 Resolves to type `str`.
 
 Shows up on the loading screen when a player joins the server.
 
-#### `game_setup.creator_name`
+#### `server_core.metadata.creator_name`
 
 Resolves to type `str`.
 
 Shows up on the loading screen when a player joins the server.
 
-#### `game_setup.icon_uri`
+#### `server_core.metadata.icon_uri`
 
 Resolves to internal type `uri_obj`.
 
 Can resolve to either a relative or absolute local path -- or extracted from a remote URL.
 
-#### `game_setup.place_file.rbxl_uri`
+#### `server_core.place_file.rbxl_uri`
 
 Resolves to internal type `uri_obj`. Files must be encoded in the binary `rbxl` format and not in the human-readable `rbxlx` format.
 
@@ -363,11 +343,22 @@ rbxl_uri = 'c:\Users\USERNAME\Documents\Baseplate.rbxl'
 rbxl_uri = 'https://archive.org/download/robloxBR1/RBR1/RBR1.rbxl'
 ```
 
-#### `game_setup.place_file.enable_saveplace`
+#### `server_core.place_file.enable_saveplace`
 
 Resolves to type `bool`; defaults to false.
 
 When `game:SavePlace()` is called and `enable_saveplace` is true, the file at [`rbxl_uri`](#game_setupplace_filerbxl_uri) is overwritten. It won't work if `rbxl_uri` points to a remote resource.
+
+#### `game_setup.roblox_version`
+
+The following are valid version strings.
+
+| `"v348"`  | `"v463"`  |
+| --------- | --------- |
+| `"2018M"` | `"2021E"` |
+| `"2018"`  | `"2021"`  |
+
+All entries on the same column are aliases for the same version.
 
 #### `game_setup.asset_cache.dir_path`
 
@@ -689,6 +680,18 @@ id_num = 757
 name = 'Awardable Badge'
 price = 1
 ```
+
+## Credits
+
+_VisualPlugin_ for principally maintaining the Freedom Distribution project.
+
+_iknowidontexistbutwhatifwin_ for making initial patches to the v463 (early 2021) binaries.
+
+_Jetray_ and others for engineering the original [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) server in PHP.
+
+_Twig6843_ for the orange RFD icon and [`./WineBootstrapper`](https://github.com/Windows81/Roblox-Freedom-Distribution/tree/wine-bootstrappable/WineBootstrapper).
+
+**More to come...**
 
 ---
 
