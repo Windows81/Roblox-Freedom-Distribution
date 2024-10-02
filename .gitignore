@@ -1,6 +1,7 @@
 */**
 !.vscode/
 !Guides/
+!Guides/**
 !Source/
 !Examples/
 !Examples/**
