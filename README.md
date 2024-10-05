@@ -681,18 +681,6 @@ name = 'Awardable Badge'
 price = 1
 ```
 
-## Credits
-
-_VisualPlugin_ for principally maintaining the Freedom Distribution project.
-
-_iknowidontexistbutwhatifwin_ for making initial patches to the v463 (early 2021) binaries.
-
-_Jetray_ and others for engineering the original [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) server in PHP.
-
-_Twig6843_ for the orange RFD icon and [`./WineBootstrapper`](https://github.com/Windows81/Roblox-Freedom-Distribution/tree/wine-bootstrappable/WineBootstrapper).
-
-**More to come...**
-
 ---
 
 <p align="center"><img src="./Logo.png" height="60px"/></p>
