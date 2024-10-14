@@ -4,8 +4,7 @@ roblox_version = '2021'
 
 [server_core.place_file]
 rbxl_uri = '_.rbxl'
-# When game:SavePlace() is called, overwirtes the place at `.place_path`
-enable_saveplace = false
+enable_saveplace = true
 
 [game_setup.database]
 path = '_.sqlite'
@@ -19,11 +18,11 @@ icon_uri = '_.png'
 
 [server_core]
 startup_script = '''
-local ASSET_IDS = {
+local TOOL_ASSET_IDS = {
     'game-asset-f3x.rbxm',
 }
 local Tools = {}
-for i, id in next, ASSET_IDS do
+for i, id in next, TOOL_ASSET_IDS do
     local tool = game:GetObjects(string.format('rbxassetid://%s', id))[1]
     print(string.format('Tool loaded: "%s" (%s)', id, tool.Name))
     table.insert(Tools, tool)

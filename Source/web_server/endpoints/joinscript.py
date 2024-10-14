@@ -92,7 +92,7 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     # NOTE: the `SessionId` is saved as an HTTPS header `Roblox-Session-Id` for later requests.
     # I'm placing the information which was passed into `join.ashx` here for simplicity.
     join_data |= {
-        'SessionId': json.dumps(join_data)
+        'SessionId': json.dumps(join_data | query_args)
     }
     return join_data
 

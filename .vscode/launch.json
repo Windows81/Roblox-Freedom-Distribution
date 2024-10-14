@@ -15,6 +15,20 @@
 			"justMyCode": true
 		},
 		{
+			"name": "Python: Launch Custom GameConfig'd Server",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"server",
+				"--config",
+				"${file}",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
 			"name": "Python: Launch Custom GameConfig'd Server with Local Client",
 			"type": "debugpy",
 			"request": "launch",
@@ -97,6 +111,21 @@
 				"player",
 				"-wh",
 				"localhost"
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "Python: Launch Client from Localhost (Debug)",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"player",
+				"-wh",
+				"localhost",
+				"--debug"
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
