@@ -109,7 +109,7 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"player",
-				"-wh",
+				"-h",
 				"localhost"
 			],
 			"console": "integratedTerminal",
@@ -123,7 +123,7 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"player",
-				"-wh",
+				"-h",
 				"localhost",
 				"--debug"
 			],
@@ -154,7 +154,7 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"player",
-				"-wh",
+				"-h",
 				"2607:fb91:1b74:d4d8:3dfb:5a51:55c3:d516",
 				//"2603-8000-1-3a97-d421-214a-2471-ac0c.ipv6-literal.net",
 			],

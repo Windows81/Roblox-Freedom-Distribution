@@ -87,11 +87,6 @@ class host_arg_type(arg_type):
         elif ':' in self.rcc_host:
             self.rcc_host = f'[{self.rcc_host}]'
 
-        if self.rcc_host == 'localhost':
-            self.rcc_host = '127.0.0.1'
-        elif ':' in self.rcc_host:
-            self.rcc_host = f'[{self.rcc_host}]'
-
         self.app_host = self.web_host
         if self.web_host == 'localhost':
             self.web_host = self.app_host = '127.0.0.1'
@@ -99,8 +94,14 @@ class host_arg_type(arg_type):
         elif self.web_host and ':' in self.web_host:
             # The ".ipv6-literal.net" replacement only works on Windows and might not translate well on Wine.
             # It's strictly necessary for 2021E because some CoreGUI stuff will crash if the BaseUrl doesn't have a dot in it.
-            unc_ip_str = self.web_host.replace(':', '-')
-            self.web_host = self.app_host = f'{unc_ip_str}.ipv6-literal.net'
+            unc_ip_str = (
+                self.web_host
+                .replace(':', '-')
+                .replace('%', 's')
+            )
+            if unc_ip_str.startswith('-'):
+                unc_ip_str = '0%s' % unc_ip_str
+            self.web_host = self.app_host = '%s.ipv6-literal.net' % unc_ip_str
 
 
 class entry(_entry):

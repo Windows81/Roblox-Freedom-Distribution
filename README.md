@@ -26,7 +26,7 @@ In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Con
 
 ## Installation
 
-RFD is natively supported on Windows. Additional testing needs to done on GNU/Linux systems with `wine`. No plans for native MacOS support so far.
+RFD is natively supported on Windows and somewhat works on GNU/Linux systems with `wine`. No plans for native MacOS support so far.
 
 ### As an [Executable](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe)
 
@@ -49,6 +49,8 @@ To launch RFD, your command line will look something like this:
 ```
 
 #### For GNU/Linux
+
+Might not run as well as on Windows.
 
 To bootstrap the compiled `exe`, run:
 

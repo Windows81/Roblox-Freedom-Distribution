@@ -82,7 +82,9 @@ end
 
 retrieve_avatar_items = '''
 function(user_iden, user_code)
-    if user_code:find('Mary') then
+    if user_code:find('Abhidjt') then
+        return {}
+    elseif user_code:find('Mary') then
         return {
             8746101819,
             12546881897,
@@ -127,6 +129,16 @@ end
 
 retrieve_avatar_colors = '''
 function(user_iden, user_code)
+    if user_code:find('Abhidjt') then
+        return {
+            head = 24,
+            left_arm = 24,
+            left_leg = 37,
+            right_arm = 24,
+            right_leg = 37,
+            torso = 23,
+        }
+    end
     return {
         head = 315,
         left_arm = 315,
