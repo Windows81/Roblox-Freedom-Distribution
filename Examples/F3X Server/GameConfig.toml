@@ -1,5 +1,4 @@
 [game_setup]
-# Aliases for "v348" is "2018M", "v463" is "2021E".
 roblox_version = '2021'
 
 [server_core.place_file]

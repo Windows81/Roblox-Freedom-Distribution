@@ -7,6 +7,7 @@ import util.resource
 import util.versions
 import util.const
 import argparse
+import os.path
 import config
 
 from launcher.routines import (
@@ -84,6 +85,12 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
+    if os.path.isdir(args.config_path):
+        args.config_path = os.path.join(
+            args.config_path,
+            util.resource.DEFAULT_CONFIG_PATH,
+        )
+
     game_config = config.get_cached_config(args.config_path)
     routine_args = []
 
