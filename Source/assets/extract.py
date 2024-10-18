@@ -3,9 +3,12 @@ import urllib3
 
 
 def download_item(url: str) -> bytes | None:
+    headers = {
+        'User-Agent': 'Roblox/WinInet',
+    }
     try:
         http = urllib3.PoolManager()
-        response = http.request('GET', url)
+        response = http.request('GET', url, headers=headers)
         if response.status != 200:
             return None
         return response.data
