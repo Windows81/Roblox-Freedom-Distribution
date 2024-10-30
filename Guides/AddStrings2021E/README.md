@@ -1,7 +1,5 @@
 # So You Want to Add Your Own Strings to Rōblox 0.463?
 
-These steps were intended for a procedure which doesn't produce expected results. Please ignore for now.
-
 Reach out to VisualPlugin if you need help with the instructions.
 
 Tools required:

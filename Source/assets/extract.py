@@ -5,6 +5,7 @@ import urllib3
 def download_item(url: str) -> bytes | None:
     headers = {
         'User-Agent': 'Roblox/WinInet',
+        'Referer': 'https://www.roblox.com/',
     }
     try:
         http = urllib3.PoolManager()
