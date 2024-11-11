@@ -16,10 +16,6 @@ FILTERING IS DISABLED, AND SIGNING IS DISABLED! THIS IS NOT SECURE!
 
 I also do recommend using the webserver from this repository, it already contains the CoreGuis, and a couple of QoL fixes.
 
-<!-- Temporarilly removed, got my github account suspended. -->
-<!--<br>
-Pre-Patched versions are now released! If you do not want to patch 2021E yourself, I have provided a download in the releases section. Although, I still heavily recommend patching it yourself for experience, I don't like skidding but its not skidding if youre learning atleast.
-<br>-->
 <br>
 
 **Recommended folder setup:**

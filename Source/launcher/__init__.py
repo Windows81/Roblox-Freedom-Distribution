@@ -104,18 +104,28 @@ def process(args: list[str] | None = None) -> None:
     if args is None:
         args = sys.argv[1:]
 
-    if len(args) == 0:
-        args = shlex.split(input("Enter your command-line arguments: "))
+    def perform_with_args(args: list[str]):
+        return perform_routine(
+            routine_args_list=parse_arg_list(args),
+        ).wait()
 
-    routine = None
+    if len(args) > 0:
+        try:
+            perform_with_args(args)
+        except KeyboardInterrupt:
+            pass
+        finally:
+            return
+
     try:
-        arg_list = parse_arg_list(args)
-        routine = perform_routine(arg_list)
-        routine.wait()
+        while True:
+            try:
+                arg_str = input(
+                    "Enter your command-line arguments [Ctrl+C to quit]: ",
+                )
+                perform_with_args(shlex.split(arg_str))
+            except Exception as e:
+                traceback.print_exc()
+                print(e)
     except KeyboardInterrupt:
         pass
-    # except Exception as e:
-        # traceback.print_exc()
-        # print(e)
-    finally:
-        del routine

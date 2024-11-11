@@ -80,7 +80,12 @@ def retr_rōblox_full_path(version: util.versions.rōblox, bin_type: bin_subtype
 
 
 def retr_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:
-    if not os.path.isabs(path):
+    if os.path.isdir(path):
+        path = os.path.join(
+            path,
+            DEFAULT_CONFIG_PATH,
+        )
+    elif not os.path.isabs(path):
         path = os.path.join(
             retr_full_path(dir_type.MISC),
             path,
