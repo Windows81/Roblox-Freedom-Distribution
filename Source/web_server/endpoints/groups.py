@@ -1,6 +1,6 @@
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
-from config import obj_type
+from game_config import obj_type
 import re
 
 

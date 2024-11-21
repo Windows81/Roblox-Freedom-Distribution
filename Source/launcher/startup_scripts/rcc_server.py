@@ -1,6 +1,6 @@
 import data_transfer
 import textwrap
-import config
+import game_config
 
 BASE_SCRIPT_FORMAT = """\
 %(rcc_snippet)s
@@ -40,7 +40,7 @@ print('Initialised RFD server scripts.')
 """
 
 
-def get_script(game_config: config.obj_type) -> str:
+def get_script(game_config: game_config.obj_type) -> str:
     return BASE_SCRIPT_FORMAT % {
         'rcc_snippet': data_transfer.get_rcc_snippet(game_config),
         'startup_script': game_config.server_core.startup_script,

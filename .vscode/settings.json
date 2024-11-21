@@ -6,4 +6,5 @@
 	"python.analysis.include": [
 		"./Source",
 	],
+	"stylua.targetReleaseVersion": "latest",
 }

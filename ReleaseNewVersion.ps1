@@ -55,6 +55,7 @@ function CreateZippedDirs() {
 			7z a $zip "$($dir.FullName)/*" `
 				"-xr!AppSettings.xml" `
 				"-xr!RFDStarterScript.lua" `
+				"-xr!cacert.pem" `
 				"-xr!dxgi.dll" "-xr!Reshade.ini" "-xr!ReShade.log" "-xr!ReShade_RobloxPlayerBeta.log" # ReShade stuff
 		}
 		$files.Add($zip)

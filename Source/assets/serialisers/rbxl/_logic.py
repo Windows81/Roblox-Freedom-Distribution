@@ -2,10 +2,13 @@ from typing_extensions import Callable
 import dataclasses
 import itertools
 import lz4.block
+import pyzstd
 import io
 import re
 
 HEADER_SIGNATURE = b'\x3c\x72\x6f\x62\x6c\x6f\x78\x21\x89\xff\x0d\x0a\x1a\x0a'
+
+INT_SIZE = 4
 
 
 class string_replacer:
@@ -13,7 +16,6 @@ class string_replacer:
     Rōblox has its own way of storing variable-length strings.
     This class gracefully replaces instances of one such string with another.
     '''
-    INT_SIZE = 4
 
     @dataclasses.dataclass
     class input_info:
@@ -21,7 +23,6 @@ class string_replacer:
         string_size: int
         match_size: int
         match_bytes: bytes
-        remainder: bytes
         match_start: int
         match_end: int
 
@@ -41,12 +42,12 @@ class string_replacer:
         self.prepend_new_length = prepend_new_length
 
     def calc(self) -> bytes:
-        # Data on where existing strings are.
+        # Extracts data on where existing strings are.
         infos = [
             info
             for match in itertools.islice(
                 re.finditer(
-                    br'(.{%d})(?=%s)' % (self.INT_SIZE, self.pattern),
+                    br'(.{%d})(?=%s)' % (INT_SIZE, self.pattern),
                     self.data,
                 ),
                 self.max_replacements,
@@ -78,32 +79,33 @@ class string_replacer:
 
     def get_input_info(self, arg: re.Match[bytes]) -> input_info | None:
         (match_start, span_end) = arg.span()
-        string_pos = match_start + self.INT_SIZE
+        string_pos = match_start + INT_SIZE
 
         string_size = int.from_bytes(
             self.data[match_start:string_pos],
             byteorder='little',
         )
-        if string_size >= 1024:
-            return None
 
-        arg_bytes = arg.group()[self.INT_SIZE:]
+        string_end = string_pos + string_size
+        full_string = arg.string[string_pos:string_end]
+
         new_match = re.match(
-            self.pattern,
-            arg.string[string_pos:string_pos+string_size],
+            b'%s$' % self.pattern,
+            full_string,
         )
+
         if new_match is None:
             return None
 
         new_match_bytes = new_match.group()
         new_match_size = len(new_match_bytes)
-        match_end = match_start + self.INT_SIZE + new_match_size
+        match_end = match_start + INT_SIZE + new_match_size
+        assert new_match_size == string_size
         return string_replacer.input_info(
             match=new_match,
             string_size=string_size,
             match_size=new_match_size,
             match_bytes=new_match_bytes,
-            remainder=arg_bytes[new_match_size:],
             match_start=match_start,
             match_end=match_end,
         )
@@ -122,12 +124,10 @@ class string_replacer:
             if self.prepend_new_length
             else b''
         )
-        suffix = info.remainder
 
         return b''.join([
             prefix,
             result,
-            suffix,
         ])
 
 
@@ -136,6 +136,7 @@ class chunk_info:
     chunk_name: bytes
     reserved_metadata: bytes
     chunk_data: bytes
+    '''All chunk information which comes *after* the `chunk_name`'''
 
 
 @dataclasses.dataclass
@@ -175,7 +176,7 @@ def get_first_chunk_str(info: chunk_info) -> bytes | None:
 def get_prop_values(info: chunk_info) -> bytes | None:
     '''
     For `PROP`, refer to `Values`.
-    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
+    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#values
     '''
     if info.chunk_name not in {b'PROP'}:
         return None
@@ -228,18 +229,18 @@ class rbxl_parser:
         self,
         transforms: list[Callable[['rbxl_parser', chunk_info], bytes | None]],
     ) -> bytes:
-        read_stream = io.BytesIO(self.file_data)
-        write_stream = io.BytesIO()
+        self.read_stream = io.BytesIO(self.file_data)
+        self.write_stream = io.BytesIO()
 
         # Copies the header from `read_stream` to `write_stream`.
-        header = self.__process_header(read_stream)
+        header = self.__process_header(self.read_stream)
         if header is None:
             return self.file_data
-        write_stream.write(header)
+        self.write_stream.write(header)
 
         # https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
         while True:
-            info = self.__process_chunk(read_stream)
+            info = self.__process_chunk()
             if info is None:
                 break
             for trans in transforms:
@@ -248,9 +249,12 @@ class rbxl_parser:
                     or info.chunk_data
                 )
             new_chunk = self.compile_chunk(info)
-            write_stream.write(new_chunk)
+            self.write_stream.write(new_chunk)
 
-        return write_stream.getvalue()
+        result = self.write_stream.getvalue()
+        self.read_stream.close()
+        self.write_stream.close()
+        return result
 
     def __process_header(self, read_stream: io.BytesIO) -> bytes | None:
         if read_stream.read(len(HEADER_SIGNATURE)) != HEADER_SIGNATURE:
@@ -280,8 +284,8 @@ class rbxl_parser:
             self.header_info,
         ])
 
-    def __process_chunk(self, read_stream: io.BytesIO) -> chunk_info | None:
-        info = self.decompress_chunk(read_stream)
+    def __process_chunk(self) -> chunk_info | None:
+        info = self.decompress_chunk()
         if info is None:
             return None
 
@@ -305,32 +309,37 @@ class rbxl_parser:
 
         return info
 
-    @staticmethod
-    def decompress_chunk(read_stream: io.BytesIO) -> chunk_info | None:
-        chunk_name = read_stream.read(4)
+    def decompress_chunk(self) -> chunk_info | None:
+        chunk_name = self.read_stream.read(4)
         if chunk_name == b'':
             return None
 
+        assert chunk_name == chunk_name.upper()
+
         compressed_size = int.from_bytes(
-            read_stream.read(4),
+            self.read_stream.read(4),
             byteorder='little',
         )
         uncompressed_size = int.from_bytes(
-            read_stream.read(4),
+            self.read_stream.read(4),
             byteorder='little',
         )
-        reserved_metadata = read_stream.read(4)
+        reserved_metadata = self.read_stream.read(4)
 
-        # https://github.com/jmkd3v/rbxl/blob/a36eb799f596a68ab2130876f5021a76bb6726d4/rbxl/binary/chunks/__init__.py#L7.
+        # https://dom.rojo.space/binary.html#chunks
         if compressed_size == 0:
-            chunk_data = read_stream.read(uncompressed_size)
-
+            chunk_data = self.read_stream.read(uncompressed_size)
         else:
-            chunk_data = lz4.block.decompress(
-                source=read_stream.read(compressed_size),
-                uncompressed_size=uncompressed_size,
-            )
+            compressed_chunk_data = self.read_stream.read(compressed_size)
+            if compressed_chunk_data.startswith(b'\x28\xB5\x2F\xFD'):
+                chunk_data = pyzstd.decompress(compressed_chunk_data)
+            else:
+                chunk_data = lz4.block.decompress(
+                    source=compressed_chunk_data,
+                    uncompressed_size=uncompressed_size,
+                )
 
+        assert len(chunk_data) == uncompressed_size
         return chunk_info(
             chunk_name=chunk_name,
             reserved_metadata=reserved_metadata,

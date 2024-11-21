@@ -10,7 +10,7 @@ import mimetypes
 import functools
 import util.ssl
 import base64
-import config
+import game_config
 import socket
 import enum
 import json
@@ -88,7 +88,7 @@ class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
         port: port_typ,
-        game_config: config.obj_type,
+        game_config: game_config.obj_type,
         print_http_log: bool = False,
         *args, **kwargs,
     ) -> None:

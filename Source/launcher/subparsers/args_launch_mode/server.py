@@ -3,12 +3,12 @@ from launcher.routines import player, web, rcc
 import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
 from web_server._logic import port_typ
+import game_config as config
 import util.resource
 import util.versions
 import util.const
 import argparse
 import os.path
-import config
 
 from launcher.routines import (
     download,

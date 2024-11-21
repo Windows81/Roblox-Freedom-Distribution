@@ -5,19 +5,26 @@ import sys
 import os
 
 MADE_WITH_PYINSTALLER = hasattr(sys, '_MEIPASS')
-TOP_DIR = (
-    os.path.dirname(sys.executable)
-    if MADE_WITH_PYINSTALLER else
-    os.path.dirname(
-        # Path for `Source`.
-        os.path.dirname(
-            # Path for top-level `_main.py`.
-            sys.modules['__main__'].__file__ or
-            # Path for `~/util`
-            os.path.dirname(__file__)
-        )
-    )
-)
+
+
+@functools.cache
+def get_top_dir() -> str:
+    if MADE_WITH_PYINSTALLER:
+        return os.path.dirname(sys.executable)
+
+    base_file = None
+    # Path for top-level `_main.py`.
+    if hasattr(sys.modules['__main__'], '__file__'):
+        base_file = sys.modules['__main__'].__file__
+
+    # Otherwise, get the path for `~/util`.
+    if base_file is None:
+        base_file = os.path.dirname(__file__)
+
+    # Traverse through parent directory twice.
+    for _ in range(2):
+        base_file = os.path.dirname(base_file)
+    return base_file
 
 
 class dir_type(enum.Enum):
@@ -38,20 +45,20 @@ def get_paths(d: dir_type) -> list[str]:
     match (MADE_WITH_PYINSTALLER, d):
 
         case (True, dir_type.RŌBLOX):
-            return [TOP_DIR, 'Roblox']
+            return [get_top_dir(), 'Roblox']
         case (False, dir_type.RŌBLOX):
-            return [TOP_DIR, 'Roblox']
+            return [get_top_dir(), 'Roblox']
 
         # If running from `exe`, stores TLS certiifcates in a temporary directory.
         case (True, dir_type.SSL):
             return [getattr(sys, '_MEIPASS', '')]
         case (False, dir_type.SSL):
-            return [TOP_DIR, 'Source', 'ssl']
+            return [get_top_dir(), 'Source', 'ssl']
 
         case (True, dir_type.MISC):
-            return [TOP_DIR]
+            return [get_top_dir()]
         case (False, dir_type.MISC):
-            return [TOP_DIR]
+            return [get_top_dir()]
     return []
 
 

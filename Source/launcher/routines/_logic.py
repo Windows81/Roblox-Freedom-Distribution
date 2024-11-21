@@ -1,6 +1,7 @@
 import web_server._logic as web_server_logic
 from .. import downloader as downloader
-import config.structure
+import game_config.structure
+import game_config as config
 import urllib.request
 import util.versions
 import util.resource
@@ -10,7 +11,6 @@ import http.client
 import subprocess
 import threading
 import certifi
-import config
 import copy
 import ssl
 import os
@@ -38,7 +38,7 @@ class popen_arg_type(arg_type):
 
 
 class server_arg_type(arg_type):
-    game_config: config.obj_type
+    game_config: game_config.obj_type
 
 
 class bin_arg_type(popen_arg_type):

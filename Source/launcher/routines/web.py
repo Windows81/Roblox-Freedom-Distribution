@@ -2,9 +2,8 @@ import web_server._logic as web_server_logic
 import web_server
 
 from . import _logic as logic
-import config.structure
-import config
-import config
+import game_config.structure
+import game_config as config
 import dataclasses
 import threading
 
@@ -54,7 +53,7 @@ class obj_type(logic.server_entry):
 class arg_type(logic.arg_type):
     obj_type = obj_type
 
-    game_config: config.obj_type
+    game_config: game_config.obj_type
     web_ports: list[web_server_logic.port_typ] = dataclasses.field(
         default_factory=list,
     )

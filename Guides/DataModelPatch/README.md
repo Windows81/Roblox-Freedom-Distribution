@@ -16,89 +16,99 @@ No Python was needed. Just many tries, traces, and branch-changes in x32dbg.
 
 And I'm not done yet...
 
-# How I'm going to analyse the "bytecode" of DataModelPatch.
+## DataModelPatch Bytecode Analysis
 
-`DataModelPatch.rbxm` is:
+### Preparation
+
+1. Download [`DataModelPatch.rbxm`](DataModelPatch.rbxm). For Rōblox v463, `DataModelPatch.rbxm` can be pulled from:
 
 ```sh
 curl -L "https://assetdelivery.roblox.com/v1/asset/?id=5345954812&version=897"
 ```
 
-1. Download [`DataModelPatch.rbxm`](DataModelPatch.rbxm). Find a way to decompress the `lz4` chunks (https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Source/assets/rbxl/_logic.py#L302).
+2. Decompress the `lz4` chunks. I'd save them to a new file. The following Python code snippet requires a module Rōblox Freedom Distribution to be imported:
 
-That's 2021E for those of you without prose.
+```py
+from assets.serialisers import rbxl as parser
+read_file_name = "./DataModelPatch.rbxm"
+write_file_name = "./DataModelPatchDecompressed.rbxm"
 
-2. Get the highlighted address. The `01` right after `Name` is the [property type](https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#value-types).
+read_data = open(read_file_name, 'rb').read()
+write_data = parser.parse(read_data, methods={})
+open(write_file_name, 'wb').write(write_data)
+```
+
+### Basic Metadata Collection (Script Names)
+
+Open the newly decompressed file in a hex-editing tool. Write down the address of the byte highlighted below. The `0x01` right after `Name` corresponds to the `String` [property type](https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#value-types). So we want to collect the byte right after this metadatum.
 
 ![alt text](image.png)
 
-3. Python shell. Pick your own path or something.
-
-```py
-with open(r"C:\Users\USERNAME\Documents\Projects\FilteringDisabled\Roblox\v463\Player\Content\models\DataModelPatch\DataModelPatch.rbxm", 'rb') as f: d=f.read()
-```
+In this case, we're using `0x00094888` as the base address. The reason that these bytes follow as `0A 00 00 00` is because the `Connection` string afterwards is ten characters long.
 
 And then:
 
 ```py
-b=0x00094888
+b = 0x00094888
 
-b0=b
-head=b''
-names=[]
+b0 = b
+head = b''
+names = []
 while True:
-  head=d[b0:b0+4]
-  if head==b'PROP':
+  head = write_data[b0:b0+4]
+  if head == b'PROP':
    break
-  l=int.from_bytes(head,'little')
-  e1=b0+4
-  e2=b0+4+l
-  val=d[e1:e2]
-  names.append((e1,e2,val))
-  b0+=l+4
+  l = int.from_bytes(head, 'little')
+  e1 = b0 + 4
+  e2 = b0 + 4 + l
+  val = write_data[e1:e2]
+  names.append((e1, e2, val))
+  b0 += l + 4
 ```
 
-That's just to get the names.
+That's just to get the names, which will be saved in the `names` list.
 
 Now to get the values of the "Source" property.
 
-4. Repeat for "Source". The 0x1D is [_supposed_](https://github.com/strawbberrys/0x1D/tree/master/bytecode-poc) to mean the value type for bytecode, But I'll need to make sure.
+### Bytecode Collection
+
+Repeat for "Source". The 0x1D is _supposed_ to refer to the value type for [bytecode](https://github.com/strawbberrys/0x1D/tree/master/bytecode-poc).
 
 ![alt text](image-1.png)
 
-5. _òó_
-
 ```py
-b=0x000B5407
+b = 0x000B5407
 
-b0=b
-head=b''
-sources=[]
+b0 = b
+head = b''
+sources = []
 while True:
-  head=d[b0:b0+4]
-  if head==b'PROP':
+  head = write_data[b0:b0+4]
+  if head == b'PROP':
    break
-  l=int.from_bytes(head,'little')
-  e1=b0+4
-  e2=b0+4+l
-  val=d[e1:e2]
-  sources.append((e1,e2,val))
-  b0+=l+4
+  l = int.from_bytes(head, 'little')
+  e1 = b0 + 4
+  e2 = b0 + 4 + l
+  val = write_data[e1:e2]
+  sources.append((e1, e2, val))
+  b0 += l + 4
 ```
 
-6. Choose the directory to save these files or something:
+The bytecode dumps are saved in a list named `sources`.
+
+### [`DataModelPatchBytecodes.zip`](DataModelPatchBytecodes.zip)
+
+In the previous two sections, we collected `names` and `sources`. Time to save them to a file.
 
 ```py
-for n,s in zip(names,sources):
+for n,s in zip(names, sources):
  fn=(
-  rb'C:\Users\USERNAME\Documents\Projects\FilteringDisabled\Roblox\v463\Player\Content\models\DataModelPatch\%08x-%s'
-  %(s[0],n[2].split(b'/')[-1])
- )
- with open(fn,'wb') as f:
+  rb'%08x-%s'
+  %(s[0], n[2].split(b'/')[-1])
+ ).decode('utf-8')
+ with open(fn, 'wb') as f:
   f.write(d[s[0]:s[1]])
 ```
-
-**Resultant archive: [`DataModelPatchBytecodes.zip`](DataModelPatchBytecodes.zip)**
 
 ---
 

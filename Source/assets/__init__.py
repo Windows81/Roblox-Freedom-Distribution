@@ -1,5 +1,5 @@
 from . import extract, returns, material, serialisers, queue
-from config.types import structs, wrappers, callable
+from config_type.types import structs, wrappers, callable
 import util.const
 import functools
 import shutil

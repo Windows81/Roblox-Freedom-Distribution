@@ -56,13 +56,13 @@ FONTS = {
 
 
 def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
-    if _logic.get_first_chunk_str(info) != b'FontFace':
+    old_prop_name = b'\x08\x00\x00\x00FontFace\x20'
+    new_prop_name = b'\x04\x00\x00\x00Font\x12'
+    if not info.chunk_data.startswith(old_prop_name, _logic.INT_SIZE):
         return None
 
-    class_id = info.chunk_data[0:4]
-    prop_info = b'\x04\x00\x00\x00Font\x12'
-    # len(class_id + b'\x08\x00\x00\x00FontFace\x20') == 17
-    chunk_values = info.chunk_data[17:]
+    class_id = info.chunk_data[0:_logic.INT_SIZE]
+    chunk_values = info.chunk_data[len(class_id + old_prop_name):]
 
     new_values = [
         FONTS.get(m.group(1), b'\03')
@@ -78,7 +78,7 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
     # Because integers here are big-endian, we put the least significant bytes at the end.
     return b''.join([
         class_id,
-        prop_info,
+        new_prop_name,
         b'\x00'*len(new_values)*3,
         *new_values,
     ])

@@ -3,14 +3,14 @@ from ..startup_scripts import rcc_server
 from . import _logic as logic
 import util.const as const
 import assets.serialisers
-import config.structure
+import game_config.structure
 import util.resource
 import util.versions
 import dataclasses
 import subprocess
 import functools
 import util.ssl
-import config
+import game_config
 import json
 import os
 
@@ -36,7 +36,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
 
         place_uri = config.server_core.place_file.rbxl_uri
         if place_uri is None:
-            return
+            raise Exception('Place file does not exist.')
 
         cache = config.asset_cache
         rbxl_data = parse(place_uri.extract())
@@ -181,7 +181,7 @@ class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
 
     rcc_port_num: int | None
-    game_config: config.obj_type
+    game_config: game_config.obj_type
     skip_popen: bool = False
     quiet: bool = False
     # TODO: fix the way place idens work.

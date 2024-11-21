@@ -3,6 +3,7 @@ pyOpenSSL
 trustme
 certifi
 urllib3
+pyzstd
 tomli
 py7zr
 lz4

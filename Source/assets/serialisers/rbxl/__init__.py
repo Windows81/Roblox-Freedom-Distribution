@@ -14,7 +14,6 @@ class method(enum.Enum):
     # Why `partial`?
     # https://stackoverflow.com/a/58714331/6879778
     fonts = partial(fonts.replace)
-    # Not useful yet; `rbxl` files still store scripts' `Disabled` property internally.
     # script_disabled = partial(script_disabled.replace)
     roblox_links = partial(roblox_links.replace)
     skip_bytecode = partial(skip_bytecode.replace)
