@@ -16,7 +16,6 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
     if not info.chunk_data.startswith(old_prop_name, _logic.INT_SIZE):
         return None
 
-    print(info.chunk_data[:50])
     base = _logic.INT_SIZE + len(old_prop_name)
     chunk_prefix = info.chunk_data[:base]
     head = b''
@@ -26,11 +25,10 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
         l = int.from_bytes(head, 'little')
         if head == b'PROP' or l == 0:
             break
-        print(l)
         e1 = base
         e2 = base + 4 + l
         val = info.chunk_data[e1:e2]
-        if len(sources) % 3 == 0:
+        if True:
             sources.append(
                 len(PRINT_SCRIPT).to_bytes(4, 'little') +
                 PRINT_SCRIPT
@@ -40,7 +38,6 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
         base += l + 4
 
     chunk_suffix = info.chunk_data[base:]
-    print(len(sources))
     return b''.join([
         chunk_prefix,
         *sources,

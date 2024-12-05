@@ -1,9 +1,14 @@
 import launcher.routines.clear_appdata as clear_appdata
 import launcher.subparsers._logic as sub_logic
 from ...routines import _logic as logic
+import functools
 import argparse
 
 CACHEABLE_ARG_SUPERTYPE = logic.bin_arg_type
+
+@functools.cache
+def check_mode(mode: sub_logic.launch_mode) -> bool:
+    return CACHEABLE_ARG_SUPERTYPE in sub_logic.SERIALISE_TYPE_SETS[mode]
 
 
 @sub_logic.add_args(sub_logic.launch_mode.ALWAYS)
@@ -12,7 +17,7 @@ def _(
     parser: argparse.ArgumentParser,
     sub_parser: argparse.ArgumentParser,
 ) -> None:
-    if CACHEABLE_ARG_SUPERTYPE not in sub_logic.SERIALISE_TYPE_SETS[mode]:
+    if not check_mode(mode):
         return
 
     sub_parser.add_argument(
@@ -28,9 +33,9 @@ def _(
     args_ns: argparse.Namespace,
     args_list: list[logic.arg_type],
 ) -> list[logic.arg_type]:
-
-    if args_ns.keep_cache:
+    if not check_mode(mode):
         return []
+
     base_args = [
         a.reconstruct()
         for a in args_list

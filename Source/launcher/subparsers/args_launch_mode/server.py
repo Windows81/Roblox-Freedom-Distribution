@@ -8,13 +8,6 @@ import util.resource
 import util.versions
 import util.const
 import argparse
-import os.path
-
-from launcher.routines import (
-    download,
-    clear_appdata,
-    player,
-)
 
 
 @sub_logic.add_args(sub_logic.launch_mode.SERVER)

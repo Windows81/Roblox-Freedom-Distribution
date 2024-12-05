@@ -4,7 +4,7 @@ import dataclasses
 import util.const
 
 from . import _logic as logic
-import launcher.downloader as downloader
+import downloader
 
 
 @dataclasses.dataclass
@@ -16,7 +16,7 @@ class _arg_type(logic.arg_type):
 class obj_type(logic.bin_entry):
     local_args: _arg_type
 
-    def __init__(self, rōblox_version: util.versions.rōblox, bin_subtype: str):
+    def __init__(self, rōblox_version: util.versions.rōblox, bin_subtype: str) -> None:
         super().__init__()
         self.rōblox_version = rōblox_version
         self.bin_subtype = bin_subtype

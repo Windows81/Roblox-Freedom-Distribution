@@ -35,7 +35,6 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
-
     return [
         download.arg_type(
             rōblox_version=args.rbx_version,

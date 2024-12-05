@@ -7,12 +7,14 @@ class launch_mode(enum.Enum):
     SERVER = 'server'
     PLAYER = 'player'
     DOWNLOAD = 'download'
+    TEST = 'test'
 
 
 ENABLED_LAUNCH_MODES = {
     launch_mode.SERVER,
     launch_mode.PLAYER,
     launch_mode.DOWNLOAD,
+    launch_mode.TEST,
 }
 
 

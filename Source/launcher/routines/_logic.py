@@ -1,5 +1,4 @@
 import web_server._logic as web_server_logic
-from .. import downloader as downloader
 import game_config.structure
 import game_config as config
 import urllib.request
@@ -8,6 +7,7 @@ import util.resource
 import urllib.error
 import urllib.parse
 import http.client
+import downloader
 import subprocess
 import threading
 import certifi

@@ -41,7 +41,7 @@ class bin_subtype(enum.Enum):
 DEFAULT_CONFIG_PATH = './GameConfig.toml'
 
 
-def get_paths(d: dir_type) -> list[str]:
+def get_path_pieces(d: dir_type) -> list[str]:
     match (MADE_WITH_PYINSTALLER, d):
 
         case (True, dir_type.RŌBLOX):
@@ -77,7 +77,7 @@ def make_dirs(full_path: str) -> None:
 
 
 def retr_full_path(d: dir_type, *paths: str) -> str:
-    full_path = os.path.join(*get_paths(d), *paths)
+    full_path = os.path.join(*get_path_pieces(d), *paths)
     make_dirs(full_path)
     return full_path
 

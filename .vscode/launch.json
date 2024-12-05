@@ -29,6 +29,18 @@
 			"justMyCode": true
 		},
 		{
+			"name": "Python: Run Unit Tests",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"test",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
 			"name": "Python: Launch Custom GameConfig'd Server with Local Client",
 			"type": "debugpy",
 			"request": "launch",

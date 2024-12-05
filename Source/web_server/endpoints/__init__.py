@@ -1,21 +1,12 @@
 from web_server._logic import server_path, web_server_handler
+from importlib import import_module
+import pathlib
 
-from . import (
-    assets,
-    avatar,
-    data_transfer,
-    persistence,
-    setup_player,
-    setup_rcc,
-    text_filter,
-    player_info,
-    save_place,
-    funds,
-    groups,
-    joinscript,
-    gamepasses,
-    badges,
-)
+
+for f in pathlib.Path(__file__).parent.glob("*.py"):
+    if "__" in f.stem:
+        continue
+    import_module(f".{f.stem}", __package__)
 
 
 @server_path("/")

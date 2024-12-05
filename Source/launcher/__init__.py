@@ -1,22 +1,23 @@
-from .subparsers.args_launch_mode import (
-    download,
-    player,
-    server,
-)
-
-from .subparsers.args_aux import (
-    clear_appdata,
-    download,
-    debug,
-)
-
-import launcher.routines._logic as routine_logic
 import launcher.subparsers._logic as sub_logic
+import launcher.routines._logic as routine_logic
 
-import traceback
-import argparse
-import shlex
 import sys
+import pathlib
+import shlex
+import argparse
+import traceback
+from importlib import import_module
+
+
+def import_subparser_dir(d: str):
+    for f in pathlib.Path(__file__).parent.glob(f"subparsers/{d}/*.py"):
+        if "__" in f.stem:
+            continue
+        import_module(f'.subparsers.{d}.{f.stem}', __package__)
+
+
+import_subparser_dir('args_launch_mode')
+import_subparser_dir('args_aux')
 
 
 def parse_arg_list(args: list[str] | None) -> list:
@@ -92,10 +93,6 @@ def parse_arg_list(args: list[str] | None) -> list:
     return routine_args_list
 
 
-def perform_routine(routine_args_list: list) -> routine_logic.routine:
-    return routine_logic.routine(*routine_args_list)
-
-
 def process(args: list[str] | None = None) -> None:
     '''
     Highest-level main function which takes a list of arguments
@@ -105,15 +102,16 @@ def process(args: list[str] | None = None) -> None:
         args = sys.argv[1:]
 
     def perform_with_args(args: list[str]):
-        return perform_routine(
-            routine_args_list=parse_arg_list(args),
-        ).wait()
+        return routine_logic.routine(*parse_arg_list(args)).wait()
 
     if len(args) > 0:
         try:
             perform_with_args(args)
         except KeyboardInterrupt:
             pass
+        except Exception as e:
+            traceback.print_exc()
+            print(e)
         finally:
             return
 
@@ -124,6 +122,8 @@ def process(args: list[str] | None = None) -> None:
                     "Enter your command-line arguments [Ctrl+C to quit]: ",
                 )
                 perform_with_args(shlex.split(arg_str))
+            except KeyboardInterrupt:
+                pass
             except Exception as e:
                 traceback.print_exc()
                 print(e)
