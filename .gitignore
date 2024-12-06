@@ -1,8 +1,10 @@
 */**
+
 !.vscode/
 !Guides/
 !Guides/**
 !Source/
+!Source/**
 !Examples/
 !Examples/**
 Examples/**/AssetCache/
