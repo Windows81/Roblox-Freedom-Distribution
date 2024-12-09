@@ -1,4 +1,4 @@
-from typing_extensions import Callable, Union, Any
+from typing import Callable, Union, Any
 from ._logic import type_call_data
 from . import wrappers, callable
 import util.resource

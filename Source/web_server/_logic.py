@@ -1,4 +1,4 @@
-from typing_extensions import Callable
+from typing import Callable
 import util.versions as versions
 import util.const as const
 from urllib import parse

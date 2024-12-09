@@ -1,4 +1,4 @@
-from typing_extensions import Self, TypeVar, get_args
+from typing import Self, TypeVar, get_args
 import util.const as const
 import fnmatch
 import urllib3

@@ -1,5 +1,5 @@
 from config_type.types import get_type_call, type_call_data
-from typing_extensions import Any
+from typing import Any
 from config_type import _logic
 import dataclasses
 import functools

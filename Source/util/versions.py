@@ -1,4 +1,4 @@
-import typing_extensions
+import typing
 import functools
 import enum
 
@@ -26,7 +26,7 @@ class rōblox(enum.Enum):
     def from_name(value: int | str) -> "rōblox":
         return VERSION_MAP[str(value)]
 
-    def __lt__(self, other: typing_extensions.Self) -> bool:
+    def __lt__(self, other: typing.Self) -> bool:
         return self.get_number() < other.get_number()
 
 

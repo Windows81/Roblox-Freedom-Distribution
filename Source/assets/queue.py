@@ -1,4 +1,4 @@
-from typing_extensions import Callable, TypeVar, Any
+from typing import Callable, TypeVar, Any
 from collections import defaultdict
 from queue import Queue
 

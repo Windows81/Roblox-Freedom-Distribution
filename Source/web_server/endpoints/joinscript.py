@@ -1,5 +1,5 @@
 from web_server._logic import web_server_handler, server_path
-from typing_extensions import Any
+from typing import Any
 import util.versions as versions
 import util.resource
 import util.const

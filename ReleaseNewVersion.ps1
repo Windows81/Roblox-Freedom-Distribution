@@ -35,7 +35,12 @@ function CreateBinary() {
 		--distpath "$root" `
 		--icon "$root/Source/Icon.ico" `
 		--specpath "$root/PyInstallerWork/Spec" `
-		--hidden-import requests # Allows functions in config to use the `requests` library (1 MiB addition)
+		--exclude-module numpy `
+		--exclude-module torch `
+		--exclude-module pandas `
+		--exclude-module scipy `
+		--hidden-import requests # Allows functions in config to use the `requests` library (1 MiB addition).
+
 	$files.Add("$root/RFD.exe")
 }
 
