@@ -1,4 +1,4 @@
-pyOpenSSL==24.3.0
+pyOpenSSL==24.0.0
 trustme==1.2.0
 certifi
 urllib3
