@@ -1,5 +1,5 @@
-pyOpenSSL
-trustme
+pyOpenSSL==24.3.0
+trustme==1.2.0
 certifi
 urllib3
 pyzstd

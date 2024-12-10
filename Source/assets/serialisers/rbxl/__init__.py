@@ -13,10 +13,10 @@ from . import (
 class method(enum.Enum):
     # Why `partial`?
     # https://stackoverflow.com/a/58714331/6879778
-    fonts = partial(fonts.replace)
+    fonts = enum.member(partial(fonts.replace))
     # script_disabled = partial(script_disabled.replace)
-    roblox_links = partial(roblox_links.replace)
-    skip_bytecode = partial(skip_bytecode.replace)
+    roblox_links = enum.member(partial(roblox_links.replace))
+    skip_bytecode = enum.member(partial(skip_bytecode.replace))
 
 
 def check(data: bytes) -> bool:

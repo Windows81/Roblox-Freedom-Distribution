@@ -2,22 +2,22 @@ import launcher.subparsers._logic as sub_logic
 import launcher.routines._logic as routine_logic
 
 import sys
-import pathlib
 import shlex
 import argparse
 import traceback
-from importlib import import_module
 
+from .subparsers.args_launch_mode import (
+    download as _,
+    player as _,
+    server as _,
+    test as _,
+)
 
-def import_subparser_dir(d: str):
-    for f in pathlib.Path(__file__).parent.glob(f"subparsers/{d}/*.py"):
-        if "__" in f.stem:
-            continue
-        import_module(f'.subparsers.{d}.{f.stem}', __package__)
-
-
-import_subparser_dir('args_launch_mode')
-import_subparser_dir('args_aux')
+from .subparsers.args_aux import (
+    clear_appdata as _,
+    download as _,
+    debug as _,
+)
 
 
 def parse_arg_list(args: list[str] | None) -> list:
@@ -38,7 +38,7 @@ def parse_arg_list(args: list[str] | None) -> list:
 
     if not args_namespace.mode:
         parser.print_help()
-        parser.exit(1)
+        parser.exit()
 
     mode = sub_logic.MODE_ALIASES[args_namespace.mode]
     chosen_sub_parser = sub_parsers[mode]
@@ -101,7 +101,7 @@ def process(args: list[str] | None = None) -> None:
     if args is None:
         args = sys.argv[1:]
 
-    def perform_with_args(args: list[str]):
+    def perform_with_args(args: list[str]) -> None:
         return routine_logic.routine(*parse_arg_list(args)).wait()
 
     if len(args) > 0:
@@ -117,10 +117,10 @@ def process(args: list[str] | None = None) -> None:
 
     try:
         while True:
+            arg_str = input(
+                "Enter your command-line arguments [Ctrl+C to quit]: ",
+            )
             try:
-                arg_str = input(
-                    "Enter your command-line arguments [Ctrl+C to quit]: ",
-                )
                 perform_with_args(shlex.split(arg_str))
             except KeyboardInterrupt:
                 pass

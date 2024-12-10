@@ -1,11 +1,13 @@
-from importlib import import_module
 import unittest
-import pathlib
+
+from . import (
+    test_asset,
+    test_hotpatch,
+)
 
 NAMED_MODULES = {
-    f.stem.lower(): import_module(f".{f.stem}", __package__)
-    for f in pathlib.Path(__file__).parent.glob("test_*.py")
-    if "__" not in f.stem
+    'asset': test_asset,
+    'hotpatch': test_hotpatch,
 }
 
 NAMED_SUITES = {

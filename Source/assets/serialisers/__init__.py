@@ -10,8 +10,8 @@ from . import (
 class method(enum.Enum):
     # Why `partial`?
     # https://stackoverflow.com/a/58714331/6879778
-    rbxl = partial(rbxl.parse)
-    mesh = partial(mesh.parse)
+    rbxl = enum.member(partial(rbxl.parse))
+    mesh = enum.member(partial(mesh.parse))
 
 
 def parse(data: bytes, items: set[method] = set(method)) -> bytes:
