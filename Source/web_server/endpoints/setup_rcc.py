@@ -13,7 +13,7 @@ def _(self: web_server_handler) -> bool:
 @server_path('/api.GetAllowedSecurityVersions/')
 def _(self: web_server_handler) -> bool:
     self.send_json({
-        'data': self.server.game_config.game_setup.roblox_version.security_versions(),
+        'data': self.game_config.game_setup.roblox_version.security_versions(),
     })
     return True
 

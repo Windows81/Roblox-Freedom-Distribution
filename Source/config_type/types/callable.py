@@ -82,7 +82,7 @@ class obj_type(Generic[P, R]):
                 exec(
                     modded_rep,  # source
                     {  # globals
-                        'CONFIG_DIR': os.path.dirname(self.config.file_path),
+                        'CONFIG_DIR': self.config.base_dir,
                     },
                     local_vars,  # locals
                 )

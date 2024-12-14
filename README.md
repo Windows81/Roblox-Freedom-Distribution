@@ -103,6 +103,11 @@ Game-specific options are specified in the `--config_path` argument, which defau
 | `--skip_rcc`              | `store_true` | N/A                 |
 | `--skip_rcc_popen`        | `store_true` | N/A                 |
 | `--skip_web`              | `store_true` | N/A                 |
+| `--place_path`, `-pl`     | `str`        | N/A                 |
+
+_This option allows you to specify the path to a Roblox place file (.rbxl) that should be loaded when the server starts._
+
+[**Please review the Roblox documentation for information on how to create and use place files.**](https://developer.roblox.com/en-us/articles/Place-Files)
 
 ### `player`
 
@@ -114,9 +119,16 @@ Game-specific options are specified in the `--config_path` argument, which defau
 | `--web_port`, `-wp`       | `int` | 2005    |
 | `--user_code`, `-u`       | `str` | N/A     |
 
-### Misc.
+Command syntaxes for `studio` and `download` now include detailed documentation.
 
-Command syntaxes for `studio` and `download` also exists, but haven't been adequately documented yet.
+## `download`
+
+The `download` command allows you to download specific versions of Rōblox components. Here are the available options:
+
+| Option              | Type   | Default               |
+| ------------------- | ------ | --------------------- |
+| `--rbx_version, -v` | `str`  | N/A                   |
+| `--bin_subtype, -b` | `list` | `Client` and `Server` |
 
 ## Network Ports in Use
 
@@ -160,7 +172,7 @@ The following are examples of asset idens resolving to cache files:
 You can modify `rbxl` file in current-day Studio as of September 2024. For compatibility with older clients, _RFD comes with its own [serialiser suite](./Source/assets/serialisers/)_. Objects transformed include:
 
 1. Fonts which existed in their respective versions,
-1. And meshes encoded with versions 4 or 5 _back_ to version 3.
+1. And meshes encoded with versions 4 or 5 _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
 
 Some modern programs do weird things to client-sided scripts. They use `Script` classs objects, but with a [`RunContext`](https://robloxapi.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://robloxapi.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
 
@@ -184,6 +196,10 @@ Where `...` is [your command-line prefix](#installation),
 
 ```shell
 ... server -p 2005 --config ./GameConfig.toml
+```
+
+```shell
+... server -p 2005 --place ./Place.rbxl
 ```
 
 ### Player

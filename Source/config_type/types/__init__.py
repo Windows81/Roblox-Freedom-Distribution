@@ -44,7 +44,7 @@ def _type_call_with_config(value, data: type_call_data, *args, **kwargs) -> Any:
 
 
 def _type_call_path_str(value, data: type_call_data, *args, **kwargs) -> Any:
-    return data.typ(value, os.path.dirname(data.config.file_path), *args, **kwargs)
+    return data.typ(value, data.config.base_dir, *args, **kwargs)
 
 
 def _type_call_rōblox_version(value, data: type_call_data) -> util.versions.rōblox:

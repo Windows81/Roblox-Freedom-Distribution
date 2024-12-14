@@ -20,7 +20,7 @@ from .subparsers.args_aux import (
 )
 
 
-def parse_arg_list(args: list[str] | None) -> list:
+def parse_arg_list(args: list[str] | None) -> list | None:
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
@@ -38,7 +38,7 @@ def parse_arg_list(args: list[str] | None) -> list:
 
     if not args_namespace.mode:
         parser.print_help()
-        parser.exit()
+        return None
 
     mode = sub_logic.MODE_ALIASES[args_namespace.mode]
     chosen_sub_parser = sub_parsers[mode]
@@ -102,7 +102,10 @@ def process(args: list[str] | None = None) -> None:
         args = sys.argv[1:]
 
     def perform_with_args(args: list[str]) -> None:
-        return routine_logic.routine(*parse_arg_list(args)).wait()
+        arg_list = parse_arg_list(args)
+        if arg_list is None:
+            return
+        return routine_logic.routine(*arg_list).wait()
 
     if len(args) > 0:
         try:

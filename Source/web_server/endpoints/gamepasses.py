@@ -34,7 +34,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     user_id_num = int(match.group(1))
     gamepass_id = int(match.group(2))
-    gamepass_catalogue = self.server.game_config.remote_data.gamepasses
+    gamepass_catalogue = self.game_config.remote_data.gamepasses
 
     has_gamepass = self.server.storage.gamepasses.check(
         user_id_num,

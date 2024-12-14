@@ -16,15 +16,23 @@ def subparse(
     subparser: argparse.ArgumentParser,
 ) -> None:
 
-    subparser.add_argument(
+    place_thing = subparser.add_mutually_exclusive_group(required=False)
+    place_thing.add_argument(
         '--config_path', '--config', '-cp',
         type=str,
         nargs='?',
         default=util.resource.DEFAULT_CONFIG_PATH,
         help='Game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up.',
     )
+    place_thing.add_argument(
+        '--place_path', '--place', '-pl',
+        type=str,
+        nargs='?',
+        default=None,
+        help='Path to the place file to be loaded.  Argument `config_path` can\'t be passed in when using this option.',
+    )
     subparser.add_argument(
-        '--rcc_port', '-rp', '-p',
+        '--rcc_port', '--port', '-rp', '-p',
         type=int,
         nargs='?',
         default=None,
@@ -78,8 +86,10 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
-    game_config = config.get_cached_config(args.config_path)
-    routine_args = []
+    if args.place_path is not None:
+        game_config = config.generate_config(args.place_path)
+    else:
+        game_config = config.get_cached_config(args.config_path)
 
     if args.web_port is None:
         args.web_port = args.rcc_port or 2005
@@ -111,6 +121,7 @@ def _(
             web_port_ipv4,
         ]
 
+    routine_args = []
     if not args.skip_web:
         routine_args.extend([
             web.arg_type(

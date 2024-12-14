@@ -13,14 +13,14 @@ def _(
 ) -> None:
 
     subparser.add_argument(
-        '--rcc_host', '-rh', '-h',
+        '--rcc_host', '--host', '-rh', '-h',
         type=str,
         nargs='?',
         default=None,
         help='Hostname or IP address to connect this program to the RCC server.',
     )
     subparser.add_argument(
-        '--rcc_port', '-rp', '-p',
+        '--rcc_port', '--port', '-rp', '-p',
         type=int,
         nargs='?',
         default=None,

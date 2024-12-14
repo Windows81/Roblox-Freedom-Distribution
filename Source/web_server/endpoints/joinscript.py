@@ -8,7 +8,7 @@ import json
 
 
 def init_player(self: web_server_handler, user_code: str, id_num: int) -> tuple[str, int, str]:
-    config = self.server.game_config
+    config = self.game_config
     username = config.server_core.retrieve_username(id_num, user_code)
 
     (user_code, id_num, username) = self.server.storage.players.add_player(
@@ -43,7 +43,7 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
         self.send_error(404)
         return {}
 
-    config = self.server.game_config
+    config = self.game_config
     id_num = config.server_core.retrieve_user_id(user_code)
 
     # The `check_user_allowed` function will also be called after the player is added.

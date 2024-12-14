@@ -24,7 +24,7 @@ def _(self: web_server_handler) -> bool:
         case 'GetGroupRank':
             group_id_str = self.query['groupid']
             user_id_num = int(self.query['playerid'])
-            rank_dict = get_rank_dict(user_id_num, self.server.game_config)
+            rank_dict = get_rank_dict(user_id_num, self.game_config)
             rank = rank_dict.get(group_id_str, 0)
 
             self.send_data(
@@ -40,7 +40,7 @@ def _(self: web_server_handler) -> bool:
 @server_path('/v2/users/([0-9]+)/groups/roles', regex=True, versions={versions.rōblox.v463})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     user_id_num = int(match.group(1))
-    groups = get_rank_dict(user_id_num, self.server.game_config)
+    groups = get_rank_dict(user_id_num, self.game_config)
 
     self.send_json({
         "data": [

@@ -1,4 +1,5 @@
 from web_server._logic import server_path, web_server_handler
+import util.const
 
 from . import (
     assets,
@@ -20,5 +21,12 @@ from . import (
 
 @server_path("/")
 def _(self: web_server_handler) -> bool:
-    self.send_data('ÒÓ'.encode('utf-16'))
+    data_string = (
+        'Roblox Freedom Distribution webserver %s [%s]' %
+        (
+            util.const.GIT_RELEASE_VERSION,
+            self.game_config.game_setup.roblox_version.value[0],
+        )
+    )
+    self.send_data(data_string.encode('utf-8'))
     return True

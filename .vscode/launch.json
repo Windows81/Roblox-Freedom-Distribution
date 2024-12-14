@@ -15,6 +15,18 @@
 			"justMyCode": true
 		},
 		{
+			"name": "Python: Run Unit Tests",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"test",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
 			"name": "Python: Launch Custom GameConfig'd Server",
 			"type": "debugpy",
 			"request": "launch",
@@ -24,18 +36,6 @@
 				"server",
 				"--config",
 				"${file}",
-			],
-			"console": "integratedTerminal",
-			"justMyCode": true
-		},
-		{
-			"name": "Python: Run Unit Tests",
-			"type": "debugpy",
-			"request": "launch",
-			"program": "${workspaceFolder}/Source/_main.py",
-			"cwd": "${workspaceFolder}",
-			"args": [
-				"test",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
@@ -65,6 +65,23 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"server",
+				"--run_client",
+				"--user_code",
+				"VisualPlugin",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "Python: Launch Server from Place File with Local Client",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"server",
+				"--place_path",
+				"./Examples/Crossroads 2007/Crossroads.rbxl",
 				"--run_client",
 				"--user_code",
 				"VisualPlugin",
