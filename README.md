@@ -193,7 +193,7 @@ Where `...` is [your command-line prefix](#installation),
 ### Player
 
 ```shell
-... player -rh 172.88.194.43 -p 2005
+... player -rh 127.0.0.1 -p 2005
 ```
 
 ## `GameConfig.toml` Structure
