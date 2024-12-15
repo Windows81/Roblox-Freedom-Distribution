@@ -6,4 +6,4 @@ Error 1:
 
 Try using these wine versions (these tend to work fine with both server & player);
 
-[ElementalWarrior](https://github.com/Twig6943/ElementalWarrior-wine-binaries/releases)
+1- [ElementalWarrior](https://github.com/Twig6943/ElementalWarrior-wine-binaries/releases)
