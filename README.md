@@ -45,7 +45,7 @@ curl https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/do
 To launch RFD, your command line will look something like this:
 
 ```
-./RFD.exe player -h 172.88.194.43 -p 2005
+./RFD.exe player -h 127.0.0.1 -p 2005
 ```
 
 #### For GNU/Linux
@@ -71,7 +71,7 @@ pip install -r ./Source/requirements.txt
 To launch RFD, your command line will look something like this:
 
 ```
-py Source/_main.py player -h 172.88.194.43 -p 2005
+py Source/_main.py player -h 127.0.0.1 -p 2005
 ```
 
 ## Command Syntax
