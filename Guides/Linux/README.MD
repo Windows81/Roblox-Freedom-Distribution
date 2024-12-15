@@ -10,4 +10,8 @@ If you're going to use a wine manager like heroic/lutris/bottles
 
 2.Apply the [cover art](https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Cover.png?raw=true)
 
-3.Put [RFD.exe](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe) to  `drive_c/windows/system32`
+3.Put [RFD.exe](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe) (the config & map files also go here if you're going to host) to `drive_c/windows/system32`
+
+4.Add `drive_c\windows\system32\cmd.exe` as the game executable
+
+5. Put these as game launch options `/C start RFD.exe`
