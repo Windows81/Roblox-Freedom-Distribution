@@ -52,19 +52,7 @@ To launch RFD, your command line will look something like this:
 
 Might not run as well as on Windows.
 
-To bootstrap the compiled `exe`, run:
-
-```
-mkdir rfd
-cd rfd
-curl https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe --output RFD.exe
-```
-
-To launch RFD, your command line will look something like this:
-
-```
-wine RFD.exe player -h 172.88.194.43 -p 2005
-```
+[Guide 📕](https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Guides/Linux/README.MD)
 
 ### From [Source](https://github.com/Windows81/Roblox-Freedom-Distribution/archive/refs/heads/main.zip)
 
