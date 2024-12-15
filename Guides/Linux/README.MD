@@ -17,3 +17,5 @@ If you're going to use a wine manager like heroic/lutris/bottles
 5. Put these as game launch options `/C start RFD.exe`
 
 6.Press play and then it should work
+
+(This is a dirty workaround to make sure Freedom distribution launches its own cmd window)
