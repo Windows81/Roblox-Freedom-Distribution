@@ -12,6 +12,9 @@ def make_server(
     *args,
     **kwargs,
 ) -> web_server_logic.web_server:
-    print("[TCP %d]: initialising Webserver" % port.port_num)
+    print(
+        "[TCP %d %s]: initialising webserver" %
+        (port.port_num, 'IPv6' if port.is_ipv6 else 'IPv4',),
+    )
     cls = web_server_logic.web_server_ssl if port.is_ssl else web_server_logic.web_server
     return cls(port, game_config, *args, **kwargs)

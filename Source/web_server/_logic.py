@@ -253,6 +253,8 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         except ssl.SSLEOFError:
             # A `ssl.SSLEOFError` is likely thrown whenever a request is interrupted.
             pass
+        except ConnectionResetError:
+            pass
 
     def send_redirect(self, url: str) -> None:
         self.send_response(301)

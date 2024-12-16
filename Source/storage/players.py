@@ -28,7 +28,11 @@ class database(_logic.sqlite_connector_base):
         )
         self.sqlite.commit()
 
-    def add_player(self, user_code: str, id_num: int, username: str) -> tuple[str, int, str]:
+    def add_player(self, user_code: str, id_num: int, username: str) -> tuple[str, int, str] | None:
+        '''
+        Adds a new player to the database and returns the first entry which corresponds with the newly-added player.
+        Tries to get the entry whose username matches, else fail.
+        '''
         self.sqlite.execute(
             f"""
             INSERT INTO "{self.TABLE_NAME}"
@@ -54,7 +58,8 @@ class database(_logic.sqlite_connector_base):
             {self.player_field.USERNAME.value}
 
             FROM "{self.TABLE_NAME}"
-            WHERE {self.player_field.USER_CODE.value} = {repr(user_code)}
+            WHERE
+            {self.player_field.USER_CODE.value} = {repr(user_code)}
             """,
         ).fetchone()
         return result
