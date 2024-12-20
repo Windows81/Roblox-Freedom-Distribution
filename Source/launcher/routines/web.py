@@ -6,11 +6,12 @@ import game_config.structure
 import game_config as config
 import dataclasses
 import threading
+import logger
 
 
 class obj_type(logic.server_entry):
     game_config: config.obj_type
-    httpds = list[web_server_logic.web_server]()
+    httpds: list[web_server_logic.web_server]
     local_args: 'arg_type'
 
     def __run_servers(
@@ -19,13 +20,18 @@ class obj_type(logic.server_entry):
         game_config: config.obj_type,
         *args, **kwargs,
     ) -> None:
-        hts = [
-            web_server.make_server(*args, port, game_config, **kwargs)
+        self.httpds = [
+            web_server.make_server(
+                *args,
+                port,
+                game_config,
+                self.local_args.log_filter,
+                **kwargs,
+            )
             for port in web_ports
         ]
-        self.httpds.extend(hts)
 
-        for ht in hts:
+        for ht in self.httpds:
             th = threading.Thread(
                 target=ht.serve_forever,
                 daemon=True,
@@ -34,15 +40,13 @@ class obj_type(logic.server_entry):
             th.start()
 
     def process(self) -> None:
-        self.server_running = True
         self.__run_servers(
             web_ports=self.local_args.web_ports,
-            print_http_log=not self.local_args.quiet,
             game_config=self.game_config,
         )
 
-    def __del__(self) -> None:
-        if not self.server_running:
+    def stop(self) -> None:
+        if self.httpds is None:
             return
         for ht in self.httpds:
             ht.shutdown()
@@ -56,4 +60,4 @@ class arg_type(logic.arg_type):
     web_ports: list[web_server_logic.port_typ] = dataclasses.field(
         default_factory=list,
     )
-    quiet: bool = False
+    log_filter: logger.filter.filter_type = logger.DEFAULT_FILTER

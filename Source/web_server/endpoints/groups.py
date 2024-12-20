@@ -37,7 +37,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/v2/users/([0-9]+)/groups/roles', regex=True, versions={versions.rōblox.v463})
+@server_path(r'/v2/users/(\d+)/groups/roles', regex=True, versions={versions.rōblox.v463})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     user_id_num = int(match.group(1))
     groups = get_rank_dict(user_id_num, self.game_config)

@@ -3,11 +3,13 @@ import unittest
 from . import (
     test_asset,
     test_hotpatch,
+    test_log,
 )
 
 NAMED_MODULES = {
     'asset': test_asset,
     'hotpatch': test_hotpatch,
+    'log': test_log,
 }
 
 NAMED_SUITES = {

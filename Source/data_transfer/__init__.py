@@ -1,4 +1,4 @@
-from config_type.types import callable
+import config_type.types.callable as callable
 import functools
 
 

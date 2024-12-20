@@ -11,6 +11,7 @@ import downloader
 import subprocess
 import threading
 import certifi
+import logger
 import copy
 import ssl
 import os
@@ -65,8 +66,8 @@ class bin_ssl_arg_type(bin_arg_type):
             )
         except urllib.error.URLError as e:
             raise Exception(
-                'No server is currently running on %s:%d (%s).' %
-                (self.web_host, self.web_port.port_num, path),
+                'No server is currently running on %s (%s).' %
+                (self.get_base_url(), path),
             )
 
 
@@ -117,6 +118,12 @@ class entry(_entry):
             while t.is_alive():
                 t.join(1)
 
+    def stop(self) -> None:
+        self.wait()
+
+    def __del__(self) -> None:
+        return self.stop()
+
 
 class popen_entry(entry):
     '''
@@ -155,7 +162,7 @@ class popen_entry(entry):
             ),
         ]
 
-    def __del__(self) -> None:
+    def stop(self) -> None:
         for p in self.popen_mains:
             p.terminate()
         for p in self.popen_daemons:
@@ -206,15 +213,24 @@ class bin_entry(ver_entry, popen_entry):
         Check if Rōblox is not downloaded; else skip.
         '''
         if os.path.isdir(self.get_versioned_path()):
-            print("Rōblox installation exists, skipping...")
+            logger.log(
+                'Rōblox installation exists, skipping...',
+                context=logger.log_context.PYTHON_SETUP,
+            )
             return
         elif self.local_args.auto_download:
-            print(
-                'Downloading zipped "%s" for Rōblox version %s...' %
-                (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
+            logger.log(
+                (
+                    'Downloading zipped "%s" for Rōblox version %s...' %
+                    (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
+                ),
+                context=logger.log_context.PYTHON_SETUP,
             )
             downloader.bootstrap_binary(self.rōblox_version, self.BIN_SUBTYPE)
-            print('Installation completed!')
+            logger.log(
+                'Installation completed!',
+                context=logger.log_context.PYTHON_SETUP,
+            )
         else:
             raise Exception(
                 'Zipped file "%s" not found for Rōblox version %s.' %
@@ -285,4 +301,4 @@ class routine:
 
     def __del__(self) -> None:
         for e in self.entries:
-            del e
+            e.stop()

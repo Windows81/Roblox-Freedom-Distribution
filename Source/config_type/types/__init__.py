@@ -5,7 +5,6 @@ import util.resource
 import util.versions
 import dataclasses
 import functools
-import os
 
 
 @functools.cache

@@ -1,4 +1,5 @@
 from web_server._logic import web_server_handler, server_path
+from config_type.types import structs, wrappers, callable
 import util.const
 import shutil
 import struct
@@ -35,7 +36,7 @@ def decompress_gzip(data, file_handle) -> None:
         data = do.unused_data[8:].lstrip(b"\x00")
 
 
-@server_path("/v1/places/([0-9]+)/symbolic-links", regex=True)
+@server_path(r'/v1/places/(\d+)/symbolic-links', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     Dummy function to return an empty list of packages.
@@ -64,7 +65,7 @@ def _(self: web_server_handler) -> bool:
     assert place_config.enable_saveplace
 
     # Don't save place if the URI is from online.
-    if place_config.rbxl_uri.is_online:
+    if place_config.rbxl_uri.uri_type == wrappers.uri_type.online:
         return False
 
     # Backups are important in case RFD crashes mid-save.

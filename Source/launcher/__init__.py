@@ -130,5 +130,6 @@ def process(args: list[str] | None = None) -> None:
             except Exception as e:
                 traceback.print_exc()
                 print(e)
+    # Handled when Ctrl+C is pressed whilst awaiting input.
     except KeyboardInterrupt:
         pass

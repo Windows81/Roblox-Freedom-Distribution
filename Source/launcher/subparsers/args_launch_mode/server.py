@@ -4,10 +4,12 @@ import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
 from web_server._logic import port_typ
 import game_config as config
+import logger.flog_table
 import util.resource
 import util.versions
 import util.const
 import argparse
+import logger
 
 
 @sub_logic.add_args(sub_logic.launch_mode.SERVER)
@@ -57,10 +59,17 @@ def subparse(
         default=None,
         help='If -run_client is passed in, .',
     )
+
     subparser.add_argument(
         '--quiet', '-q',
         action='store_true',
-        help='Suppresses console output from RCC.',
+        help='Suppresses console output.',
+    )
+    subparser.add_argument(
+        '--rcc_log_options', '--rcc_log', '-log',
+        type=str, nargs='*', default=None, choices=logger.flog_table.LOG_LEVEL_LIST,
+        help='Filter list for which FLog types to print in RCC.',
+        metavar='FLog',
     )
 
     skip_mutex = subparser.add_mutually_exclusive_group()
@@ -121,13 +130,36 @@ def _(
             web_port_ipv4,
         ]
 
+    if args.quiet:
+        rcc_logs = logger.filter.filter_type_rcc.parse()
+        other_logs = False
+    else:
+        rcc_logs = logger.filter.filter_type_rcc.parse(
+            "RCCServiceInit",
+            "LocalStorage",
+            "RCCServiceJobs",
+            "RCCExecuteInfo",
+            "Output",
+            "NetworkAudit",
+            "Error",
+        )
+        other_logs = True
+
+    if args.rcc_log_options is not None:
+        rcc_logs = logger.filter.filter_type_rcc.parse(*args.rcc_log)
+
+    log_filter = logger.filter.filter_type(
+        rcc_logs=rcc_logs,
+        other_logs=other_logs,
+    )
+
     routine_args = []
     if not args.skip_web:
         routine_args.extend([
             web.arg_type(
                 # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
                 web_ports=web_port_servers,
-                quiet=args.quiet,
+                log_filter=log_filter,
                 game_config=game_config,
             ),
         ])
@@ -138,7 +170,7 @@ def _(
                 rcc_port_num=args.rcc_port,
                 # since RCC only really connects to 127.0.0.1.
                 web_port=web_port_ipv4,
-                quiet=args.quiet,
+                log_filter=log_filter,
                 skip_popen=args.skip_rcc_popen,
                 game_config=game_config,
             ),

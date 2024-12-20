@@ -4,6 +4,7 @@ import urllib.request
 import util.resource
 import util.versions
 import util.const
+import logger
 import py7zr
 import io
 
@@ -52,5 +53,8 @@ def bootstrap_binary(rōblox_version: util.versions.rōblox, bin_type: util.reso
         rōblox_version, bin_type,
     )
 
-    print(f"Extracting to {full_dir}...")
+    logger.log(
+        "Extracting to {full_dir}...",
+        context=logger.log_context.PYTHON_SETUP,
+    )
     py7zr.unpack_7zarchive(response, full_dir)

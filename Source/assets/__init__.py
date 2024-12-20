@@ -1,7 +1,8 @@
-from . import extract, returns, material, serialisers, queue
 from config_type.types import structs, wrappers, callable
+from . import returns, material, serialisers, queue
 import util.const
 import functools
+import extractor
 import shutil
 import os
 
@@ -53,7 +54,7 @@ class asseter:
             pass
 
     def _load_online_asset(self, asset_id: int) -> bytes | None:
-        data = self.queuer.get(asset_id, extract.download_rōblox_asset)
+        data = self.queuer.get(asset_id, extractor.download_rōblox_asset)
         if data is None:
             return None
 
@@ -132,7 +133,7 @@ class asseter:
                 return returns.construct(data=local_data)
 
         if redirect.uri is not None:
-            if redirect.uri.is_online:
+            if redirect.uri.uri_type == wrappers.uri_type.online:
                 return returns.construct(
                     redirect_url=redirect.uri.value,
                 )
@@ -146,7 +147,7 @@ class asseter:
             return returns.construct(
                 data=self.queuer.get(
                     redirect.cmd_line,
-                    extract.process_command_line,
+                    extractor.process_command_line,
                 ),
             )
         elif redirect.raw_data is not None:

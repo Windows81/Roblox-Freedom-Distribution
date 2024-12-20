@@ -134,13 +134,13 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/users/([0-9]+)/canmanage/([0-9]+)', regex=True)
+@server_path(r'/users/(\d+)/canmanage/([\d]+)', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     self.send_json({"Success": True, "CanManage": True})
     return True
 
 
-@server_path('/v1/user/([0-9]+)/is-admin-developer-console-enabled', regex=True)
+@server_path(r'/v1/user/(\d+)/is-admin-developer-console-enabled', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     database = self.server.storage.players
 

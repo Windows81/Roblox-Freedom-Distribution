@@ -1,7 +1,9 @@
 from typing import Self, TypeVar, get_args
 import util.const as const
+import extractor
 import fnmatch
 import urllib3
+import enum
 import os
 
 
@@ -40,13 +42,17 @@ class path_str(str):
         return str.__new__(cls, os.path.join(dir_root, value))
 
 
+class uri_type(enum.Enum):
+    local = 0
+    online = 1
+    rōblox = 2
+
+
 class uri_obj:
     '''
     Supports either a file path or an `http` URL.
     Unlike the `path_str` class, is **not** a subclass of `str`.
     '''
-    is_online: bool
-    value: str
 
     def __init__(self, value: str | bytes, dir_root: str) -> None:
         if isinstance(value, bytes):
@@ -54,26 +60,35 @@ class uri_obj:
         elif isinstance(value, str):
             value_str = value
 
+        rbx_asset_prefix = 'rbxassetid://'
+        if value_str.startswith(rbx_asset_prefix):
+            self.uri_type = uri_type.rōblox
+            self.value = value_str[len(rbx_asset_prefix):]
+
         if value_str.startswith('http://') or value_str.startswith('https://'):
-            self.is_online = True
+            self.uri_type = uri_type.online
             self.value = value_str
             return
 
-        self.is_online = False
+        self.uri_type = uri_type.local
         self.value = path_str(value_str, dir_root)
 
-    def extract(self) -> bytes:
-        if not self.is_online:
+    def extract(self) -> bytes | None:
+        if self.uri_type == uri_type.local:
             with open(self.value, 'rb') as rf:
                 return rf.read()
 
-        http = urllib3.PoolManager()
-        response = http.request('GET', self.value)
+        elif self.uri_type == uri_type.online:
+            http = urllib3.PoolManager()
+            response = http.request('GET', self.value)
 
-        if response.status != 200:
-            raise Exception("File couldn't be loaded.")
+            if response.status != 200:
+                raise Exception("File couldn't be loaded.")
 
-        return response.data
+            return response.data
+
+        elif self.uri_type == uri_type.rōblox:
+            return extractor.download_item(self.value)
 
 
 class rfd_version_check(str):

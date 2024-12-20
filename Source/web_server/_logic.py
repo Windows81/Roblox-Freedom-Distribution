@@ -1,16 +1,18 @@
-from typing import Callable
+import logging
 import util.versions as versions
+from typing import Callable
 import util.const as const
 from urllib import parse
 import OpenSSL.crypto
 import http.server
 import dataclasses
+import game_config
 import traceback
 import mimetypes
 import functools
 import util.ssl
+import logger
 import base64
-import game_config
 import socket
 import enum
 import json
@@ -89,16 +91,16 @@ class web_server(http.server.ThreadingHTTPServer):
         self,
         port: port_typ,
         game_config: game_config.obj_type,
-        print_http_log: bool = False,
+        log_filter: logger.filter.filter_type,
         *args, **kwargs,
     ) -> None:
         self.game_config = game_config
         self.data_transferer = game_config.data_transferer
         self.storage = game_config.storage
+        self.log_filter = log_filter
 
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
-        self.print_http_log = print_http_log
 
         super().__init__(
             ('', port.port_num),
@@ -200,15 +202,17 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         return True
 
     def handle_rcc_request(self) -> None:
-        if self.__open_from_static():
-            return
-        if self.__open_from_regex():
-            return
-        if self.__open_from_file():
-            return
         try:
+            if self.__open_from_static():
+                return
+            if self.__open_from_regex():
+                return
+            if self.__open_from_file():
+                return
             self.send_error(404)
         except ssl.SSLError:
+            pass
+        except ConnectionResetError:
             pass
 
     def do_GET(self) -> None: return self.handle_rcc_request()
@@ -247,14 +251,8 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         if content_type:
             self.send_header('content-type', content_type)
         self.send_header('content-length', str(len(data)))
-        try:
-            self.end_headers()
-            self.wfile.write(data)
-        except ssl.SSLEOFError:
-            # A `ssl.SSLEOFError` is likely thrown whenever a request is interrupted.
-            pass
-        except ConnectionResetError:
-            pass
+        self.end_headers()
+        self.wfile.write(data)
 
     def send_redirect(self, url: str) -> None:
         self.send_response(301)
@@ -311,10 +309,12 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return True
 
     def log_message(self, format, *args) -> None:
-        if not self.server.print_http_log:
-            return
         if not self.is_valid_request:
             return
         # if not self.requestline.startswith('\x16\x03'):
             # super().log_message(format, *args)
-        print(self.url)
+        logger.log(
+            self.url.rstrip('\r\n').encode('utf-8'),
+            context=logger.log_context.WEB_SERVER,
+            filter=self.server.log_filter,
+        )

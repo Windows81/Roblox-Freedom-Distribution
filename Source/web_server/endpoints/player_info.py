@@ -3,7 +3,7 @@ import util.versions as versions
 import re
 
 
-@server_path("/v1/users/([0-9]+)/friends", regex=True, versions={versions.rōblox.v463}, commands={'POST', 'GET'})
+@server_path(r'/v1/users/(\d+)/friends', regex=True, versions={versions.rōblox.v463}, commands={'POST', 'GET'})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     Dummy endpoint for 2021E.
@@ -13,7 +13,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     return True
 
 
-@server_path("/users/([0-9]+)", regex=True)
+@server_path(r'/users/(\d+)', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     GetUsernameFromUserId

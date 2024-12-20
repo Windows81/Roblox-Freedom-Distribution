@@ -1,5 +1,5 @@
 from assets.serialisers import rbxl, mesh
-import assets.extract
+import extractor
 import unittest
 
 
@@ -14,7 +14,7 @@ class TestAssets(unittest.TestCase):
         Asserts that the data has been loaded at all, then checks if it can be
         parsed by the RBXL parser.
         '''
-        data = assets.extract.download_rōblox_asset(1818)
+        data = extractor.download_rōblox_asset(1818)
         self.assertIsNotNone(data)
         assert data is not None
         self.assertTrue(rbxl.check(data))
@@ -25,7 +25,7 @@ class TestAssets(unittest.TestCase):
         Asserts that the data has been loaded at all,
         then checks if it is either an OGG or a WAVE audio file.
         '''
-        data = assets.extract.download_rōblox_asset(12222084)
+        data = extractor.download_rōblox_asset(12222084)
         self.assertIsNotNone(data)
         assert data is not None
         self.assertRegex(data, b'(OggS|RIFF)')
@@ -34,7 +34,7 @@ class TestAssets(unittest.TestCase):
         '''
         Tests that specific image data can be loaded and is in the PNG format.
         '''
-        data = assets.extract.download_rōblox_asset(270995247)
+        data = extractor.download_rōblox_asset(270995247)
         # Asserts that the data has been loaded at all.
         self.assertIsNotNone(data)
         assert data is not None
@@ -47,7 +47,7 @@ class TestAssets(unittest.TestCase):
         Asserts that the data has been loaded at all, then checks if it can be
         parsed by the `mesh` parser.
         '''
-        data = assets.extract.download_rōblox_asset(120627289)
+        data = extractor.download_rōblox_asset(120627289)
         self.assertIsNotNone(data)
         assert data is not None
         parsed_data = mesh.parse(data)

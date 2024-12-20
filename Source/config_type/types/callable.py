@@ -1,6 +1,7 @@
+from calendar import c
 from typing import ParamSpec, TypeVar, Generic
 import textwrap
-import os.path
+import logger
 import enum
 
 
@@ -78,7 +79,10 @@ class obj_type(Generic[P, R]):
                         'func_body': textwrap.indent(self.rep, ' ' * 4),
                     }
                 )
-                print('Python callable `%s` evaluating...' % self.field_path)
+                logger.log(
+                    'Python callable `%s` evaluating...' % self.field_path,
+                    context=logger.log_context.PYTHON_SETUP,
+                )
                 exec(
                     modded_rep,  # source
                     {  # globals
@@ -87,7 +91,10 @@ class obj_type(Generic[P, R]):
                     local_vars,  # locals
                 )
                 result = local_vars['func']()
-                print('Python callable `%s` evaluated.' % self.field_path)
+                logger.log(
+                    'Python callable `%s` evaluated.' % self.field_path,
+                    context=logger.log_context.PYTHON_SETUP,
+                )
                 return result
             case call_mode_enum.dicted:
                 def call_dicted(*args):

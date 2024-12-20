@@ -1,4 +1,4 @@
-from .. import extract
+import extractor as extract
 from . import const
 import urllib3
 

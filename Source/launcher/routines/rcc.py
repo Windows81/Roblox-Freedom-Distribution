@@ -1,16 +1,21 @@
+from config_type.types import structs, wrappers, callable
 import web_server._logic as web_server_logic
 from ..startup_scripts import rcc_server
+from collections import ChainMap
 from . import _logic as logic
+import game_config.structure
 import util.const as const
 import assets.serialisers
-import game_config.structure
+import logger.bcolors
 import util.resource
 import util.versions
+import game_config
 import dataclasses
 import subprocess
+import threading
 import functools
 import util.ssl
-import game_config
+import logger
 import json
 import os
 
@@ -29,29 +34,36 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         '''
         config = self.game_config
 
-        def parse(data: bytes) -> bytes:
-            return assets.serialisers.parse(
-                data, {assets.serialisers.method.rbxl}
-            )
-
         place_uri = config.server_core.place_file.rbxl_uri
         if place_uri is None:
             raise Exception('Place file does not exist.')
 
         cache = config.asset_cache
-        rbxl_data = parse(place_uri.extract())
+        raw_data = place_uri.extract()
+        if raw_data is None:
+            raise Exception(f'Failed to extract data from {place_uri}.')
+
+        rbxl_data = assets.serialisers.parse(
+            raw_data, {assets.serialisers.method.rbxl}
+        )
         cache.add_asset(self.local_args.place_iden, rbxl_data)
 
         try:
-            thumbnail_data = config.server_core.metadata.icon_uri.extract()
+            thumbnail_data = config.server_core.metadata.icon_uri.extract() or bytes()
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
         except Exception as e:
-            pass
+            logger.log(
+                'Warning: thumbnail data not found.',
+                context=logger.log_context.PYTHON_SETUP,
+            )
 
-        if place_uri.is_online and config.server_core.place_file.enable_saveplace:
-            print(
-                'Warning: config option "enable_saveplace" is redundant ' +
-                'when the place file is an online resource.'
+        if place_uri.uri_type == wrappers.uri_type.online and config.server_core.place_file.enable_saveplace:
+            logger.log(
+                (
+                    'Warning: config option "enable_saveplace" is redundant '
+                    'when the place file is an online resource.'
+                ),
+                context=logger.log_context.PYTHON_SETUP,
             )
 
     def save_app_setting(self) -> str:
@@ -79,6 +91,40 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         with open(server_path, 'w', encoding='utf-8') as f:
             rcc_script = rcc_server.get_script(self.game_config)
             f.write(rcc_script)
+
+    def update_fflags(self) -> None:
+        '''
+        Updates the FFlags in the game configuration based on the Rōblox version.
+        '''
+        version = self.retr_version()
+        new_flags = ChainMap(
+            logger.rcc.get_level_table(),
+        )
+
+        match version:
+            case util.versions.rōblox.v348:
+                path = self.get_versioned_path(
+                    'ClientSettings',
+                    'RCCService.json',
+                )
+                with open(path, 'r', encoding='utf-8') as f:
+                    json_data = json.load(f)
+
+                json_data |= new_flags
+                with open(path, 'w', encoding='utf-8') as f:
+                    json.dump(json_data, f)
+
+            case util.versions.rōblox.v463:
+                path = self.get_versioned_path(
+                    'DevSettingsFile.json',
+                )
+                with open(path, 'r', encoding='utf-8') as f:
+                    json_data = json.load(f)
+
+                # 2021E stores the RCC flags in a sub-dictionary named `applicationSettings`.
+                json_data['applicationSettings'] |= new_flags
+                with open(path, 'w', encoding='utf-8') as f:
+                    json.dump(json_data, f)
 
     def save_gameserver(self) -> str:
         base_url = self.local_args.get_base_url()
@@ -136,39 +182,86 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             }, f)
         return path
 
+    def get_cmd_args(self) -> list[str]:
+        suffix_args = []
+
+        # There is a chance that RFD can be overwhelmed with processing output.
+        # Removing the `-verbose` flag will reduce the amount of data piped from RCC.
+        if not self.local_args.log_filter.rcc_logs.is_empty():
+            suffix_args.append('-verbose')
+
+        match self.retr_version():
+            case util.versions.rōblox.v348:
+                return [
+                    self.get_versioned_path('RCCService.exe'),
+                    f'-PlaceId:{self.local_args.place_iden}',
+                    '-LocalTest', self.get_versioned_path(
+                        'GameServer.json',
+                    ),
+                    *suffix_args,
+                ]
+            case util.versions.rōblox.v463:
+                return [
+                    self.get_versioned_path('RCCService.exe'),
+                    f'-PlaceId:{self.local_args.place_iden}',
+                    '-LocalTest', self.get_versioned_path(
+                        'GameServer.json',
+                    ),
+                    '-SettingsFile', self.get_versioned_path(
+                        'DevSettingsFile.json',
+                    ),
+                    *suffix_args,
+                ]
+
     def make_rcc_popen(self) -> None:
-        return self.make_popen(
-            [
-                self.get_versioned_path('RCCService.exe'),
+        def read_output(pipe: subprocess.Popen[str]) -> None:
+            stdout = pipe.stdout
+            assert stdout is not None
+            while True:
+                line: bytes | None = stdout.readline()  # type: ignore
+                if not line:
+                    break
+                logger.log(
+                    line.rstrip(b'\r\n'),
+                    context=logger.log_context.RCC_SERVER,
+                    filter=self.local_args.log_filter,
+                )
+            stdout.flush()
 
-                f'-PlaceId:{self.local_args.place_iden}',
-
-                '-LocalTest', self.get_versioned_path(
-                    'GameServer.json',
-                ),
-
-                '-SettingsFile', self.get_versioned_path(
-                    'DevSettingsFile.json',
-                ),
-
-                *(() if self.local_args.quiet else ('-verbose',)),
-            ],
+        self.make_popen(
+            cmd_args=self.get_cmd_args(),
             stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
             cwd=self.get_versioned_path(),
-
-            # This suppresses the "To enable debug output, run with the -verbose flag"
-            # which prints if verbosity is disabled.
-            stdout=subprocess.PIPE if self.local_args.quiet else None,
         )
 
+        self.pipe_thread = threading.Thread(
+            target=read_output,
+            args=(self.principal,),
+            daemon=True,
+        )
+        self.pipe_thread.start()
+
+    def stop(self) -> None:
+        super().stop()
+        self.pipe_thread.join()
+
+    def wait(self) -> None:
+        super().wait()
+        self.pipe_thread.join()
+
     def process(self) -> None:
-        print(
-            "[UDP %d]: initialising Rōblox Cloud Compute" %
-            self.local_args.rcc_port_num
+        logger.log(
+            (
+                f"{logger.bcolors.bcolors.BOLD}[UDP %d]{logger.bcolors.bcolors.ENDC}: initialising Rōblox Cloud Compute" %
+                (self.local_args.rcc_port_num,)
+            ),
+            context=logger.log_context.PYTHON_SETUP,
         )
         self.save_starter_scripts()
         self.save_place_file()
         self.save_app_setting()
+        self.update_fflags()
         self.save_ssl_cert(
             include_system_certs=True,
         )
@@ -185,7 +278,6 @@ class arg_type(logic.bin_ssl_arg_type):
     rcc_port_num: int | None
     game_config: game_config.obj_type
     skip_popen: bool = False
-    quiet: bool = False
     # TODO: fix the way place idens work.
     place_iden: int = const.PLACE_IDEN_CONST
     web_port: web_server_logic.port_typ = web_server_logic.port_typ(
@@ -193,6 +285,7 @@ class arg_type(logic.bin_ssl_arg_type):
         is_ssl=False,
         is_ipv6=False,
     ),  # type: ignore
+    log_filter: logger.filter.filter_type = logger.DEFAULT_FILTER
 
     def get_base_url(self) -> str:
         return (
