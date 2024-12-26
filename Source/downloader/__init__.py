@@ -55,7 +55,7 @@ def bootstrap_binary(
     link = get_remote_link(rōblox_version, bin_type)
     response = download(
         remote_link=link,
-        quiet=log_filter.other_logs,
+        quiet=not log_filter.other_logs,
     )
 
     full_dir = util.resource.retr_rōblox_full_path(
