@@ -10,8 +10,6 @@ Players can join existing servers.
 
 Clients only need to keep track of which hosts and ports to connect to. That's because clients will automatically connect to a server of the same version.
 
-# [Matrix Space](https://matrix.to/#/#robloxfreedomdistribution:matrix.org)
-
 **If you worked with Python 3.12+ before, [_initial_ setup](#installation) is supposed to take less than a minute. Why _initial_? Freedom Distribution automatically downloads additional data (at most 90 MiB) for you.**
 
 Initial adaptation from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.

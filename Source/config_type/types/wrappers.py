@@ -43,9 +43,9 @@ class path_str(str):
 
 
 class uri_type(enum.Enum):
-    local = 0
-    online = 1
-    rōblox = 2
+    LOCAL = 0
+    ONLINE = 1
+    RŌBLOX = 2
 
 
 class uri_obj:
@@ -56,29 +56,28 @@ class uri_obj:
 
     def __init__(self, value: str | bytes, dir_root: str) -> None:
         if isinstance(value, bytes):
-            value_str = value.decode(encoding='utf-8')
-        elif isinstance(value, str):
-            value_str = value
+            value = value.decode(encoding='utf-8')
+        assert isinstance(value, str)
 
         rbx_asset_prefix = 'rbxassetid://'
-        if value_str.startswith(rbx_asset_prefix):
-            self.uri_type = uri_type.rōblox
-            self.value = value_str[len(rbx_asset_prefix):]
+        if value.startswith(rbx_asset_prefix):
+            self.uri_type = uri_type.RŌBLOX
+            self.value = value[len(rbx_asset_prefix):]
 
-        if value_str.startswith('http://') or value_str.startswith('https://'):
-            self.uri_type = uri_type.online
-            self.value = value_str
+        if value.startswith('http://') or value.startswith('https://'):
+            self.uri_type = uri_type.ONLINE
+            self.value = value
             return
 
-        self.uri_type = uri_type.local
-        self.value = path_str(value_str, dir_root)
+        self.uri_type = uri_type.LOCAL
+        self.value = path_str(value, dir_root)
 
     def extract(self) -> bytes | None:
-        if self.uri_type == uri_type.local:
+        if self.uri_type == uri_type.LOCAL:
             with open(self.value, 'rb') as rf:
                 return rf.read()
 
-        elif self.uri_type == uri_type.online:
+        elif self.uri_type == uri_type.ONLINE:
             http = urllib3.PoolManager()
             response = http.request('GET', self.value)
 
@@ -87,7 +86,7 @@ class uri_obj:
 
             return response.data
 
-        elif self.uri_type == uri_type.rōblox:
+        elif self.uri_type == uri_type.RŌBLOX:
             return extractor.download_item(self.value)
 
 

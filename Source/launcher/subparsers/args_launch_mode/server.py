@@ -1,8 +1,8 @@
 from launcher.routines import player, web, rcc
 
+from web_server._logic import port_typ, server_mode
 import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
-from web_server._logic import port_typ
 import game_config as config
 import logger.flog_table
 import util.resource
@@ -159,6 +159,7 @@ def _(
             web.arg_type(
                 # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
                 web_ports=web_port_servers,
+                server_mode=server_mode.RCC,
                 log_filter=log_filter,
                 game_config=game_config,
             ),
@@ -185,6 +186,7 @@ def _(
                 # since RCC only really connects to 127.0.0.1.
                 web_port=web_port_ipv4,
                 user_code=args.user_code,
+                log_filter=log_filter,
                 # Some CoreGUI elements don't render properly if we join too early.
                 launch_delay=3,
             ),

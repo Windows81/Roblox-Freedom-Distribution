@@ -1,6 +1,6 @@
 from config_type.types import get_type_call, type_call_data
-from typing import Any
 from config_type import _logic
+from typing import Any
 import dataclasses
 import functools
 
@@ -36,10 +36,37 @@ class obj_type:
             )
         )
 
+    @classmethod
+    @functools.cache
+    def get_subclasses(cls) -> dict[str, type['obj_type']]:
+        return {
+            key: typ
+            for key, typ in cls.__dict__.items()
+            if isinstance(typ, type) and issubclass(typ, obj_type)
+        }
+
+    @classmethod
+    def get_fields(cls) -> dict[str, type['obj_type']]:
+        return cls.__annotations__
+
+    def get_rep(self, key: str):
+        '''
+        Grabs the intermediate representation from the game config file,
+        Else the default as defined in `./structure.py`.
+        '''
+        if key in self.kwargs:
+            return self.kwargs[key]
+        if hasattr(self, key):
+            return getattr(self, key)
+        raise Exception(
+            'Unable to find setting "%s" in config file.' %
+            (key),
+        )
+
     def __init__(
         self,
         root: _logic.base_type,
-        current_typ: type,
+        current_typ: type['obj_type'],
         path_prefix: str = '',
         **kwargs,
     ) -> None:
@@ -54,8 +81,7 @@ class obj_type:
                     **kwargs.get(key, {}),
                 ),
             )
-            for key, typ in current_typ.__dict__.items()
-            if isinstance(typ, type) and issubclass(typ, obj_type)
+            for key, typ in current_typ.get_subclasses().items()
         ]
 
         self.root = root
@@ -64,30 +90,16 @@ class obj_type:
         for sub in self.subsections:
             setattr(self, sub.key, sub.val)
 
-        def get_rep(key: str):
-            '''
-            Grabs the intermediate representation from the game config file,
-            Else the default as defined in `./structure.py`.
-            '''
-            if key in self.kwargs:
-                return self.kwargs[key]
-            if hasattr(current_typ, key):
-                return getattr(current_typ, key)
-            raise Exception(
-                'Unable to find setting "%s" in config file.' %
-                (key),
-            )
-
         # Creates `annotation` objects through individual settings in this section.
         self.annotations = [
             annotation(
                 key=key,
                 typ=typ,
                 path=(path := f'{path_prefix}{key}'),
-                rep=(rep := get_rep(key)),
+                rep=(rep := self.get_rep(key)),
                 val=self.serialise_object(path, key, typ, rep),
             )
-            for key, typ in current_typ.__annotations__.items()
+            for key, typ in current_typ.get_fields().items()
         ]
 
         for ann in self.annotations:

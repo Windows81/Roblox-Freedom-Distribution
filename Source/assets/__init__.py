@@ -133,7 +133,7 @@ class asseter:
                 return returns.construct(data=local_data)
 
         if redirect.uri is not None:
-            if redirect.uri.uri_type == wrappers.uri_type.online:
+            if redirect.uri.uri_type == wrappers.uri_type.ONLINE:
                 return returns.construct(
                     redirect_url=redirect.uri.value,
                 )

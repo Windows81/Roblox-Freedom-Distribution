@@ -1,4 +1,5 @@
 from . import bcolors, filter, flog_table
+import functools
 import re
 
 patterns = [
@@ -126,7 +127,12 @@ patterns = [
 ]
 
 
-def get_level_table() -> dict[str, int]:
+def get_level_table(filter: filter.filter_type) -> dict[str, int]:
+    return {
+        i: (v if v in filter.rcc_logs.types else 0)
+        for i, v in flog_table.LOG_LEVEL_DICT.items()
+    }
+    # TODO: allow hosters to determine if they want a verbose log file or not.
     return flog_table.LOG_LEVEL_DICT
 
 

@@ -40,7 +40,7 @@ def fetch(server) -> str | None:
     }.items())
 
     try:
-        url = opener.open(server, timeout=4)
+        url = opener.open(server, timeout=30)
         content = url.read()
         try:
             content = content.decode('UTF-8')

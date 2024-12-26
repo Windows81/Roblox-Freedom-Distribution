@@ -42,7 +42,11 @@ class server_arg_type(arg_type):
     game_config: game_config.obj_type
 
 
-class bin_arg_type(popen_arg_type):
+class loggable_arg_type(arg_type):
+    log_filter: logger.filter.filter_type
+
+
+class bin_arg_type(popen_arg_type, loggable_arg_type):
     auto_download: bool
 
     def get_base_url(self) -> str:
@@ -191,7 +195,18 @@ class ver_entry(entry):
         return util.resource.retr_rōblox_full_path(self.rōblox_version, bin_type, *paths)
 
 
-class bin_entry(ver_entry, popen_entry):
+class loggable_entry(entry):
+    local_args: loggable_arg_type
+
+    def log(self, message: bytes | str) -> None:
+        logger.log(
+            message,
+            context=logger.log_context.PYTHON_SETUP,
+            filter=self.local_args.log_filter,
+        )
+
+
+class bin_entry(ver_entry, popen_entry, loggable_entry):
     '''
     Routine entry abstract class that corresponds to a versioned binary of Rōblox.
     '''
@@ -216,6 +231,7 @@ class bin_entry(ver_entry, popen_entry):
             logger.log(
                 'Rōblox installation exists, skipping...',
                 context=logger.log_context.PYTHON_SETUP,
+                filter=self.local_args.log_filter,
             )
             return
         elif self.local_args.auto_download:
@@ -225,11 +241,17 @@ class bin_entry(ver_entry, popen_entry):
                     (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
                 ),
                 context=logger.log_context.PYTHON_SETUP,
+                filter=self.local_args.log_filter,
             )
-            downloader.bootstrap_binary(self.rōblox_version, self.BIN_SUBTYPE)
+            downloader.bootstrap_binary(
+                rōblox_version=self.rōblox_version,
+                bin_type=self.BIN_SUBTYPE,
+                log_filter=self.local_args.log_filter,
+            )
             logger.log(
                 'Installation completed!',
                 context=logger.log_context.PYTHON_SETUP,
+                filter=self.local_args.log_filter,
             )
         else:
             raise Exception(

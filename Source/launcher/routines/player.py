@@ -7,6 +7,7 @@ import urllib.parse
 import urllib.error
 import dataclasses
 import util.const
+import logger
 import ctypes
 import time
 
@@ -69,13 +70,17 @@ class obj_type(logic.bin_ssl_entry):
 
 
 @dataclasses.dataclass
-class arg_type(logic.bin_ssl_arg_type, logic.host_arg_type):
+class arg_type(logic.bin_ssl_arg_type, logic.loggable_arg_type, logic.host_arg_type):
     obj_type = obj_type
 
     rcc_host: str
     rcc_port_num: int
     web_host: str
     web_port: web_server_logic.port_typ
+    # The `log_filter` field is only used for indicating download status.
+    log_filter: logger.filter.filter_type = logger.filter.filter_type(
+        other_logs=True,
+    )
     user_code: str | None = None
     launch_delay: float = 0
 

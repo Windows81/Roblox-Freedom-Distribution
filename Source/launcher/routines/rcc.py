@@ -55,15 +55,17 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             logger.log(
                 'Warning: thumbnail data not found.',
                 context=logger.log_context.PYTHON_SETUP,
+                filter=self.local_args.log_filter,
             )
 
-        if place_uri.uri_type == wrappers.uri_type.online and config.server_core.place_file.enable_saveplace:
+        if place_uri.uri_type == wrappers.uri_type.ONLINE and config.server_core.place_file.enable_saveplace:
             logger.log(
                 (
                     'Warning: config option "enable_saveplace" is redundant '
                     'when the place file is an online resource.'
                 ),
                 context=logger.log_context.PYTHON_SETUP,
+                filter=self.local_args.log_filter,
             )
 
     def save_app_setting(self) -> str:
@@ -98,7 +100,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         '''
         version = self.retr_version()
         new_flags = ChainMap(
-            logger.rcc.get_level_table(),
+            logger.rcc.get_level_table(self.local_args.log_filter),
         )
 
         match version:
@@ -257,6 +259,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                 (self.local_args.rcc_port_num,)
             ),
             context=logger.log_context.PYTHON_SETUP,
+            filter=self.local_args.log_filter,
         )
         self.save_starter_scripts()
         self.save_place_file()

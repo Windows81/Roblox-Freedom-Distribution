@@ -36,6 +36,7 @@ class dir_type(enum.Enum):
 class bin_subtype(enum.Enum):
     SERVER = 'Server'
     PLAYER = 'Player'
+    STUDIO = 'Studio'
 
 
 DEFAULT_CONFIG_PATH = './GameConfig.toml'

@@ -65,7 +65,7 @@ def _(self: web_server_handler) -> bool:
     assert place_config.enable_saveplace
 
     # Don't save place if the URI is from online.
-    if place_config.rbxl_uri.uri_type == wrappers.uri_type.online:
+    if place_config.rbxl_uri.uri_type == wrappers.uri_type.ONLINE:
         return False
 
     # Backups are important in case RFD crashes mid-save.

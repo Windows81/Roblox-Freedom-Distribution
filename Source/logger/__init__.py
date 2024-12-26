@@ -31,7 +31,7 @@ def get_message(text: bytes | str, context: log_context, filter: filter.filter_t
             return text.decode('utf-8')
 
 
-def log(text: bytes | str, context: log_context, filter: filter.filter_type = DEFAULT_FILTER) -> None:
+def log(text: bytes | str, context: log_context, filter: filter.filter_type) -> None:
     message = get_message(text, context, filter)
     if message is not None:
         print(f'{message}\n', end='')

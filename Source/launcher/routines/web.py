@@ -22,10 +22,11 @@ class obj_type(logic.server_entry):
     ) -> None:
         self.httpds = [
             web_server.make_server(
-                *args,
                 port,
                 game_config,
+                self.local_args.server_mode,
                 self.local_args.log_filter,
+                *args,
                 **kwargs,
             )
             for port in web_ports
@@ -57,6 +58,7 @@ class arg_type(logic.arg_type):
     obj_type = obj_type
 
     game_config: game_config.obj_type
+    server_mode: web_server_logic.server_mode
     web_ports: list[web_server_logic.port_typ] = dataclasses.field(
         default_factory=list,
     )

@@ -20,6 +20,7 @@ class obj_type(structure.config_type, _logic.base_type):
         structure.config_type.__init__(
             self,
             root=self,
+            # `current_typ` must be defined separately since this `__init__` call is a super constructor.
             current_typ=structure.config_type,
             **self.data_dict,
         )
@@ -53,6 +54,8 @@ def generate_config(rbxl_file: str) -> obj_type:
         # This is a placeholder value.
         'game_setup': {'roblox_version': '2021'},
     }
+    obj_type.server_core.place_file
     base_dir = util.resource.retr_full_path(util.resource.dir_type.MISC)
     config = obj_type(skeleton, base_dir)
+
     return config

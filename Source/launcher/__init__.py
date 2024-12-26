@@ -10,6 +10,7 @@ from .subparsers.args_launch_mode import (
     download as _,
     player as _,
     server as _,
+    studio as _,
     test as _,
 )
 

@@ -6,6 +6,7 @@ import launcher.subparsers._logic as sub_logic
 import util.resource
 import util.versions
 import argparse
+import logger
 
 
 @sub_logic.add_args(sub_logic.launch_mode.DOWNLOAD)
@@ -35,9 +36,11 @@ def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> list[logic.arg_type]:
+    log_filter = logger.filter.filter_type(other_logs=True)
     return [
         download.arg_type(
             rōblox_version=args.rbx_version,
+            log_filter=log_filter,
             bin_subtype=b,
         )
         for b in args.bin_subtype

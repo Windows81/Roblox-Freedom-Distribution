@@ -5,6 +5,7 @@ import enum
 class launch_mode(enum.Enum):
     ALWAYS = 'always'
     SERVER = 'server'
+    STUDIO = 'studio'
     PLAYER = 'player'
     DOWNLOAD = 'download'
     TEST = 'test'
@@ -13,6 +14,7 @@ class launch_mode(enum.Enum):
 ENABLED_LAUNCH_MODES = {
     launch_mode.SERVER,
     launch_mode.PLAYER,
+    launch_mode.STUDIO,
     launch_mode.DOWNLOAD,
     launch_mode.TEST,
 }

@@ -1,9 +1,9 @@
-import logging
 import util.versions as versions
 from typing import Callable
 import util.const as const
 from urllib import parse
 import OpenSSL.crypto
+import logger.bcolors
 import http.server
 import dataclasses
 import game_config
@@ -31,6 +31,11 @@ class port_typ:
 class func_mode(enum.Enum):
     STATIC = 0
     REGEX = 1
+
+
+class server_mode(enum.Enum):
+    RCC = 0
+    STUDIO = 1
 
 
 @dataclasses.dataclass(frozen=True)
@@ -91,13 +96,24 @@ class web_server(http.server.ThreadingHTTPServer):
         self,
         port: port_typ,
         game_config: game_config.obj_type,
+        server_mode: server_mode,
         log_filter: logger.filter.filter_type,
         *args, **kwargs,
     ) -> None:
         self.game_config = game_config
         self.data_transferer = game_config.data_transferer
         self.storage = game_config.storage
+        self.server_mode = server_mode
         self.log_filter = log_filter
+
+        logger.log(
+            (
+                f"{logger.bcolors.bcolors.BOLD}[TCP %d %s]{logger.bcolors.bcolors.ENDC}: initialising webserver" %
+                (port.port_num, 'IPv6' if port.is_ipv6 else 'IPv4',)
+            ),
+            context=logger.log_context.PYTHON_SETUP,
+            filter=log_filter,
+        )
 
         self.is_ipv6 = port.is_ipv6
         self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
@@ -115,14 +131,10 @@ class web_server_ssl(web_server):
 
     def __init__(
         self,
-        port: port_typ,
         *args, **kwargs,
     ) -> None:
 
-        super().__init__(
-            port,
-            *args, **kwargs,
-        )
+        super().__init__(*args, **kwargs)
         self.identities = {'::1', '127.0.0.1', 'localhost'}
         self.ssl_mutable = util.ssl.ssl_mutable()
         self.update_socket()
@@ -189,6 +201,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.is_privileged = self.domain == 'localhost'
 
         self.url = f'{self.hostname}{self.path}'
+        assert isinstance(self.url, str)
         self.url_split = parse.urlsplit(self.url)
 
         # Optimised for query values which may contain more than one of the same field.
@@ -201,7 +214,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         }
         return True
 
-    def handle_rcc_request(self) -> None:
+    def handle_request(self) -> None:
         try:
             if self.__open_from_static():
                 return
@@ -215,11 +228,11 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         except ConnectionResetError:
             pass
 
-    def do_GET(self) -> None: return self.handle_rcc_request()
-    def do_POST(self) -> None: return self.handle_rcc_request()
-    def do_HEAD(self) -> None: return self.handle_rcc_request()
-    def do_PATCH(self) -> None: return self.handle_rcc_request()
-    def do_DELETE(self) -> None: return self.handle_rcc_request()
+    def do_GET(self) -> None: return self.handle_request()
+    def do_POST(self) -> None: return self.handle_request()
+    def do_HEAD(self) -> None: return self.handle_request()
+    def do_PATCH(self) -> None: return self.handle_request()
+    def do_DELETE(self) -> None: return self.handle_request()
 
     def send_json(
         self,
@@ -235,24 +248,27 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
 
     def send_data(
         self,
-        byts: bytes,
+        text: bytes | str,
         status: int = 200,
         content_type: str | None = None,
         sign_prefix: bytes | None = None,
     ) -> None:
+        if isinstance(text, str):
+            text = text.encode('utf-8')
+        assert isinstance(text, bytes)
 
-        data = sign_prefix and rbx_sign(
+        text = sign_prefix and rbx_sign(
             key=const.JOIN_GAME_SIGN_KEY,
             prefix=sign_prefix,
-            data=byts,
-        ) or byts
+            data=text,
+        ) or text
 
         self.send_response(status)
         if content_type:
             self.send_header('content-type', content_type)
-        self.send_header('content-length', str(len(data)))
+        self.send_header('content-length', str(len(text)))
         self.end_headers()
-        self.wfile.write(data)
+        self.wfile.write(text)
 
     def send_redirect(self, url: str) -> None:
         self.send_response(301)

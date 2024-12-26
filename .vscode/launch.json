@@ -58,6 +58,18 @@
 			"justMyCode": true
 		},
 		{
+			"name": "Python: Launch Studio",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"studio",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
 			"name": "Python: Launch Server with Local Client",
 			"type": "debugpy",
 			"request": "launch",
