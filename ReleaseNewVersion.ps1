@@ -58,7 +58,7 @@ function UpdateZippedReleaseVersion($labels) {
 function CreateZippedDirs() {
 	foreach ($dir in (Get-ChildItem "$root/Roblox/*/*" -Directory)) {
 		$zip = "$root/Roblox/$($dir.Parent.Name).$($dir.Name).7z"
-		Remove-Item $zip -Force -Confirm
+		Remove-Item $zip -Force -Confirm -ErrorAction Ignore
 		if (-not (Test-Path $zip)) {
 			# The `-xr` switches are for excluding specific file names (https://documentation.help/7-Zip-18.0/exclude.htm).
 			7z a $zip "$($dir.FullName)/*" `
