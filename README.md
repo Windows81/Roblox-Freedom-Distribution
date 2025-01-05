@@ -168,7 +168,7 @@ options:
   --help, -?            show this help message and exit
 ```
 
-## `studio`
+### `studio`
 
 The `studio` command allows developers to modify existing place files whilst connected to RFD's webserver.
 
@@ -208,7 +208,7 @@ options:
   --help, -?            show this help message and exit
 ```
 
-## `download`
+### `download`
 
 The `download` command allows you to download specific versions of Rōblox components.
 
@@ -222,7 +222,7 @@ usage: _main.py download [--rbx_version RBX_VERSION]
 options:
   --rbx_version, -v RBX_VERSION
                         Version to download.
-  --bin_subtype, -b {Player,Server} [{Player,Server} ...]
+  --bin_subtype, -b {Player,Server,Studio} [{Player,Server,Studio} ...]
                         Directories to download.
   --help, -?            show this help message and exit
 ```
@@ -264,7 +264,7 @@ The following are examples of asset idens resolving to cache files:
 | `rbxassetid://97646706196482` | `./97646706196482` | `%11d` |
 | `rbxassetid://custom-asset`   | `./custom-asset`   | `%s`   |
 
-## Studio?
+## How About Studio?
 
 You can modify `rbxl` file in current-day Studio as of September 2024. For compatibility with older clients, _RFD comes with its own [serialiser suite](./Source/assets/serialisers/)_. Objects transformed include:
 
@@ -277,7 +277,7 @@ And, **union operations done in current-day Studio (CSG v3) are not supported**.
 
 In that case...
 
-RFD comes bundled with Studio builds. These should be used if modern Studio doesn't mesh well with your old places.
+RFD [comes bundled with Studio builds](#studio). These should be used if modern Studio doesn't mesh well with your old places.
 
 [Sodikm](https://archive.org/details/full-sodikm_202308) has a functional Studio build from 2018.
 

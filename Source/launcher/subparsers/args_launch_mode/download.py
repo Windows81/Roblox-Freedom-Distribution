@@ -1,4 +1,4 @@
-from launcher.routines import rcc, player, download
+from launcher.routines import rcc, player, studio, download
 
 from launcher.routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
@@ -25,6 +25,7 @@ def _(
         choices=[
             player.obj_type.BIN_SUBTYPE.value,
             rcc.obj_type.BIN_SUBTYPE.value,
+            studio.obj_type.BIN_SUBTYPE.value,
         ],
         help='Directories to download.',
         nargs='+',
