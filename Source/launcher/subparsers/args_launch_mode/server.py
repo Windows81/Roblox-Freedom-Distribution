@@ -86,7 +86,7 @@ def subparse(
     skip_mutex.add_argument(
         "--skip_web",
         action="store_true",
-        help="Only runs the RCC binary, skipping hosting the webserver.",
+        help="Only runs the Studio binary, skipping hosting the webserver.",
     )
 
 

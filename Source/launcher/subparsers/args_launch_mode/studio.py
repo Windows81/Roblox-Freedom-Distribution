@@ -17,6 +17,10 @@ def subparse(
     parser: argparse.ArgumentParser,
     subparser: argparse.ArgumentParser,
 ) -> None:
+    subparser.description = (
+        "RFD's bundled Studio binaries are very very very ill-prepared.  "
+        "I recommend using modern versions of Roblox Studio instead."
+    )
 
     place_thing = subparser.add_mutually_exclusive_group(required=False)
     place_thing.add_argument(

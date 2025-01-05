@@ -58,18 +58,6 @@
 			"justMyCode": true
 		},
 		{
-			"name": "Python: Launch Studio",
-			"type": "debugpy",
-			"request": "launch",
-			"program": "${workspaceFolder}/Source/_main.py",
-			"cwd": "${workspaceFolder}",
-			"args": [
-				"studio",
-			],
-			"console": "integratedTerminal",
-			"justMyCode": true
-		},
-		{
 			"name": "Python: Launch Server with Local Client",
 			"type": "debugpy",
 			"request": "launch",
@@ -198,6 +186,31 @@
 				"-h",
 				"2607:fb91:1b74:d4d8:3dfb:5a51:55c3:d516",
 				//"2603-8000-1-3a97-d421-214a-2471-ac0c.ipv6-literal.net",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "Python: Launch Studio",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"studio",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
+			"name": "Python: Launch Studio (Debug)",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"studio",
+				"--debug",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true

@@ -60,7 +60,7 @@ class bin_ssl_arg_type(bin_arg_type):
     web_host: str
     web_port: web_server_logic.port_typ
 
-    def send_request(self, path: str, timeout: float = 7) -> http.client.HTTPResponse:
+    def send_request(self, path: str, timeout: float = 30) -> http.client.HTTPResponse:
         assert self.web_port.port_num is not None
         try:
             return urllib.request.urlopen(
@@ -157,7 +157,7 @@ class popen_entry(entry):
             *(
                 [
                     subprocess.Popen([
-                        'x32dbg-unsigned',
+                        'x96dbg',
                         '-p', str(self.principal.pid),
                     ])
                 ]

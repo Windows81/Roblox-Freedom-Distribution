@@ -12,11 +12,16 @@ class obj_type(logic.entry):
     base_url_bytes: bytes
 
     def check_host(self, full_path: str) -> bool:
-        l = len(self.base_url_bytes)
-        with open(full_path, 'rb') as f:
-            f.seek(12)
-            b = f.read(l)
-        return b == self.base_url_bytes
+        try:
+            l = len(self.base_url_bytes)
+            with open(full_path, 'rb') as f:
+                f.seek(12)
+                b = f.read(l)
+            return b == self.base_url_bytes
+
+        # This error rarely happens when being called by `remove_hosts`.
+        except FileNotFoundError:
+            return False
 
     def remove_hosts(self, full_paths: list[str]) -> None:
         for full_path in full_paths:

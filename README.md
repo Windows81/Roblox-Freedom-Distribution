@@ -1,5 +1,9 @@
 <h1 align="center"><img src="./Logo.png" height="20px"/> Rōblox: Freedom Distribution <img src="./Logo.png" height="20px"/></h1>
 
+<p align="right">
+<a href="https://matrix.to/#/#robloxfreedomdistribution:matrix.org"><img src="https://matrix.org/images/matrix-logo.svg" height="30"></a>
+</p>
+
 _Want to host your own Rōblox LAN parties? Looking for a way to deploy your Rōblox experiences, new and old, on your own machine?_
 
 Rōblox Freedom Distribution is one such solution. It's a 'revival' launcher built on existing research for self-hosting Rōblox servers.
@@ -82,41 +86,146 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 [**Please review each option in the config file before starting your server up.**](#gameconfigtoml-structure)
 
-| Option                    | Type         | Default             |
-| ------------------------- | ------------ | ------------------- |
-| `--config_path`, `-cp`    | `int`        | `./GameConfig.toml` |
-| `--rcc_port`, `-rp`, `-p` | `int`        | 2005                |
-| `--web_port`, `-wp`       | `int`        | 2005                |
-| `--run_client`, `-rc`     | `store_true` | N/A                 |
-| `--skip_rcc`              | `store_true` | N/A                 |
-| `--skip_rcc_popen`        | `store_true` | N/A                 |
-| `--skip_web`              | `store_true` | N/A                 |
-| `--place_path`, `-pl`     | `str`        | N/A                 |
+As of RFD 0.54.1, the available options are as follows:
 
-_This option allows you to specify the path to a Roblox place file (.rbxl) that should be loaded when the server starts._
+```
+usage: _main.py server [--config_path [CONFIG_PATH] |
+                       --place_path [PLACE_PATH]] [--rcc_port [RCC_PORT]]
+                       [--web_port [WEB_PORT]] [--run_client]
+                       [--user_code [USER_CODE]] [--quiet]
+                       [--rcc_log_options [FLog ...]] [--skip_rcc |
+                       --skip_rcc_popen | --skip_web] [--keep_cache]
+                       [--skip_download] [--debug | --debug_all] [--help]
 
-[**Please review the Roblox documentation for information on how to create and use place files.**](https://developer.roblox.com/en-us/articles/Place-Files)
+options:
+  --config_path, --config, -cp [CONFIG_PATH]
+                        Game-specific options; defaults to ./GameConfig.toml.
+                        Please review each option before starting a new server
+                        up.
+  --place_path, --place, -pl [PLACE_PATH]
+                        Path to the place file to be loaded. Argument
+                        `config_path` can't be passed in when using this
+                        option.
+  --rcc_port, --port, -rp, -p [RCC_PORT]
+                        Port number for the RCC server to run from.
+  --web_port, -wp [WEB_PORT]
+                        Port number for the web server to run from.
+  --run_client, -rc, --run_player
+                        Runs an instance of the player immediately after
+                        starting the server.
+  --user_code, -u [USER_CODE]
+                        If -run_client is passed in, .
+  --quiet, -q           Suppresses console output.
+  --rcc_log_options, --rcc_log, -log [FLog ...]
+                        Filter list for which FLog types to print in RCC.
+  --skip_rcc            Only runs the webserver, skipping the RCC binary
+                        completely.
+  --skip_rcc_popen      Runs the webserver and initialises RCC configuration,
+                        but doesn't execute `RCCService.exe`.
+  --skip_web            Only runs the Studio binary, skipping hosting the
+                        webserver.
+  --keep_cache          Skips deleting host-specific cached content from the
+                        %LocalAppData%\Temp\Roblox\http directory.
+  --skip_download       Disables auto-download of RFD binaries from the
+                        internet.
+  --debug               Opens an instance of x96dbg and attaches it to the
+                        running "server" binary.
+  --debug_all           Opens instances of x96dbg and attaches them to all
+                        running binaries.
+  --help, -?            show this help message and exit
+```
 
 ### `player`
 
-| Option                    | Type  | Default |
-| ------------------------- | ----- | ------- |
-| `--rcc_host`, `-rh`, `-h` | `str` | None    |
-| `--rcc_port`, `-rp`, `-p` | `int` | 2005    |
-| `--web_host`, `-wh`       | `str` | N/A     |
-| `--web_port`, `-wp`       | `int` | 2005    |
-| `--user_code`, `-u`       | `str` | N/A     |
+As of RFD 0.54.1, the available options are as follows:
 
-Command syntaxes for `studio` and `download` now include detailed documentation.
+```
+usage: _main.py player [--rcc_host [RCC_HOST]] [--rcc_port [RCC_PORT]]
+                       [--web_host [WEB_HOST]] [--web_port [WEB_PORT]]
+                       [--user_code [USER_CODE]] [--keep_cache]
+                       [--skip_download] [--debug | --debug_all] [--help]
+
+options:
+  --rcc_host, --host, -rh, -h [RCC_HOST]
+                        Hostname or IP address to connect this program to the
+                        RCC server.
+  --rcc_port, --port, -rp, -p [RCC_PORT]
+                        Port number to connect this program to the RCC server.
+  --web_host, -wh [WEB_HOST]
+                        Hostname or IP address to connect this program to the
+                        web server.
+  --web_port, -wp [WEB_PORT]
+                        Port number to connect this program to the web server.
+  --user_code, -u [USER_CODE]
+  --keep_cache          Skips deleting host-specific cached content from the
+                        %LocalAppData%\Temp\Roblox\http directory.
+  --skip_download       Disables auto-download of RFD binaries from the
+                        internet.
+  --debug               Opens an instance of x96dbg and attaches it to the
+                        running "player" binary.
+  --debug_all           Opens instances of x96dbg and attaches them to all
+                        running binaries.
+  --help, -?            show this help message and exit
+```
+
+## `studio`
+
+The `studio` command allows developers to modify existing place files whilst connected to RFD's webserver.
+
+As of RFD 0.54.1, the available options are as follows:
+
+```
+usage: _main.py studio [--config_path [CONFIG_PATH] |
+                       --place_path [PLACE_PATH]] [--web_port [WEB_PORT]]
+                       [--quiet] [--skip_web] [--keep_cache] [--skip_download]
+                       [--debug | --debug_all] [--help]
+
+RFD's bundled Studio binaries are very very very ill-prepared. I recommend
+using modern versions of Roblox Studio instead.
+
+options:
+  --config_path, --config, -cp [CONFIG_PATH]
+                        Game-specific options; defaults to ./GameConfig.toml.
+                        Please review each option before starting a new server
+                        up.
+  --place_path, --place, -pl [PLACE_PATH]
+                        Path to the place file to be loaded. Argument
+                        `config_path` can't be passed in when using this
+                        option.
+  --web_port, -wp, -p [WEB_PORT]
+                        Port number for the web server to run from.
+  --quiet, -q           Suppresses console output.
+  --skip_web            Only runs the RCC binary, skipping hosting the
+                        webserver.
+  --keep_cache          Skips deleting host-specific cached content from the
+                        %LocalAppData%\Temp\Roblox\http directory.
+  --skip_download       Disables auto-download of RFD binaries from the
+                        internet.
+  --debug               Opens an instance of x96dbg and attaches it to the
+                        running "studio" binary.
+  --debug_all           Opens instances of x96dbg and attaches them to all
+                        running binaries.
+  --help, -?            show this help message and exit
+```
 
 ## `download`
 
-The `download` command allows you to download specific versions of Rōblox components. Here are the available options:
+The `download` command allows you to download specific versions of Rōblox components.
 
-| Option              | Type   | Default               |
-| ------------------- | ------ | --------------------- |
-| `--rbx_version, -v` | `str`  | N/A                   |
-| `--bin_subtype, -b` | `list` | `Client` and `Server` |
+As of RFD 0.54.1, the available options are as follows:
+
+```
+usage: _main.py download [--rbx_version RBX_VERSION]
+                         [--bin_subtype {Player,Server} [{Player,Server} ...]]
+                         [--help]
+
+options:
+  --rbx_version, -v RBX_VERSION
+                        Version to download.
+  --bin_subtype, -b {Player,Server} [{Player,Server} ...]
+                        Directories to download.
+  --help, -?            show this help message and exit
+```
 
 ## Network Ports in Use
 
@@ -167,6 +276,8 @@ Some modern programs do weird things to client-sided scripts. They use `Script` 
 And, **union operations done in current-day Studio (CSG v3) are not supported**. This is because CSG v2 support was completely removed in late 2022.
 
 In that case...
+
+RFD comes bundled with Studio builds. These should be used if modern Studio doesn't mesh well with your old places.
 
 [Sodikm](https://archive.org/details/full-sodikm_202308) has a functional Studio build from 2018.
 
@@ -690,7 +801,5 @@ price = 1
 ```
 
 ---
-
-[Matrix Space](https://matrix.to/#/#robloxfreedomdistribution:matrix.org)
 
 <p align="center"><img src="./Logo.png" height="60px"/></p>

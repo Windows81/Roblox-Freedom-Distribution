@@ -1,3 +1,4 @@
+import logger.bcolors
 import web_server._logic as web_server_logic
 from config_type.types import wrappers
 from . import _logic as logic
@@ -8,6 +9,7 @@ import game_config
 import dataclasses
 import util.const
 import functools
+import threading
 import logger
 import time
 
@@ -17,8 +19,7 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
     BIN_SUBTYPE = util.resource.bin_subtype.STUDIO
 
     def retr_version(self) -> util.versions.rōblox:
-        res = self.local_args.send_request('/rfd/roblox-version')
-        return util.versions.rōblox.from_name(str(res.read(), encoding='utf-8'))
+        return self.local_args.game_config.retr_version()
 
     @functools.cache
     def setup_place(self) -> str:
@@ -56,13 +57,51 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
             '''))
         return path
 
+    @staticmethod
+    def get_warning_message(version: util.versions.rōblox) -> str | None:
+        prefix = (
+            '\n'
+            + logger.bcolors.bcolors.BOLD
+            + "Studio is not 'stable' and can take some help."
+            + logger.bcolors.bcolors.ENDC
+            + '\n'
+        )
+        match version:
+            case util.versions.rōblox.v463:
+                return prefix + dedent(f'''\
+                    When you open Studio, you will encounter a login page.
+                    You can type anything into the username and password fields.
+                    Or find your desired file in Explorer and drag it to the top of the Studio window.
+                    Press enter to continue.
+                ''')
+            case _:
+                return prefix + dedent(f'''\
+                    When you open Studio, you will encounter a login page.
+                    Simply find your desired file in Explorer and drag it to the top of the Studio window.
+                    Press enter to continue.
+                ''')
+
     def process(self) -> None:
         self.save_app_setting()
         self.save_ssl_cert(
             include_system_certs=True,
         )
 
-        time.sleep(self.local_args.launch_delay)
+        # Warn the user that Studio requires additional user intervention.
+        warn_str = self.get_warning_message(self.retr_version())
+
+        # If no warning string is included, assume that no warning is needed.
+        if warn_str is not None and self.local_args.warn_drag:
+            warn_thread = threading.Thread(
+                target=input,
+                args=(warn_str,),
+            )
+            warn_thread.start()
+            time.sleep(self.local_args.launch_delay)
+            warn_thread.join()
+        else:
+            time.sleep(self.local_args.launch_delay)
+
         self.make_popen([
             self.get_versioned_path('RobloxStudioBeta.exe'),
             self.setup_place(),
@@ -78,6 +117,7 @@ class arg_type(logic.bin_ssl_arg_type, logic.loggable_arg_type):
     game_config: game_config.obj_type
     log_filter: logger.filter.filter_type
     launch_delay: float = 0
+    warn_drag: bool = True
 
     def get_base_url(self) -> str:
         return (
@@ -87,3 +127,9 @@ class arg_type(logic.bin_ssl_arg_type, logic.loggable_arg_type):
 
     def get_app_base_url(self) -> str:
         return self.get_base_url()
+
+    def sanitise(self) -> None:
+        super().sanitise()
+
+        if self.web_host == 'localhost':
+            self.web_host = '127.0.0.1'

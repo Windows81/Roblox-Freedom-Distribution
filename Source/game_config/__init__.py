@@ -38,6 +38,9 @@ class obj_type(structure.config_type, _logic.base_type):
             clear_on_start=self.game_setup.asset_cache.clear_on_start,
         )
 
+    def retr_version(self) -> util.versions.rōblox:
+        return self.game_setup.roblox_version
+
 
 @functools.cache
 def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
@@ -47,12 +50,11 @@ def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type
 
 
 @functools.cache
-def generate_config(rbxl_file: str) -> obj_type:
+def generate_config(rbxl_file: str, version: util.versions.rōblox = util.versions.rōblox.v463) -> obj_type:
     # The dictionary structure should adjust with changes to the `structure.py` file.
     skeleton = {
         'server_core': {'place_file': {'rbxl_uri': rbxl_file}},
-        # This is a placeholder value.
-        'game_setup': {'roblox_version': '2021'},
+        'game_setup': {'roblox_version': version.name},
     }
     obj_type.server_core.place_file
     base_dir = util.resource.retr_full_path(util.resource.dir_type.MISC)

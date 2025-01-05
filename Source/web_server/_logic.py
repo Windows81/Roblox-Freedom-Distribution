@@ -237,6 +237,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     def send_json(
         self,
         json_data,
+        status: int | None = 200,
         sign_prefix: bytes | None = None,
     ) -> None:
         byts = json.dumps(json_data).encode('utf-8')
@@ -244,12 +245,13 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             byts,
             content_type='application/json',
             sign_prefix=sign_prefix,
+            status=status,
         )
 
     def send_data(
         self,
         text: bytes | str,
-        status: int = 200,
+        status: int | None = 200,
         content_type: str | None = None,
         sign_prefix: bytes | None = None,
     ) -> None:
@@ -263,7 +265,9 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             data=text,
         ) or text
 
-        self.send_response(status)
+        # If `status` is None, we can add headers before calling `send_data`.
+        if status is not None:
+            self.send_response(status)
         if content_type:
             self.send_header('content-type', content_type)
         self.send_header('content-length', str(len(text)))
