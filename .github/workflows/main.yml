@@ -53,13 +53,13 @@ jobs:
         echo "Virtual environment activated. Now running pyinstaller."
         pyinstaller ^
           --name "RFD" ^
-          --onefile $GITHUB_WORKSPACE/Source/_main.py ^
-          --paths $GITHUB_WORKSPACE/Source/ ^
-          --workpath $GITHUB_WORKSPACE/PyInstallerWork ^
-          --distpath $GITHUB_WORKSPACE/dist ^
-          --icon $GITHUB_WORKSPACE/Source/Icon.ico ^
-          --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec ^
-          --add-data "$GITHUB_WORKSPACE/Source/*:Source" ^
+          --onefile Source/_main.py ^
+          --paths Source/ ^
+          --workpath PyInstallerWork ^
+          --distpath dist ^
+          --icon Source/Icon.ico ^
+          --specpath PyInstallerWork/Spec ^
+          --add-data "Source/*:Source" ^
           --hidden-import requests
       shell: cmd
 
@@ -83,7 +83,7 @@ jobs:
     - name: Compress Executable (Windows)
       if: matrix.os == 'windows-latest'
       run: |
-        Compress-Archive -Path $GITHUB_WORKSPACE\dist\RFD.exe -DestinationPath RFD_release.zip
+        Compress-Archive -Path dist\RFD.exe -DestinationPath RFD_release.zip
 
     - name: Compress Executable (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
