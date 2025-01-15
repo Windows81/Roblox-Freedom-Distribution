@@ -85,17 +85,25 @@ def _(self: web_server_handler) -> bool:
     Handles retrieval of sorted data from the persistence storage with pagination.
     """
     # Parse query parameters
-    place_iden = self.query.get("placeId")
+    place_iden = int(self.query.get("placeId", 0))
     data_type = self.query.get("type", None)
     scope = self.query.get("scope", "global")
     page_size = int(self.query.get("pageSize", 50))
     exclusive_start_key = int(self.query.get("exclusiveStartKey", 1))
-    key = self.query.get("key", default=None, type=str)
-    ascending = self.query.get("ascending", False) == "True"
-    inclusive_min_value = int(self.query.get(
-        "inclusiveMinValue"))
-    exclusive_max_value = int(self.query.get(
-        "exclusiveMaxValue"))
+    key = self.query.get("key", '')
+    ascending = self.query.get("ascending") == "True"
+
+    inclusive_min_str = self.query.get("inclusiveMinValue")
+    if inclusive_min_str is not None:
+        inclusive_min_value = int(inclusive_min_str)
+    else:
+        inclusive_min_value = None
+
+    exclusive_max_str = self.query.get("exclusiveMaxValue")
+    if exclusive_max_str is not None:
+        exclusive_max_value = int(exclusive_max_str)
+    else:
+        exclusive_max_value = None
 
     # Validate inputs
     if place_iden is None:
