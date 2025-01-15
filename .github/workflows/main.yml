@@ -19,18 +19,37 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Set Up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5.3.0
       with:
-        python-version: '3.9'
+        python-version: '3.13'
 
-    - name: Install Dependencies (Windows and Ubuntu)
+    - name: Create Virtual Environment
+      run: python -m venv venv
+
+    - name: Install Dependencies
       run: |
-        python -m venv venv
-        ${{ matrix.os == 'windows-latest' && 'venv\\Scripts\\activate' || 'source venv/bin/activate' }}
-        pip install --upgrade pip
-        pip install -r Source/requirements.txt
-        pip install -r Source/requirements.dev.txt
-      shell: ${{ matrix.os == 'windows-latest' && 'cmd' || 'bash' }}
+        # Install dependencies after virtual environment creation
+        venv/bin/pip install --upgrade pip
+        venv/bin/pip install -r Source/requirements.txt
+        venv/bin/pip install -r Source/requirements.dev.txt
+      shell: bash
+      if: matrix.os == 'ubuntu-latest'
+      
+    - name: Install Dependencies (Windows)
+      run: |
+        venv\Scripts\pip install --upgrade pip
+        venv\Scripts\pip install -r Source/requirements.txt
+        venv\Scripts\pip install -r Source/requirements.dev.txt
+      shell: powershell
+      if: matrix.os == 'windows-latest'
+
+    - name: Activate Virtual Environment (Windows)
+      if: matrix.os == 'windows-latest'
+      run: venv\\Scripts\\activate
+
+    - name: Activate Virtual Environment (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: source venv/bin/activate
 
     - name: Build EXE (Windows)
       if: matrix.os == 'windows-latest'
@@ -64,16 +83,14 @@ jobs:
           --hidden-import requests
       shell: bash
 
-    - name: Compress Executable (Windows) using PowerShell
+    - name: Compress Executable (Windows)
       if: matrix.os == 'windows-latest'
       run: |
-        Compress-Archive -Path dist\\RFD.exe -DestinationPath RFD_release.zip
-      shell: pwsh
+        Compress-Archive -Path dist\RFD.exe -DestinationPath RFD_release.zip
 
     - name: Compress Executable (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
-      run: |
-        zip -r RFD_release.zip dist/RFD
+      run: zip -j RFD_release.zip dist/RFD
 
     - name: Upload Artifact (Windows)
       if: matrix.os == 'windows-latest'
@@ -84,7 +101,7 @@ jobs:
 
     - name: Upload Artifact (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.6.0
       with:
         name: RFD-Release-ubuntu
         path: RFD_release.zip
