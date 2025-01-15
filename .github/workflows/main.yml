@@ -26,30 +26,23 @@ jobs:
     - name: Create Virtual Environment
       run: python -m venv venv
 
-    - name: Install Dependencies
+    - name: Install Dependencies (Ubuntu)
       run: |
-        # Install dependencies after virtual environment creation
-        venv/bin/pip install --upgrade pip
-        venv/bin/pip install -r Source/requirements.txt
-        venv/bin/pip install -r Source/requirements.dev.txt
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r Source/requirements.txt
+        pip install -r Source/requirements.dev.txt
       shell: bash
       if: matrix.os == 'ubuntu-latest'
       
     - name: Install Dependencies (Windows)
       run: |
-        venv\Scripts\pip install --upgrade pip
-        venv\Scripts\pip install -r Source/requirements.txt
-        venv\Scripts\pip install -r Source/requirements.dev.txt
+        venv\Scripts\activate
+        pip install --upgrade pip
+        pip install -r Source/requirements.txt
+        pip install -r Source/requirements.dev.txt
       shell: powershell
       if: matrix.os == 'windows-latest'
-
-    - name: Activate Virtual Environment (Windows)
-      if: matrix.os == 'windows-latest'
-      run: venv\\Scripts\\activate
-
-    - name: Activate Virtual Environment (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      run: source venv/bin/activate
 
     - name: Build EXE (Windows)
       if: matrix.os == 'windows-latest'
@@ -94,7 +87,7 @@ jobs:
 
     - name: Upload Artifact (Windows)
       if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4.6.0
       with:
         name: RFD-Release-windows
         path: RFD_release.zip
