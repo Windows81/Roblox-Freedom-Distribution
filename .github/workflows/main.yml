@@ -63,7 +63,7 @@ jobs:
           --distpath dist ^
           --icon Source/Icon.ico ^
           --specpath PyInstallerWork/Spec ^
-          --add-data "Source/*:Source" ^
+          --add-data "D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/*;Source" ^
           --hidden-import requests
       shell: cmd
 
