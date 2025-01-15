@@ -1,4 +1,4 @@
-name: Build and Compress EXE and Compile Stuff.
+name: Build and Compress EXE and Compile Stuff
 
 on:
   push:
@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+      fail-fast: false # Allows jobs to fail independently
 
     steps:
     - name: Checkout Repository
@@ -25,28 +26,30 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m venv venv
-        source venv/bin/activate
+        ${{ matrix.os == 'windows-latest' && 'venv\\Scripts\\activate' || 'source venv/bin/activate' }}
         pip install --upgrade pip
         pip install -r Source/requirements.txt
         pip install -r Source/requirements.dev.txt
 
     - name: Build EXE
       run: |
-        source venv/bin/activate
-        pyinstaller \
-          --name "RFD" \
-          --onefile $GITHUB_WORKSPACE/Source/_main.py \
-          --paths $GITHUB_WORKSPACE/Source/ \
-          --workpath $GITHUB_WORKSPACE/PyInstallerWork \
-          --distpath $GITHUB_WORKSPACE/dist \
-          --icon $GITHUB_WORKSPACE/Source/Icon.ico \
-          --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
-          --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
+        ${{ matrix.os == 'windows-latest' && 'venv\\Scripts\\activate' || 'source venv/bin/activate' }}
+        pyinstaller ^
+          --name "RFD" ^
+          --onefile $GITHUB_WORKSPACE/Source/_main.py ^
+          --paths $GITHUB_WORKSPACE/Source/ ^
+          --workpath $GITHUB_WORKSPACE/PyInstallerWork ^
+          --distpath $GITHUB_WORKSPACE/dist ^
+          --icon $GITHUB_WORKSPACE/Source/Icon.ico ^
+          --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec ^
+          --add-data "$GITHUB_WORKSPACE/Source/*:Source" ^
           --hidden-import requests
-          
+      shell: ${{ matrix.os == 'windows-latest' && 'cmd' || 'bash' }}
+
     - name: Compress Executable
       run: |
-        zip -j RFD_release.zip $GITHUB_WORKSPACE/dist/RFD.exe
+        ${{ matrix.os == 'windows-latest' && 'venv\\Scripts\\activate' || 'source venv/bin/activate' }}
+        ${{ matrix.os == 'windows-latest' && 'tar -a -cf RFD_release.zip dist\\RFD.exe' || 'zip -j RFD_release.zip dist/RFD' }}
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
