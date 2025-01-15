@@ -1,0 +1,55 @@
+name: Build and Compress EXE and Compile Stuff.
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-compress:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set Up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r Source/requirements.txt
+        pip install -r Source/requirements.dev.txt
+
+    - name: Build EXE
+      run: |
+        source venv/bin/activate
+        pyinstaller \
+          --name "RFD" \
+          --onefile Source/_main.py \
+          --paths Source/ \
+          --workpath PyInstallerWork \
+          --distpath dist \
+          --icon Source/Icon.ico \
+          --specpath PyInstallerWork/Spec \
+          --add-data "Source/*:./Source" \
+          --hidden-import requests
+
+    - name: Compress Executable
+      run: |
+        zip -j RFD_release.zip dist/RFD.exe
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: RFD-Release-${{ matrix.os }}
+        path: RFD_release.zip
