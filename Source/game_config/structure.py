@@ -35,7 +35,7 @@ class config_type(allocateable.obj_type):
             title: str = 'Untitled'
             description: str = ''
             creator_name: str = 'RFD'
-            icon_uri: wrappers.uri_obj = ''  # type:ignore
+            icon_uri: wrappers.uri_obj | None = None
 
         chat_style: structs.chat_style = structs.chat_style.CLASSIC_CHAT
 

@@ -28,6 +28,26 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def retr_version(self) -> util.versions.rōblox:
         return self.game_config.game_setup.roblox_version
 
+    def save_thumbnail(self) -> None:
+        '''
+        Saves the thumbnail data for the current game config.
+        '''
+        config = self.game_config
+        cache = config.asset_cache
+        icon_uri = config.server_core.metadata.icon_uri
+        if icon_uri is None:
+            return
+
+        try:
+            thumbnail_data = icon_uri.extract() or bytes()
+            cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
+        except Exception as e:
+            logger.log(
+                'Warning: thumbnail data not found.',
+                context=logger.log_context.PYTHON_SETUP,
+                filter=self.local_args.log_filter,
+            )
+
     def save_place_file(self) -> None:
         '''
         Parses and copies the place file (specified in the config file) to the asset cache.
@@ -43,20 +63,16 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         if raw_data is None:
             raise Exception(f'Failed to extract data from {place_uri}.')
 
+        # Parses the raw data using the `rbxl` method.
         rbxl_data = assets.serialisers.parse(
             raw_data, {assets.serialisers.method.rbxl}
         )
-        cache.add_asset(self.local_args.place_iden, rbxl_data)
 
-        try:
-            thumbnail_data = config.server_core.metadata.icon_uri.extract() or bytes()
-            cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
-        except Exception as e:
-            logger.log(
-                'Warning: thumbnail data not found.',
-                context=logger.log_context.PYTHON_SETUP,
-                filter=self.local_args.log_filter,
-            )
+        # Saves `rbxl_data` to a local file in `AssetCache`.
+        cache.add_asset(
+            self.local_args.place_iden,
+            rbxl_data,
+        )
 
         if place_uri.uri_type == wrappers.uri_type.ONLINE and config.server_core.place_file.enable_saveplace:
             logger.log(
@@ -97,6 +113,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     def update_fflags(self) -> None:
         '''
         Updates the FFlags in the game configuration based on the Rōblox version.
+        Individual FFlags, rather than the entire file, override the ones that already exist.
         '''
         version = self.retr_version()
         new_flags = ChainMap(
@@ -123,12 +140,15 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                 with open(path, 'r', encoding='utf-8') as f:
                     json_data = json.load(f)
 
-                # 2021E stores the RCC flags in a sub-dictionary named `applicationSettings`.
+                # 2021E stores the RCC flags in a JSON sub-dictionary named `applicationSettings`.
                 json_data['applicationSettings'] |= new_flags
                 with open(path, 'w', encoding='utf-8') as f:
                     json.dump(json_data, f)
 
     def save_gameserver(self) -> str:
+        '''
+        Saves `GameServer.json`, which will be used when the RCC process is created.
+        '''
         base_url = self.local_args.get_base_url()
         path = self.get_versioned_path('GameServer.json')
 
@@ -184,11 +204,11 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             }, f)
         return path
 
-    def get_cmd_args(self) -> list[str]:
+    def gen_cmd_args(self) -> list[str]:
         suffix_args = []
 
         # There is a chance that RFD can be overwhelmed with processing output.
-        # Removing the `-verbose` flag will reduce the amount of data piped from RCC.
+        # Removing the `-verbose` flag here will reduce the amount of data piped from RCC.
         if not self.local_args.log_filter.rcc_logs.is_empty():
             suffix_args.append('-verbose')
 
@@ -217,6 +237,11 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
 
     def make_rcc_popen(self) -> None:
         def read_output(pipe: subprocess.Popen[str]) -> None:
+            '''
+            Pipes output from the RCC server to the logger module for processing.
+            This is done in a separate thread to avoid blocking the main process from
+            terminating RCC when necessary.
+            '''
             stdout = pipe.stdout
             assert stdout is not None
             while True:
@@ -231,7 +256,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             stdout.flush()
 
         self.make_popen(
-            cmd_args=self.get_cmd_args(),
+            cmd_args=self.gen_cmd_args(),
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             cwd=self.get_versioned_path(),
@@ -263,6 +288,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         )
         self.save_starter_scripts()
         self.save_place_file()
+        self.save_thumbnail()
         self.save_app_setting()
         self.update_fflags()
         self.save_ssl_cert(

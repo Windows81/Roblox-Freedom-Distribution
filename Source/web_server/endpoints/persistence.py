@@ -30,7 +30,6 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/persistence/getv2')  # Usually expects POST.
 @server_path('/persistence/getV2')  # Usually expects POST.
-@server_path('/persistence/getSortedValues')  # Usually expects POST.
 def _(self: web_server_handler) -> bool:
     '''
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/datastoreservice.py#L162
@@ -77,4 +76,70 @@ def _(self: web_server_handler) -> bool:
         return True
 
     self.send_json({"data": return_data})
+    return True
+
+
+@server_path('/persistence/getSortedValues')  # Expecting POST.
+def _(self: web_server_handler) -> bool:
+    """
+    Handles retrieval of sorted data from the persistence storage with pagination.
+    """
+    # Parse query parameters
+    place_iden = self.query.get("placeId")
+    data_type = self.query.get("type", None)
+    scope = self.query.get("scope", "global")
+    page_size = int(self.query.get("pageSize", 50))
+    exclusive_start_key = int(self.query.get("exclusiveStartKey", 1))
+    key = self.query.get("key", default=None, type=str)
+    ascending = self.query.get("ascending", False) == "True"
+    inclusive_min_value = int(self.query.get(
+        "inclusiveMinValue"))
+    exclusive_max_value = int(self.query.get(
+        "exclusiveMaxValue"))
+
+    # Validate inputs
+    if place_iden is None:
+        self.send_json({"data": [], "message": "Place ID is required"})
+        return True
+
+    if page_size <= 0 or page_size > 100:
+        self.send_json(
+            {"data": [], "message": "Page size must be between 1 and 100"})
+        return True
+
+    if data_type != "sorted":
+        self.send_json({"data": [], "message": "Invalid data type"})
+        return True
+
+    if exclusive_start_key < 1:
+        self.send_json({"data": [], "message": "Invalid exclusive start key"})
+        return True
+
+    # Simulated database query (replace with actual implementation)
+    # Assuming persistence supports sorted data
+    database = self.server.storage.persistence
+    sorted_data = database.query_sorted_data(
+        place_id=place_iden,
+        scope=scope,
+        key=key,
+        ascending=ascending,
+        min_value=inclusive_min_value,
+        max_value=exclusive_max_value,
+        start=exclusive_start_key,
+        size=page_size
+    )
+
+    if not sorted_data:
+        self.send_json({"data": {"Entries": [], "ExclusiveStartKey": None}})
+        return True
+
+    # Prepare response
+    entries = [{"Target": entry["name"], "Value": entry["value"]}
+               for entry in sorted_data["items"]]
+    next_key = sorted_data["next_key"] if sorted_data["has_next"] else None
+
+    self.send_json({"data": {
+        "Entries": entries,
+        "ExclusiveStartKey": next_key
+    }})
     return True
