@@ -23,21 +23,14 @@ jobs:
       with:
         python-version: '3.9'
 
-    - name: Install Dependencies
+    - name: Install Dependencies (Windows and Ubuntu)
       run: |
         python -m venv venv
+        ${{ matrix.os == 'windows-latest' && 'venv\\Scripts\\activate' || 'source venv/bin/activate' }}
         pip install --upgrade pip
         pip install -r Source/requirements.txt
         pip install -r Source/requirements.dev.txt
-      shell: bash
-
-    - name: Activate Virtual Environment (Windows)
-      if: matrix.os == 'windows-latest'
-      run: venv\\Scripts\\activate
-
-    - name: Activate Virtual Environment (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      run: source venv/bin/activate
+      shell: ${{ matrix.os == 'windows-latest' && 'cmd' || 'bash' }}
 
     - name: Build EXE (Windows)
       if: matrix.os == 'windows-latest'
@@ -71,13 +64,16 @@ jobs:
           --hidden-import requests
       shell: bash
 
-    - name: Compress Executable (Windows)
+    - name: Compress Executable (Windows) using PowerShell
       if: matrix.os == 'windows-latest'
-      run: tar -a -cf RFD_release.zip dist\\RFD.exe
+      run: |
+        Compress-Archive -Path dist\\RFD.exe -DestinationPath RFD_release.zip
+      shell: pwsh
 
     - name: Compress Executable (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
-      run: zip -j RFD_release.zip dist/RFD
+      run: |
+        zip -r RFD_release.zip dist/RFD
 
     - name: Upload Artifact (Windows)
       if: matrix.os == 'windows-latest'
