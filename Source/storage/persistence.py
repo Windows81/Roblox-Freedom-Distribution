@@ -34,7 +34,7 @@ class database(_logic.sqlite_connector_base):
         value_str = json.dumps(value)
         self.sqlite.execute(
             f"""
-            INSERT INTO "{self.TABLE_NAME}"
+            INSERT INTO ?
             (
                 {self.field.SCOPE.value},
                 {self.field.TARGET.value},
@@ -44,6 +44,7 @@ class database(_logic.sqlite_connector_base):
             VALUES (?, ?, ?, ?)
             """,
             (
+                self.TABLE_NAME,
                 scope,
                 target,
                 key,
@@ -58,11 +59,17 @@ class database(_logic.sqlite_connector_base):
             SELECT
             {self.field.VALUE.value}
 
-            FROM "{self.TABLE_NAME}"
-            WHERE {self.field.SCOPE.value} = {repr(scope)}
-            AND {self.field.TARGET.value} = {repr(target)}
-            AND {self.field.KEY.value} = {repr(key)}
+            FROM ?
+            WHERE {self.field.SCOPE.value} = ?
+            AND {self.field.TARGET.value} = ?
+            AND {self.field.KEY.value} = ?
             """,
+            (
+                self.TABLE_NAME,
+                scope,
+                target,
+                key,
+            )
         ).fetchone()
         if result is None:
             return None
