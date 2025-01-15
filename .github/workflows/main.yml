@@ -41,7 +41,7 @@ jobs:
           --distpath dist \
           --icon Source/Icon.ico \
           --specpath PyInstallerWork/Spec \
-          --add-data "Source/*:./Source" \
+          --add-data "Source/*:Source" \ 
           --hidden-import requests
 
     - name: Compress Executable
