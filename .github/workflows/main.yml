@@ -57,12 +57,12 @@ jobs:
         echo "Virtual environment activated. Now running pyinstaller."
         pyinstaller ^
           --name "RFD" ^
-          --onefile Source/_main.py ^
-          --paths Source/ ^
-          --workpath PyInstallerWork ^
-          --distpath dist ^
-          --icon Source/Icon.ico ^
-          --specpath PyInstallerWork/Spec ^
+          --onefile D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/_main.py ^
+          --paths D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/ ^
+          --workpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/PyInstallerWork ^
+          --distpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/dist ^
+          --icon D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/Icon.ico ^
+          --specpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/PyInstallerWork/Spec ^
           --add-data "D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/*;Source" ^
           --hidden-import requests
       shell: cmd
