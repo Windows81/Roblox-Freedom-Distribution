@@ -32,6 +32,7 @@ jobs:
         pip install --upgrade pip
         pip install -r Source/requirements.txt
         pip install -r Source/requirements.dev.txt
+        pip install requests
       shell: bash
       if: matrix.os == 'ubuntu-latest'
       
@@ -41,6 +42,7 @@ jobs:
         pip install --upgrade pip
         pip install -r Source/requirements.txt
         pip install -r Source/requirements.dev.txt
+        pip install requests
       shell: powershell
       if: matrix.os == 'windows-latest'
 
@@ -79,7 +81,7 @@ jobs:
     - name: Compress Executable (Windows)
       if: matrix.os == 'windows-latest'
       run: |
-        Compress-Archive -Path dist\RFD.exe -DestinationPath RFD_release.zip
+        Compress-Archive -Path $GITHUB_WORKSPACE\dist\RFD.exe -DestinationPath RFD_release.zip
 
     - name: Compress Executable (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
