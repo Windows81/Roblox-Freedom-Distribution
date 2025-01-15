@@ -26,30 +26,32 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m venv venv
-        ${{ matrix.os == 'windows-latest' && 'venv\\Scripts\\activate' || 'source venv/bin/activate' }}
+        ${{ if eq(matrix.os, 'windows-latest') }} venv\Scripts\activate
+        ${{ if eq(matrix.os, 'ubuntu-latest') }} source venv/bin/activate
         pip install --upgrade pip
         pip install -r Source/requirements.txt
         pip install -r Source/requirements.dev.txt
 
     - name: Build EXE
       run: |
-        ${{ matrix.os == 'windows-latest' && 'venv\\Scripts\\activate' || 'source venv/bin/activate' }}
-        pyinstaller ^
-          --name "RFD" ^
-          --onefile $GITHUB_WORKSPACE/Source/_main.py ^
-          --paths $GITHUB_WORKSPACE/Source/ ^
-          --workpath $GITHUB_WORKSPACE/PyInstallerWork ^
-          --distpath $GITHUB_WORKSPACE/dist ^
-          --icon $GITHUB_WORKSPACE/Source/Icon.ico ^
-          --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec ^
-          --add-data "$GITHUB_WORKSPACE/Source/*:Source" ^
+        ${{ if eq(matrix.os, 'windows-latest') }} venv\Scripts\activate
+        ${{ if eq(matrix.os, 'ubuntu-latest') }} source venv/bin/activate
+        pyinstaller \
+          --name "RFD" \
+          --onefile $GITHUB_WORKSPACE/Source/_main.py \
+          --paths $GITHUB_WORKSPACE/Source/ \
+          --workpath $GITHUB_WORKSPACE/PyInstallerWork \
+          --distpath $GITHUB_WORKSPACE/dist \
+          --icon $GITHUB_WORKSPACE/Source/Icon.ico \
+          --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
+          --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
           --hidden-import requests
-      shell: ${{ matrix.os == 'windows-latest' && 'cmd' || 'bash' }}
+      shell: bash
 
     - name: Compress Executable
       run: |
-        ${{ matrix.os == 'windows-latest' && 'venv\\Scripts\\activate' || 'source venv/bin/activate' }}
-        ${{ matrix.os == 'windows-latest' && 'tar -a -cf RFD_release.zip dist\\RFD.exe' || 'zip -j RFD_release.zip dist/RFD' }}
+        ${{ if eq(matrix.os, 'windows-latest') }} tar -a -cf RFD_release.zip dist\RFD.exe
+        ${{ if eq(matrix.os, 'ubuntu-latest') }} zip -j RFD_release.zip dist/RFD
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
