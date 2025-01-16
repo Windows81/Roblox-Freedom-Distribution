@@ -31,7 +31,7 @@ jobs:
     - name: Get Version Number
       id: version_num
       run: |
-        "version=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")" >> $GITHUB_OUTPUT
+        echo "version=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")" >> $GITHUB_OUTPUT
 
     - name: Install Dependencies
       run: |
