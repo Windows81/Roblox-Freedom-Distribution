@@ -54,7 +54,7 @@ def should_overwrite(full_dir: str) -> bool:
         full_dir, 'rfd_version',
     )
     with open(rfd_ver_path, 'r') as f:
-        return f.read() != util.const.ZIPPED_RELEASE_VERSION
+        return f.read().startswith(util.const.ZIPPED_RELEASE_VERSION)
 
 
 def bootstrap_binary(

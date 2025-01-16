@@ -26,27 +26,13 @@ jobs:
     - name: Create Virtual Environment
       run: python -m venv venv
 
-    - name: Install Dependencies (Ubuntu)
+    - name: Install Dependencies
       run: |
         source venv/bin/activate
         pip install --upgrade pip
         pip install -r Source/requirements.txt
         pip install -r Source/requirements.dev.txt
         pip install requests
-      shell: bash
-      if: matrix.os == 'ubuntu-latest'
-      
-    - name: Install Dependencies (Windows)
-      run: |
-        echo "Current Path: "
-        echo %cd%
-        venv\Scripts\activate
-        pip install --upgrade pip
-        pip install -r Source/requirements.txt
-        pip install -r Source/requirements.dev.txt
-        pip install requests
-      shell: powershell
-      if: matrix.os == 'windows-latest'
 
     - name: Build EXE (Windows)
       if: matrix.os == 'windows-latest'
@@ -84,11 +70,6 @@ jobs:
           --hidden-import requests
       shell: bash
 
-    - name: Compress Executable (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        Compress-Archive -Path dist\RFD.exe -DestinationPath RFD_release.zip
-
     - name: Compress Executable (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: zip -j RFD_release.zip dist/RFD
@@ -98,7 +79,7 @@ jobs:
       uses: actions/upload-artifact@v4.6.0
       with:
         name: RFD-Release-windows
-        path: RFD_release.zip
+        path: dist/RFD.exe
 
     - name: Upload Artifact (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
@@ -106,3 +87,10 @@ jobs:
       with:
         name: RFD-Release-ubuntu
         path: RFD_release.zip
+
+    - name: Release with Notes
+      uses: softprops/action-gh-release@v1
+      with:
+        files: "*"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
