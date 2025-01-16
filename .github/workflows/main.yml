@@ -22,6 +22,7 @@ jobs:
 
     - name: Get Version Number 
       id: version_num
+      shell: bash
       run: |
         LC_ALL=en_US.utf8 echo "version=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")" >> $GITHUB_OUTPUT
 
@@ -42,7 +43,6 @@ jobs:
       run: |
         echo "Current Path: "
         echo %cd%
-        call venv\\Scripts\\activate
         echo "Virtual environment activated. Now running pyinstaller."
         pyinstaller ^
           --name "RFD" ^
@@ -59,7 +59,6 @@ jobs:
     - name: Build PKG (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        source venv/bin/activate
         echo "Virtual environment activated. Now running pyinstaller."
         pyinstaller \
           --name "RFD" \
@@ -97,7 +96,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: "dist/*"
-        tag_name: "commit-${{ steps.version_num.outputs.version }}-${{ github.event.head_commit.id }}"
+        name: "${{ steps.version_num.outputs.version }}-${{ github.event.head_commit.id }}"
+        tag_name: "commit-${{ github.event.head_commit.id }}"
         prerelease: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
