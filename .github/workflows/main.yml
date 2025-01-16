@@ -30,7 +30,8 @@ jobs:
       run: |
         source venv/bin/activate
         pip install --upgrade pip
-        pip install -e Source/.[dev]
+        pip install -r Source/requirements.txt
+        pip install -r Source/requirements.dev.txt
         pip install requests
       shell: bash
       if: matrix.os == 'ubuntu-latest'
@@ -41,7 +42,8 @@ jobs:
         echo %cd%
         venv\Scripts\activate
         pip install --upgrade pip
-        pip install -e Source/.[dev]
+        pip install -r Source/requirements.txt
+        pip install -r Source/requirements.dev.txt
         pip install requests
       shell: powershell
       if: matrix.os == 'windows-latest'

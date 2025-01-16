@@ -1,7 +1,7 @@
 <h1 align="center"><img src="./Logo.png" height="20px"/> Rōblox: Freedom Distribution <img src="./Logo.png" height="20px"/></h1>
 
-[![Build and Compress EXE and Compile Stuff](https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml/badge.svg)](https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml)
 <p align="right">
+<a href="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml"><img src="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml/badge.svg"></a>
 <a href="https://matrix.to/#/#robloxfreedomdistribution:matrix.org"><img src="https://matrix.org/images/matrix-logo.svg" height="30"></a>
 </p>
 
@@ -70,7 +70,7 @@ To install _from source_, run:
 ```
 git clone --depth 1 https://github.com/Windows81/Roblox-Freedom-Distribution rfd
 cd rfd/Source
-pip install -e .
+pip install -r requirements.txt
 ```
 
 To launch RFD, your command line will look something like this:
