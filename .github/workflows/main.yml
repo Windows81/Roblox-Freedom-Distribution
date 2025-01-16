@@ -54,7 +54,7 @@ jobs:
           --hidden-import requests
       shell: cmd
 
-    - name: Build EXE (Ubuntu)
+    - name: Build PKG (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: |
         source venv/bin/activate
@@ -92,7 +92,7 @@ jobs:
     - name: Release with Notes
       uses: softprops/action-gh-release@v1
       with:
-        files: "*"
+        files: "dist/*"
         tag_name: "commit-${{ github.event.head_commit.id }}"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
