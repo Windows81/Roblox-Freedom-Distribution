@@ -80,7 +80,7 @@ def _(
         other_logs=not args.quiet,
     )
 
-    routine_args = []
+    routine_args: list[logic.arg_type] = []
     if not args.skip_web:
         routine_args.extend([
             web.arg_type(

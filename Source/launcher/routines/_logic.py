@@ -1,6 +1,7 @@
 import web_server._logic as web_server_logic
 import game_config.structure
 import game_config as config
+from typing import override
 import urllib.request
 import util.versions
 import util.resource
@@ -68,7 +69,7 @@ class bin_ssl_arg_type(bin_arg_type):
                 context=bin_ssl_entry.get_none_ssl(),
                 timeout=timeout,
             )
-        except urllib.error.URLError as e:
+        except urllib.error.URLError as _:
             raise Exception(
                 'No server is currently running on %s (%s).' %
                 (self.get_base_url(), path),
@@ -84,6 +85,7 @@ class host_arg_type(arg_type):
     user_code: str | None = None
     launch_delay: float = 0
 
+    @override
     def sanitise(self) -> None:
         super().sanitise()
 
@@ -114,6 +116,7 @@ class entry(_entry):
     threads: list[threading.Thread]
 
     def __init__(self, local_args: arg_type) -> None:
+        super().__init__()
         self.local_args = local_args
         self.threads = []
 
@@ -134,9 +137,9 @@ class popen_entry(entry):
     Routine entry class that corresponds to a Popen subprocess object.
     '''
     local_args: popen_arg_type
-    debug_popen: subprocess.Popen
-    popen_mains: list[subprocess.Popen]
-    popen_daemons: list[subprocess.Popen]
+    debug_popen: subprocess.Popen[str]
+    popen_mains: list[subprocess.Popen[str]]
+    popen_daemons: list[subprocess.Popen[str]]
 
     def __init__(self, local_args: arg_type) -> None:
         super().__init__(local_args)
@@ -144,7 +147,7 @@ class popen_entry(entry):
         self.popen_mains = []
         self.popen_daemons = []
 
-    def make_popen(self, cmd_args: list, *args, **kwargs) -> None:
+    def make_popen(self, cmd_args: list[str], *args, **kwargs) -> None:
         # TODO: test native support for RFD on systems with Wine.
         if os.name != 'nt':
             cmd_args[:0] = ['wine']
@@ -156,7 +159,7 @@ class popen_entry(entry):
         self.popen_daemons = [
             *(
                 [
-                    subprocess.Popen([
+                    subprocess.Popen[str]([
                         'x96dbg',
                         '-p', str(self.principal.pid),
                     ])
@@ -166,12 +169,14 @@ class popen_entry(entry):
             ),
         ]
 
+    @override
     def stop(self) -> None:
         for p in self.popen_mains:
             p.terminate()
         for p in self.popen_daemons:
             p.terminate()
 
+    @override
     def wait(self) -> None:
         for p in self.popen_mains:
             p.wait()
@@ -218,6 +223,7 @@ class bin_entry(ver_entry, popen_entry, loggable_entry):
         self.rōblox_version = self.retr_version()
         self.maybe_download_binary()
 
+    @override
     def get_versioned_path(self, *paths: str) -> str:
         return super().get_versioned_path(
             self.BIN_SUBTYPE, *paths,
@@ -310,6 +316,7 @@ class routine:
     entries: list[entry]
 
     def __init__(self, *args_list: arg_type) -> None:
+        super().__init__()
         self.entries = []
         for args in args_list:
             args.sanitise()

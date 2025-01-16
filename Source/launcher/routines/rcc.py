@@ -2,6 +2,7 @@ from config_type.types import structs, wrappers, callable
 import web_server._logic as web_server_logic
 from ..startup_scripts import rcc_server
 from collections import ChainMap
+from typing import IO, override
 from . import _logic as logic
 import game_config.structure
 import util.const as const
@@ -41,7 +42,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         try:
             thumbnail_data = icon_uri.extract() or bytes()
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
-        except Exception as e:
+        except Exception as _:
             logger.log(
                 'Warning: thumbnail data not found.',
                 context=logger.log_context.PYTHON_SETUP,
@@ -53,10 +54,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         Parses and copies the place file (specified in the config file) to the asset cache.
         '''
         config = self.game_config
-
         place_uri = config.server_core.place_file.rbxl_uri
-        if place_uri is None:
-            raise Exception('Place file does not exist.')
 
         cache = config.asset_cache
         raw_data = place_uri.extract()
@@ -205,7 +203,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         return path
 
     def gen_cmd_args(self) -> list[str]:
-        suffix_args = []
+        suffix_args: list[str] = []
 
         # There is a chance that RFD can be overwhelmed with processing output.
         # Removing the `-verbose` flag here will reduce the amount of data piped from RCC.
@@ -242,10 +240,10 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             This is done in a separate thread to avoid blocking the main process from
             terminating RCC when necessary.
             '''
-            stdout = pipe.stdout
+            stdout: IO[bytes] = pipe.stdout  # type: ignore[reportAssignmentType]
             assert stdout is not None
             while True:
-                line: bytes | None = stdout.readline()  # type: ignore
+                line = stdout.readline()
                 if not line:
                     break
                 logger.log(
@@ -269,14 +267,17 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         )
         self.pipe_thread.start()
 
+    @override
     def stop(self) -> None:
         super().stop()
         self.pipe_thread.join()
 
+    @override
     def wait(self) -> None:
         super().wait()
         self.pipe_thread.join()
 
+    @override
     def process(self) -> None:
         logger.log(
             (
@@ -313,14 +314,16 @@ class arg_type(logic.bin_ssl_arg_type):
         port_num=80,
         is_ssl=False,
         is_ipv6=False,
-    ),  # type: ignore
+    )
     log_filter: logger.filter.filter_type = logger.DEFAULT_FILTER
 
+    @override
     def get_base_url(self) -> str:
         return (
             f'http{"s" if self.web_port.is_ssl else ""}://' +
             f'localhost:{self.web_port.port_num}'
         )
 
+    @override
     def get_app_base_url(self) -> str:
         return f'{self.get_base_url()}/'

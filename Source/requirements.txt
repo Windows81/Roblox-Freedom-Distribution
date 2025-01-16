@@ -1,9 +1,0 @@
-pyOpenSSL==24.0.0
-trustme==1.2.0
-certifi
-urllib3
-pyzstd
-tomli
-py7zr
-lz4
-git+https://github.com/Windows81/Vendored-Tqdm
