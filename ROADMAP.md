@@ -12,7 +12,7 @@ This document outlines the planned features and improvements for our project. Pl
 ### Peer-to-Peer Support
 
 - [x] Implement peer-to-peer support for seamless communication between users.
-- [ ] Ensure secure and efficient data transfer between peers.
+- [x] Ensure secure and efficient data transfer between peers.
 - [x] Enable real-time collaboration and interaction among users.
 
 ### Freecam Toggle with Rōblox Logo Hide
@@ -29,15 +29,15 @@ This document outlines the planned features and improvements for our project. Pl
 
 ### Support for Different Client Versions
 
-- [ ] Add support for connecting clients that are up to 100 versions apart.
 - [ ] Ensure backward compatibility with clients from earlier years, e.g., ~2016, ~2013, etc.
 - [x] Implement version negotiation and compatibility checks for seamless cross-version interactions.
 
 ### Other
+
 - [x] Write documentation about asset packs.
 - [x] Polish the default config.
 - [ ] Switch to GitLab?
-- [ ] Fix the auth fail error (might already be fixed, unsure)
+- [x] Fix the auth fail error (might already be fixed, unsure)
 - [ ] Android support (native support is planned iirc) (u play with Winlator as of rn)
 - [ ] IOS support (might not happen)
-- [x] Linux/MacOS support (playable thanks to wine🍷) (Use heroic games launcher)
+- [x] GNU/Linux support (playable thanks to wine🍷) (Use heroic games launcher)
