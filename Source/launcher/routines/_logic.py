@@ -233,37 +233,13 @@ class bin_entry(ver_entry, popen_entry, loggable_entry):
         '''
         Check if Rōblox is not downloaded; else skip.
         '''
-        if os.path.isdir(self.get_versioned_path()):
-            logger.log(
-                text='Rōblox installation exists, skipping...',
-                context=logger.log_context.PYTHON_SETUP,
-                filter=self.local_args.log_filter,
-            )
+        if not self.local_args.auto_download:
             return
-        elif self.local_args.auto_download:
-            logger.log(
-                (
-                    'Downloading zipped "%s" for Rōblox version %s...' %
-                    (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
-                ),
-                context=logger.log_context.PYTHON_SETUP,
-                filter=self.local_args.log_filter,
-            )
-            downloader.bootstrap_binary(
-                rōblox_version=self.rōblox_version,
-                bin_type=self.BIN_SUBTYPE,
-                log_filter=self.local_args.log_filter,
-            )
-            logger.log(
-                text='Installation completed!',
-                context=logger.log_context.PYTHON_SETUP,
-                filter=self.local_args.log_filter,
-            )
-        else:
-            raise Exception(
-                'Zipped file "%s" not found for Rōblox version %s.' %
-                (self.BIN_SUBTYPE.name, self.rōblox_version.get_number())
-            )
+        downloader.bootstrap_binary(
+            rōblox_version=self.rōblox_version,
+            bin_type=self.BIN_SUBTYPE,
+            log_filter=self.local_args.log_filter,
+        )
 
 
 class bin_ssl_entry(bin_entry):

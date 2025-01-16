@@ -54,26 +54,29 @@ function UpdateConstReleaseVersion($labels) {
 	$const_txt | Set-Content $const_file
 }
 
-function UpdatePyProjectVersion() {
-	$project_file = "$root/pyproject.toml"
-	(Get-Content $project_file) | ForEach-Object {
-		return $_ -replace "version =.+", "version = `"$script:release_name`""
-	} | Set-Content $project_file
-}
-
 # Creates zipped directories for Roblox files.
 function CreateZippedDirs() {
 	foreach ($dir in (Get-ChildItem "$root/Roblox/*/*" -Directory)) {
 		$zip = "$root/Roblox/$($dir.Parent.Name).$($dir.Name).7z"
+
+		# The users confirms whether to remove each zipped archive.
 		Remove-Item $zip -Force -Confirm -ErrorAction Ignore
-		if (-not (Test-Path $zip)) {
-			# The `-xr` switches are for excluding specific file names (https://documentation.help/7-Zip-18.0/exclude.htm).
-			7z a $zip "$($dir.FullName)/*" `
-				"-xr!AppSettings.xml" `
-				"-xr!RFDStarterScript.lua" `
-				"-xr!cacert.pem" `
-				"-xr!dxgi.dll" "-xr!Reshade.ini" "-xr!ReShade.log" "-xr!ReShade_RobloxPlayerBeta.log" # ReShade stuff
+
+		if (Test-Path $zip) {
+			$files.Add($zip)
+			return
 		}
+
+		# Writes to the version-flag file.
+		$script:release_name | Set-Content "$($dir.FullName)/rfd_version"
+
+		# The `-xr` switches are for excluding specific file names (https://documentation.help/7-Zip-18.0/exclude.htm).
+		7z a $zip "$($dir.FullName)/*" `
+			"-xr!dxgi.dll" "-xr!Reshade.ini" "-xr!ReShade.log" "-xr!ReShade_RobloxPlayerBeta.log" `
+			"-xr!AppSettings.xml" `
+			"-xr!RFDStarterScript.lua" `
+			"-xr!cacert.pem"
+
 		$files.Add($zip)
 	}
 }
@@ -91,7 +94,6 @@ switch ($mode) {
 	'2' {
 		RetrieveInput
 		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION")
-		UpdatePyProjectVersion
 		UpdateAndPush
 		CreateBinary
 		ReleaseToGitHub
@@ -99,7 +101,6 @@ switch ($mode) {
 	'3' {
 		RetrieveInput
 		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION", "ZIPPED_RELEASE_VERSION")
-		UpdatePyProjectVersion
 		UpdateAndPush
 		CreateBinary
 		CreateZippedDirs
