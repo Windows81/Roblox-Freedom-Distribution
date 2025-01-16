@@ -1,0 +1,108 @@
+name: Build and Compress EXE and Compile Stuff
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-compress:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false # Allows jobs to fail independently
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set Up Python
+      uses: actions/setup-python@v5.3.0
+      with:
+        python-version: '3.13'
+
+    - name: Create Virtual Environment
+      run: python -m venv venv
+
+    - name: Install Dependencies (Ubuntu)
+      run: |
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r Source/requirements.txt
+        pip install -r Source/requirements.dev.txt
+        pip install requests
+      shell: bash
+      if: matrix.os == 'ubuntu-latest'
+      
+    - name: Install Dependencies (Windows)
+      run: |
+        echo "Current Path: "
+        echo %cd%
+        venv\Scripts\activate
+        pip install --upgrade pip
+        pip install -r Source/requirements.txt
+        pip install -r Source/requirements.dev.txt
+        pip install requests
+      shell: powershell
+      if: matrix.os == 'windows-latest'
+
+    - name: Build EXE (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        echo "Current Path: "
+        echo %cd%
+        call venv\\Scripts\\activate
+        echo "Virtual environment activated. Now running pyinstaller."
+        pyinstaller ^
+          --name "RFD" ^
+          --onefile D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/_main.py ^
+          --paths D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/ ^
+          --workpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/PyInstallerWork ^
+          --distpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/dist ^
+          --icon D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/Icon.ico ^
+          --specpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/PyInstallerWork/Spec ^
+          --add-data "D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/*;Source" ^
+          --hidden-import requests
+      shell: cmd
+
+    - name: Build EXE (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        source venv/bin/activate
+        echo "Virtual environment activated. Now running pyinstaller."
+        pyinstaller \
+          --name "RFD" \
+          --onefile $GITHUB_WORKSPACE/Source/_main.py \
+          --paths $GITHUB_WORKSPACE/Source/ \
+          --workpath $GITHUB_WORKSPACE/PyInstallerWork \
+          --distpath $GITHUB_WORKSPACE/dist \
+          --icon $GITHUB_WORKSPACE/Source/Icon.ico \
+          --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
+          --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
+          --hidden-import requests
+      shell: bash
+
+    - name: Compress Executable (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        Compress-Archive -Path dist\RFD.exe -DestinationPath RFD_release.zip
+
+    - name: Compress Executable (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: zip -j RFD_release.zip dist/RFD
+
+    - name: Upload Artifact (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: RFD-Release-windows
+        path: RFD_release.zip
+
+    - name: Upload Artifact (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: RFD-Release-ubuntu
+        path: RFD_release.zip
