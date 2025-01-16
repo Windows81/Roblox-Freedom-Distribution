@@ -44,7 +44,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
         except Exception as _:
             logger.log(
-                'Warning: thumbnail data not found.',
+                text='Warning: thumbnail data not found.',
                 context=logger.log_context.PYTHON_SETUP,
                 filter=self.local_args.log_filter,
             )

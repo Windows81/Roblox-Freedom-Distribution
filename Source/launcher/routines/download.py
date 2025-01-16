@@ -1,3 +1,4 @@
+from typing import override
 import util.resource
 import util.versions
 import dataclasses
@@ -23,6 +24,7 @@ class obj_type(logic.bin_entry, logic.loggable_entry):
         self.rōblox_version = rōblox_version
         self.bin_subtype = bin_subtype
 
+    @override
     def process(self) -> None:
         downloader.bootstrap_binary(
             rōblox_version=self.rōblox_version,

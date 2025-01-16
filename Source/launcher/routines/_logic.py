@@ -235,7 +235,7 @@ class bin_entry(ver_entry, popen_entry, loggable_entry):
         '''
         if os.path.isdir(self.get_versioned_path()):
             logger.log(
-                'Rōblox installation exists, skipping...',
+                text='Rōblox installation exists, skipping...',
                 context=logger.log_context.PYTHON_SETUP,
                 filter=self.local_args.log_filter,
             )
@@ -255,7 +255,7 @@ class bin_entry(ver_entry, popen_entry, loggable_entry):
                 log_filter=self.local_args.log_filter,
             )
             logger.log(
-                'Installation completed!',
+                text='Installation completed!',
                 context=logger.log_context.PYTHON_SETUP,
                 filter=self.local_args.log_filter,
             )

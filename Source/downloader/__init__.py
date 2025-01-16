@@ -63,7 +63,7 @@ def bootstrap_binary(
     )
 
     logger.log(
-        f'Extracting to {full_dir}...',
+        text=f'Extracting to {full_dir}...',
         context=logger.log_context.PYTHON_SETUP,
         filter=log_filter,
     )
