@@ -28,7 +28,8 @@ class database(_logic.sqlite_connector_base):
         )
         self.sqlite.commit()
 
-    def add_player(self, user_code: str, id_num: int, username: str) -> tuple[str, int, str] | None:
+    def add_player(self, user_code: str, id_num: int,
+                   username: str) -> tuple[str, int, str] | None:
         '''
         Adds a new player to the database and returns the first entry which corresponds with the newly-added player.
         Tries to get the entry whose username matches, else fail.
@@ -64,7 +65,11 @@ class database(_logic.sqlite_connector_base):
         ).fetchone()
         return result
 
-    def get_player_field_from_index(self, index: player_field, value, field: player_field):
+    def get_player_field_from_index(
+            self,
+            index: player_field,
+            value,
+            field: player_field):
         if index == self.player_field.ID_NUMBER:
             value = self.sanitise_player_id_num(value)
 

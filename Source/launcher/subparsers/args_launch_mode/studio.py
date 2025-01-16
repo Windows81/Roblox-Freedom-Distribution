@@ -24,14 +24,18 @@ def subparse(
 
     place_thing = subparser.add_mutually_exclusive_group(required=False)
     place_thing.add_argument(
-        '--config_path', '--config', '-cp',
+        '--config_path',
+        '--config',
+        '-cp',
         type=str,
         nargs='?',
         default=util.resource.DEFAULT_CONFIG_PATH,
         help='Game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up.',
     )
     place_thing.add_argument(
-        '--place_path', '--place', '-pl',
+        '--place_path',
+        '--place',
+        '-pl',
         type=str,
         nargs='?',
         default=None,
@@ -57,7 +61,8 @@ def subparse(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO, {web.arg_type, rcc.arg_type, player.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO,
+                          {web.arg_type, rcc.arg_type, player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,

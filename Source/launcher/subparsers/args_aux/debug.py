@@ -18,14 +18,13 @@ def _(
     debug_mutex.add_argument(
         '--debug',
         action='store_true',
-        help='Opens an instance of x96dbg and attaches it to the running "%s" binary.' % mode.value
-    )
+        help='Opens an instance of x96dbg and attaches it to the running "%s" binary.' %
+        mode.value)
 
     debug_mutex.add_argument(
         '--debug_all',
         action='store_true',
-        help='Opens instances of x96dbg and attaches them to all running binaries.'
-    )
+        help='Opens instances of x96dbg and attaches them to all running binaries.')
 
 
 @sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS, set())

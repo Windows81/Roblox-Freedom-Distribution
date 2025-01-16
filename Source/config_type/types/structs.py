@@ -28,8 +28,7 @@ class asset_redirect:
         ]) > 1:
             raise Exception(
                 'Entries for `asset_redirects` should not have '
-                'more than one of a `uri`, a pipeable `cmd_line`, or a `raw_data` chunk.'
-            )
+                'more than one of a `uri`, a pipeable `cmd_line`, or a `raw_data` chunk.')
     uri: wrappers.uri_obj | None = None
     raw_data: bytes | None = None
     cmd_line: str | None = None

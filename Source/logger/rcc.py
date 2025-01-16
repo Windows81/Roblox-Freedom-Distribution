@@ -167,7 +167,8 @@ def get_message(text: bytes, filter: filter.filter_type) -> str | None:
         'utf-8', errors='backslashreplace',
     )
 
-    # For cases in 2018M when the log line begins with `[Output] Output:` or `[Error] Error:`.
+    # For cases in 2018M when the log line begins with `[Output] Output:` or
+    # `[Error] Error:`.
     if decoded_line.startswith(f'{rcc_log_type}: '):
         decoded_line = decoded_line[len(rcc_log_type) + 2:]
 

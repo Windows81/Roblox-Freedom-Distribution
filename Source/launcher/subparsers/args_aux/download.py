@@ -36,7 +36,8 @@ def _(
     if not check_mode(mode):
         return []
 
-    # Enables the `auto_download` flag for every routine, but adds no new routines of its own.
+    # Enables the `auto_download` flag for every routine, but adds no new
+    # routines of its own.
     auto_download = not args_ns.skip_download
     for a in args_list:
         if not isinstance(a, DOWNLOADABLE_ARG_SUPERTYPE):

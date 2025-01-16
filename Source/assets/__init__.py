@@ -71,7 +71,8 @@ class asseter:
 
     def resolve_asset_version_id(self, id_str: str | None) -> int | None:
         # Don't assume this is true for production Rōblox:
-        # RFD treats 'asset version ids' the same way as just plain 'version ids'.
+        # RFD treats 'asset version ids' the same way as just plain 'version
+        # ids'.
         return self.resolve_asset_id(id_str)
 
     def resolve_asset_query(self, query: dict[str, str]) -> int | str:
@@ -117,7 +118,10 @@ class asseter:
             return material.load_asset(asset_id)
         return None
 
-    def _load_redir_asset(self, asset_id: int | str, redirect: structs.asset_redirect) -> returns.base_type:
+    def _load_redir_asset(
+            self,
+            asset_id: int | str,
+            redirect: structs.asset_redirect) -> returns.base_type:
         asset_path = self.get_asset_path(asset_id)
 
         # Checks if it's the first time for a redirect to be called.
@@ -172,7 +176,10 @@ class asseter:
         elif isinstance(asset_id, int):
             return returns.construct(data=self._load_asset_num(asset_id))
 
-    def get_asset(self, asset_id: int | str, bypass_blocklist: bool = False) -> returns.base_type:
+    def get_asset(
+            self,
+            asset_id: int | str,
+            bypass_blocklist: bool = False) -> returns.base_type:
         if not bypass_blocklist and self.is_blocklisted(asset_id):
             returns.construct(error='Asset is blocklisted.')
 

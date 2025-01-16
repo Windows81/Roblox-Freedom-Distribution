@@ -4,7 +4,10 @@ import sqlite3
 class sqlite_connector_base:
     TABLE_NAME: str
 
-    def __init__(self, sqlite: sqlite3.Connection, is_first_time: bool) -> None:
+    def __init__(
+            self,
+            sqlite: sqlite3.Connection,
+            is_first_time: bool) -> None:
         self.sqlite = sqlite
         if is_first_time:
             self.drop_existing()

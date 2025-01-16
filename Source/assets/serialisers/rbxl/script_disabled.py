@@ -1,7 +1,8 @@
 from . import _logic
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
+def replace(parser: _logic.rbxl_parser,
+            info: _logic.chunk_info) -> bytes | None:
     if _logic.get_first_chunk_str(info) != b'Enabled':
         return None
 

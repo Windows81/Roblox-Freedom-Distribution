@@ -60,7 +60,8 @@ def _(self: web_server_handler) -> bool:
         })
         return True
 
-    # Returns an error if the thing trying to be accessed isn't the place we're in.
+    # Returns an error if the thing trying to be accessed isn't the place
+    # we're in.
     if asset_id != util.const.PLACE_IDEN_CONST:
         self.send_error(404)
         return True

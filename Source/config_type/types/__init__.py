@@ -12,7 +12,7 @@ def get_type_call(object_type: type) -> Callable:
     if dataclasses.is_dataclass(object_type):
         return type_calls[dataclasses.dataclass]
 
-    if type(object_type) == type(str | None):
+    if isinstance(object_type, type(str | None)):
         return type_calls[Union]
 
     for k in object_type.mro():
@@ -38,7 +38,11 @@ def _type_call_dicter(value: list, data: type_call_data) -> Any:
     return data.typ(item_list)
 
 
-def _type_call_with_config(value, data: type_call_data, *args, **kwargs) -> Any:
+def _type_call_with_config(
+        value,
+        data: type_call_data,
+        *args,
+        **kwargs) -> Any:
     return data.typ(value, data.config, *args, **kwargs)
 
 
@@ -46,7 +50,9 @@ def _type_call_path_str(value, data: type_call_data, *args, **kwargs) -> Any:
     return data.typ(value, data.config.base_dir, *args, **kwargs)
 
 
-def _type_call_rōblox_version(value, data: type_call_data) -> util.versions.rōblox:
+def _type_call_rōblox_version(
+        value,
+        data: type_call_data) -> util.versions.rōblox:
     return util.versions.rōblox.from_name(value)
 
 
@@ -100,7 +106,7 @@ def _type_call_dataclass_as_dict(value, data: type_call_data) -> Callable:
 
 def _type_call_union(value, data: type_call_data) -> Any | None:
     type_args: tuple[type] = data.typ.__args__
-    if type_args[-1] == type(None):
+    if isinstance(None, type_args[-1]):
         type_args = (type_args[-1], *type_args[:-1])
     for sub_typ in type_args:
         try:

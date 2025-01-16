@@ -17,11 +17,13 @@ class queuer:
         self.queued_waiters[key] += 1
         if self.queued_waiters[key] == 1:
             result = func(key)
-            # If this is the first waiter, puts the result in the queue for this key.
+            # If this is the first waiter, puts the result in the queue for
+            # this key.
             for _ in range(self.queued_waiters[key] - 1):
                 self.queued_data[key].put(result)
         else:
-            # If there are already waiters, gets the result from the queue for this key.
+            # If there are already waiters, gets the result from the queue for
+            # this key.
             result = self.queued_data[key].get(block=True)
 
         self.queued_waiters[key] -= 1

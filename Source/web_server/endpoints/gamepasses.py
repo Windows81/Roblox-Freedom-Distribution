@@ -13,7 +13,8 @@ def _(self: web_server_handler) -> bool:
             def check() -> bool:
                 gamepass_id = int(self.query['PassID'])
                 user_id = int(self.query['UserID'])
-                return self.server.storage.gamepasses.check(user_id, gamepass_id) is not None
+                return self.server.storage.gamepasses.check(
+                    user_id, gamepass_id) is not None
 
             self.send_data(bytes(
                 '<Value Type="boolean">' +
@@ -27,7 +28,8 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path(r'/v1/users/(\d+)/items/gamepass/(\d+)', regex=True, commands={'GET'})
+@server_path(r'/v1/users/(\d+)/items/gamepass/(\d+)',
+             regex=True, commands={'GET'})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     https://github.com/SushiDesigner/Meteor-back/blob/dc561b5af196ca9c375530d30d593fc8d7f0486c/routes/marketplace.js#L129

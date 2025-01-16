@@ -38,7 +38,8 @@ class TestAssets(unittest.TestCase):
         # Asserts that the data has been loaded at all.
         self.assertIsNotNone(data)
         assert data is not None
-        # Asserts that the data starts with the PNG header, indicating it is a valid PNG image.
+        # Asserts that the data starts with the PNG header, indicating it is a
+        # valid PNG image.
         self.assertTrue(data.startswith(b'PNG'))
 
     def test_mesh_load(self) -> None:

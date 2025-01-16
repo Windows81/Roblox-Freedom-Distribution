@@ -138,7 +138,8 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                 with open(path, 'r', encoding='utf-8') as f:
                     json_data = json.load(f)
 
-                # 2021E stores the RCC flags in a JSON sub-dictionary named `applicationSettings`.
+                # 2021E stores the RCC flags in a JSON sub-dictionary named
+                # `applicationSettings`.
                 json_data['applicationSettings'] |= new_flags
                 with open(path, 'w', encoding='utf-8') as f:
                     json.dump(json_data, f)
@@ -206,7 +207,8 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         suffix_args: list[str] = []
 
         # There is a chance that RFD can be overwhelmed with processing output.
-        # Removing the `-verbose` flag here will reduce the amount of data piped from RCC.
+        # Removing the `-verbose` flag here will reduce the amount of data
+        # piped from RCC.
         if not self.local_args.log_filter.rcc_logs.is_empty():
             suffix_args.append('-verbose')
 
@@ -280,10 +282,11 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
     @override
     def process(self) -> None:
         logger.log(
-            (
-                f"{logger.bcolors.bcolors.BOLD}[UDP %d]{logger.bcolors.bcolors.ENDC}: initialising Rōblox Cloud Compute" %
-                (self.local_args.rcc_port_num,)
-            ),
+            (f"{
+                logger.bcolors.bcolors.BOLD}[UDP %d]{
+                logger.bcolors.bcolors.ENDC}: initialising Rōblox Cloud Compute" %
+                (self.local_args.rcc_port_num,
+                 )),
             context=logger.log_context.PYTHON_SETUP,
             filter=self.local_args.log_filter,
         )

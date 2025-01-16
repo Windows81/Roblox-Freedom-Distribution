@@ -112,5 +112,4 @@ class obj_type(Generic[P, R]):
             case _:
                 raise Exception(
                     "Config option `%s` doesn't seem to be in a valid format." %
-                    (self.field_path),
-                )
+                    (self.field_path), )
