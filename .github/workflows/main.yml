@@ -92,5 +92,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: "*"
+        tag_name: ${{ github.event.head_commit.id }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
