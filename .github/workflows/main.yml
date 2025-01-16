@@ -25,7 +25,11 @@ jobs:
       shell: bash
       run: |
         export LC_ALL=en_US.utf8
-        echo "version=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")" >> $GITHUB_OUTPUT
+        GIT_COMMIT_ID="${{ github.event.head_commit.id }}"
+        GIT_RELEASE_VERSION=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")
+        UPDATE_TIME=$(echo ${{ github.event.repository.updated_at }} | sed 's/[:-]//g')
+        echo "tag_name=v${GIT_RELEASE_VERSION}-${UPDATE_TIME}" >> $GITHUB_ENV
+        echo "release_name=${GIT_RELEASE_VERSION}-${GIT_COMMIT_ID}" >> $GITHUB_ENV
 
     - name: Set Up Python
       uses: actions/setup-python@v5.3.0
@@ -39,26 +43,7 @@ jobs:
         pip install -r Source/requirements.dev.txt
         pip install requests
 
-    - name: Build EXE (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        echo "Current Path: "
-        echo %cd%
-        echo "Virtual environment activated. Now running pyinstaller."
-        pyinstaller ^
-          --name "RFD-windows" ^
-          --onefile D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/_main.py ^
-          --paths D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/ ^
-          --workpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/PyInstallerWork ^
-          --distpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/dist ^
-          --icon D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/Icon.ico ^
-          --specpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/PyInstallerWork/Spec ^
-          --add-data "D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/*;Source" ^
-          --hidden-import requests
-      shell: cmd
-
-    - name: Build PKG (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+    - name: Build PyInstaller
       run: |
         echo "Virtual environment activated. Now running pyinstaller."
         pyinstaller \
@@ -76,29 +61,28 @@ jobs:
     - name: Compress Executable (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        zip -j  dist/RFD-ubuntu.zip dist/RFD
-        rm dist/RFD
+        zip -j "dist/RFD-${{ matrix.os }}.zip" "dist/RFD"
+        rm "dist/RFD"
+
+    - name: Rename Executable (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        mv "dist/RFD.exe" "dist/RFD-${{ matrix.os }}.exe"
+      shell: bash
 
     - name: Upload Artifact (Windows)
       if: matrix.os == 'windows-latest'
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: RFD-Release-windows
-        path: dist/RFD-windows.exe
-
-    - name: Upload Artifact (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v4.6.0
-      with:
-        name: RFD-Release-ubuntu
-        path: RFD-ubuntu.zip
+        path: "dist/*"
+        name: "RFD-${{ matrix.os }}"
 
     - name: Release with Notes
       uses: softprops/action-gh-release@v1
       with:
         files: "dist/*"
-        name: "${{ steps.version_num.outputs.version }}-${{ github.event.head_commit.id }}"
-        tag_name: "commit-${{ github.event.head_commit.id }}"
+        name: ${{ env.release_name }}
+        tag_name: ${{ env.tag_name }}
         prerelease: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

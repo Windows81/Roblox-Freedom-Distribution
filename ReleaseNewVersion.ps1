@@ -67,7 +67,7 @@ function CreateZippedDirs() {
 
 # Creates a GitHub release with specified files.
 function ReleaseToGitHub() {
-	gh release create "$release_name" --notes "" $files
+	gh release create "${release_name}-manual" --notes "" $files
 }
 
 # Executes selected build mode.
@@ -80,7 +80,6 @@ switch ($mode) {
 		RetrieveInput
 		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION")
 		UpdateAndPush
-		ReleaseToGitHub
 	}
 	'3' {
 		RetrieveInput
