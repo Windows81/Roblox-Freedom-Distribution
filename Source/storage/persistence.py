@@ -32,7 +32,7 @@ class database(_logic.sqlite_connector_base):
     def set(self, scope: str, target: str, key: str, value) -> None:
         value_str = json.dumps(value)
         query = f"""
-        INSERT INTO {self.TABLE_NAME} 
+        INSERT INTO {self.TABLE_NAME}
         (
             {self.field.SCOPE.value},
             {self.field.TARGET.value},
@@ -83,11 +83,13 @@ class database(_logic.sqlite_connector_base):
         params = [scope, key]
 
         if min_value is not None:
-            query += f" AND CAST(JSON_EXTRACT({self.field.VALUE.value}, '$') AS INTEGER) >= ?"
+            query += f" AND CAST(JSON_EXTRACT({
+                self.field.VALUE.value}, '$') AS INTEGER) >= ?"
             params.append(min_value)
 
         if max_value is not None:
-            query += f" AND CAST(JSON_EXTRACT({self.field.VALUE.value}, '$') AS INTEGER) < ?"
+            query += f" AND CAST(JSON_EXTRACT({
+                self.field.VALUE.value}, '$') AS INTEGER) < ?"
             params.append(max_value)
 
         query += f"""

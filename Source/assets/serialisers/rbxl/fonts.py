@@ -55,7 +55,8 @@ FONTS = {
 }
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
+def replace(parser: _logic.rbxl_parser,
+            info: _logic.chunk_info) -> bytes | None:
     old_prop_name = b'\x08\x00\x00\x00FontFace\x20'
     new_prop_name = b'\x04\x00\x00\x00Font\x12'
     if not info.chunk_data.startswith(old_prop_name, _logic.INT_SIZE):
@@ -75,10 +76,11 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
 
     # Fonts (just like all enums) are stored as an interleaved array of big-endian `uint32`s.
     # Why the large string of zeroes?  We're taking advantage of the fact that `Enum.Font` never goes above 256.
-    # Because integers here are big-endian, we put the least significant bytes at the end.
+    # Because integers here are big-endian, we put the least significant bytes
+    # at the end.
     return b''.join([
         class_id,
         new_prop_name,
-        b'\x00'*len(new_values)*3,
+        b'\x00' * len(new_values) * 3,
         *new_values,
     ])

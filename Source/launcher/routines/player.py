@@ -18,7 +18,8 @@ class obj_type(logic.bin_ssl_entry):
 
     def retr_version(self) -> util.versions.rōblox:
         res = self.local_args.send_request('/rfd/roblox-version')
-        return util.versions.rōblox.from_name(str(res.read(), encoding='utf-8'))
+        return util.versions.rōblox.from_name(
+            str(res.read(), encoding='utf-8'))
 
     def save_app_setting(self) -> str:
         '''
@@ -61,7 +62,10 @@ class obj_type(logic.bin_ssl_entry):
 
 
 @dataclasses.dataclass
-class arg_type(logic.bin_ssl_arg_type, logic.loggable_arg_type, logic.host_arg_type):
+class arg_type(
+        logic.bin_ssl_arg_type,
+        logic.loggable_arg_type,
+        logic.host_arg_type):
     obj_type = obj_type
 
     rcc_host: str

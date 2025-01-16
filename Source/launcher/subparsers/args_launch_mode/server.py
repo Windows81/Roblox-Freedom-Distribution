@@ -20,14 +20,18 @@ def subparse(
 
     place_thing = subparser.add_mutually_exclusive_group(required=False)
     place_thing.add_argument(
-        '--config_path', '--config', '-cp',
+        '--config_path',
+        '--config',
+        '-cp',
         type=str,
         nargs='?',
         default=util.resource.DEFAULT_CONFIG_PATH,
         help='Game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up.',
     )
     place_thing.add_argument(
-        '--place_path', '--place', '-pl',
+        '--place_path',
+        '--place',
+        '-pl',
         type=str,
         nargs='?',
         default=None,
@@ -48,7 +52,9 @@ def subparse(
         help='Port number for the web server to run from.',
     )
     subparser.add_argument(
-        '--run_client', '-rc', '--run_player',
+        '--run_client',
+        '-rc',
+        '--run_player',
         action='store_true',
         help='Runs an instance of the player immediately after starting the server.',
     )
@@ -66,8 +72,13 @@ def subparse(
         help='Suppresses console output.',
     )
     subparser.add_argument(
-        '--rcc_log_options', '--rcc_log', '-log',
-        type=str, nargs='*', default=None, choices=logger.flog_table.LOG_LEVEL_LIST,
+        '--rcc_log_options',
+        '--rcc_log',
+        '-log',
+        type=str,
+        nargs='*',
+        default=None,
+        choices=logger.flog_table.LOG_LEVEL_LIST,
         help='Filter list for which FLog types to print in RCC.',
         metavar='FLog',
     )
@@ -90,7 +101,8 @@ def subparse(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.SERVER, {web.arg_type, rcc.arg_type, player.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.SERVER,
+                          {web.arg_type, rcc.arg_type, player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
@@ -157,7 +169,8 @@ def _(
     if not args.skip_web:
         routine_args.extend([
             web.arg_type(
-                # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
+                # IPv6 goes first since `localhost` also resolves first to
+                # [::1] on the client.
                 web_ports=web_port_servers,
                 server_mode=server_mode.RCC,
                 log_filter=log_filter,
@@ -187,7 +200,8 @@ def _(
                 web_port=web_port_ipv4,
                 user_code=args.user_code,
                 log_filter=log_filter,
-                # Some CoreGUI elements don't render properly if we join too early.
+                # Some CoreGUI elements don't render properly if we join too
+                # early.
                 launch_delay=3,
             ),
         ])

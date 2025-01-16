@@ -61,7 +61,10 @@ class bin_ssl_arg_type(bin_arg_type):
     web_host: str
     web_port: web_server_logic.port_typ
 
-    def send_request(self, path: str, timeout: float = 30) -> http.client.HTTPResponse:
+    def send_request(
+            self,
+            path: str,
+            timeout: float = 30) -> http.client.HTTPResponse:
         assert self.web_port.port_num is not None
         try:
             return urllib.request.urlopen(
@@ -100,7 +103,8 @@ class host_arg_type(arg_type):
 
         elif self.web_host and ':' in self.web_host:
             # The ".ipv6-literal.net" replacement only works on Windows and might not translate well on Wine.
-            # It's strictly necessary for 2021E because some CoreGUI stuff will crash if the BaseUrl doesn't have a dot in it.
+            # It's strictly necessary for 2021E because some CoreGUI stuff will
+            # crash if the BaseUrl doesn't have a dot in it.
             unc_ip_str = (
                 self.web_host
                 .replace(':', '-')
@@ -196,8 +200,12 @@ class ver_entry(entry):
         '''
         raise NotImplementedError()
 
-    def get_versioned_path(self, bin_type: util.resource.bin_subtype, *paths: str) -> str:
-        return util.resource.retr_rōblox_full_path(self.rōblox_version, bin_type, *paths)
+    def get_versioned_path(
+            self,
+            bin_type: util.resource.bin_subtype,
+            *paths: str) -> str:
+        return util.resource.retr_rōblox_full_path(
+            self.rōblox_version, bin_type, *paths)
 
 
 class loggable_entry(entry):

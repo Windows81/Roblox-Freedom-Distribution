@@ -170,7 +170,7 @@ def get_first_chunk_str(info: chunk_info) -> bytes | None:
         byteorder='little',
     )
     str_start = 8
-    return info.chunk_data[str_start:str_start+str_size]
+    return info.chunk_data[str_start:str_start + str_size]
 
 
 def get_prop_values(info: chunk_info) -> bytes | None:
@@ -185,7 +185,7 @@ def get_prop_values(info: chunk_info) -> bytes | None:
         byteorder='little',
     )
     str_start = 8
-    return info.chunk_data[str_start+str_size+1:]
+    return info.chunk_data[str_start + str_size + 1:]
 
 
 def get_type_id(info: chunk_info) -> int | None:
@@ -216,7 +216,7 @@ def get_instance_count(info: chunk_info) -> int | None:
     )
     prop_start = 8 + str_size + 1
     return int.from_bytes(
-        info.chunk_data[prop_start:prop_start+4],
+        info.chunk_data[prop_start:prop_start + 4],
         byteorder='little',
     )
 

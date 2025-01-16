@@ -14,7 +14,8 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 def _(self: web_server_handler) -> bool:
     database = self.server.storage.players
 
-    # Manually parsing here since `self.query` isn't automatically populated prior.
+    # Manually parsing here since `self.query` isn't automatically populated
+    # prior.
     field_data = str(self.read_content(), encoding='utf-8')
     self.query = dict(urllib.parse.parse_qsl(field_data))
 

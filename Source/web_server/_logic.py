@@ -107,10 +107,12 @@ class web_server(http.server.ThreadingHTTPServer):
         self.log_filter = log_filter
 
         logger.log(
-            (
-                f"{logger.bcolors.bcolors.BOLD}[TCP %d %s]{logger.bcolors.bcolors.ENDC}: initialising webserver" %
-                (port.port_num, 'IPv6' if port.is_ipv6 else 'IPv4',)
-            ),
+            (f"{
+                logger.bcolors.bcolors.BOLD}[TCP %d %s]{
+                logger.bcolors.bcolors.ENDC}: initialising webserver" %
+                (port.port_num,
+                 'IPv6' if port.is_ipv6 else 'IPv4',
+                 )),
             context=logger.log_context.PYTHON_SETUP,
             filter=log_filter,
         )
@@ -204,10 +206,12 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         assert isinstance(self.url, str)
         self.url_split = parse.urlsplit(self.url)
 
-        # Optimised for query values which may contain more than one of the same field.
+        # Optimised for query values which may contain more than one of the
+        # same field.
         self.query_lists = parse.parse_qs(self.url_split.query)
 
-        # Optimised for quick access for query indicies which only show up once.
+        # Optimised for quick access for query indicies which only show up
+        # once.
         self.query = {
             i: v[0]
             for i, v in self.query_lists.items()

@@ -43,15 +43,19 @@ class obj_type(structure.config_type, _logic.base_type):
 
 
 @functools.cache
-def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
+def get_cached_config(
+        path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
     file_path = util.resource.retr_config_full_path(path)
     with open(file_path, 'rb') as f:
         return obj_type(tomllib.load(f), base_dir=os.path.dirname(file_path))
 
 
 @functools.cache
-def generate_config(rbxl_file: str, version: util.versions.rōblox = util.versions.rōblox.v463) -> obj_type:
-    # The dictionary structure should adjust with changes to the `structure.py` file.
+def generate_config(
+        rbxl_file: str,
+        version: util.versions.rōblox = util.versions.rōblox.v463) -> obj_type:
+    # The dictionary structure should adjust with changes to the
+    # `structure.py` file.
     skeleton = {
         'server_core': {'place_file': {'rbxl_uri': rbxl_file}},
         'game_setup': {'roblox_version': version.name},

@@ -1,4 +1,5 @@
-# Much of this script is from https://github.com/begleysm/ipwatch/blob/master/ipgetter.py.
+# Much of this script is from
+# https://github.com/begleysm/ipwatch/blob/master/ipgetter.py.
 import functools
 import os
 import urllib.request
@@ -60,13 +61,15 @@ def get_external_ips(server_list: list[str]) -> list[str]:
     for _ in range(7):
         server = random.choice(server_list)
         address = fetch(server)
-        if address != None:
+        if address is not None:
             return [address.rstrip()]
     return []
 
 
-# From https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib
-def get_local_ips(mode: socket.AddressFamily, addr: tuple[str, int]) -> list[str]:
+# From
+# https://stackoverflow.com/questions/166506/finding-local-ip-addresses-using-pythons-stdlib
+def get_local_ips(mode: socket.AddressFamily,
+                  addr: tuple[str, int]) -> list[str]:
     with socket.socket(mode, socket.SOCK_DGRAM) as s:
         try:
             # Address doesn't have to be reachable.

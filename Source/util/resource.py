@@ -50,7 +50,8 @@ def get_path_pieces(d: dir_type) -> list[str]:
         case (False, dir_type.RŌBLOX):
             return [get_top_dir(), 'Roblox']
 
-        # If running from `exe`, stores TLS certiifcates in a temporary directory.
+        # If running from `exe`, stores TLS certiifcates in a temporary
+        # directory.
         case (True, dir_type.SSL):
             return [getattr(sys, '_MEIPASS', '')]
         case (False, dir_type.SSL):
@@ -83,8 +84,15 @@ def retr_full_path(d: dir_type, *paths: str) -> str:
     return full_path
 
 
-def retr_rōblox_full_path(version: util.versions.rōblox, bin_type: bin_subtype, *paths: str) -> str:
-    return retr_full_path(dir_type.RŌBLOX, version.name, bin_type.value, *paths)
+def retr_rōblox_full_path(
+        version: util.versions.rōblox,
+        bin_type: bin_subtype,
+        *paths: str) -> str:
+    return retr_full_path(
+        dir_type.RŌBLOX,
+        version.name,
+        bin_type.value,
+        *paths)
 
 
 def retr_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:

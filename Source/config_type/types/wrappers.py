@@ -24,7 +24,8 @@ class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
     # https://stackoverflow.com/a/71720366
     def __init_subclass__(cls) -> None:
         # `typed_base` should be something like `dicter[config.types.structs.gamepass, int]`.
-        # We're extracting the generic types which `__init__` will cast the input values into.
+        # We're extracting the generic types which `__init__` will cast the
+        # input values into.
         typed_base = next(
             c
             for c in getattr(cls, '__orig_bases__', [])

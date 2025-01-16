@@ -34,7 +34,8 @@ class obj_type:
             args=call_args,
         ))
 
-        # Waits for the result to be passed in, then deletes the container to save memory.
+        # Waits for the result to be passed in, then deletes the container to
+        # save memory.
         result = temp_queue.get(block=True)
         del self.output_dict[guid]
         return result
@@ -45,7 +46,7 @@ class obj_type:
             try:
                 item = self.input_queue.get(
                     block=True,
-                    timeout=30 if i == 0 else 1/30,
+                    timeout=30 if i == 0 else 1 / 30,
                 )
             except queue.Empty:
                 break

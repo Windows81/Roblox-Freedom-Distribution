@@ -21,8 +21,13 @@ class annotation:
 
 
 class obj_type:
-    def serialise_object(self, path: str, key: str, typ: type, rep: Any) -> Any:
-        if type(rep) == typ:
+    def serialise_object(
+            self,
+            path: str,
+            key: str,
+            typ: type,
+            rep: Any) -> Any:
+        if isinstance(rep, typ):
             return rep
         type_call = get_type_call(typ)
         return type_call(
@@ -70,7 +75,8 @@ class obj_type:
         path_prefix: str = '',
         **kwargs,
     ) -> None:
-        # Iterates through sub-sections; makes recursive calls to this `__init__`.
+        # Iterates through sub-sections; makes recursive calls to this
+        # `__init__`.
         self.subsections = [
             subsection(
                 key,
@@ -90,7 +96,8 @@ class obj_type:
         for sub in self.subsections:
             setattr(self, sub.key, sub.val)
 
-        # Creates `annotation` objects through individual settings in this section.
+        # Creates `annotation` objects through individual settings in this
+        # section.
         self.annotations = [
             annotation(
                 key=key,

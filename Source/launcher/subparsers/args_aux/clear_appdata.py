@@ -6,6 +6,7 @@ import argparse
 
 CACHEABLE_ARG_SUPERTYPE = logic.bin_arg_type
 
+
 @functools.cache
 def check_mode(mode: sub_logic.launch_mode) -> bool:
     return CACHEABLE_ARG_SUPERTYPE in sub_logic.SERIALISE_TYPE_SETS[mode]
@@ -27,7 +28,8 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS, {clear_appdata.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS,
+                          {clear_appdata.arg_type})
 def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,

@@ -7,14 +7,17 @@ import util.ssl
 import json
 
 
-def init_player(self: web_server_handler, user_code: str) -> tuple[str, int, str] | None:
+def init_player(self: web_server_handler,
+                user_code: str) -> tuple[str, int, str] | None:
     config = self.game_config
 
-    # Very hacky to call `send_error` when the webserver will later call `send_json`.
+    # Very hacky to call `send_error` when the webserver will later call
+    # `send_json`.
     if user_code is None:
         return None
 
-    # Keeps generating an iden number until it finds one that is not yet in the database.
+    # Keeps generating an iden number until it finds one that is not yet in
+    # the database.
     while True:
         id_num = config.server_core.retrieve_user_id(user_code)
 
@@ -34,7 +37,8 @@ def init_player(self: web_server_handler, user_code: str) -> tuple[str, int, str
 
     (user_code, id_num, username) = result
 
-    # The player's fund balance is only affected if they're joining for the first time.
+    # The player's fund balance is only affected if they're joining for the
+    # first time.
     self.server.storage.funds.first_init(
         id_num, config.server_core.retrieve_default_funds(id_num, user_code),
     )
@@ -61,7 +65,8 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     rcc_port = int(query_args.get('rcc-port'))
     user_code = query_args.get('user-code')
 
-    # Very hacky to call `send_error` when the webserver will later call `send_json`.
+    # Very hacky to call `send_error` when the webserver will later call
+    # `send_json`.
     result = init_player(self, user_code)
     if result is None:
         self.send_error(403)
@@ -102,7 +107,8 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     }
 
     # NOTE: the `SessionId` is saved as an HTTPS header `Roblox-Session-Id` for later requests.
-    # I'm placing the information which was passed into `join.ashx` here for simplicity.
+    # I'm placing the information which was passed into `join.ashx` here for
+    # simplicity.
     join_data |= {
         'SessionId': json.dumps(join_data | query_args)
     }
