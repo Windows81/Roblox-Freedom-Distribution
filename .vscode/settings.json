@@ -7,4 +7,5 @@
 		"./Source",
 	],
 	"stylua.targetReleaseVersion": "latest",
+	"python.languageServer": "None",
 }

@@ -68,14 +68,14 @@ To install _from source_, run:
 
 ```
 git clone --depth 1 https://github.com/Windows81/Roblox-Freedom-Distribution rfd
-cd rfd
-pip install -r ./Source/requirements.txt
+cd rfd/Source
+pip install -e .
 ```
 
 To launch RFD, your command line will look something like this:
 
 ```
-py Source/_main.py player -h 127.0.0.1 -p 2005
+py _main.py player -h 127.0.0.1 -p 2005
 ```
 
 ## Command Syntax

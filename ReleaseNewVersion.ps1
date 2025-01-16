@@ -42,7 +42,7 @@ function CreateBinary() {
 }
 
 # Updates version number in const.py file.
-function UpdateZippedReleaseVersion($labels) {
+function UpdateConstReleaseVersion($labels) {
 	$const_file = "$root/Source/util/const.py"
 	$const_txt = (Get-Content $const_file) | ForEach-Object {
 		$r = $_
@@ -52,6 +52,13 @@ function UpdateZippedReleaseVersion($labels) {
 		return $r
 	}
 	$const_txt | Set-Content $const_file
+}
+
+function UpdatePyProjectVersion() {
+	$project_file = "$root/pyproject.toml"
+	(Get-Content $project_file) | ForEach-Object {
+		return $_ -replace "version =.+", "version = `"$script:release_name`""
+	} | Set-Content $project_file
 }
 
 # Creates zipped directories for Roblox files.
@@ -83,14 +90,16 @@ switch ($mode) {
 	}
 	'2' {
 		RetrieveInput
-		UpdateZippedReleaseVersion @("GIT_RELEASE_VERSION")
+		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION")
+		UpdatePyProjectVersion
 		UpdateAndPush
 		CreateBinary
 		ReleaseToGitHub
 	}
 	'3' {
 		RetrieveInput
-		UpdateZippedReleaseVersion @("GIT_RELEASE_VERSION", "ZIPPED_RELEASE_VERSION")
+		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION", "ZIPPED_RELEASE_VERSION")
+		UpdatePyProjectVersion
 		UpdateAndPush
 		CreateBinary
 		CreateZippedDirs
