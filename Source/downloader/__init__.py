@@ -1,3 +1,4 @@
+from ntpath import isfile
 import shutil
 import tqdm_vendored as tqdm
 import py7zr.exceptions
@@ -55,8 +56,10 @@ def should_overwrite(full_dir: str) -> bool:
     rfd_ver_path = os.path.join(
         full_dir, 'rfd_version',
     )
+    if not os.path.isfile(rfd_ver_path):
+        return True
     with open(rfd_ver_path, 'r') as f:
-        return f.read().startswith(util.const.ZIPPED_RELEASE_VERSION)
+        return not f.read().startswith(util.const.ZIPPED_RELEASE_VERSION)
 
 
 def bootstrap_binary(

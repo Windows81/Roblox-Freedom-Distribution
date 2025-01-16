@@ -1,8 +1,8 @@
 # Prompt user to select build mode
 $mode = (Read-Host @"
-1. Build EXE
-2. Build EXE and publish artefacts
-3. Build EXE and ZIP, then publish artefacts
+1. Update version
+2. Update version then push
+3. Zip binaries, update version, then push
 "@)
 
 # Defines root directory.
@@ -23,22 +23,6 @@ function UpdateAndPush() {
 	git add .
 	git commit -m $script:commit_name
 	git push
-}
-
-# Builds RFD.exe using PyInstaller.
-function CreateBinary() {
-	pyinstaller `
-		--name "RFD" `
-		--onefile "$root/Source/_main.py" `
-		--paths "$root/Source/" `
-		--workpath "$root/PyInstallerWork" `
-		--distpath "$root" `
-		--icon "$root/Source/Icon.ico" `
-		--specpath "$root/PyInstallerWork/Spec" `
-		--add-data "$root/Source/*:./Source" `
-		--hidden-import requests # Allows functions in config to use the `requests` library (1 MiB addition).
-
-	$files.Add("$root/RFD.exe")
 }
 
 # Updates version number in const.py file.
@@ -89,21 +73,20 @@ function ReleaseToGitHub() {
 # Executes selected build mode.
 switch ($mode) {
 	'1' {
-		CreateBinary
+		RetrieveInput
+		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION")
 	}
 	'2' {
 		RetrieveInput
 		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION")
 		UpdateAndPush
-		CreateBinary
 		ReleaseToGitHub
 	}
 	'3' {
 		RetrieveInput
 		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION", "ZIPPED_RELEASE_VERSION")
-		UpdateAndPush
-		CreateBinary
 		CreateZippedDirs
+		UpdateAndPush
 		ReleaseToGitHub
 	}
 	Default {}

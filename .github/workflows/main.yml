@@ -46,7 +46,7 @@ jobs:
         echo %cd%
         echo "Virtual environment activated. Now running pyinstaller."
         pyinstaller ^
-          --name "RFD" ^
+          --name "RFD-windows" ^
           --onefile D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/_main.py ^
           --paths D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/Source/ ^
           --workpath D:/a/Roblox-Freedom-Distribution/Roblox-Freedom-Distribution/PyInstallerWork ^
@@ -84,7 +84,7 @@ jobs:
       uses: actions/upload-artifact@v4.6.0
       with:
         name: RFD-Release-windows
-        path: dist/RFD.exe
+        path: dist/RFD-windows.exe
 
     - name: Upload Artifact (Ubuntu)
       if: matrix.os == 'ubuntu-latest'

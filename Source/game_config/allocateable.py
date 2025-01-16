@@ -20,15 +20,24 @@ class annotation:
     val: Any
 
 
+def is_repr(rep, typ: type):
+    try:
+        return isinstance(rep, typ)
+    except TypeError:
+        return False
+
+
 class obj_type:
     def serialise_object(
-            self,
-            path: str,
-            key: str,
-            typ: type,
-            rep: Any) -> Any:
-        if isinstance(rep, typ):
+        self,
+        path: str,
+        key: str,
+        typ: type,
+        rep: Any
+    ) -> Any:
+        if is_repr(rep, typ):
             return rep
+
         type_call = get_type_call(typ)
         return type_call(
             rep,
