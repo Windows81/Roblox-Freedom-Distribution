@@ -24,7 +24,8 @@ jobs:
       id: version_num
       shell: bash
       run: |
-        LC_ALL=en_US.utf8 echo "version=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")" >> $GITHUB_OUTPUT
+        export LC_ALL=en_US.utf8
+        echo "version=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")" >> $GITHUB_OUTPUT
 
     - name: Set Up Python
       uses: actions/setup-python@v5.3.0
