@@ -20,18 +20,15 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    - name: Get Version Number 
+      id: version_num
+      run: |
+        echo "LC_ALL=en_US.utf8 version=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")" >> $GITHUB_OUTPUT
+
     - name: Set Up Python
       uses: actions/setup-python@v5.3.0
       with:
         python-version: '3.13'
-
-    - name: Create Virtual Environment
-      run: python -m venv venv
-
-    - name: Get Version Number
-      id: version_num
-      run: |
-        echo "version=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")" >> $GITHUB_OUTPUT
 
     - name: Install Dependencies
       run: |
