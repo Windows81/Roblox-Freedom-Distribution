@@ -151,3 +151,53 @@ def _(self: web_server_handler) -> bool:
         "ExclusiveStartKey": next_key
     }})
     return True
+
+
+@server_path('/persistence/increment')  # Usually expects POST.
+def _(self: web_server_handler) -> bool:
+    """
+    Handles incrementing numeric values in the persistence storage.
+    Supports both standard and sorted data types.
+    """
+    database = self.server.storage.persistence
+
+    # Get required parameters
+    scope = self.query.get('scope', 'global')
+    target = self.query['target']
+    key = self.query['key']
+    data_type = self.query['type']
+
+    try:
+        increment_value = int(self.query.get('value', 1))
+    except (TypeError, ValueError):
+        self.send_json(
+            {"data": [], "message": "Increment value must be an integer"})
+        return True
+
+    if not all([target, key]):
+        self.send_json({"data": [], "message": "Missing required parameters"})
+        return True
+
+    # Get current value
+    current_value = database.get(scope, target, key)
+
+    try:
+        if current_value is None:
+            new_value = increment_value
+        else:
+            if isinstance(current_value, str):
+                current_value = int(current_value)
+            new_value = current_value + increment_value
+    except (TypeError, ValueError):
+        self.send_json(
+            {"data": [], "message": "Current value is not an integer"})
+        return True
+
+    if data_type != "sorted":
+        new_value = str(new_value)
+
+    # Stores the new value.
+    database.set(scope, target, key, new_value)
+
+    self.send_json({"data": new_value})
+    return True

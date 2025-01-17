@@ -33,7 +33,7 @@ In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Con
 
 RFD is natively supported on Windows and somewhat works on GNU/Linux systems with `wine`. No plans for native MacOS support so far.
 
-### As an [Executable](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe)
+### As an Executable
 
 This is good for if you want to deploy quickly on any machine _with_ connection to the internet.
 
@@ -44,7 +44,7 @@ To install _as an executable_, run:
 ```
 mkdir rfd
 cd rfd
-curl https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe --output RFD.exe
+curl https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD-windows-latest.exe --output RFD.exe
 ```
 
 To launch RFD, your command line will look something like this:

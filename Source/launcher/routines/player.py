@@ -8,7 +8,6 @@ import urllib.error
 import dataclasses
 import util.const
 import logger
-import ctypes
 import time
 
 
@@ -63,9 +62,10 @@ class obj_type(logic.bin_ssl_entry):
 
 @dataclasses.dataclass
 class arg_type(
-        logic.bin_ssl_arg_type,
-        logic.loggable_arg_type,
-        logic.host_arg_type):
+    logic.bin_ssl_arg_type,
+    logic.loggable_arg_type,
+    logic.host_arg_type
+):
     obj_type = obj_type
 
     rcc_host: str

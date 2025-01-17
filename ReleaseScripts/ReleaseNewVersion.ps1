@@ -1,4 +1,10 @@
-# Prompt user to select build mode
+# Checks if the appropriate software is installed.
+if ($null -eq (Get-Command "gh.exe" -ErrorAction SilentlyContinue)) {
+	Write-Output "You need to install `gh`!"
+	return
+}
+
+# Prompts user to select build mode.
 $mode = (Read-Host @"
 1. Update version string
 2. Update version string then create new commit
@@ -69,7 +75,7 @@ function CreateZippedDirs() {
 
 # Creates a GitHub release with specified files.
 function ReleaseToGitHub() {
-	gh release create "${release_name}" --title "${release_name} Binaries" --notes "" $files
+	gh release create $release_name --notes "" $files --prerelease
 }
 
 # Executes selected build mode.

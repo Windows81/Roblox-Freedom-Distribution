@@ -4,6 +4,7 @@ import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
 from web_server._logic import port_typ
 import argparse
+import logger
 
 
 @sub_logic.add_args(sub_logic.launch_mode.PLAYER)
@@ -50,6 +51,11 @@ def _(
         nargs='?',
         default=None,
     )
+    subparser.add_argument(
+        '--quiet', '-q',
+        action='store_true',
+        help='Suppresses console output.',
+    )
 
 
 @sub_logic.serialise_args(sub_logic.launch_mode.PLAYER, {player.arg_type})
@@ -68,6 +74,10 @@ def _(
     if args.rcc_port is None:
         args.rcc_port = args.web_port or 2005
 
+    log_filter = logger.filter.filter_type(
+        other_logs=not args.quiet,
+    )
+
     return [
         player.arg_type(
             rcc_host=args.rcc_host,
@@ -78,5 +88,6 @@ def _(
                 is_ssl=True,
             ),
             user_code=args.user_code,
+            log_filter=log_filter,
         ),
     ]

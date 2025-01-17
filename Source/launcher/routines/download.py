@@ -20,9 +20,10 @@ class obj_type(logic.bin_entry, logic.loggable_entry):
     local_args: _arg_type
 
     def __init__(
-            self,
-            rōblox_version: util.versions.rōblox,
-            bin_subtype: str) -> None:
+        self,
+        rōblox_version: util.versions.rōblox,
+        bin_subtype: str
+    ) -> None:
         super().__init__()
         self.rōblox_version = rōblox_version
         self.bin_subtype = bin_subtype
