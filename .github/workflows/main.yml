@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - 'Source/**'
+      - "Source/**"
   pull_request:
     branches:
       - main
     paths:
-      - 'Source/**'
+      - "Source/**"
 
 jobs:
   build-and-compress:
@@ -21,72 +21,72 @@ jobs:
       fail-fast: false # Allows jobs to fail independently
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Get Version Number 
-      id: version_num
-      shell: bash
-      run: |
-        export LC_ALL=en_US.utf8
-        GIT_COMMIT_ID="${{ github.event.head_commit.id }}"
-        GIT_RELEASE_VERSION=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")
-        UPDATE_TIME=$(echo ${{ github.event.repository.updated_at }} | sed 's/[:-]//g')
-        echo "tag_name=v${GIT_RELEASE_VERSION}-${UPDATE_TIME}" >> $GITHUB_ENV
-        echo "release_name=${GIT_RELEASE_VERSION}-${GIT_COMMIT_ID}" >> $GITHUB_ENV
+      - name: Get Version Number
+        id: version_num
+        shell: bash
+        run: |
+          export LC_ALL=en_US.utf8
+          GIT_COMMIT_ID="${{ github.event.head_commit.id }}"
+          GIT_RELEASE_VERSION=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")
+          UPDATE_TIME=$(echo ${{ github.event.repository.updated_at }} | sed 's/[:-]//g')
+          echo "tag_name=v${GIT_RELEASE_VERSION}-${UPDATE_TIME}" >> $GITHUB_ENV
+          echo "release_name=${GIT_RELEASE_VERSION} (${GIT_COMMIT_ID})" >> $GITHUB_ENV
 
-    - name: Set Up Python
-      uses: actions/setup-python@v5.3.0
-      with:
-        python-version: '3.13'
+      - name: Set Up Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: "3.13"
 
-    - name: Install Dependencies
-      run: |
-        pip install --upgrade pip
-        pip install -r Source/requirements.txt
-        pip install -r Source/requirements.dev.txt
-        pip install requests
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r Source/requirements.txt
+          pip install -r Source/requirements.dev.txt
+          pip install requests
 
-    - name: Build PyInstaller
-      run: |
-        echo "Virtual environment activated. Now running pyinstaller."
-        pyinstaller \
-          --name "RFD" \
-          --onefile $GITHUB_WORKSPACE/Source/_main.py \
-          --paths $GITHUB_WORKSPACE/Source/ \
-          --workpath $GITHUB_WORKSPACE/PyInstallerWork \
-          --distpath $GITHUB_WORKSPACE/dist \
-          --icon $GITHUB_WORKSPACE/Source/Icon.ico \
-          --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
-          --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
-          --hidden-import requests
-      shell: bash
+      - name: Build PyInstaller
+        run: |
+          echo "Virtual environment activated. Now running pyinstaller."
+          pyinstaller \
+            --name "RFD" \
+            --onefile $GITHUB_WORKSPACE/Source/_main.py \
+            --paths $GITHUB_WORKSPACE/Source/ \
+            --workpath $GITHUB_WORKSPACE/PyInstallerWork \
+            --distpath $GITHUB_WORKSPACE/dist \
+            --icon $GITHUB_WORKSPACE/Source/Icon.ico \
+            --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
+            --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
+            --hidden-import requests
+        shell: bash
 
-    - name: Compress Executable (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        zip -j "dist/RFD-${{ matrix.os }}.zip" "dist/RFD"
-        rm "dist/RFD"
+      - name: Compress Executable (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          zip -j "dist/RFD-${{ matrix.os }}.zip" "dist/RFD"
+          rm "dist/RFD"
 
-    - name: Rename Executable (Windows)
-      if: matrix.os == 'windows-latest'
-      run: |
-        mv "dist/RFD.exe" "dist/RFD-${{ matrix.os }}.exe"
-      shell: bash
+      - name: Rename Executable (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mv "dist/RFD.exe" "dist/RFD-${{ matrix.os }}.exe"
+        shell: bash
 
-    - name: Upload Artifact (Windows)
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v4.6.0
-      with:
-        path: "dist/*"
-        name: "RFD-${{ matrix.os }}"
+      - name: Upload Artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          path: "dist/*"
+          name: "RFD-${{ matrix.os }}"
 
-    - name: Release with Notes
-      uses: softprops/action-gh-release@v1
-      with:
-        files: "dist/*"
-        name: ${{ env.release_name }}
-        tag_name: ${{ env.tag_name }}
-        prerelease: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release with Notes
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "dist/*"
+          name: ${{ env.release_name }}
+          tag_name: ${{ env.tag_name }}
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

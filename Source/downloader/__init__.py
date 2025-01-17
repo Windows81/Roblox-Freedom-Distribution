@@ -14,8 +14,9 @@ import os
 
 
 def get_remote_link(
-        rōblox_version: util.versions.rōblox,
-        bin_type: util.resource.bin_subtype) -> str:
+    rōblox_version: util.versions.rōblox,
+    bin_type: util.resource.bin_subtype
+) -> str:
     return util.const.ZIPPED_RELEASE_LINK_FORMAT % (
         util.const.ZIPPED_RELEASE_VERSION,
         rōblox_version.name,
