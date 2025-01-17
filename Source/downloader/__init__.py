@@ -73,6 +73,10 @@ def bootstrap_binary(
 
     if os.path.isdir(full_dir):
         if should_overwrite(full_dir):
+            input(
+                'RFD will overwrite a directory in `./Roblox`.  ' +
+                'Press Enter to continue.'
+            )
             shutil.rmtree(full_dir)
         else:
             logger.log(

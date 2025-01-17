@@ -1,12 +1,16 @@
-name: Build and Compress EXE and Compile Stuff
+name: Build
 
 on:
   push:
     branches:
       - main
-    tags:
-      - v
+    paths:
+      - 'Source/**'
   pull_request:
+    branches:
+      - main
+    paths:
+      - 'Source/**'
 
 jobs:
   build-and-compress:

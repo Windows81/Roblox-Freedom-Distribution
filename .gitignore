@@ -3,6 +3,8 @@
 !.vscode/
 !Guides/
 !Guides/**
+!ReleaseScripts/
+!ReleaseScripts/**
 !Source/
 !Source/**
 !Examples/
