@@ -1,5 +1,6 @@
 import web_server._logic as web_server_logic
 from . import _logic as logic
+from typing import override
 import urllib.request
 import util.resource
 import util.versions
@@ -15,6 +16,7 @@ class obj_type(logic.bin_ssl_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.PLAYER
 
+    @override
     def retr_version(self) -> util.versions.rōblox:
         res = self.local_args.send_request('/rfd/roblox-version')
         return util.versions.rōblox.from_name(
@@ -35,6 +37,7 @@ class obj_type(logic.bin_ssl_entry):
             ]))
         return path
 
+    @override
     def process(self) -> None:
         self.save_app_setting()
         self.save_ssl_cert(
@@ -81,7 +84,7 @@ class arg_type(
 
     def finalise_user_code(self) -> None:
         '''
-        This method is seaprate from `sanitise` because
+        This method is separate from `sanitise` because
         it needs to be executed after `launch_delay` seconds.
         The `sanitise` method gets executed before that delay.
         '''
@@ -90,12 +93,14 @@ class arg_type(
         res = self.send_request('/rfd/default-user-code')
         self.user_code = str(res.read(), encoding='utf-8')
 
+    @override
     def get_base_url(self) -> str:
         return (
             f'http{"s" if self.web_port.is_ssl else ""}://' +
             f'{self.web_host}:{self.web_port.port_num}'
         )
 
+    @override
     def get_app_base_url(self) -> str:
         return (
             f'http{"s" if self.web_port.is_ssl else ""}://' +

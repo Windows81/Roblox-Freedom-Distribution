@@ -13,9 +13,6 @@ def _(self: web_server_handler) -> bool:
     form_data = dict(urllib.parse.parse_qsl(form_content))
     database = self.server.storage.persistence
 
-    # TODO: implement sorted data stores.
-    data_type = self.query.get('type')
-
     scope = self.query.get('scope', 'global')
     target = self.query['target']
     key = self.query['key']
@@ -39,6 +36,7 @@ def _(self: web_server_handler) -> bool:
     database = self.server.storage.persistence
 
     return_data = []
+    starting_count = 0
     for starting_count in itertools.count(0):
         prefix = "qkeys[%d]" % starting_count
         scope = form_data.get(
@@ -68,9 +66,6 @@ def _(self: web_server_handler) -> bool:
             "Target": target,
         })
 
-    # TODO: implement sorted data stores.
-    data_type = self.query.get('type')
-
     if starting_count == 0:
         self.send_json({"data": [], "message": "No data being requested"})
         return True
@@ -84,36 +79,27 @@ def _(self: web_server_handler) -> bool:
     """
     Handles retrieval of sorted data from the persistence storage with pagination.
     """
-    # Parse query parameters
-    place_iden = int(self.query.get("placeId", 0))
     data_type = self.query.get("type", None)
     scope = self.query.get("scope", "global")
-    page_size = int(self.query.get("pageSize", 50))
+    key = self.query['key']
+
     exclusive_start_key = int(self.query.get("exclusiveStartKey", 1))
-    key = self.query.get("key", '')
-    ascending = self.query.get("ascending") == "True"
+    is_ascending = self.query.get("ascending") == "True"
+    page_size = int(self.query.get("pageSize", 50))
 
     inclusive_min_str = self.query.get("inclusiveMinValue")
-    if inclusive_min_str is not None:
-        inclusive_min_value = int(inclusive_min_str)
-    else:
-        inclusive_min_value = None
+    inclusive_min_value = (
+        int(inclusive_min_str)
+        if inclusive_min_str is not None
+        else None
+    )
 
     exclusive_max_str = self.query.get("exclusiveMaxValue")
-    if exclusive_max_str is not None:
-        exclusive_max_value = int(exclusive_max_str)
-    else:
-        exclusive_max_value = None
-
-    # Validate inputs
-    if place_iden is None:
-        self.send_json({"data": [], "message": "Place ID is required"})
-        return True
-
-    if page_size <= 0 or page_size > 100:
-        self.send_json(
-            {"data": [], "message": "Page size must be between 1 and 100"})
-        return True
+    exclusive_max_value = (
+        int(exclusive_max_str)
+        if exclusive_max_str is not None
+        else None
+    )
 
     if data_type != "sorted":
         self.send_json({"data": [], "message": "Invalid data type"})
@@ -123,14 +109,12 @@ def _(self: web_server_handler) -> bool:
         self.send_json({"data": [], "message": "Invalid exclusive start key"})
         return True
 
-    # Simulated database query (replace with actual implementation)
-    # Assuming persistence supports sorted data
+    # Assuming persistence supports sorted data.
     database = self.server.storage.persistence
     sorted_data = database.query_sorted_data(
-        place_id=place_iden,
         scope=scope,
         key=key,
-        ascending=ascending,
+        ascending=is_ascending,
         min_value=inclusive_min_value,
         max_value=exclusive_max_value,
         start=exclusive_start_key,
@@ -138,18 +122,28 @@ def _(self: web_server_handler) -> bool:
     )
 
     if not sorted_data:
-        self.send_json({"data": {"Entries": [], "ExclusiveStartKey": None}})
+        self.send_json({
+            "data": {
+                "Entries": [],
+                "ExclusiveStartKey": None,
+            }
+        })
         return True
 
-    # Prepare response
-    entries = [{"Target": entry["name"], "Value": entry["value"]}
-               for entry in sorted_data["items"]]
-    next_key = sorted_data["next_key"] if sorted_data["has_next"] else None
+    entries = [
+        {
+            "Target": entry.name,
+            "Value": entry.value,
+        }
+        for entry in sorted_data.items
+    ]
 
-    self.send_json({"data": {
-        "Entries": entries,
-        "ExclusiveStartKey": next_key
-    }})
+    self.send_json({
+        "data": {
+            "Entries": entries,
+            "ExclusiveStartKey": sorted_data.next_key,
+        }
+    })
     return True
 
 
@@ -161,7 +155,6 @@ def _(self: web_server_handler) -> bool:
     """
     database = self.server.storage.persistence
 
-    # Get required parameters
     scope = self.query.get('scope', 'global')
     target = self.query['target']
     key = self.query['key']
@@ -170,8 +163,7 @@ def _(self: web_server_handler) -> bool:
     try:
         increment_value = int(self.query.get('value', 1))
     except (TypeError, ValueError):
-        self.send_json(
-            {"data": [], "message": "Increment value must be an integer"})
+        self.send_json({"data": [], "message": "Increment must be an integer"})
         return True
 
     if not all([target, key]):

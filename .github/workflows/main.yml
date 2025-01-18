@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           export LC_ALL=en_US.utf8
-          GIT_COMMIT_ID="${{ github.event.head_commit.id }}"
+          GIT_COMMIT_ID=$(echo "${{ github.event.head_commit.id }}" |  cut -c 1-7)
           GIT_RELEASE_VERSION=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")
           UPDATE_TIME=$(echo ${{ github.event.repository.updated_at }} | sed 's/[:-]//g')
           echo "tag_name=v${GIT_RELEASE_VERSION}-${UPDATE_TIME}" >> $GITHUB_ENV

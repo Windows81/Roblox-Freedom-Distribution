@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Any, Callable
 import enum
 
 
@@ -29,10 +29,10 @@ MODE_ALIASES = {
 }
 
 
-ADD_MODE_ARGS: dict[launch_mode, list[Callable]] = {
+ADD_MODE_ARGS: dict[launch_mode, list[Callable[..., Any]]] = {
     m: [] for m in launch_mode
 }
-SERIALISE_ARGS: dict[launch_mode, list[Callable]] = {
+SERIALISE_ARGS: dict[launch_mode, list[Callable[..., Any]]] = {
     m: [] for m in launch_mode
 }
 SERIALISE_TYPE_SETS: dict[launch_mode, set[type]] = {
@@ -40,11 +40,7 @@ SERIALISE_TYPE_SETS: dict[launch_mode, set[type]] = {
 }
 
 
-def call_auxs(args_table: dict[launch_mode,
-                               list[Callable]],
-              l_mode: launch_mode,
-              *args,
-              **kwargs) -> list:
+def call_auxs(args_table: dict[launch_mode, list[Callable[..., Any]]], l_mode: launch_mode, *args, **kwargs) -> list[Any]:
     return [
         result
         for func in args_table[launch_mode.ALWAYS]
@@ -52,11 +48,7 @@ def call_auxs(args_table: dict[launch_mode,
     ]
 
 
-def call_subparser(args_table: dict[launch_mode,
-                                    list[Callable]],
-                   l_mode: launch_mode,
-                   *args,
-                   **kwargs) -> list:
+def call_subparser(args_table: dict[launch_mode, list[Callable[..., Any]]], l_mode: launch_mode, *args, **kwargs) -> list[Any]:
     return [
         result
         for func in args_table[l_mode]

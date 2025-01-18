@@ -1,6 +1,20 @@
+from typing import Any
 from . import _logic
+import dataclasses
 import enum
 import json
+
+
+@dataclasses.dataclass
+class sorted_item:
+    name: str
+    value: Any
+
+
+@dataclasses.dataclass
+class sorted_struct:
+    items: list[sorted_item]
+    next_key: int | None
 
 
 class database(_logic.sqlite_connector_base):
@@ -59,7 +73,6 @@ class database(_logic.sqlite_connector_base):
 
     def query_sorted_data(
         self,
-        place_id: int,
         scope: str,
         key: str,
         ascending: bool = True,
@@ -67,50 +80,57 @@ class database(_logic.sqlite_connector_base):
         max_value: int | None = None,
         start: int = 1,
         size: int = 50
-    ) -> dict:
+    ) -> sorted_struct:
+        params: list[Any] = [scope, key]
+
+        int_casted_skeleton = (
+            "CAST(JSON_EXTRACT(%s, '$') AS INTEGER)"
+            % (self.field.VALUE.value,)
+        )
+
+        value_bound_suffix = ''
+        if min_value is not None:
+            value_bound_suffix += f" AND {int_casted_skeleton} >= ?"
+            params.append(min_value)
+        if max_value is not None:
+            value_bound_suffix += f" AND {int_casted_skeleton} < ?"
+            params.append(max_value)
+        params.extend([size + 1, start - 1])
+
         query = f"""
         WITH parsed_values AS (
             SELECT
                 {self.field.TARGET.value} as name,
-                CAST(JSON_EXTRACT({self.field.VALUE.value}, '$') AS INTEGER) as value
+                {int_casted_skeleton} as value
             FROM {self.TABLE_NAME}
             WHERE {self.field.SCOPE.value} = ?
             AND {self.field.KEY.value} = ?
             AND JSON_VALID({self.field.VALUE.value})
-            AND CAST(JSON_EXTRACT({self.field.VALUE.value}, '$') AS INTEGER) IS NOT NULL
-        """
-
-        params = [scope, key]
-
-        if min_value is not None:
-            query += f" AND CAST(JSON_EXTRACT({
-                self.field.VALUE.value}, '$') AS INTEGER) >= ?"
-            params.append(min_value)
-
-        if max_value is not None:
-            query += f" AND CAST(JSON_EXTRACT({
-                self.field.VALUE.value}, '$') AS INTEGER) < ?"
-            params.append(max_value)
-
-        query += f"""
+            AND {int_casted_skeleton} IS NOT NULL
+            {value_bound_suffix}
         )
         SELECT name, value
         FROM parsed_values
         ORDER BY value {'ASC' if ascending else 'DESC'}
         LIMIT ? OFFSET ?
         """
-        params.extend([size + 1, start - 1])
 
         results = self.sqlite.execute(query, params).fetchall()
+        items_list = [
+            sorted_item(
+                name=str(row[0]),
+                value=row[1],
+            )
+            for row in results[:size]
+        ]
 
-        has_more = len(results) > size
-        items = results[:size]
+        next_key = (
+            start + size
+            if len(results) > size  # More keys exist if evaluated to true.
+            else None
+        )
 
-        next_key = start + size if has_more else None
-        items_list = [{"name": str(row[0]), "value": row[1]} for row in items]
-
-        return {
-            "items": items_list,
-            "has_next": has_more,
-            "next_key": next_key
-        }
+        return sorted_struct(
+            items=items_list,
+            next_key=next_key,
+        )

@@ -1,4 +1,5 @@
 from . import _logic as logic
+from typing import override
 import dataclasses
 import threading
 import os.path
@@ -29,6 +30,7 @@ class obj_type(logic.entry):
                 continue
             os.remove(full_path)
 
+    @override
     def process(self) -> None:
         self.base_url_bytes = bytes(self.local_args.base_url, encoding='utf-8')
         http_folder = os.path.join(

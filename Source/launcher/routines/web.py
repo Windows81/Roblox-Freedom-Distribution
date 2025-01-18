@@ -4,6 +4,7 @@ import web_server
 from . import _logic as logic
 import game_config.structure
 import game_config as config
+from typing import override
 import dataclasses
 import threading
 import logger
@@ -11,7 +12,7 @@ import logger
 
 class obj_type(logic.server_entry):
     game_config: config.obj_type
-    httpds: list[web_server_logic.web_server]
+    httpds: list[web_server_logic.web_server] | None
     local_args: 'arg_type'
 
     def __run_servers(
@@ -40,12 +41,14 @@ class obj_type(logic.server_entry):
             self.threads.append(th)
             th.start()
 
+    @override
     def process(self) -> None:
         self.__run_servers(
             web_ports=self.local_args.web_ports,
             game_config=self.game_config,
         )
 
+    @override
     def stop(self) -> None:
         if self.httpds is None:
             return

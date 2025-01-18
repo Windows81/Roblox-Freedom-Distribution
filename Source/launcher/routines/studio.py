@@ -1,8 +1,9 @@
-import logger.bcolors
 import web_server._logic as web_server_logic
 from config_type.types import wrappers
 from . import _logic as logic
+from typing import override
 from textwrap import dedent
+import logger.bcolors
 import util.resource
 import util.versions
 import game_config
@@ -18,6 +19,7 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.STUDIO
 
+    @override
     def retr_version(self) -> util.versions.rōblox:
         return self.local_args.game_config.retr_version()
 
@@ -81,6 +83,7 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
                     Press enter to continue.
                 ''')
 
+    @override
     def process(self) -> None:
         self.save_app_setting()
         self.save_ssl_cert(
@@ -119,15 +122,18 @@ class arg_type(logic.bin_ssl_arg_type, logic.loggable_arg_type):
     launch_delay: float = 0
     warn_drag: bool = True
 
+    @override
     def get_base_url(self) -> str:
         return (
             f'http{"s" if self.web_port.is_ssl else ""}://' +
             f'{self.web_host}:{self.web_port.port_num}'
         )
 
+    @override
     def get_app_base_url(self) -> str:
         return self.get_base_url()
 
+    @override
     def sanitise(self) -> None:
         super().sanitise()
 

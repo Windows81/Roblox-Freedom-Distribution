@@ -51,7 +51,7 @@ function CreateZippedDirs() {
 	foreach ($dir in (Get-ChildItem "$root/Roblox/*/*" -Directory)) {
 		$zip = "$root/Roblox/$($dir.Parent.Name).$($dir.Name).7z"
 
-		# Always overwrite the file.
+		# Always overwrites the file.
 		Remove-Item $zip -Force -ErrorAction Ignore
 
 		# Writes to the version-flag file.
