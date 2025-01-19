@@ -8,7 +8,7 @@ If you're going to use a wine manager like heroic/lutris/bottles
 
 1.Initialize a wineprefix
 
-2.Apply the [cover art](https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Cover.png?raw=true)
+2.Apply the [Assets](https://github.com/Windows81/Roblox-Freedom-Distribution/tree/main/Assets)
 
 3.Put [RFD.exe](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD.exe) (the config & map files also go here if you're going to host) to `drive_c/windows/system32`
 
