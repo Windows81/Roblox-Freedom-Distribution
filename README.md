@@ -803,4 +803,4 @@ price = 1
 
 ---
 
-<p align="center"><img src="./Logo.svg" height="60px"/></p>
+<p align="center"><img src="./Logo.svg" height="120px"/></p>
