@@ -1,4 +1,4 @@
-<h1 align="center"><img src="./Logo.png" height="20px"/> Rōblox: Freedom Distribution <img src="./Logo.png" height="20px"/></h1>
+<h1 align="center"><img src="./Logo.svg" height="40px"/> Rōblox: Freedom Distribution <img src="./Logo.svg" height="40px"/></h1>
 
 <p align="right">
 <a href="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml"><img src="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml/badge.svg"></a>
@@ -803,4 +803,4 @@ price = 1
 
 ---
 
-<p align="center"><img src="./Logo.png" height="60px"/></p>
+<p align="center"><img src="./Logo.svg" height="60px"/></p>
