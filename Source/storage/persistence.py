@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, override
 from . import _logic
 import dataclasses
 import enum
@@ -26,6 +26,7 @@ class database(_logic.sqlite_connector_base):
         KEY = '"key"'
         VALUE = '"value"'
 
+    @override
     def first_time_setup(self) -> None:
         query = f"""
         CREATE TABLE IF NOT EXISTS "{self.TABLE_NAME}" (

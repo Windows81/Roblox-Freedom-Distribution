@@ -1,3 +1,4 @@
+import shutil
 import web_server._logic as web_server_logic
 import game_config.structure
 import game_config as config
@@ -15,7 +16,6 @@ import certifi
 import logger
 import copy
 import ssl
-import os
 
 
 class _entry:
@@ -152,8 +152,12 @@ class popen_entry(entry):
         self.popen_daemons = []
 
     def make_popen(self, cmd_args: list[str], *args, **kwargs) -> None:
-        # TODO: test native support for RFD on systems with Wine.
-        if os.name != 'nt':
+        '''
+        Creates new thread(s) for the Popen to operate under.
+        '''
+
+        # Checks if Wine is installed.  Redundant if using Windows.
+        if shutil.which('wine') is not None:
             cmd_args[:0] = ['wine']
 
         self.principal = subprocess.Popen(cmd_args, *args, **kwargs)

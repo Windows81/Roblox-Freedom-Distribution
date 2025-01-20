@@ -21,7 +21,7 @@ from .subparsers.args_aux import (
 )
 
 
-def parse_arg_list(args: list[str] | None) -> list | None:
+def parse_arg_list(args: list[str] | None):
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
@@ -99,7 +99,7 @@ def parse_arg_list(args: list[str] | None) -> list | None:
     return routine_args_list
 
 
-def process(args: list[str] | None = None) -> None:
+def read_eval_loop(args: list[str] | None = None) -> None:
     '''
     Highest-level main function which takes a list of arguments
     and does everything in one go.

@@ -1,4 +1,4 @@
 import launcher
 
 if __name__ == '__main__':
-    launcher.process()
+    launcher.read_eval_loop()
