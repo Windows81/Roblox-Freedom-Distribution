@@ -29,6 +29,7 @@ class config_type(allocateable.obj_type):
         class place_file(allocateable.obj_type):
             rbxl_uri: wrappers.uri_obj
             enable_saveplace: bool = False
+            track_file_changes: bool = False
 
         startup_script: str = ''
 

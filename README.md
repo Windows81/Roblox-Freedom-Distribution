@@ -469,6 +469,14 @@ Resolves to type `bool`; defaults to false.
 
 When `game:SavePlace()` is called and `enable_saveplace` is true, the file at [`rbxl_uri`](#game_setupplace_filerbxl_uri) is overwritten. It won't work if `rbxl_uri` points to a remote resource.
 
+````
+
+#### `server_core.place_file.track_file_changes`
+
+Resolves to type `bool`; defaults to false.
+
+When the file at `rbxl_uri` is modified, RCC is restarted such that RFD always runs the latest version of the file. It won't work if `rbxl_uri` points to a remote resource.
+
 #### `game_setup.roblox_version`
 
 The following are valid version strings.
@@ -516,7 +524,7 @@ retrieve_default_user_code = '''
 function(tick) -- float -> str
     return string.format('Player%d', tick)
 end
-```
+````
 
 #### `server_core.check_user_allowed`
 

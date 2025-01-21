@@ -23,6 +23,7 @@ class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
 
     # https://stackoverflow.com/a/71720366
     def __init_subclass__(cls) -> None:
+        super().__init_subclass__()
         # `typed_base` should be something like `dicter[config.types.structs.gamepass, int]`.
         # We're extracting the generic types which `__init__` will cast the
         # input values into.
@@ -34,6 +35,7 @@ class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
         (cls.item_type, cls.key_type) = get_args(typed_base)
 
     def __init__(self, item_list: list[item_typ]):
+        super().__init__()
         for item in item_list:
             self[getattr(item, self.key_name)] = item
 
@@ -56,6 +58,7 @@ class uri_obj:
     '''
 
     def __init__(self, value: str | bytes, dir_root: str) -> None:
+        super().__init__()
         if isinstance(value, bytes):
             value = value.decode(encoding='utf-8')
         assert isinstance(value, str)
@@ -95,7 +98,7 @@ class rfd_version_check(str):
     def __new__(cls, val: str) -> Self:
         if not fnmatch.fnmatch(const.GIT_RELEASE_VERSION, val):
             raise Exception(
-                "The RFD version you're using doesn't match "
+                "The RFD version you're using doesn't match " +
                 "what was specified in the file."
             )
         return str.__new__(cls, val)

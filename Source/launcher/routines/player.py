@@ -12,7 +12,7 @@ import logger
 import time
 
 
-class obj_type(logic.bin_ssl_entry):
+class obj_type(logic.bin_ssl_entry, logic.restartable_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.PLAYER
 
@@ -37,15 +37,13 @@ class obj_type(logic.bin_ssl_entry):
             ]))
         return path
 
-    @override
-    def process(self) -> None:
+    def bootstrap(self) -> None:
         self.save_app_setting()
         self.save_ssl_cert(
             include_system_certs=False,
         )
 
-        time.sleep(self.local_args.launch_delay)
-        self.local_args.finalise_user_code()
+    def make_client_popen(self) -> None:
         base_url = self.local_args.get_base_url()
         self.make_popen([
             self.get_versioned_path('RobloxPlayerBeta.exe'),
@@ -61,6 +59,19 @@ class obj_type(logic.bin_ssl_entry):
             }.items() if v}),
             '-t', '1',
         ])
+
+    @override
+    def process(self) -> None:
+        self.bootstrap()
+        time.sleep(self.local_args.launch_delay)
+        self.local_args.finalise_user_code()
+        self.make_client_popen()
+
+    @override
+    def restart(self) -> None:
+        self.stop()
+        self.bootstrap()
+        self.make_client_popen()
 
 
 @dataclasses.dataclass

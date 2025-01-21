@@ -1,7 +1,6 @@
 # Much of this script is from
 # https://github.com/begleysm/ipwatch/blob/master/ipgetter.py.
-import functools
-import os
+
 import urllib.request
 import http.cookiejar
 import util.resource
@@ -9,6 +8,7 @@ import trustme
 import random
 import socket
 import ssl
+import os
 
 IPV4_SERVER_LIST = [
     "http://ipv4.icanhazip.com/",
@@ -98,6 +98,7 @@ class ssl_mutable:
         return ssl_file_path
 
     def __init__(self) -> None:
+        super().__init__()
         self.ca = trustme.CA()
 
         # Writes the certificate that the client should trust.

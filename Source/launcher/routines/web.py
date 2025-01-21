@@ -54,6 +54,7 @@ class obj_type(logic.server_entry):
             return
         for ht in self.httpds:
             ht.shutdown()
+        super().stop()
 
 
 @dataclasses.dataclass

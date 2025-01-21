@@ -62,11 +62,11 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
     @staticmethod
     def get_warning_message(version: util.versions.rōblox) -> str | None:
         prefix = (
+            '\n' +
+            logger.bcolors.bcolors.BOLD +
+            "Studio is not 'stable' and can take some help." +
+            logger.bcolors.bcolors.ENDC +
             '\n'
-            + logger.bcolors.bcolors.BOLD
-            + "Studio is not 'stable' and can take some help."
-            + logger.bcolors.bcolors.ENDC
-            + '\n'
         )
         match version:
             case util.versions.rōblox.v463:

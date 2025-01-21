@@ -17,11 +17,12 @@ import threading
 import functools
 import util.ssl
 import logger
+import time
 import json
 import os
 
 
-class obj_type(logic.bin_ssl_entry, logic.server_entry):
+class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
 
@@ -72,7 +73,10 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             rbxl_data,
         )
 
-        if place_uri.uri_type == wrappers.uri_type.ONLINE and config.server_core.place_file.enable_saveplace:
+        if (
+            place_uri.uri_type != wrappers.uri_type.LOCAL and
+            config.server_core.place_file.enable_saveplace
+        ):
             logger.log(
                 (
                     'Warning: config option "enable_saveplace" is redundant '
@@ -235,26 +239,26 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
                     *suffix_args,
                 ]
 
-    def make_rcc_popen(self) -> None:
-        def read_output(pipe: subprocess.Popen[str]) -> None:
-            '''
-            Pipes output from the RCC server to the logger module for processing.
-            This is done in a separate thread to avoid blocking the main process from
-            terminating RCC when necessary.
-            '''
-            stdout: IO[bytes] = pipe.stdout  # type: ignore[reportAssignmentType]
-            assert stdout is not None
-            while True:
-                line = stdout.readline()
-                if not line:
-                    break
-                logger.log(
-                    line.rstrip(b'\r\n'),
-                    context=logger.log_context.RCC_SERVER,
-                    filter=self.local_args.log_filter,
-                )
-            stdout.flush()
+    def read_rcc_output(self) -> None:
+        '''
+        Pipes output from the RCC server to the logger module for processing.
+        This is done in a separate thread to avoid blocking the main process from
+        terminating RCC when necessary.
+        '''
+        stdout: IO[bytes] = self.principal.stdout  # type: ignore[reportAssignmentType]
+        assert stdout is not None
+        while True:
+            line = stdout.readline()
+            if not line:
+                break
+            logger.log(
+                line.rstrip(b'\r\n'),
+                context=logger.log_context.RCC_SERVER,
+                filter=self.local_args.log_filter,
+            )
+        stdout.flush()
 
+    def make_rcc_popen(self) -> None:
         self.make_popen(
             cmd_args=self.gen_cmd_args(),
             stdin=subprocess.PIPE,
@@ -263,24 +267,66 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
         )
 
         self.pipe_thread = threading.Thread(
-            target=read_output,
-            args=(self.principal,),
+            target=self.read_rcc_output,
             daemon=True,
         )
         self.pipe_thread.start()
 
+        self.file_change_thread = threading.Thread(
+            target=self.track_file_changes,
+            daemon=True,
+        )
+        self.file_change_thread.start()
+
+        self.threads.extend([
+            self.pipe_thread,
+            self.file_change_thread,
+        ])
+
     @override
     def stop(self) -> None:
         super().stop()
-        self.pipe_thread.join()
 
     @override
     def wait(self) -> None:
         super().wait()
-        self.pipe_thread.join()
+
+    def bootstrap(self) -> None:
+        self.save_starter_scripts()
+        self.save_place_file()
+        self.save_thumbnail()
+        self.save_app_setting()
+        self.update_fflags()
+        self.save_ssl_cert(
+            include_system_certs=True,
+        )
+        self.save_gameserver()
+
+    def track_file_changes(self) -> None:
+        config = self.game_config
+        if not config.server_core.place_file.track_file_changes:
+            return
+
+        place_uri = config.server_core.place_file.rbxl_uri
+        if place_uri.uri_type != wrappers.uri_type.LOCAL:
+            return
+
+        file_path = place_uri.value
+        last_modified = os.path.getmtime(file_path)
+
+        while not self.is_terminated:
+            current_modified = os.path.getmtime(file_path)
+            if current_modified == last_modified:
+                time.sleep(1)
+                continue
+            # The `restart` method must take place in a new thread.
+            # It waits for *this* thread to finish running.
+            threading.Thread(target=self.restart).start()
+            return
 
     @override
     def process(self) -> None:
+        self.get_versioned_path()
         logger.log(
             (f"{
                 logger.bcolors.bcolors.BOLD}[UDP %d]{
@@ -290,18 +336,14 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry):
             context=logger.log_context.PYTHON_SETUP,
             filter=self.local_args.log_filter,
         )
-        self.save_starter_scripts()
-        self.save_place_file()
-        self.save_thumbnail()
-        self.save_app_setting()
-        self.update_fflags()
-        self.save_ssl_cert(
-            include_system_certs=True,
-        )
-
-        self.save_gameserver()
+        self.bootstrap()
         if not self.local_args.skip_popen:
             self.make_rcc_popen()
+
+    @override
+    def restart(self) -> None:
+        self.stop()
+        self.process()
 
 
 @dataclasses.dataclass
@@ -310,9 +352,12 @@ class arg_type(logic.bin_ssl_arg_type):
 
     rcc_port_num: int | None
     game_config: game_config.obj_type
+    track_file_changes: bool = True
     skip_popen: bool = False
+
     # TODO: fix the way place idens work.
     place_iden: int = const.PLACE_IDEN_CONST
+
     web_port: web_server_logic.port_typ = web_server_logic.port_typ(
         port_num=80,
         is_ssl=False,

@@ -1,10 +1,12 @@
 import launcher.subparsers._logic as sub_logic
 import launcher.routines._logic as routine_logic
 
-import sys
-import shlex
-import argparse
+import logger.bcolors
 import traceback
+import argparse
+import shlex
+import sys
+
 
 from .subparsers.args_launch_mode import (
     download as _,
@@ -127,7 +129,9 @@ def read_eval_loop(args: list[str] | None = None) -> None:
     try:
         while True:
             arg_str = input(
-                "Enter your command-line arguments [Ctrl+C to quit]: ",
+                logger.bcolors.bcolors.BOLD +
+                "Enter your command-line arguments [Ctrl+C to quit]: " +
+                logger.bcolors.bcolors.ENDC
             )
             try:
                 perform_with_args(shlex.split(arg_str))

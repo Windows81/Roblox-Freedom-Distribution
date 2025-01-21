@@ -298,6 +298,8 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return func(self)
         except ssl.SSLEOFError:
             return False
+        except ConnectionResetError:
+            return False
         except Exception as e:
             print(traceback.format_exc())
             return False

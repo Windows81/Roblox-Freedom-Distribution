@@ -139,7 +139,9 @@
 			"args": [
 				"player",
 				"-h",
-				"localhost"
+				"localhost",
+				"--user_code",
+				"VisualPlugin",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true

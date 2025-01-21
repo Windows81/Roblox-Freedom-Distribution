@@ -1,4 +1,3 @@
-import shutil
 import web_server._logic as web_server_logic
 import game_config.structure
 import game_config as config
@@ -13,13 +12,14 @@ import downloader
 import subprocess
 import threading
 import certifi
+import shutil
 import logger
 import copy
 import ssl
 
 
 class _entry:
-    def process(self):
+    def process(self) -> None:
         raise NotImplementedError()
 
 
@@ -117,12 +117,11 @@ class host_arg_type(arg_type):
 
 class entry(_entry):
     local_args: arg_type
-    threads: list[threading.Thread]
 
     def __init__(self, local_args: arg_type) -> None:
         super().__init__()
         self.local_args = local_args
-        self.threads = []
+        self.threads: list[threading.Thread] = []
 
     def wait(self) -> None:
         for t in self.threads:
@@ -130,10 +129,15 @@ class entry(_entry):
                 t.join(1)
 
     def stop(self) -> None:
-        self.wait()
+        entry.wait(self)
 
     def __del__(self) -> None:
         return self.stop()
+
+
+class restartable_entry(entry):
+    def restart(self) -> None:
+        raise NotImplementedError()
 
 
 class popen_entry(entry):
@@ -141,15 +145,14 @@ class popen_entry(entry):
     Routine entry class that corresponds to a Popen subprocess object.
     '''
     local_args: popen_arg_type
-    debug_popen: subprocess.Popen[str]
-    popen_mains: list[subprocess.Popen[str]]
-    popen_daemons: list[subprocess.Popen[str]]
 
     def __init__(self, local_args: arg_type) -> None:
         super().__init__(local_args)
         # Arrays are initialised in case `make_popen` raises an exception.
-        self.popen_mains = []
-        self.popen_daemons = []
+        self.debug_popen: subprocess.Popen[str]
+        self.popen_mains: list[subprocess.Popen[str]] = []
+        self.popen_daemons: list[subprocess.Popen[str]] = []
+        self.is_terminated: bool = False
 
     def make_popen(self, cmd_args: list[str], *args, **kwargs) -> None:
         '''
@@ -160,6 +163,7 @@ class popen_entry(entry):
         if shutil.which('wine') is not None:
             cmd_args[:0] = ['wine']
 
+        self.is_terminated = False
         self.principal = subprocess.Popen(cmd_args, *args, **kwargs)
         self.popen_mains = [
             self.principal,
@@ -183,6 +187,8 @@ class popen_entry(entry):
             p.terminate()
         for p in self.popen_daemons:
             p.terminate()
+        self.is_terminated = True
+        super().stop()
 
     @override
     def wait(self) -> None:
@@ -190,6 +196,8 @@ class popen_entry(entry):
             p.wait()
         for p in self.popen_daemons:
             p.terminate()
+        self.is_terminated = True
+        super().wait()
 
 
 class ver_entry(entry):

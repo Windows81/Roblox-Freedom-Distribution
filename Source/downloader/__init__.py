@@ -1,5 +1,3 @@
-from ntpath import isfile
-import shutil
 import tqdm_vendored as tqdm
 import py7zr.exceptions
 import urllib.request
@@ -7,6 +5,7 @@ import logger.filter
 import util.resource
 import util.versions
 import util.const
+import shutil
 import logger
 import py7zr
 import io
@@ -87,11 +86,18 @@ def bootstrap_binary(
             )
             return
 
+    logger.log(
+        text=f'Downloading {rōblox_version.name}/{bin_type.name}...',
+        context=logger.log_context.PYTHON_SETUP,
+        filter=log_filter,
+    )
+
     remote_link = get_remote_link(
         rōblox_version,
         bin_type,
     )
-    response = download(
+
+    download_response = download(
         remote_link=remote_link,
         quiet=not log_filter.other_logs,
     )
@@ -102,6 +108,6 @@ def bootstrap_binary(
         filter=log_filter,
     )
     py7zr.unpack_7zarchive(
-        archive=response,
+        archive=download_response,
         path=full_dir,
     )
