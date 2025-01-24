@@ -35,6 +35,7 @@ BEGIN {
 
 	 # If toggle is back to 0, print the accumulated output.
     if (!toggle) {
+
 		# Gets the substring excluding XML tags.
         match(output, /<SharedString[^>]*>([^<]*)<\/SharedString>/, a);
 
