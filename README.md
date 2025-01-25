@@ -7,6 +7,10 @@
 
 _Want to host your own Rōblox LAN parties? Looking for a way to deploy your Rōblox experiences, new and old, on your own machine?_
 
+
+https://github.com/user-attachments/assets/483c4263-db43-4ec2-9243-b0b885e625f6
+
+
 Rōblox Freedom Distribution is one such solution. It's a 'revival' launcher built on existing research for self-hosting Rōblox servers.
 
 Using RFD, users can host their own server instances from compiled Rōblox binaries from 2018-07-25 or 2021-01-25.
