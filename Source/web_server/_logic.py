@@ -2,7 +2,6 @@ import util.versions as versions
 from typing import Callable
 import util.const as const
 from urllib import parse
-import OpenSSL.crypto
 import logger.bcolors
 import http.server
 import dataclasses
@@ -78,6 +77,7 @@ def server_path(
 
 
 def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
+    import OpenSSL.crypto
     data = b'\r\n' + data
     key = b"-----BEGIN RSA PRIVATE KEY-----\n%s\n-----END RSA PRIVATE KEY-----" % key
     signature = OpenSSL.crypto.sign(
