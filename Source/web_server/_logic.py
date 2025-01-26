@@ -1,3 +1,9 @@
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+
 import util.versions as versions
 from typing import Callable
 import util.const as const
@@ -10,6 +16,7 @@ import traceback
 import mimetypes
 import functools
 import util.ssl
+import hashlib
 import logger
 import base64
 import socket
@@ -46,13 +53,15 @@ class server_func_key:
 
 
 SERVER_FUNCS = dict[server_func_key, Callable]()
+DEFAULT_COMMANDS = {'POST', 'GET'}
+ALL_VERSIONS = set(versions.rōblox)
 
 
 def server_path(
     path: str,
     regex: bool = False,
-    versions: set[versions.rōblox] = set(versions.rōblox),
-    commands: set[str] = {'POST', 'GET'}
+    versions: set[versions.rōblox] = ALL_VERSIONS,
+    commands: set[str] = DEFAULT_COMMANDS
 ):
     def inner(func):
         dict_mode = (
@@ -77,16 +86,14 @@ def server_path(
 
 
 def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
-    import OpenSSL.crypto
     data = b'\r\n' + data
     key = b"-----BEGIN RSA PRIVATE KEY-----\n%s\n-----END RSA PRIVATE KEY-----" % key
-    signature = OpenSSL.crypto.sign(
-        OpenSSL.crypto.load_privatekey(
-            OpenSSL.crypto.FILETYPE_PEM,
-            key,
-        ),
+    private_key = serialization.load_pem_private_key(
+        key, None, default_backend())
+    signature = private_key.sign(   # type: ignore[reportAttributeAccessIssue]
         data,
-        'sha1',
+        padding.PKCS1v15(),  # type: ignore[reportCallIssue]
+        hashes.SHA1(),  # type: ignore[reportCallIssue]
     )
     return prefix + b"%" + base64.b64encode(signature) + b'%' + data
 

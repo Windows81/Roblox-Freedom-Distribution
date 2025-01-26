@@ -836,8 +836,8 @@ def read_mesh_v3(data: bytes, offset: int) -> FileMeshData:
 
     if offset != len(data):
         raise Exception(
-            "read_mesh_v3: unexpected data at end of file (%d bytes)"
-            % (len(data) - offset)
+            "read_mesh_v3: unexpected data at end of file (%d bytes)" %
+            (len(data) - offset)
         )
 
     debug_print(

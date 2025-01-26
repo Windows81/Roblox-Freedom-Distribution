@@ -85,8 +85,8 @@ class database(_logic.sqlite_connector_base):
         params: list[Any] = [scope, key]
 
         int_casted_skeleton = (
-            "CAST(JSON_EXTRACT(%s, '$') AS INTEGER)"
-            % (self.field.VALUE.value,)
+            "CAST(JSON_EXTRACT(%s, '$') AS INTEGER)" %
+            (self.field.VALUE.value,)
         )
 
         value_bound_suffix = ''

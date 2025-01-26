@@ -38,11 +38,7 @@ def _type_call_dicter(value: list, data: type_call_data) -> Any:
     return data.typ(item_list)
 
 
-def _type_call_with_config(
-        value,
-        data: type_call_data,
-        *args,
-        **kwargs) -> Any:
+def _type_call_with_config(value, data: type_call_data, *args, **kwargs) -> Any:
     return data.typ(value, data.config, *args, **kwargs)
 
 
@@ -50,9 +46,7 @@ def _type_call_path_str(value, data: type_call_data, *args, **kwargs) -> Any:
     return data.typ(value, data.config.base_dir, *args, **kwargs)
 
 
-def _type_call_rōblox_version(
-        value,
-        data: type_call_data) -> util.versions.rōblox:
+def _type_call_rōblox_version(value, data: type_call_data) -> util.versions.rōblox:
     return util.versions.rōblox.from_name(value)
 
 
@@ -93,7 +87,10 @@ def _type_call_dataclass_as_dict(value, data: type_call_data) -> Callable:
     should be written as Python `dict` objects in the config file.
     This snippet is responsible for casting the `dict` to  a `dataclass`.
     '''
-    fields = getattr(data.typ, dataclasses._FIELDS)  # type: ignore
+    fields = getattr(
+        data.typ,
+        dataclasses._FIELDS,  # type: ignore[reportAttributeAccessIssue]
+    )
     casted_values = {
         field_name: get_type_call(field.type)(
             value.get(field_name, field.default),

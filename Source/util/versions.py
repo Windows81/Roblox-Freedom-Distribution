@@ -1,5 +1,5 @@
-import typing
 import functools
+import typing
 import enum
 
 
@@ -28,6 +28,10 @@ class rōblox(enum.Enum):
 
     def __lt__(self, other: typing.Self) -> bool:
         return self.get_number() < other.get_number()
+
+    @classmethod
+    def get_all_versions(cls) -> set[typing.Self]:
+        return set(cls)
 
 
 FIRST_VERSION = min(rōblox)
