@@ -3,7 +3,7 @@
     Python Library for reading and writing Roblox mesh files.
     Written by something.else on 21/9/2023
 
-    Support for meshes up to version 5.
+    Supported meshes up to version 5.
     Mesh Format documentation by MaximumADHD: https://devforum.roblox.com/t/roblox-mesh-format/326114
 """
 
@@ -52,8 +52,7 @@ class FileMeshVertexNormalTexture3d:
     def read_data(self, data: bytes):
         if len(data) < 40:
             raise Exception(
-                f"FileMeshVertexNormalTexture3d.read_data: data is too short ({
-                    len(data)} bytes)")
+                f"FileMeshVertexNormalTexture3d.read_data: data is too short ({len(data)} bytes)")
 
         self.vx = struct.unpack("<f", data[0:4])[0]
         self.vy = struct.unpack("<f", data[4:8])[0]
@@ -123,8 +122,7 @@ class FileMeshVertexNormalTexture3dNoRGBA:
     def read_data(self, data: bytes):
         if len(data) < 36:
             raise Exception(
-                f"FileMeshVertexNormalTexture3dNoRGBA.read_data: data is too short ({
-                    len(data)} bytes)")
+                f"FileMeshVertexNormalTexture3dNoRGBA.read_data: data is too short ({len(data)} bytes)")
 
         self.vx = struct.unpack("<f", data[0:4])[0]
         self.vy = struct.unpack("<f", data[4:8])[0]
@@ -175,8 +173,7 @@ class FileMeshFace:
     def read_data(self, data: bytes):
         if len(data) < 12:
             raise Exception(
-                f"FileMeshFace.read_data: data is too short ({
-                    len(data)} bytes)")
+                f"FileMeshFace.read_data: data is too short ({len(data)} bytes)")
 
         self.a = int.from_bytes(data[0:4], "little")
         self.b = int.from_bytes(data[4:8], "little")
@@ -214,8 +211,7 @@ class FileMeshHeader:
     def read_data(self, data: bytes):
         if len(data) < 12:
             raise Exception(
-                f"FileMeshHeader.read_data: data is too short ({
-                    len(data)} bytes)")
+                f"FileMeshHeader.read_data: data is too short ({len(data)} bytes)")
 
         self.cbSize = int.from_bytes(data[0:2], "little")
         if self.cbSize != 12:
@@ -236,12 +232,7 @@ class FileMeshHeader:
         )
 
     def __str__(self) -> str:
-        return f"FileMeshHeader(cbSize={
-            self.cbSize}, cbVerticesStride={
-            self.cbVerticesStride}, cbFaceStride={
-            self.cbFaceStride}, num_vertices={
-                self.num_vertices}, num_faces={
-                    self.num_faces})"
+        return f"FileMeshHeader(cbSize={self.cbSize}, cbVerticesStride={self.cbVerticesStride}, cbFaceStride={self.cbFaceStride}, num_vertices={self.num_vertices}, num_faces={self.num_faces})"
 
     def __repr__(self) -> str:
         return str(self)
@@ -275,8 +266,7 @@ class FileMeshHeaderV3:
     def read_data(self, data: bytes):
         if len(data) < 16:
             raise Exception(
-                f"FileMeshHeaderV3.read_data: data is too short ({
-                    len(data)} bytes)")
+                f"FileMeshHeaderV3.read_data: data is too short ({len(data)} bytes)")
 
         self.cbSize = int.from_bytes(data[0:2], "little")
         if self.cbSize != 16:
@@ -338,8 +328,7 @@ class FileMeshHeaderV4:
     def read_data(self, data: bytes):
         if len(data) < 24:
             raise Exception(
-                f"FileMeshHeaderV4.read_data: data is too short ({
-                    len(data)} bytes)")
+                f"FileMeshHeaderV4.read_data: data is too short ({len(data)} bytes)")
 
         self.sizeof_MeshHeader = int.from_bytes(data[0:2], "little")
         if self.sizeof_MeshHeader != 24:
@@ -392,8 +381,8 @@ class Envelope:
                 f"Envelope.read_data: data is too short ({len(data)} bytes)")
 
         for i in range(0, 4):
-            self.bones.append(int.from_bytes(data[i:i + 1], "little"))
-            self.weights.append(int.from_bytes(data[i + 4:i + 5], "little"))
+            self.bones.append(int.from_bytes(data[i:i+1], "little"))
+            self.weights.append(int.from_bytes(data[i+4:i+5], "little"))
 
     def export_data(self) -> bytes:
         return bytearray(
@@ -522,8 +511,7 @@ class MeshSubset:
         self.vertsLength = int.from_bytes(data[12:16], "little")
         self.numBoneIndicies = int.from_bytes(data[16:20], "little")
         for i in range(0, 26):
-            self.boneIndicies.append(
-                int.from_bytes(data[20 + i:21 + i], "little"))
+            self.boneIndicies.append(int.from_bytes(data[20+i:21+i], "little"))
 
     def export_data(self) -> bytes:
         subsetData: bytes = bytearray(
@@ -581,8 +569,7 @@ class FileMeshHeaderV5:
     def read_data(self, data: bytes):
         if len(data) < 32:
             raise Exception(
-                f"FileMeshHeaderV5.read_data: data is too short ({
-                    len(data)} bytes)")
+                f"FileMeshHeaderV5.read_data: data is too short ({len(data)} bytes)")
 
         self.sizeof_MeshHeader = int.from_bytes(data[0:2], "little")
         if self.sizeof_MeshHeader != 32:
@@ -641,7 +628,7 @@ def read_data(data: bytes, offset: int, size: int) -> bytes:
     if len(data) < offset + size:
         raise Exception(
             f"read_data: offset is out of bounds (offset={offset}, size={size})")
-    return data[offset:offset + size]
+    return data[offset:offset+size]
 
 
 def get_mesh_version(data: bytes) -> float:
@@ -676,11 +663,7 @@ def get_mesh_version(data: bytes) -> float:
             f"get_mesh_version: unsupported mesh version ({data[0:12]})")
 
 
-def read_mesh_v1(
-        data_bytes: bytes,
-        offset: int,
-        scale: float = 0.5,
-        invertUV: bool = True) -> FileMeshData:
+def read_mesh_v1(data_bytes: bytes, offset: int, scale: float = 0.5, invertUV: bool = True) -> FileMeshData:
     data = data_bytes.decode("ASCII")
 
     meshData: FileMeshData = FileMeshData(
@@ -689,8 +672,7 @@ def read_mesh_v1(
     debug_print(f"read_mesh_v1: numFaces={numFaces}")
 
     # [0.551563,-0.0944613,0.0862401] we need to find every vector3 in the file
-    # Each vert has 3 vector3 values so we need to find 3 vector3 values for
-    # each vert
+    # Each vert has 3 vector3 values so we need to find 3 vector3 values for each vert
     startingIndex = data.find("[")
     allVectorStrs: list[str] = data[startingIndex:].split("]")
     allVectors: list[list[float]] = []
@@ -836,8 +818,8 @@ def read_mesh_v3(data: bytes, offset: int) -> FileMeshData:
 
     if offset != len(data):
         raise Exception(
-            "read_mesh_v3: unexpected data at end of file (%d bytes)" %
-            (len(data) - offset)
+            "read_mesh_v3: unexpected data at end of file (%d bytes)"
+            % (len(data) - offset)
         )
 
     debug_print(
@@ -926,12 +908,11 @@ def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
     offset += meshHeader.numSubsets * 72
     offset += meshHeader.unused
 
-    # Don't count on this.  Mesh rbxassetid://7385905814 gets stopped whenever it tries to execute here.
-    # if offset != len(data):
-    #    raise Exception(
-    #       "read_mesh_v4: unexpected data at end of file (%d bytes)" %
-    #       (len(data) - offset)
-    #    )
+    if offset != len(data):
+        raise Exception(
+            "read_mesh_v4: unexpected data at end of file (%d bytes)" %
+            (len(data) - offset)
+        )
 
     debug_print(
         "read_mesh_v4: read {len(meshData.vnts)} vertices and %d faces successfully" %
@@ -1068,8 +1049,7 @@ def export_mesh_v3(meshData: FileMeshData) -> bytes:
         40,
         12,
         4,
-        # There has to be at least two LODs ( [0, 1234] ) if not ROBLOX will
-        # complain about an empty mesh
+        # There has to be at least two LODs ( [0, 1234] ) if not ROBLOX will complain about an empty mesh
         max(len(meshData.LODs), 2),
         len(meshData.vnts),
         len(meshData.full_faces) if len(meshData.LODs) > 1 and len(
@@ -1079,10 +1059,7 @@ def export_mesh_v3(meshData: FileMeshData) -> bytes:
     for i in range(0, len(meshData.vnts)):
         finalmesh += meshData.vnts[i].export_data()
 
-    if len(
-        meshData.LODs) > 1 and len(
-        meshData.full_faces) > len(
-            meshData.faces):
+    if len(meshData.LODs) > 1 and len(meshData.full_faces) > len(meshData.faces):
         for i in range(0, len(meshData.full_faces)):
             finalmesh += meshData.full_faces[i].export_data()
     else:
@@ -1099,45 +1076,46 @@ def export_mesh_v3(meshData: FileMeshData) -> bytes:
     return finalmesh
 
 
-def read_mesh_data(data: bytes, meshVersion: float) -> FileMeshData:
+def read_mesh_data(data: bytes) -> FileMeshData:
+    meshVersion = get_mesh_version(data)
     startingOffset = data.find(b"\n")
+    debug_print(f"meshVersion={meshVersion}, startingOffset={startingOffset}")
 
     if meshVersion == 1.0:
-        meshData: FileMeshData = read_mesh_v1(
-            data, startingOffset + 1, 0.5)
-
+        meshData: FileMeshData = read_mesh_v1(data, startingOffset + 1, 0.5)
     elif meshVersion == 1.1:
         meshData: FileMeshData = read_mesh_v1(
             data, startingOffset + 1, 1.0, False)
-
     elif meshVersion == 2.0:
-        meshData: FileMeshData = read_mesh_v2(
-            data, startingOffset + 1)
-
+        meshData: FileMeshData = read_mesh_v2(data, startingOffset + 1)
     elif meshVersion == 3.0 or meshVersion == 3.1:
-        meshData: FileMeshData = read_mesh_v3(
-            data, startingOffset + 1)
-
+        meshData: FileMeshData = read_mesh_v3(data, startingOffset + 1)
     elif meshVersion == 4.0 or meshVersion == 4.1:
-        meshData: FileMeshData = read_mesh_v4(
-            data, startingOffset + 1)
-
+        meshData: FileMeshData = read_mesh_v4(data, startingOffset + 1)
     elif meshVersion == 5.0 or meshVersion == 5.1:
-        meshData: FileMeshData = read_mesh_v5(
-            data, startingOffset + 1)
+        meshData: FileMeshData = read_mesh_v5(data, startingOffset + 1)
     else:
         raise Exception(
             f"read_mesh_data: unsupported mesh version ({meshVersion})")
     return meshData
 
 
-def parse(originalData: bytes) -> bytes:
-    try:
-        meshVersion = get_mesh_version(originalData)
-        if meshVersion < 4:
-            return originalData
+if __name__ == "__main__":
+    arguments = sys.argv[1:]
+    if len(arguments) < 1:
+        debug_print("Usage: RBXMesh.py <mesh file location>")
+        exit(1)
 
-        meshData = read_mesh_data(originalData, meshVersion)
-        return export_mesh_v2(meshData)
-    except Exception:
-        return originalData
+    meshFile = open(arguments[0], "rb")
+    meshData = meshFile.read()
+    meshFile.close()
+
+    meshData = read_mesh_data(meshData)
+
+    if len(arguments) > 1:
+        if arguments[1] == "2.0":
+            with open(f"{arguments[0]}.v2", "wb") as f:
+                f.write(export_mesh_v2(meshData))
+        elif arguments[1] == "3.0":
+            with open(f"{arguments[0]}.v3", "wb") as f:
+                f.write(export_mesh_v3(meshData))

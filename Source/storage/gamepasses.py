@@ -1,3 +1,4 @@
+from typing import override
 from . import _logic
 import enum
 
@@ -10,6 +11,7 @@ class database(_logic.sqlite_connector_base):
         GAMEPASS_ID = '"gamepass_id"'
         TIMESTAMP = '"timestamp"'
 
+    @override
     def first_time_setup(self) -> None:
         self.sqlite.execute(
             f"""
@@ -24,7 +26,6 @@ class database(_logic.sqlite_connector_base):
             );
             """,
         )
-        self.sqlite.commit()
 
     def update(self, user_id_num: int, gamepass_id: int) -> None:
         self.sqlite.execute(
@@ -41,10 +42,9 @@ class database(_logic.sqlite_connector_base):
                 gamepass_id,
             ),
         )
-        self.sqlite.commit()
 
     def check(self, user_id_num: int, gamepass_id: int) -> str | None:
-        result: dict | None = self.sqlite.execute(
+        result = self.sqlite.fetch_results(self.sqlite.execute(
             f"""
             SELECT
             {self.field.TIMESTAMP.value}
@@ -53,8 +53,8 @@ class database(_logic.sqlite_connector_base):
             WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
             AND {self.field.GAMEPASS_ID.value} = {gamepass_id}
             """,
-        ).fetchone()
-        if result is None:
-            return None
-
-        return result[0]
+        ))
+        assert result is not None
+        if len(result) > 0:
+            return result[0]
+        return None

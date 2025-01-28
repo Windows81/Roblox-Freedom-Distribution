@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite_worker
 import os.path
 
 from . import (
@@ -16,8 +16,9 @@ class storager:
         path: str,
         force_init: bool,
     ) -> None:
+        super().__init__()
         self.is_first_time = force_init or not os.path.isfile(path)
-        self.sqlite = sqlite3.connect(path, check_same_thread=False)
+        self.sqlite = sqlite_worker.SqliteWorker(path)
 
         arg_list = (
             self.sqlite,

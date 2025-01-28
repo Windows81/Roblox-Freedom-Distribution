@@ -7,9 +7,7 @@
 
 _Want to host your own Rōblox LAN parties? Looking for a way to deploy your Rōblox experiences, new and old, on your own machine?_
 
-
 https://github.com/user-attachments/assets/483c4263-db43-4ec2-9243-b0b885e625f6
-
 
 Rōblox Freedom Distribution is one such solution. It's a 'revival' launcher built on existing research for self-hosting Rōblox servers.
 
@@ -473,8 +471,6 @@ Resolves to type `bool`; defaults to false.
 
 When `game:SavePlace()` is called and `enable_saveplace` is true, the file at [`rbxl_uri`](#game_setupplace_filerbxl_uri) is overwritten. It won't work if `rbxl_uri` points to a remote resource.
 
-````
-
 #### `server_core.place_file.track_file_changes`
 
 Resolves to type `bool`; defaults to false.
@@ -528,7 +524,7 @@ retrieve_default_user_code = '''
 function(tick) -- float -> str
     return string.format('Player%d', tick)
 end
-````
+```
 
 #### `server_core.check_user_allowed`
 

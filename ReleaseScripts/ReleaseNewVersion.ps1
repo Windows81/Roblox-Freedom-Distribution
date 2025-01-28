@@ -68,6 +68,12 @@ function CreateZippedDirs() {
 	}
 }
 
+# Marks the most recent release on GitHub as the latest.
+function MarkLatestVersion() {
+	$latest = (gh release list --json tagName --template '{{range .}}{{.tagName}}{{end}}' --limit 1)
+	gh release edit $latest --latest
+}
+
 # Creates a GitHub release with specified files.
 function ReleaseToGitHub() {
 	gh release create $release_name --notes "" $files --prerelease
@@ -78,6 +84,7 @@ switch ($mode) {
 	'1' {
 		RetrieveInput
 		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION")
+		MarkLatestVersion
 	}
 	'2' {
 		RetrieveInput

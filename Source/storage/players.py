@@ -26,10 +26,8 @@ class database(_logic.sqlite_connector_base):
             );
             """,
         )
-        self.sqlite.commit()
 
-    def add_player(self, user_code: str, id_num: int,
-                   username: str) -> tuple[str, int, str] | None:
+    def add_player(self, user_code: str, id_num: int, username: str) -> tuple[str, int, str] | None:
         '''
         Adds a new player to the database and returns the first entry which corresponds with the newly-added player.
         Tries to get the entry whose username matches, else fail.
@@ -50,8 +48,7 @@ class database(_logic.sqlite_connector_base):
                 username,
             ),
         )
-        self.sqlite.commit()
-        result = self.sqlite.execute(
+        result = self.sqlite.fetch_results(self.sqlite.execute(
             f"""
             SELECT
             {self.player_field.USER_CODE.value},
@@ -62,8 +59,11 @@ class database(_logic.sqlite_connector_base):
             WHERE
             {self.player_field.USER_CODE.value} = {repr(user_code)}
             """,
-        ).fetchone()
-        return result
+        ))
+        assert result is not None
+        if len(result) > 0:
+            return result[0]
+        return None
 
     def get_player_field_from_index(
             self,
@@ -76,14 +76,15 @@ class database(_logic.sqlite_connector_base):
         if value is None:
             return None
 
-        result = self.sqlite.execute(
+        result = self.sqlite.fetch_results(self.sqlite.execute(
             f"""
             SELECT {field.value} FROM "{self.TABLE_NAME}" WHERE {index.value} = {repr(value)}
             """,
-        ).fetchone()
-        if result is None:
-            return None
-        return result[0]
+        ))
+        assert result is not None
+        if len(result) > 0:
+            return result[0]
+        return None
 
     def check(self, index: player_field, value) -> bool:
         '''
@@ -95,11 +96,11 @@ class database(_logic.sqlite_connector_base):
         if value is None:
             return False
 
-        result = self.sqlite.execute(
+        result = self.sqlite.fetch_results(self.sqlite.execute(
             f"""
             SELECT * FROM "{self.TABLE_NAME}" WHERE {index.value} = {repr(value)}
             """,
-        ).fetchone()
+        ))
         return result is not None
 
     def sanitise_player_id_num(self, id_num: int | str | None) -> int | None:

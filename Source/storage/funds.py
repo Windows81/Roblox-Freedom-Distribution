@@ -1,3 +1,4 @@
+from typing import override
 from . import _logic
 import enum
 
@@ -9,6 +10,7 @@ class database(_logic.sqlite_connector_base):
         USER_ID_NUM = '"user_id_num"'
         FUNDS = '"funds"'
 
+    @override
     def first_time_setup(self) -> None:
         self.sqlite.execute(
             f"""
@@ -21,7 +23,6 @@ class database(_logic.sqlite_connector_base):
             );
             """,
         )
-        self.sqlite.commit()
 
     def add(self, user_id_num: int, delta: int) -> None:
         self.sqlite.execute(
@@ -31,7 +32,6 @@ class database(_logic.sqlite_connector_base):
             WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
             """
         )
-        self.sqlite.commit()
 
     def first_init(self, user_id_num: int, value: int) -> None:
         self.sqlite.execute(
@@ -44,7 +44,6 @@ class database(_logic.sqlite_connector_base):
                 value,
             ),
         )
-        self.sqlite.commit()
 
     def set(self, user_id_num: int, value: int) -> None:
         self.sqlite.execute(
@@ -54,10 +53,9 @@ class database(_logic.sqlite_connector_base):
             WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
             """
         )
-        self.sqlite.commit()
 
     def check(self, user_id_num: int) -> int | None:
-        result: dict | None = self.sqlite.execute(
+        result = self.sqlite.fetch_results(self.sqlite.execute(
             f"""
             SELECT
             {self.field.FUNDS.value}
@@ -65,8 +63,8 @@ class database(_logic.sqlite_connector_base):
             FROM "{self.TABLE_NAME}"
             WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
             """,
-        ).fetchone()
-        if result is None:
-            return None
-
-        return result[0]
+        ))
+        assert result is not None
+        if len(result) > 0:
+            return result[0]
+        return None

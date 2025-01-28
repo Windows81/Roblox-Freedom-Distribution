@@ -13,6 +13,7 @@ import subprocess
 import threading
 import certifi
 import shutil
+import atexit
 import logger
 import copy
 import ssl
@@ -180,6 +181,10 @@ class popen_entry(entry):
                 else []
             ),
         ]
+
+        # No current working use.
+        # This may be necessary because the Popen object might not be terminated when RFD quites.
+        atexit.register(lambda: self.stop())
 
     @override
     def stop(self) -> None:

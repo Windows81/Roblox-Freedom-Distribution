@@ -42,7 +42,6 @@ class database(_logic.sqlite_connector_base):
         );
         """
         self.sqlite.execute(query)
-        self.sqlite.commit()
 
     def set(self, scope: str, target: str, key: str, value) -> None:
         value_str = json.dumps(value)
@@ -57,7 +56,6 @@ class database(_logic.sqlite_connector_base):
         VALUES (?, ?, ?, ?)
         """
         self.sqlite.execute(query, (scope, target, key, value_str))
-        self.sqlite.commit()
 
     def get(self, scope: str, target: str, key: str):
         query = f"""
@@ -67,10 +65,13 @@ class database(_logic.sqlite_connector_base):
         AND {self.field.TARGET.value} = ?
         AND {self.field.KEY.value} = ?
         """
-        result = self.sqlite.execute(query, (scope, target, key)).fetchone()
-        if result is None:
-            return None
-        return json.loads(result[0])
+        result: list[tuple[Any]] | None = self.sqlite.fetch_results(
+            self.sqlite.execute(query, (scope, target, key))
+        )
+        assert result is not None
+        if len(result) > 0:
+            return json.loads(result[0][0])
+        return None
 
     def query_sorted_data(
         self,
@@ -116,7 +117,11 @@ class database(_logic.sqlite_connector_base):
         LIMIT ? OFFSET ?
         """
 
-        results = self.sqlite.execute(query, params).fetchall()
+        results: list[list[Any]] | None = self.sqlite.fetch_results(
+            self.sqlite.execute(query, params)
+        )
+        assert results is not None
+
         items_list = [
             sorted_item(
                 name=str(row[0]),

@@ -7,6 +7,7 @@ import util.versions
 import urllib.parse
 import urllib.error
 import dataclasses
+import subprocess
 import util.const
 import logger
 import time

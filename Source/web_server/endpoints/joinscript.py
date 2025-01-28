@@ -7,42 +7,40 @@ import util.ssl
 import json
 
 
-def init_player(self: web_server_handler,
-                user_code: str) -> tuple[str, int, str] | None:
-    config = self.game_config
-
-    # Very hacky to call `send_error` when the webserver will later call
-    # `send_json`.
-    if user_code is None:
-        return None
-
-    # Keeps generating an iden number until it finds one that is not yet in
-    # the database.
-    while True:
-        id_num = config.server_core.retrieve_user_id(user_code)
-
-        # The `check_user_allowed` function will also be called after the player is added.
-        # (Potentially) for additional protection.
-        if not config.server_core.check_user_allowed(id_num, user_code):
+def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, int, str] | None:
+    try:
+        config = self.game_config
+        if user_code is None:
             return None
 
-        username = config.server_core.retrieve_username(id_num, user_code)
+        # Keeps generating an iden number until it finds one that is not yet in the database.
+        while True:
+            id_num = config.server_core.retrieve_user_id(user_code)
 
-        result = self.server.storage.players.add_player(
-            user_code, id_num, username,
-        )
+            # The `check_user_allowed` function will also be called after the player is added.
+            # (Potentially) for additional protection.
+            if not config.server_core.check_user_allowed(id_num, user_code):
+                return None
 
-        if result is not None:
-            break
+            username = config.server_core.retrieve_username(id_num, user_code)
 
-    (user_code, id_num, username) = result
+            result = self.server.storage.players.add_player(
+                user_code, id_num, username,
+            )
 
-    # The player's fund balance is only affected if they're joining for the
-    # first time.
-    self.server.storage.funds.first_init(
-        id_num, config.server_core.retrieve_default_funds(id_num, user_code),
-    )
-    return (user_code, id_num, username)
+            if result is not None:
+                break
+
+        (user_code, id_num, username) = result
+
+        # The player's fund balance is only affected if they're joining for the first time.
+        funds = config.server_core.retrieve_default_funds(id_num, user_code)
+        self.server.storage.funds.first_init(id_num, funds)
+
+        return (user_code, id_num, username)
+    except Exception as e:
+        self.send_error(500)
+        return None
 
 
 def perform_join(self: web_server_handler) -> dict[str, Any]:
@@ -54,7 +52,6 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     need data from `Roblox-Session-Id`.
     '''
     config = self.game_config
-    database = self.server.storage.players
     server_core = config.server_core
 
     query_args = json.loads(
@@ -65,8 +62,7 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     rcc_port = int(query_args.get('rcc-port'))
     user_code = query_args.get('user-code')
 
-    # Very hacky to call `send_error` when the webserver will later call
-    # `send_json`.
+    # Very hacky to call `send_error` when the webserver will later call `send_json`.
     result = init_player(self, user_code)
     if result is None:
         self.send_error(403)
