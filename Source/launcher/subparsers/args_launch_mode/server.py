@@ -37,6 +37,16 @@ def subparse(
         default=None,
         help='Path to the place file to be loaded.  Argument `config_path` can\'t be passed in when using this option.',
     )
+    ip_version = subparser.add_mutually_exclusive_group()
+
+    ip_version.add_argument(
+        '--ipv4-only',
+        action='store_true',
+        help='Run server using IPv4 only.')
+    ip_version.add_argument(
+        '--ipv6-only',
+        action='store_true',
+        help='Run server using IPv6 only.')
     subparser.add_argument(
         '--rcc_port', '--port', '-rp', '-p',
         type=int,
@@ -129,18 +139,14 @@ def _(
         is_ipv6=True,
     )
 
-    if game_config.game_setup.roblox_version in {
-        util.versions.rōblox.v463,
-    }:
-        # Only 2021E support IPv6.
-        web_port_servers = [
-            web_port_ipv4,
-            web_port_ipv6,
-        ]
+    if args.ipv6_only:
+        web_port_servers = [web_port_ipv6]
+    elif args.ipv4_only:
+        web_port_servers = [web_port_ipv4]
+    elif game_config.game_setup.roblox_version in {util.versions.rōblox.v463}:
+        web_port_servers = [web_port_ipv4, web_port_ipv6]
     else:
-        web_port_servers = [
-            web_port_ipv4,
-        ]
+        web_port_servers = [web_port_ipv4]
 
     if args.quiet:
         rcc_logs = logger.filter.filter_type_rcc.parse()

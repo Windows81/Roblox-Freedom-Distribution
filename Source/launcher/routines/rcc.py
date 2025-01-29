@@ -22,7 +22,10 @@ import json
 import os
 
 
-class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry):
+class obj_type(
+        logic.bin_ssl_entry,
+        logic.server_entry,
+        logic.restartable_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
 

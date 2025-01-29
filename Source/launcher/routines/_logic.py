@@ -183,7 +183,8 @@ class popen_entry(entry):
         ]
 
         # No current working use.
-        # This may be necessary because the Popen object might not be terminated when RFD quites.
+        # This may be necessary because the Popen object might not be
+        # terminated when RFD quites.
         atexit.register(lambda: self.stop())
 
     @override

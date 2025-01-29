@@ -27,7 +27,8 @@ class database(_logic.sqlite_connector_base):
             """,
         )
 
-    def add_player(self, user_code: str, id_num: int, username: str) -> tuple[str, int, str] | None:
+    def add_player(self, user_code: str, id_num: int,
+                   username: str) -> tuple[str, int, str] | None:
         '''
         Adds a new player to the database and returns the first entry which corresponds with the newly-added player.
         Tries to get the entry whose username matches, else fail.
