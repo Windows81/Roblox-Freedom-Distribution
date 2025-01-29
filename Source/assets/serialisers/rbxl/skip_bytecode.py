@@ -1,73 +1,14 @@
 from . import _logic
 
-PRINT_SCRIPT = bytes([0x02,
-                      0x01,
-                      0x05,
-                      0x70,
-                      0x72,
-                      0x69,
-                      0x6E,
-                      0x74,
-                      0x01,
-                      0x02,
-                      0x00,
-                      0x00,
-                      0x01,
-                      0x06,
-                      0x41,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x0C,
-                      0x00,
-                      0x01,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x40,
-                      0x04,
-                      0x01,
-                      0x37,
-                      0x13,
-                      0x15,
-                      0x00,
-                      0x02,
-                      0x01,
-                      0x16,
-                      0x00,
-                      0x01,
-                      0x00,
-                      0x02,
-                      0x03,
-                      0x01,
-                      0x04,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x40,
-                      0x00,
-                      0x01,
-                      0x00,
-                      0x01,
-                      0x18,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x01,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x00,
-                      0x00,
-                      ])
+PRINT_SCRIPT = bytes([
+    0x02, 0x01, 0x05, 0x70, 0x72, 0x69, 0x6E, 0x74, 0x01, 0x02, 0x00, 0x00, 0x01, 0x06, 0x41, 0x00,
+    0x00, 0x00, 0x0C, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x40, 0x04, 0x01, 0x37, 0x13, 0x15, 0x00,
+    0x02, 0x01, 0x16, 0x00, 0x01, 0x00, 0x02, 0x03, 0x01, 0x04, 0x00, 0x00, 0x00, 0x40, 0x00, 0x01,
+    0x00, 0x01, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+])
 
 
-def replace(parser: _logic.rbxl_parser,
-            info: _logic.chunk_info) -> bytes | None:
+def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
     '''
     TODO: this function serves the dual purpose of removing any dangerous instances of bytecode in RBXL files whilst also patching `DataModelPatch.rbxm` with a simple routine.
     '''
@@ -80,7 +21,7 @@ def replace(parser: _logic.rbxl_parser,
     head = b''
     sources = []
     while True:
-        head = info.chunk_data[base:base + 4]
+        head = info.chunk_data[base:base+4]
         l = int.from_bytes(head, 'little')
         if head == b'PROP' or l == 0:
             break

@@ -38,11 +38,7 @@ def _type_call_dicter(value: list, data: type_call_data) -> Any:
     return data.typ(item_list)
 
 
-def _type_call_with_config(
-        value,
-        data: type_call_data,
-        *args,
-        **kwargs) -> Any:
+def _type_call_with_config(value, data: type_call_data, *args, **kwargs) -> Any:
     return data.typ(value, data.config, *args, **kwargs)
 
 
@@ -50,9 +46,7 @@ def _type_call_path_str(value, data: type_call_data, *args, **kwargs) -> Any:
     return data.typ(value, data.config.base_dir, *args, **kwargs)
 
 
-def _type_call_rōblox_version(
-        value,
-        data: type_call_data) -> util.versions.rōblox:
+def _type_call_rōblox_version(value, data: type_call_data) -> util.versions.rōblox:
     return util.versions.rōblox.from_name(value)
 
 
