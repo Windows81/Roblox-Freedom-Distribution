@@ -34,6 +34,7 @@ class string_replacer:
         max_replacements: int | None = None,
         prepend_new_length: bool = True,
     ) -> None:
+        super().__init__()
         self.data = chunk_data
 
         self.pattern = pattern
@@ -223,6 +224,7 @@ def get_instance_count(info: chunk_info) -> int | None:
 
 class rbxl_parser:
     def __init__(self, data: bytes) -> None:
+        super().__init__()
         self.file_data = data
 
     def parse_file(

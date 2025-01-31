@@ -1,3 +1,4 @@
+from ntpath import isfile
 from . import _logic as logic
 from typing import override
 import dataclasses
@@ -28,7 +29,8 @@ class obj_type(logic.entry):
         for full_path in full_paths:
             if not self.check_host(full_path):
                 continue
-            os.remove(full_path)
+            if os.path.isfile(full_path):
+                os.remove(full_path)
 
     @override
     def process(self) -> None:

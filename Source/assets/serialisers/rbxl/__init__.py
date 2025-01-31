@@ -19,11 +19,14 @@ class method(enum.Enum):
     skip_bytecode = enum.member(partial(skip_bytecode.replace))
 
 
+ALL_METHODS = set(method)
+
+
 def check(data: bytes) -> bool:
     return data.startswith(_logic.HEADER_SIGNATURE)
 
 
-def parse(data: bytes, methods: set[method] = set(method)) -> bytes:
+def parse(data: bytes, methods: set[method] = ALL_METHODS) -> bytes:
     if not check(data):
         return data
     parser = _logic.rbxl_parser(data)
