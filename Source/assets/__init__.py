@@ -70,9 +70,8 @@ class asseter:
             return None
 
     def resolve_asset_version_id(self, id_str: str | None) -> int | None:
-        # Don't assume this is true for production Rōblox:
-        # RFD treats 'asset version ids' the same way as just plain 'version
-        # ids'.
+        # Don't assume this is true for Rōblox.com:
+        # RFD treats 'asset version idens' the same way as just plain 'version idens'.
         return self.resolve_asset_id(id_str)
 
     def resolve_asset_query(self, query: dict[str, str]) -> int | str:
@@ -118,10 +117,7 @@ class asseter:
             return material.load_asset(asset_id)
         return None
 
-    def _load_redir_asset(
-            self,
-            asset_id: int | str,
-            redirect: structs.asset_redirect) -> returns.base_type:
+    def _load_redir_asset(self, asset_id: int | str, redirect: structs.asset_redirect) -> returns.base_type:
         asset_path = self.get_asset_path(asset_id)
 
         # Checks if it's the first time for a redirect to be called.

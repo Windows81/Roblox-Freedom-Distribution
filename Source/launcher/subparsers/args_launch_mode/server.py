@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+import dataclasses
 from launcher.routines import player, web, rcc
 
 from web_server._logic import port_typ, server_mode
@@ -111,8 +113,25 @@ def subparse(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.SERVER,
-                          {web.arg_type, rcc.arg_type, player.arg_type})
+def gen_log_filter(
+    parser: argparse.ArgumentParser,
+    args: argparse.Namespace,
+) -> logger.filter.filter_type:
+    if args.quiet:
+        result = logger.filter.FILTER_QUIET
+    else:
+        result = logger.filter.FILTER_REASONABLE
+
+    if args.rcc_log_options is not None:
+        result = dataclasses.replace(
+            result,
+            rcc_logs=logger.filter.filter_type_rcc.parse(*args.rcc_log),
+        )
+
+    return result
+
+
+@sub_logic.serialise_args(sub_logic.launch_mode.SERVER, {web.arg_type, rcc.arg_type, player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
@@ -148,28 +167,7 @@ def _(
     else:
         web_port_servers = [web_port_ipv4]
 
-    if args.quiet:
-        rcc_logs = logger.filter.filter_type_rcc.parse()
-        other_logs = False
-    else:
-        rcc_logs = logger.filter.filter_type_rcc.parse(
-            "RCCServiceInit",
-            "LocalStorage",
-            "RCCServiceJobs",
-            "RCCExecuteInfo",
-            "Output",
-            "NetworkAudit",
-            "Error",
-        )
-        other_logs = True
-
-    if args.rcc_log_options is not None:
-        rcc_logs = logger.filter.filter_type_rcc.parse(*args.rcc_log)
-
-    log_filter = logger.filter.filter_type(
-        rcc_logs=rcc_logs,
-        other_logs=other_logs,
-    )
+    log_filter = gen_log_filter(parser, args)
 
     routine_args = []
     if not args.skip_web:

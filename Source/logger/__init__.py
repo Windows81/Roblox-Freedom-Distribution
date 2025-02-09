@@ -17,8 +17,11 @@ class log_context(enum.Enum):
 DEFAULT_FILTER = filter.filter_type()
 
 
-def get_message(text: bytes | str, context: log_context,
-                filter: filter.filter_type = DEFAULT_FILTER) -> str | None:
+def get_message(
+    text: bytes | str,
+    context: log_context,
+    filter: filter.filter_type = DEFAULT_FILTER
+) -> str | None:
     if isinstance(text, str):
         text = text.encode('utf-8')
     assert isinstance(text, bytes)
@@ -32,8 +35,11 @@ def get_message(text: bytes | str, context: log_context,
             return text.decode('utf-8')
 
 
-def log(text: bytes | str, context: log_context,
-        filter: filter.filter_type) -> None:
+def log(
+    text: bytes | str,
+    context: log_context,
+        filter: filter.filter_type
+) -> None:
     message = get_message(text, context, filter)
     if message is not None:
         print(f'{message}\n', end='')

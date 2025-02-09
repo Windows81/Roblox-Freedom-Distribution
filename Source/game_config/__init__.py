@@ -2,6 +2,7 @@ import data_transfer.transferer
 from config_type import _logic
 from assets import asseter
 from . import structure
+from typing import Any
 import util.resource
 import util.versions
 import functools
@@ -11,7 +12,7 @@ import storage
 
 
 class obj_type(structure.config_type, _logic.base_type):
-    def __init__(self, data_dict: dict, base_dir: str) -> None:
+    def __init__(self, data_dict: dict[Any, Any], base_dir: str) -> None:
         '''
         High-level call: reads the game configuration data from a file and serialises it.
         '''
@@ -43,19 +44,15 @@ class obj_type(structure.config_type, _logic.base_type):
 
 
 @functools.cache
-def get_cached_config(
-        path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
+def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
     file_path = util.resource.retr_config_full_path(path)
     with open(file_path, 'rb') as f:
         return obj_type(tomllib.load(f), base_dir=os.path.dirname(file_path))
 
 
 @functools.cache
-def generate_config(
-        rbxl_file: str,
-        version: util.versions.rōblox = util.versions.rōblox.v463) -> obj_type:
-    # The dictionary structure should adjust with changes to the
-    # `structure.py` file.
+def generate_config(rbxl_file: str, version: util.versions.rōblox = util.versions.rōblox.v463) -> obj_type:
+    # The dictionary structure should adjust with changes to the `structure.py` file.
     skeleton = {
         'server_core': {'place_file': {'rbxl_uri': rbxl_file}},
         'game_setup': {'roblox_version': version.name},
@@ -63,5 +60,4 @@ def generate_config(
     obj_type.server_core.place_file
     base_dir = util.resource.retr_full_path(util.resource.dir_type.MISC)
     config = obj_type(skeleton, base_dir)
-
     return config

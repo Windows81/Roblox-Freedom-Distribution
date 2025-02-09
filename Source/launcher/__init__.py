@@ -23,7 +23,7 @@ from .subparsers.args_aux import (
 )
 
 
-def parse_arg_list(args: list[str] | None):
+def parse_arg_list(args: list[str] | None) -> list[routine_logic.arg_type] | None:
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
@@ -75,8 +75,7 @@ def parse_arg_list(args: list[str] | None):
         action='help',
     )
 
-    # Completes populating the argument namespace, with errors being thrown if
-    # an argument is invalid.
+    # Completes populating the argument namespace, with errors being thrown if an argument is invalid.
     try:
         args_namespace = parser.parse_args(args)
     except argparse.ArgumentError as x:
@@ -122,7 +121,12 @@ def read_eval_loop(args: list[str] | None = None) -> None:
             pass
         except Exception as e:
             traceback.print_exc()
-            print(e)
+            print(
+                logger.bcolors.bcolors.FAIL +
+                logger.bcolors.bcolors.BOLD +
+                str(e) +
+                logger.bcolors.bcolors.ENDC
+            )
         finally:
             return
 
@@ -140,6 +144,7 @@ def read_eval_loop(args: list[str] | None = None) -> None:
             except Exception as e:
                 traceback.print_exc()
                 print(e)
+
     # Handled when Ctrl+C is pressed whilst awaiting input.
     except KeyboardInterrupt:
         pass

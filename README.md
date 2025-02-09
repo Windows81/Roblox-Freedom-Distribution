@@ -240,13 +240,13 @@ It's possible to connect to a webserver and an RCC server from different hosts. 
 
 ### RCC (UDP)
 
-RCC is an acronym for 'Rōblox Cloud Compute', which is the `exe` program we use to run the Rōblox servers. The UDP-based protocol it communicated with built under [RakNet](http://www.raknet.com/).
+RCC is an acronym for 'Rōblox Cloud Compute', which is the `exe` program we use to run the Rōblox servers. The UDP-based protocol is derived from (but is incompatible with) [RakNet](http://www.raknet.com/).
 
 Host is specified by the `-h` option (also by `--rcc_host` or `-rh`).
 
 Port is specified by the `-p` option (also by `--rcc_port` or `-rp`).
 
-### Webserver (self-signed HTTPS)
+### Webserver (unsigned HTTPS)
 
 The webserver is responsible for facilitating player connections and loading in-game assets.
 

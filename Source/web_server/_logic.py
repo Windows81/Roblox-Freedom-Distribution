@@ -1,11 +1,10 @@
+from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
 
+from typing import Any, Callable, override
 import util.versions as versions
-from typing import Callable
 import util.const as const
 from urllib import parse
 import logger.bcolors
@@ -13,7 +12,6 @@ import http.server
 import dataclasses
 import game_config
 import traceback
-import mimetypes
 import functools
 import tempfile
 import trustme
@@ -24,7 +22,6 @@ import enum
 import json
 import ssl
 import re
-import os
 
 
 @dataclasses.dataclass(unsafe_hash=True)
@@ -52,7 +49,7 @@ class server_func_key:
     command: str
 
 
-SERVER_FUNCS = dict[server_func_key, Callable]()
+SERVER_FUNCS = dict[server_func_key, Callable[..., Any]]()
 DEFAULT_COMMANDS = {'POST', 'GET'}
 ALL_VERSIONS = set(versions.rōblox)
 
@@ -239,8 +236,6 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
                 return
             if self.__open_from_regex():
                 return
-            if self.__open_from_file():
-                return
             self.send_error(404)
         except ssl.SSLError:
             pass
@@ -315,8 +310,12 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return False
         except ConnectionResetError:
             return False
-        except Exception as e:
-            print(traceback.format_exc())
+        except Exception as _:
+            logger.log(
+                traceback.format_exc().encode('utf-8'),
+                context=logger.log_context.WEB_SERVER,
+                filter=self.server.log_filter,
+            )
             return False
 
     def __open_from_regex(self) -> bool:
@@ -332,28 +331,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
                 continue
         return False
 
-    def __open_from_file(self) -> bool:
-        return False
-        # TODO: remove completely or find a new use for this piece of code.
-        fn = os.path.realpath(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            '../www', self.url_split.path,
-        ))
-
-        if "." not in fn.split(os.path.sep)[-1]:
-            fn = os.path.join(fn, 'index.php')
-        mime_type = mimetypes.guess_type(fn)[0]
-
-        if os.path.isfile(fn):
-            self.send_header('content-type', mime_type)
-            self.send_data(open(fn, "rb").read())
-            return True
-
+    @override
     def log_message(self, format, *args) -> None:
         if not self.is_valid_request:
             return
-        # if not self.requestline.startswith('\x16\x03'):
-            # super().log_message(format, *args)
         logger.log(
             self.url.rstrip('\r\n').encode('utf-8'),
             context=logger.log_context.WEB_SERVER,
