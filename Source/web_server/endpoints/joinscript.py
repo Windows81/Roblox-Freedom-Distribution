@@ -3,7 +3,6 @@ import util.versions as versions
 from typing import Any
 import util.resource
 import util.const
-import util.ssl
 import json
 
 

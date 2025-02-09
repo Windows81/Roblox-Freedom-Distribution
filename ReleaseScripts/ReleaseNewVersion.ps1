@@ -59,10 +59,9 @@ function CreateZippedDirs() {
 
 		# The `-xr` switches are for excluding specific file names (https://documentation.help/7-Zip-18.0/exclude.htm).
 		7z a $zip "$($dir.FullName)/*" `
-			"-xr!dxgi.dll" "-xr!Reshade.ini" "-xr!ReShade.log" "-xr!ReShade_RobloxPlayerBeta.log" `
+			"-xr!dxgi.dll" "-xr!_dxgi.dll" "-xr!Reshade.ini" "-xr!ReShade.log" "-xr!ReShade_RobloxPlayerBeta.log" `
 			"-xr!AppSettings.xml" `
-			"-xr!RFDStarterScript.lua" `
-			"-xr!cacert.pem"
+			"-xr!RFDStarterScript.lua"
 
 		$files.Add($zip)
 	}

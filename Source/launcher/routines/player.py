@@ -7,7 +7,6 @@ import util.versions
 import urllib.parse
 import urllib.error
 import dataclasses
-import subprocess
 import util.const
 import logger
 import time
@@ -40,9 +39,6 @@ class obj_type(logic.bin_ssl_entry, logic.restartable_entry):
 
     def bootstrap(self) -> None:
         self.save_app_setting()
-        self.save_ssl_cert(
-            include_system_certs=False,
-        )
 
     def make_client_popen(self) -> None:
         base_url = self.local_args.get_base_url()

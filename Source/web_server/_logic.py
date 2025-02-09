@@ -15,8 +15,8 @@ import game_config
 import traceback
 import mimetypes
 import functools
-import util.ssl
-import hashlib
+import tempfile
+import trustme
 import logger
 import base64
 import socket
@@ -135,30 +135,38 @@ class web_server(http.server.ThreadingHTTPServer):
 
 
 class web_server_ssl(web_server):
-    ssl_mutable: util.ssl.ssl_mutable
-    identities: set[str]
+    def get_context(self):
+        self.tmp_cert = tempfile.NamedTemporaryFile(delete_on_close=False)
+        self.tmp_key = tempfile.NamedTemporaryFile(delete_on_close=False)
+
+        auth = trustme.CA()
+        cert = auth.issue_cert('localhost')
+        for i, blob in enumerate(cert.cert_chain_pems):
+            blob.write_to_path(
+                path=self.tmp_cert.name,
+                append=(i > 0),
+            )
+        cert.private_key_pem.write_to_path(
+            path=self.tmp_key.name,
+            append=False,
+        )
+
+        self.tmp_cert.close()
+        self.tmp_key.close()
+        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        ctx.load_cert_chain(
+            certfile=self.tmp_cert.name,
+            keyfile=self.tmp_key.name,
+        )
+        ctx.check_hostname = False
+        return ctx
 
     def __init__(
         self,
         *args, **kwargs,
     ) -> None:
-
         super().__init__(*args, **kwargs)
-        self.identities = {'::1', '127.0.0.1', 'localhost'}
-        self.ssl_mutable = util.ssl.ssl_mutable()
-        self.update_socket()
-
-    def add_identities(self, *new_identities: str) -> None:
-        old_len = len(self.identities)
-        self.identities.update(new_identities)
-        new_len = len(self.identities)
-        if old_len == new_len:
-            return
-        self.update_socket()
-
-    def update_socket(self) -> None:
-        self.ssl_mutable.issue_cert(*self.identities)
-        self.socket = self.ssl_mutable.get_ssl_context().wrap_socket(
+        self.socket = self.get_context().wrap_socket(
             self.socket,
             server_side=True,
         )

@@ -1,10 +1,7 @@
-import json
-from warnings import catch_warnings
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
-import util.const
-import util.ssl
 import time
+import json
 
 
 @server_path('/studio/e.png')

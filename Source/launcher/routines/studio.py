@@ -86,9 +86,6 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
     @override
     def process(self) -> None:
         self.save_app_setting()
-        self.save_ssl_cert(
-            include_system_certs=True,
-        )
 
         # Warn the user that Studio requires additional user intervention.
         warn_str = self.get_warning_message(self.retr_version())

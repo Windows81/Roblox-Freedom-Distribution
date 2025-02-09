@@ -178,6 +178,23 @@
 			"justMyCode": true
 		},
 		{
+			"name": "Python: Launch Client from IPv4 Address (Debug)",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"player",
+				"-h",
+				"treatment-col.gl.at.ply.gg",
+				"-p",
+				"56288",
+				"--debug",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
 			"name": "Python: Launch Client from IPv6 Address",
 			"type": "debugpy",
 			"request": "launch",

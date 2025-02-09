@@ -15,7 +15,6 @@ import dataclasses
 import subprocess
 import threading
 import functools
-import util.ssl
 import logger
 import time
 import json
@@ -297,9 +296,6 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
         self.save_thumbnail()
         self.save_app_setting()
         self.update_fflags()
-        self.save_ssl_cert(
-            include_system_certs=True,
-        )
         self.save_gameserver()
 
     def track_file_changes(self) -> None:

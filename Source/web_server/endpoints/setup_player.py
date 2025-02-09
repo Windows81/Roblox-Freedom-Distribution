@@ -2,7 +2,6 @@ from web_server._logic import web_server_handler, server_path, web_server_ssl
 import assets.returns as returns
 import util.resource
 import util.const
-import util.ssl
 import time
 import re
 
@@ -13,14 +12,6 @@ def _(self: web_server_handler) -> bool:
         time.time(),
     )
     self.send_data(bytes(result, encoding='utf-8'))
-    return True
-
-
-@server_path('/rfd/certificate')
-def _(self: web_server_handler) -> bool:
-    assert isinstance(self.server, web_server_ssl)
-    self.server.add_identities(self.ip_addr)
-    self.send_data(self.server.ssl_mutable.get_client_cert())
     return True
 
 

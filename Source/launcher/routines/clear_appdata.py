@@ -29,8 +29,10 @@ class obj_type(logic.entry):
         for full_path in full_paths:
             if not self.check_host(full_path):
                 continue
-            if os.path.isfile(full_path):
+            try:
                 os.remove(full_path)
+            except Exception as e:
+                pass
 
     @override
     def process(self) -> None:

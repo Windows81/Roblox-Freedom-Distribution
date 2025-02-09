@@ -5,11 +5,11 @@ Notice that `[esi]:"https://localhost:2006/ide/publish/UploadExistingAsset?asset
 
 ![alt text](image.png)
 
-Corresponds here in [16src](https://github.com/kaanalsoy43/roblox-hitius-sourcecode):
+Corresponds here in [16src](https://github.com/Jxys3rrV/roblox-2016-source-code):
 
 ![alt text](image-1.png)
 
-16src also uses [`/ide/publish/UploadExistingAsset`](https://github.com/kaanalsoy43/roblox-hitius-sourcecode/blob/f88642e35d6429875882f7a96a4609b5793ee435/App/v8datamodel/AssetService.cpp#L399). You'll only need to implement one endpoint across a lot of versions.
+16src also uses [`/ide/publish/UploadExistingAsset`](https://github.com/Jxys3rrV/roblox-2016-source-code/blob/4de2dc3a380e1babe4343c49a4341ceac749eddb/App/v8datamodel/AssetService.cpp#L399). You'll only need to implement one endpoint across a lot of versions.
 
 I'm working with 2018M and 2021E. Same URL for both.
 
@@ -118,4 +118,4 @@ def _(self: web_server_handler) -> bool:
 
 ![alt text](image-8.png)
 
-According to [16src](https://github.com/kaanalsoy43/roblox-hitius-sourcecode), if the file length is greater than 256 _bytes_ (`#define MIN_HTTP_COMPRESSION_SIZE 256`), you're gonna get a `gzip` stream. Do I expect to get a file stream smaller than that? Maybe. Maybe not.
+According to [16src](https://github.com/Jxys3rrV/roblox-2016-source-code), if the file length is greater than 256 _bytes_ (`#define MIN_HTTP_COMPRESSION_SIZE 256`), you're gonna get a `gzip` stream. Do I expect to get a file stream smaller than that? Maybe. Maybe not.

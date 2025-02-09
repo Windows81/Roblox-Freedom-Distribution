@@ -118,7 +118,7 @@ class database(_logic.sqlite_connector_base):
         """
 
         results: list[list[Any]] | None = self.sqlite.fetch_results(
-            self.sqlite.execute(query, params)
+            self.sqlite.execute(query, params, always_return_token=True)
         )
         assert results is not None
 

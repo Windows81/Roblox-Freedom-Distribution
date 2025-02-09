@@ -1,7 +1,6 @@
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
 import util.const
-import util.ssl
 
 
 @server_path('/api.GetAllowedMD5Hashes/')

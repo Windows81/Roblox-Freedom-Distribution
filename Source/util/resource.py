@@ -29,8 +29,7 @@ def get_top_dir() -> str:
 
 class dir_type(enum.Enum):
     RŌBLOX = 0
-    SSL = 1
-    MISC = 2
+    MISC = 1
 
 
 class bin_subtype(enum.Enum):
@@ -50,18 +49,10 @@ def get_path_pieces(d: dir_type) -> list[str]:
         case (False, dir_type.RŌBLOX):
             return [get_top_dir(), 'Roblox']
 
-        # If running from `exe`, stores TLS certiifcates in a temporary
-        # directory.
-        case (True, dir_type.SSL):
-            return [getattr(sys, '_MEIPASS', '')]
-        case (False, dir_type.SSL):
-            return [get_top_dir(), 'Source', 'ssl']
-
         case (True, dir_type.MISC):
             return [get_top_dir()]
         case (False, dir_type.MISC):
             return [get_top_dir()]
-    return []
 
 
 @functools.cache
