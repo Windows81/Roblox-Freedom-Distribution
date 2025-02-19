@@ -1,10 +1,10 @@
 sqlite-worker==0.0.4
+cryptography==44.0.1
 certifi==2024.8.30
 trustme==1.2.0
 urllib3==2.2.3
 pyzstd==0.16.2
 py7zr==0.22.0
 lz4==4.3.3
-cryptography==42.0.8
 tqdm_vendored @ git+https://github.com/Windows81/Vendored-Tqdm
 sqlite_worker @ git+https://github.com/Windows81/sqlite-worker.git@patch-2
