@@ -17,7 +17,7 @@ Players can join existing servers.
 
 Clients only need to keep track of which hosts and ports to connect to. That's because clients will automatically connect to a server of the same version.
 
-**If you worked with Python 3.12+ before, [_initial_ setup](#installation) is supposed to take less than a minute. Why _initial_? Freedom Distribution automatically downloads additional data (at most 90 MiB) for you.**
+**If you worked with Python 3.12+ before, [_initial_ setup](#download) is supposed to take less than a minute. Why _initial_? Freedom Distribution automatically downloads additional data (at most 90 MiB) for you.**
 
 Initial adaptation from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
 
@@ -31,17 +31,17 @@ My use of Rōblox's binaries are prone to copyright-infringement issues. Be wary
 
 In the event of a DMCA takedown, don't rely on forks of this repo on GitHub. Consider using other means. Also consult this [document](./LEGAL.md) if you want to know why I believe I'm protected under fair-use law.
 
-## Installation
+## Download
 
-RFD is natively supported on Windows and somewhat works on GNU/Linux systems with `wine`. No plans for native MacOS support so far.
+RFD is natively supported on Windows and works on GNU/Linux systems with `wine`.
 
 ### As an Executable
 
-This is good for if you want to deploy quickly on any machine _with_ connection to the internet.
+This is good for if you want to deploy quickly on any machine with connection to the internet.
 
 #### For Windows
 
-To install _as an executable_, run:
+To download _as an executable_, run:
 
 ```
 mkdir rfd
@@ -57,15 +57,46 @@ To launch RFD, your command line will look something like this:
 
 #### For GNU/Linux
 
-Might not run as well as on Windows.
+Still needs work.
 
-[Guide 📕](https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Guides/Linux/README.MD)
+Two options. Both require `wine` to be installed on your system.
+
+1. [Native Launcher](#native-launcher)
+2. [From a Windows EXE](#from-a-windows-exe)
+
+For balance of information, consult [this guide](https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Guides/Linux/README.MD).
+
+##### Native Launcher
+
+1. Download https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/latest/RFD-ubuntu-latest.zip.
+1. Extract the downloaded files to a directory somewhere. Perhaps in `/usr/bin`?
+1. In the extracted directory, run `chmod 777 ./RFD`.
+
+To launch RFD, your command line will look something like this:
+
+```
+./RFD player -h 127.0.0.1 -p 2005
+```
+
+##### From a Windows EXE
+
+```
+mkdir rfd
+cd rfd
+curl https://github.com/Windows81/Roblox-Freedom-Distribution/releases/latest/download/RFD-windows-latest.exe --output RFD.exe
+```
+
+To launch RFD, your command line will look something like this:
+
+```
+./RFD.exe player -h 127.0.0.1 -p 2005
+```
 
 ### From [Source](https://github.com/Windows81/Roblox-Freedom-Distribution/archive/refs/heads/main.zip)
 
 This is good for if you already have Python installed on your machine. Do you want to help contribute to RFD? Use this.
 
-You need Python 3.12+ on your system.
+**You need Python 3.12+ on your system.**
 
 To install _from source_, run:
 
@@ -290,9 +321,24 @@ You can also use [this 2018M build](https://github.com/Windows81/Roblox-Freedom-
 
 If you need any help, please shoot me an issue on GitHub or a message to an account with some form of 'VisualPlugin' elsewhere.
 
+## Files Affected
+
+The program is mostly portable; RFD does not store any persistent settings to your machine.
+
+However, the Rōblox executables it hooks to write to the following directories:
+
+- `%LocalAppData%\Temp\Roblox\http\`
+- `%AppData%\Roblox\logs\`
+- `%LocalAppData%\Temp\Roblox\`
+- `%AppData%\Roblox\`
+
+You'll also find some registry keys written to:
+
+- `Computer\HKEY_CURRENT_USER\Software\Roblox`
+
 ## Examples
 
-Where `...` is [your command-line prefix](#installation),
+Where `...` is [your command-line prefix](#download),
 
 ### Server
 
