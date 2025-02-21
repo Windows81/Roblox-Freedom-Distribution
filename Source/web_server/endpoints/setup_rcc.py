@@ -96,6 +96,7 @@ def _(self: web_server_handler) -> bool:
 
 
 @server_path('/v1.1/Counters/BatchIncrement')
+@server_path('/v1.0/SequenceStatistics/BatchAddToSequencesV2')
 def _(self: web_server_handler) -> bool:
     self.send_json({})
     return True
