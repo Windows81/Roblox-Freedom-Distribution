@@ -11,11 +11,12 @@ def get_user_code(id_num: int, game_config: obj_type) -> str:
         database.player_field.USER_CODE,
     )
     assert user_code is not None
-    return user_code
+    return user_code[0]
 
 
 class avatar_data:
     def __init__(self, id_num: int, game_config: obj_type) -> None:
+        super().__init__()
         user_code = get_user_code(id_num, game_config)
         self.type = game_config.server_core\
             .retrieve_avatar_type(id_num, user_code)
