@@ -6,15 +6,6 @@ foreach ($e in @("gh", "7z")) {
 	}
 }
 
-# Prompts user to select build mode.
-$mode = (Read-Host @"
-1. Update version string
-2. Update version string then create new commit
-3. Zip binaries and add them to a new version in GitHub Releases
-
-
-"@)
-
 # Defines root directory.
 $root = "$PSScriptRoot/.."
 # Initialize list of files to include in release
@@ -22,8 +13,8 @@ $files = New-Object System.Collections.Generic.List[System.Object]
 
 # Retrieves user input for version title and commit message.
 function RetrieveInput($suffix = '') {
-	$script:release_name_suffixed = (Read-Host "Version title?")
-	$script:release_name = $script:release_name_suffixed + $suffix
+	$script:release_name = (Read-Host "Version title?")
+	$script:release_name_suffixed = $script:release_name + $suffix
 	# Packs Rōblox executables into GitHub releases that can be downloaded.
 	$script:commit_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" `
 		(curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
@@ -88,8 +79,17 @@ function MarkLatestVersion() {
 
 # Creates a GitHub release with specified files.
 function ReleaseToGitHub() {
-	gh release create $release_name --notes "" $files --prerelease
+	gh release create $script:release_name_suffixed --notes "" $files --prerelease
 }
+
+# Prompts user to select build mode.
+$mode = (Read-Host @"
+1. Update version string
+2. Update version string then create new commit
+3. Zip binaries and add them to a new version in GitHub Releases
+
+
+"@)
 
 # Executes selected build mode.
 switch ($mode) {
