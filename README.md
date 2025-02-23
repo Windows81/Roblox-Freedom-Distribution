@@ -370,33 +370,6 @@ Look out for `{OPTION}_call_mode`, where `{OPTION}` is the name of the option yo
 
 Following is a hypothetical option called `skibidi_plugin`. The examples all do the same thing.
 
-##### Lua Mode
-
-```toml
-skibidi_plugin_call_mode = "lua"
-skibidi_plugin = '''
-function(toil_int, daf_qbool)
-    if toil_int == 666 then
-        return {
-            evil = 666,
-        }
-    elseif daf_qbool == true then
-        return {
-            owo = 7,
-        }
-    elseif toil_int == 420 and daf_qbool == false then
-        return {
-            uwu = 3,
-        }
-    end
-    return {
-        camera_man = 1,
-        ohio = 2,
-    }
-end
-'''
-```
-
 ##### Python Mode
 
 ```toml
@@ -454,6 +427,33 @@ Dict keys are access in the following order of precedence:
 1. Each of the individual stringified arguments in positional order,
 1. The joined string of all arguments with string separators `_`, `,`, then `, `,
 1. Then the static key `default`.
+
+##### Lua Mode (unstable)
+
+```toml
+skibidi_plugin_call_mode = "lua"
+skibidi_plugin = '''
+function(toil_int, daf_qbool)
+    if toil_int == 666 then
+        return {
+            evil = 666,
+        }
+    elseif daf_qbool == true then
+        return {
+            owo = 7,
+        }
+    elseif toil_int == 420 and daf_qbool == false then
+        return {
+            uwu = 3,
+        }
+    end
+    return {
+        camera_man = 1,
+        ohio = 2,
+    }
+end
+'''
+```
 
 ### Options
 

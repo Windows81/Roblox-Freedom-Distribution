@@ -17,7 +17,7 @@ from .subparsers.args_launch_mode import (
 )
 
 from .subparsers.args_aux import (
-    clear_appdata as _,
+    clear_cache as _,
     download as _,
     debug as _,
 )
