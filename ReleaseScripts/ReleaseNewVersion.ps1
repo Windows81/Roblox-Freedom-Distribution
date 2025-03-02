@@ -50,7 +50,7 @@ function CreateZippedDirs() {
 		Remove-Item $zip -Force -ErrorAction Ignore
 
 		# Writes to the version-flag file.
-		$script:release_name | Set-Content "$($dir.FullName)/rfd_version"
+		$script:release_name_suffixed | Set-Content "$($dir.FullName)/rfd_version"
 
 		# The `-xr` switches are for excluding specific file names (https://documentation.help/7-Zip-18.0/exclude.htm).
 		7z a $zip "$($dir.FullName)/*" `
