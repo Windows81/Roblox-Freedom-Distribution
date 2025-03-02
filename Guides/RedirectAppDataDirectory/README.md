@@ -28,6 +28,8 @@ Then search for user strings.
 
 ![alt text](image.png)
 
+If you get multiple results, clicking on just one will suffice.
+
 ```
 004BAF15 | 68 FC181301              | push robloxplayerbeta.11318FC                          | 11318FC:"logs"
 004BAF1A | 6A 00                    | push 0                                                 |
@@ -38,7 +40,7 @@ Then search for user strings.
 004BAF29 | E8 F2AA0F00              | call robloxplayerbeta.5B5A20                           |
 ```
 
-The last function call (in this case) is to `robloxplayerbeta.5B5A20`. Let's look inside!
+The very next function call (in this case) is to `robloxplayerbeta.5B5A20`. Let's look inside!
 
 About 10 lines later in the function call, we get this branch:
 
@@ -78,7 +80,7 @@ So we look elsewhere. About 100 lines later, we get this switch-case block (insp
 005B5BE8 | EB 59                    | jmp robloxplayerbeta.5B5C43                            | `eax == DirExe == 3`
 ```
 
-We'll go back to the first `jne` and replace it with a `jmp` to the now-empty block whih begins at `5B5C1E`.
+We'll go back to the first `jne` and replace it with a `jmp` to the now-empty block which begins at `5B5C1E`.
 
 ```patch
 - 005B5A4A | 83FF 03                  | cmp edi,3                                              |
@@ -115,11 +117,7 @@ Since we are trying to change the behavior of `DirAppData`, and we _don't_ want 
 + 005B5C21 | 0F84 2CFEFFFF            | je robloxplayerbeta.5B5A53                             |
 + 005B5C27 | 83FF 03                  | cmp edi,3                                              |
 + 005B5C2A | 0F84 23FEFFFF            | je robloxplayerbeta.5B5A53                             |
-+ 005B5C30 | 90                       | nop                                                    |
-+ 005B5C31 | 90                       | nop                                                    |
-+ 005B5C32 | 90                       | nop                                                    |
-+ 005B5C33 | 90                       | nop                                                    |
-+ 005B5C34 | 90                       | nop                                                    |
++ 005B5C30 | E9 36FFFFFF              | jmp robloxplayerbeta.5B5B6B                            |
 + 005B5C35 | 90                       | nop                                                    |
 005B5C36 | 6A 00                    | push 0                                                 | Irrelevant to our current execution path
 005B5C38 | 6A 00                    | push 0                                                 | Irrelevant ...
@@ -127,6 +125,11 @@ Since we are trying to change the behavior of `DirAppData`, and we _don't_ want 
 005B5C3B | 6A 00                    | push 0                                                 | Irrelevant ...
 005B5C3D | FFD3                     | call ebx                                               | Irrelevant ...
 ```
+
+Note that there are two different `jmp` destinations. These should be changed accordingly:
+
+- **`robloxplayerbeta.5B5A53`**: should point to a `push 104` instruction.
+- **`robloxplayerbeta.5B5B6B`**: should point to `push ebx`; comes right after a `ret` statement.
 
 ---
 

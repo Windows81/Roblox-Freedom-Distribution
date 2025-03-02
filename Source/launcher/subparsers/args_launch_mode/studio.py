@@ -18,7 +18,8 @@ def subparse(
     subparser: argparse.ArgumentParser,
 ) -> None:
     subparser.description = (
-        "RFD's bundled Studio binaries are very very very ill-prepared.  "
+        "RFD's bundled Studio binaries are very very very ill-prepared.  " +
+        "Unless you're creating CSG unions which won't work otherwise, " +
         "I recommend using modern versions of Roblox Studio instead."
     )
 
@@ -57,12 +58,11 @@ def subparse(
     subparser.add_argument(
         "--skip_web",
         action="store_true",
-        help="Only runs the RCC binary, skipping hosting the webserver.",
+        help="Skips hosting the webserver.",
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO,
-                          {web.arg_type, rcc.arg_type, player.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO, {web.arg_type, rcc.arg_type, player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
