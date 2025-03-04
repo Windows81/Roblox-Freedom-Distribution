@@ -24,7 +24,7 @@ def _(
     sub_parser.add_argument(
         '--keep_cache',
         action='store_true',
-        help=r'Skips deleting cached content specific to the host you\'re connecting to.  Searches in the %%LocalAppData%%\Temp\Roblox\http directory.',
+        help=r'Skips deleting cached content specific to the host you're connecting to.  Searches in the % %LocalAppData % %\Temp\Roblox\http directory.',
     )
 
 
