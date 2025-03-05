@@ -65,7 +65,7 @@ def read_file_data(path: str) -> bytes:
     # Reads from stdin if `-` is passed in.
     # This takes precedent from FFmpeg.
     if path == STDIN_NAME:
-        return sys.stdin.buffer.read().strip(b'\n\r')
+        return sys.stdin.buffer.read()
     file_path = util.resource.retr_config_full_path(path)
     with open(file_path, 'rb') as f:
         return f.read()
