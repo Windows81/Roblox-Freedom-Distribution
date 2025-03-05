@@ -1,0 +1,151 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<Meta name="ExplicitAutoJoints">true</Meta>
+	<External>null</External>
+	<External>nil</External>
+	<Item class="Model" referent="RBX491A2EA839B94A1C844E9306295BBDBE">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<token name="LevelOfDetail">0</token>
+			<SharedString name="ModelMeshData">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<token name="ModelStreamingMode">0</token>
+			<string name="Name">Model</string>
+			<bool name="NeedsPivotMigration">false</bool>
+			<Ref name="PrimaryPart">null</Ref>
+			<float name="ScaleFactor">1</float>
+			<int64 name="SourceAssetId">-1</int64>
+			<BinaryString name="Tags"></BinaryString>
+		</Properties>
+		<Item class="ModuleScript" referent="RBX9B66B3C0CED04B32A8179EEB9467FEF4">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">MainModule</string>
+				<string name="ScriptGuid">{D1133202-256E-4DCC-8ACD-8C988230E2D1}</string>
+				<ProtectedString name="Source"><![CDATA[
+
+function transformLib(name, funcs)
+	local result = {}
+	for k, v in next, funcs do
+		result[k] = v
+	end
+	
+	local existing = getfenv(0)[name]
+	if type(existing) == 'table' then
+		for k, v in next, existing do
+			result[k] = v
+		end
+	end
+	getfenv(0)[name] = result
+end
+
+function transformLibs(libTable, filter)
+	for k, v in next, libTable do
+		if not filter or k == filter then
+			transformLib(k, v)
+		end
+	end
+end
+
+-- https://github.com/vocksel/Sugar/blob/ff25d2ce87591d2534d0c23b7725c647b880b889/src/timing/yield.lua
+-- Corresponds to `task.wait`.
+do
+	local RunService = game:GetService("RunService")
+	local DEFAULT_WAIT = 1 / 128 -- Less than one frame
+
+	function task_wait(waitTime)
+		local elapsed = 0
+		waitTime = waitTime or DEFAULT_WAIT
+
+		while elapsed < waitTime do
+			elapsed = elapsed + RunService.Heartbeat:Wait()
+		end
+
+		return elapsed
+	end
+end
+
+-- https://github.com/BradSharp/Roblox-Miscellaneous/blob/master/Utility/FastSpawn.lua
+-- Corresponds to `task.spawn`.
+do
+	local event = Instance.new("BindableEvent")
+	local f, args
+	event.Event:Connect(function()
+		f(unpack(args))
+	end)
+	
+	function task_spawn(callback, ...)
+		f, args = callback, {...}
+		event:Fire()
+	end
+
+	function task_defer(callback, ...)
+		local args = {...}
+		return spawn(function() callback(unpack(args)) end)
+	end
+	
+	function task_delay(waitTime, callback, ...)
+		task_wait(waitTime)
+		task_spawn(callback, ...)
+	end
+end
+
+-- https://github.com/download4/LuaPackages/blob/main/Packages/_Index/LuauPolyfill/LuauPolyfill/Math/clz32.lua
+do
+	local rshift = bit32.rshift
+	local log = math.log
+	local floor = math.floor
+	local LN2 = math.log(2)
+
+	function bit32_countlz(x)
+		-- convert to 32 bit integer
+		local as32bit = rshift(x, 0)
+		if as32bit == 0 then
+			return 32
+		end
+		return 31 - floor(log(as32bit) / LN2)
+	end
+end
+
+-- https://github.com/playvoras/anoynymousscript/blob/main/public/bit32.byteswap.lua
+do	
+	function bit32_byteswap(value)
+		local b1 = bit32.extract(value, 0, 8)
+		local b2 = bit32.extract(value, 8, 8)
+		local b3 = bit32.extract(value, 16, 8)
+		local b4 = bit32.extract(value, 24, 8)
+		return bit32.bor(
+			bit32.lshift(b1, 24),
+			bit32.lshift(b2, 16),
+			bit32.lshift(b3, 8),
+			b4
+		)
+	end
+end
+
+return transformLibs({
+	task = {
+		spawn = task_spawn,
+		defer = task_defer,
+		delay = task_delay,
+		wait = task_wait,
+	},
+	bit32 = {
+		countlz = bit32_countlz,
+		byteswap = bit32_byteswap,
+	},
+})
+
+]]></ProtectedString>
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
+	</Item>
+	<SharedStrings>
+		<SharedString md5="yuZpQdnvvUBOTYh1jqZ2cA=="></SharedString>
+	</SharedStrings>
+</roblox>

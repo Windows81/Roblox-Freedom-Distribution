@@ -9,13 +9,14 @@ import uuid
 class _input_type:
     path: str
     guid: str
-    args: tuple
+    args: tuple[Any, ...]
 
 
 class obj_type:
     def __init__(self):
+        super().__init__()
         self.input_queue = queue.Queue[_input_type]()
-        self.output_dict = dict[str, queue.Queue]()
+        self.output_dict = dict[str, queue.Queue[_input_type]]()
 
     def generate_guid(self) -> str:
         while True:
@@ -55,6 +56,6 @@ class obj_type:
             result[item.guid] = val
         return result
 
-    def insert(self, data: dict) -> None:
+    def insert(self, data: dict[str, _input_type]) -> None:
         for guid, result in data.items():
             self.output_dict[guid].put(result)

@@ -1,14 +1,22 @@
+# pyright: reportImportCycles=false
+from typing import Any, Callable
 import data_transfer.transferer
 from config_type import _logic
 from assets import asseter
 from . import structure
-from typing import Any
 import util.resource
 import util.versions
 import functools
 import os.path
 import tomllib
 import storage
+import json
+import sys
+
+PARSERS: dict[str, Callable[[bytes], dict]] = {
+    'toml': lambda f: tomllib.loads(f.decode('utf-8')),
+    'json': lambda f: json.loads(f),
+}
 
 
 class obj_type(structure.config_type, _logic.base_type):
@@ -43,11 +51,40 @@ class obj_type(structure.config_type, _logic.base_type):
         return self.game_setup.roblox_version
 
 
+STDIN_NAME = '-'
+
+
+def get_dir_path(path: str) -> str:
+    if path == STDIN_NAME:
+        return util.resource.retr_full_path(util.resource.dir_type.WORKING_DIR)
+    return os.path.dirname(util.resource.retr_config_full_path(path))
+
+
 @functools.cache
-def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
+def read_file_data(path: str) -> bytes:
+    # Reads from stdin if `-` is passed in.
+    # This takes precedent from FFmpeg.
+    if path == STDIN_NAME:
+        return sys.stdin.buffer.read().strip(b'\n\r')
     file_path = util.resource.retr_config_full_path(path)
     with open(file_path, 'rb') as f:
-        return obj_type(tomllib.load(f), base_dir=os.path.dirname(file_path))
+        return f.read()
+
+
+@functools.cache
+def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
+    base_dir = get_dir_path(path)
+    file_data = read_file_data(path)
+    for parse in PARSERS.values():
+        try:
+            data_dict = parse(file_data)
+        except Exception:
+            continue
+        return obj_type(
+            data_dict=data_dict,
+            base_dir=base_dir,
+        )
+    raise Exception(f'The file at {path} is in an invalid format')
 
 
 @functools.cache

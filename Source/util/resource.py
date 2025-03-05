@@ -8,7 +8,7 @@ MADE_WITH_PYINSTALLER = hasattr(sys, '_MEIPASS')
 
 
 @functools.cache
-def get_top_dir() -> str:
+def get_rfd_top_dir() -> str:
     if MADE_WITH_PYINSTALLER:
         return os.path.dirname(sys.executable)
 
@@ -29,7 +29,8 @@ def get_top_dir() -> str:
 
 class dir_type(enum.Enum):
     RŌBLOX = 0
-    MISC = 1
+    WORKING_DIR = 1
+    MISC = 2
 
 
 class bin_subtype(enum.Enum):
@@ -45,14 +46,19 @@ def get_path_pieces(d: dir_type) -> list[str]:
     match (MADE_WITH_PYINSTALLER, d):
 
         case (True, dir_type.RŌBLOX):
-            return [get_top_dir(), 'Roblox']
+            return [get_rfd_top_dir(), 'Roblox']
         case (False, dir_type.RŌBLOX):
-            return [get_top_dir(), 'Roblox']
+            return [get_rfd_top_dir(), 'Roblox']
 
         case (True, dir_type.MISC):
-            return [get_top_dir()]
+            return [get_rfd_top_dir()]
         case (False, dir_type.MISC):
-            return [get_top_dir()]
+            return [get_rfd_top_dir()]
+
+        case (True, dir_type.WORKING_DIR):
+            return [os.getcwd()]
+        case (False, dir_type.WORKING_DIR):
+            return [os.getcwd()]
 
 
 @functools.cache
