@@ -1,8 +1,8 @@
 from typing import Self, TypeVar, get_args
 import util.const as const
+import urllib.request
 import extractor
 import fnmatch
-import urllib3
 import enum
 import os
 
@@ -82,13 +82,10 @@ class uri_obj:
                 return rf.read()
 
         elif self.uri_type == uri_type.ONLINE:
-            http = urllib3.PoolManager()
-            response = http.request('GET', self.value)
-
-            if response.status != 200:
-                raise Exception("File couldn't be loaded.")
-
-            return response.data
+            with urllib.request.urlopen(self.value) as response:
+                if response.status != 200:
+                    raise Exception("File couldn't be loaded.")
+                return response.read()
 
         elif self.uri_type == uri_type.RŌBLOX:
             return extractor.download_item(self.value)

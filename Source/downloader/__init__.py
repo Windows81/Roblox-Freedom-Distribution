@@ -24,14 +24,14 @@ def get_remote_link(
 
 
 def download(remote_link: str, quiet: bool = False) -> io.BytesIO:
-    with urllib.request.urlopen(remote_link) as request_res:
-        if request_res.status != 200:
+    with urllib.request.urlopen(remote_link) as response:
+        if response.status != 200:
             raise Exception(
                 "Failed to download: HTTP Status %d" %
-                (request_res.status),
+                (response.status),
             )
 
-        total_size = int(request_res.info().get('Content-Length').strip())
+        total_size = int(response.info().get('Content-Length').strip())
         downloaded_data = io.BytesIO()
 
         with tqdm.tqdm(
@@ -42,7 +42,7 @@ def download(remote_link: str, quiet: bool = False) -> io.BytesIO:
             disable=quiet,
         ) as bar:
             while True:
-                chunk = request_res.read(1024)
+                chunk = response.read(1024)
                 if not chunk:
                     break
                 downloaded_data.write(chunk)

@@ -1,6 +1,6 @@
 import extractor as extract
+import urllib.request
 from . import const
-import urllib3
 
 
 def transform_to_id_num(asset_id: str) -> int:
@@ -51,10 +51,10 @@ def load_asset(asset_id: str) -> bytes | None:
             ('/'.join(combo[:-1]), combo[-1])
         )
 
-        http = urllib3.PoolManager()
-        response = http.request('GET', url)
-        if response.status == 200:
-            return response.data
+        with urllib.request.urlopen(url) as response:
+            if response.status != 200:
+                continue
+            return response.read()
 
     id_num = transform_to_id_num(asset_id)
     return extract.download_rōblox_asset(id_num)

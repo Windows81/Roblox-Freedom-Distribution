@@ -1,4 +1,7 @@
-from assets.serialisers import rbxl, mesh
+from typing import Any
+
+
+import assets.serialisers as serialisers
 import extractor
 import unittest
 
@@ -17,7 +20,8 @@ class TestAssets(unittest.TestCase):
         data = extractor.download_rōblox_asset(1818)
         self.assertIsNotNone(data)
         assert data is not None
-        self.assertTrue(rbxl.check(data))
+
+        self.assertTrue(serialisers.rbxl.check(data))
 
     def test_audio_load(self) -> None:
         '''
@@ -28,16 +32,29 @@ class TestAssets(unittest.TestCase):
         data = extractor.download_rōblox_asset(12222084)
         self.assertIsNotNone(data)
         assert data is not None
+
         self.assertRegex(data, b'(OggS|RIFF)')
+
+    def test_video_load(self) -> None:
+        '''
+        Tests that video data can be loaded and parsed by the parser.
+        '''
+        data = extractor.download_rōblox_asset(5608333583)
+        self.assertIsNotNone(data)
+        assert data is not None
+
+        self.assertTrue(serialisers.video.check(data))
+        webm_data = serialisers.video.parse(data)
+        self.assertIsNotNone(webm_data)
 
     def test_image_load(self) -> None:
         '''
         Tests that specific image data can be loaded and is in the PNG format.
         '''
         data = extractor.download_rōblox_asset(270995247)
-        # Asserts that the data has been loaded at all.
         self.assertIsNotNone(data)
         assert data is not None
+
         # Asserts that the data starts with the PNG header, indicating it is a valid PNG image.
         self.assertTrue(data.startswith(b'\x89PNG'))
 
@@ -50,5 +67,6 @@ class TestAssets(unittest.TestCase):
         data = extractor.download_rōblox_asset(120627289)
         self.assertIsNotNone(data)
         assert data is not None
-        parsed_data = mesh.parse(data)
-        self.assertRegex(parsed_data, rb'^version')
+
+        result = serialisers.mesh.parse(data)
+        self.assertRegex(result, rb'^version')

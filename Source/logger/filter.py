@@ -5,10 +5,7 @@ import re
 
 @dataclasses.dataclass(frozen=True)
 class filter_type_rcc:
-    flogs: set[int] = dataclasses.field(default_factory=lambda: set(range(
-        flog_table.INDEX_OFFSET,
-        len(flog_table.LOG_LEVEL_LIST) + flog_table.INDEX_OFFSET
-    )))
+    flogs: set[int] = dataclasses.field(default_factory=set)
 
     @staticmethod
     def serialise_key(flog: str) -> str:
@@ -20,6 +17,13 @@ class filter_type_rcc:
             flog_table.LOG_LEVEL_DICT[filter_type_rcc.serialise_key(flog)]
             for flog in flogs
         ))
+
+    @staticmethod
+    def get_loud_type() -> "filter_type_rcc":
+        return filter_type_rcc(flogs=set(range(
+            flog_table.INDEX_OFFSET,
+            len(flog_table.LOG_LEVEL_LIST) + flog_table.INDEX_OFFSET
+        )))
 
     def __contains__(self, item: int) -> bool:
         return item in self.flogs
@@ -60,6 +64,16 @@ FILTER_REASONABLE = filter_type(
         "NetworkAudit",
         "Error",
     ),
+    web_logs=filter_type_web(
+        urls=True,
+        errors=True,
+    ),
+    other_logs=True,
+)
+
+
+FILTER_LOUD = filter_type(
+    rcc_logs=filter_type_rcc.get_loud_type(),
     web_logs=filter_type_web(
         urls=True,
         errors=True,
