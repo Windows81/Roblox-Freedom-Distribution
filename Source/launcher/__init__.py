@@ -1,7 +1,6 @@
 import launcher.subparsers._logic as sub_logic
 import launcher.routines._logic as routine_logic
 
-import logger.bcolors
 import traceback
 import argparse
 import shlex
@@ -121,21 +120,14 @@ def read_eval_loop(args: list[str] | None = None) -> None:
             pass
         except Exception as e:
             traceback.print_exc()
-            print(
-                logger.bcolors.bcolors.FAIL +
-                logger.bcolors.bcolors.BOLD +
-                str(e) +
-                logger.bcolors.bcolors.ENDC
-            )
+            print(str(e))
         finally:
             return
 
     try:
         while True:
             arg_str = input(
-                logger.bcolors.bcolors.BOLD +
-                "Enter your command-line arguments [Ctrl+C to quit]: " +
-                logger.bcolors.bcolors.ENDC
+                "Enter your command-line arguments [Ctrl+C to quit]: ",
             )
             try:
                 perform_with_args(shlex.split(arg_str))

@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-import dataclasses
 from launcher.routines import player, web, rcc
 
 from web_server._logic import port_typ, server_mode
@@ -7,8 +5,10 @@ import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
 import game_config as config
 import logger.flog_table
+import logger.bcolors
 import util.resource
 import util.versions
+import dataclasses
 import util.const
 import argparse
 import logger
@@ -84,6 +84,11 @@ def subparse(
         help='Suppresses console output.',
     )
     subparser.add_argument(
+        '--no_colour', '--no_color',
+        action='store_true',
+        help='Suppresses ANSI colour codes.',
+    )
+    subparser.add_argument(
         '--rcc_log_options',
         '--rcc_log',
         '-log',
@@ -126,6 +131,12 @@ def gen_log_filter(
         result = dataclasses.replace(
             result,
             rcc_logs=logger.filter.filter_type_rcc.parse(*args.rcc_log),
+        )
+
+    if args.no_colour:
+        result = dataclasses.replace(
+            result,
+            bcolors=logger.bcolors.BCOLORS_INVISIBLE,
         )
 
     return result

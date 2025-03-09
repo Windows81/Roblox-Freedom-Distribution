@@ -7,7 +7,6 @@ from . import _logic as logic
 import game_config.structure
 import util.const as const
 import assets.serialisers
-import logger.bcolors
 import util.resource
 import util.versions
 import game_config
@@ -323,14 +322,16 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
     @override
     def process(self) -> None:
         self.get_versioned_path()
+        log_filter = self.local_args.log_filter
         logger.log(
-            (f"{
-                logger.bcolors.bcolors.BOLD}[UDP %d]{
-                logger.bcolors.bcolors.ENDC}: initialising Rōblox Cloud Compute" %
-                (self.local_args.rcc_port_num,
-                 )),
+            (
+                f"{log_filter.bcolors.BOLD}[UDP %d]{log_filter.bcolors.ENDC}: " +
+                "initialising Rōblox Cloud Compute"
+            ) % (
+                self.local_args.rcc_port_num,
+            ),
             context=logger.log_context.PYTHON_SETUP,
-            filter=self.local_args.log_filter,
+            filter=log_filter,
         )
         self.bootstrap()
         if not self.local_args.skip_popen:

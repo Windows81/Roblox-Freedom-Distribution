@@ -1,4 +1,4 @@
-from . import bcolors, filter, flog_table
+from . import filter, flog_table
 import re
 
 patterns = [
@@ -142,8 +142,8 @@ def get_log_name(i: int) -> str:
         return '%3d (unknown log level)' % i
 
 
-def get_message(text: bytes, filter: filter.filter_type) -> str | None:
-    if filter.rcc_logs.is_empty():
+def get_message(text: bytes, log_filter: filter.filter_type) -> str | None:
+    if log_filter.rcc_logs.is_empty():
         return
 
     match = next(
@@ -151,14 +151,14 @@ def get_message(text: bytes, filter: filter.filter_type) -> str | None:
             re.match(pattern, text)
             for pattern in patterns
             if (match := re.match(pattern, text)) is not None
-        ),
-        None)
+        ), None,
+    )
 
     if match is None:
         return None
 
     rcc_log_num = int(match['rcc_log_num'])
-    if rcc_log_num not in filter.rcc_logs:
+    if rcc_log_num not in log_filter.rcc_logs:
         return
 
     rcc_log_type = get_log_name(rcc_log_num)
@@ -166,12 +166,14 @@ def get_message(text: bytes, filter: filter.filter_type) -> str | None:
         'utf-8', errors='backslashreplace',
     )
 
-    # For cases in 2018M when the log line begins with `[Output] Output:` or
-    # `[Error] Error:`.
+    # For cases in 2018M when the log line begins with
+    # `[Output] Output:` or `[Error] Error:`.
     if decoded_line.startswith(f'{rcc_log_type}: '):
         decoded_line = decoded_line[len(rcc_log_type) + 2:]
 
     return (
-        f'{bcolors.bcolors.OKGREEN}[RCC %s]{bcolors.bcolors.ENDC} %s' %
-        (rcc_log_type, decoded_line)
+        f'{log_filter.bcolors.OKGREEN}[RCC %s]{log_filter.bcolors.ENDC} %s'
+    ) % (
+        rcc_log_type,
+        decoded_line,
     )

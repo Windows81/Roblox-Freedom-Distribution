@@ -1,3 +1,4 @@
+from . import bcolors as bc
 from . import flog_table
 import dataclasses
 import re
@@ -40,6 +41,7 @@ class filter_type_web:
 
 @dataclasses.dataclass(frozen=True)
 class filter_type:
+    bcolors: bc.bcolors = bc.BCOLORS_VISIBLE
     rcc_logs: filter_type_rcc = filter_type_rcc()
     web_logs: filter_type_web = filter_type_web()
     other_logs: bool = False

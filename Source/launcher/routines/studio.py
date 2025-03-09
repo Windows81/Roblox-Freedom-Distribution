@@ -3,7 +3,6 @@ from config_type.types import wrappers
 from . import _logic as logic
 from typing import override
 from textwrap import dedent
-import logger.bcolors
 import util.resource
 import util.versions
 import game_config
@@ -60,12 +59,12 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
         return path
 
     @staticmethod
-    def get_warning_message(version: util.versions.rōblox) -> str | None:
+    def get_warning_message(version: util.versions.rōblox, filter: logger.filter.filter_type) -> str | None:
         prefix = (
             '\n' +
-            logger.bcolors.bcolors.BOLD +
+            filter.bcolors.BOLD +
             "Studio is not 'stable' and can take some help." +
-            logger.bcolors.bcolors.ENDC +
+            filter.bcolors.ENDC +
             '\n'
         )
         match version:
@@ -87,8 +86,11 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
     def process(self) -> None:
         self.save_app_setting()
 
-        # Warn the user that Studio requires additional user intervention.
-        warn_str = self.get_warning_message(self.retr_version())
+        # Let's warn the user that Studio requires additional user intervention.
+        warn_str = self.get_warning_message(
+            self.retr_version(),
+            self.local_args.log_filter,
+        )
 
         # If no warning string is included, assume that no warning is needed.
         if warn_str is not None and self.local_args.warn_drag:

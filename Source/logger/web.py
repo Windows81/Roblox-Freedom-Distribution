@@ -1,21 +1,22 @@
-from . import bcolors, filter
-import textwrap
+from . import filter
 
 URL_PREFIX = b'http'
 
 
-def get_message(text: bytes, filter: filter.filter_type) -> str | None:
+def get_message(text: bytes, log_filter: filter.filter_type) -> str | None:
     if text.startswith(URL_PREFIX):
-        if not filter.web_logs.urls:
+        if not log_filter.web_logs.urls:
             return
         return (
-            f'{bcolors.bcolors.OKCYAN}[Webserver]{bcolors.bcolors.ENDC} %s' %
-            (text.decode('utf-8'),)
+            f'{log_filter.bcolors.OKCYAN}[Webserver]{log_filter.bcolors.ENDC} %s'
+        ) % (
+            text.decode('utf-8'),
         )
 
-    if not filter.web_logs.errors:
+    if not log_filter.web_logs.errors:
         return
     return (
-        f'{bcolors.bcolors.FAIL}[Webserver Error]\n%s{bcolors.bcolors.ENDC}' %
-        (text.decode('utf-8'),)
+        f'{log_filter.bcolors.FAIL}[Webserver Error]\n%s{log_filter.bcolors.ENDC}'
+    ) % (
+        text.decode('utf-8'),
     )

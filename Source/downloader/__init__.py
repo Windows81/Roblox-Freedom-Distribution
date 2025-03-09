@@ -1,3 +1,4 @@
+import ssl
 import tqdm_vendored as tqdm
 import py7zr.exceptions
 import urllib.request

@@ -111,12 +111,13 @@ class web_server(http.server.ThreadingHTTPServer):
         self.log_filter = log_filter
 
         logger.log(
-            (f"{
-                logger.bcolors.bcolors.BOLD}[TCP %d %s]{
-                logger.bcolors.bcolors.ENDC}: initialising webserver" %
-                (port.port_num,
-                 'IPv6' if port.is_ipv6 else 'IPv4',
-                 )),
+            (
+                f"{log_filter.bcolors.BOLD}[TCP %d %s]{log_filter.bcolors.ENDC}: " +
+                "initialising webserver"
+            ) % (
+                port.port_num,
+                'IPv6' if port.is_ipv6 else 'IPv4',
+            ),
             context=logger.log_context.PYTHON_SETUP,
             filter=log_filter,
         )
