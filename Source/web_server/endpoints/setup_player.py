@@ -127,7 +127,23 @@ def _(self: web_server_handler) -> bool:
 
 @server_path(r'/users/(\d+)/canmanage/([\d]+)', regex=True)
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
-    self.send_json({"Success": True, "CanManage": True})
+    database = self.server.storage.players
+
+    id_num = int(match.group(1))
+    user_code = database.get_player_field_from_index(
+        database.player_field.ID_NUMBER,
+        id_num,
+        database.player_field.USER_CODE,
+    )
+
+    if user_code is None:
+        result = False
+    else:
+        result = self.game_config.server_core.check_user_has_admin(
+            id_num, user_code,
+        )
+
+    self.send_json({"Success": True, "CanManage": result})
     return True
 
 

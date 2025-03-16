@@ -189,9 +189,9 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
                     "MatchmakingContextId":
                         1,
                     "CreatorId":
-                        1,
+                        0,
                     "CreatorType":
-                        "User",
+                        "Group",
                     "PlaceVersion":
                         1,
                     "BaseUrl":

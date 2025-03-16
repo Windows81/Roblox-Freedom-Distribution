@@ -1,4 +1,4 @@
-GIT_RELEASE_VERSION = '''0.57.4'''
+GIT_RELEASE_VERSION = '''0.57.5'''
 
 ZIPPED_RELEASE_VERSION = '''0.57.2-binaries'''
 ZIPPED_RELEASE_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/%s/%s.%s.7z'

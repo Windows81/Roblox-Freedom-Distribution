@@ -22,7 +22,7 @@ def _(self: web_server_handler) -> bool:
 @server_path('/.127.0.0.1/game/load-place-info/')
 def _(self: web_server_handler) -> bool:
     self.send_json({
-        'CreatorId': 1,
+        'CreatorId': 0,
         'CreatorType': 'User',
         'PlaceVersion': 1,
         'GameId': 123456,
