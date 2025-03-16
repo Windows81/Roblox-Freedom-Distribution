@@ -59,26 +59,9 @@ To launch RFD, your command line will look something like this:
 
 Still needs work.
 
-Two options. Both require `wine` to be installed on your system.
-
-1. [Native Launcher](#native-launcher)
-2. [From a Windows EXE](#from-a-windows-exe)
+RFD requires `wine` to be installed on your system.
 
 For balance of information, consult [this guide](https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Guides/Linux/README.MD).
-
-##### Native Launcher
-
-1. Download https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/latest/RFD-ubuntu-latest.zip.
-1. Extract the downloaded files to a directory somewhere. Perhaps in `/usr/bin`?
-1. In the extracted directory, run `chmod 777 ./RFD`.
-
-To launch RFD, your command line will look something like this:
-
-```
-./RFD player -h 127.0.0.1 -p 2005
-```
-
-##### From a Windows EXE
 
 ```
 mkdir rfd
@@ -267,7 +250,7 @@ Host is specified by the `-h` option (also by `--rcc_host` or `-rh`).
 
 Port is specified by the `-p` option (also by `--rcc_port` or `-rp`).
 
-### Webserver (unsigned HTTPS)
+### Webserver (_unsigned_ HTTPS)
 
 The webserver is responsible for facilitating player connections and loading in-game assets.
 
@@ -287,6 +270,8 @@ The following are examples of asset idens resolving to cache files:
 | `rbxassetid://5950704`        | `./00005950704`    | `%11d` |
 | `rbxassetid://97646706196482` | `./97646706196482` | `%11d` |
 | `rbxassetid://custom-asset`   | `./custom-asset`   | `%s`   |
+
+This behaviour can be changed in [your game configuration file](#game_setupasset_cachename_template).
 
 ## How About Studio?
 
@@ -554,6 +539,14 @@ Resolves to type `path_str`. Relative paths are traced from the directory where 
 Resolves to type `bool`; defaults to false.
 
 If true, deletes cache from assets which should redirect so that the config file remains correct.
+
+#### `game_setup.asset_cache.name_template`
+
+Resolves to [function](#functions) type `(int | str) -> str`.
+
+With the asset iden passed in (a string or integer), returns the name of the asset file that is stored in [`./AssetCache`](#asset-packs).
+
+Default naming convention is `%11d` for integers or `%s` for strings.
 
 #### `game_setup.persistence.clear_on_start`
 

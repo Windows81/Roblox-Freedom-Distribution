@@ -21,5 +21,7 @@ ALL_METHODS = set(method)
 
 def parse(data: bytes, items: set[method] = ALL_METHODS) -> bytes:
     for m in items:
-        data = m.value(data)
+        result = m.value(data)
+        if result is not None:
+            return result
     return data

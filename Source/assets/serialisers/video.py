@@ -34,7 +34,7 @@ def get_m3u8_links(data: bytes) -> list[str]:
 
 def parse(data: bytes) -> bytes | None:
     if not check(data):
-        return
+        return data
     concat_data = []
     for url in get_m3u8_links(data):
         with urllib.request.urlopen(url) as response:

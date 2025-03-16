@@ -26,9 +26,9 @@ def check(data: bytes) -> bool:
     return data.startswith(_logic.HEADER_SIGNATURE)
 
 
-def parse(data: bytes, methods: set[method] = ALL_METHODS) -> bytes:
+def parse(data: bytes, methods: set[method] = ALL_METHODS) -> bytes | None:
     if not check(data):
-        return data
+        return
     parser = _logic.rbxl_parser(data)
     return parser.parse_file([
         m.value

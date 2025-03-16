@@ -44,6 +44,7 @@ class obj_type(structure.config_type, _logic.base_type):
         self.asset_cache = asseter(
             dir_path=self.game_setup.asset_cache.dir_path,
             redirect_func=self.remote_data.asset_redirects,
+            asset_name_func=self.game_setup.asset_cache.name_template,
             clear_on_start=self.game_setup.asset_cache.clear_on_start,
         )
 

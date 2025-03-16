@@ -41,10 +41,10 @@ class filter_type_web:
 
 @dataclasses.dataclass(frozen=True)
 class filter_type:
-    bcolors: bc.bcolors = bc.BCOLORS_VISIBLE
     rcc_logs: filter_type_rcc = filter_type_rcc()
     web_logs: filter_type_web = filter_type_web()
     other_logs: bool = False
+    bcolors: bc.bcolors = bc.BCOLORS_VISIBLE
 
 
 FILTER_QUIET = filter_type(

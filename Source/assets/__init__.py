@@ -12,10 +12,12 @@ class asseter:
         self,
         dir_path: str,
         redirect_func: callable.obj_type[[int | str], structs.asset_redirect | None],
+        asset_name_func: callable.obj_type[[int | str], str],
         clear_on_start: bool,
     ) -> None:
         self.dir_path = dir_path
         self.redirect_func = redirect_func
+        self.asset_name_func = asset_name_func
         self.redirect_iden_flags = set[int | str]()
         self.queuer = queue.queuer()
 
@@ -31,11 +33,7 @@ class asseter:
         return os.path.normpath(
             os.path.join(
                 self.dir_path,
-                (
-                    f'{asset_id:011d}'
-                    if isinstance(asset_id, int) else
-                    asset_id
-                ),
+                self.asset_name_func(asset_id),
             )
         )
 
@@ -92,9 +90,6 @@ class asseter:
         raise Exception('Unable to extract asset id from URL query.')
 
     def add_asset(self, asset_id: int | str, data: bytes) -> None:
-        redirect_info = self.redirect_func(asset_id)
-        if redirect_info is not None:
-            raise Exception('Asset already has a redirect per config file.')
         path = self.get_asset_path(asset_id)
         self._save_file(path, data)
 
@@ -173,9 +168,10 @@ class asseter:
             return returns.construct(data=self._load_asset_num(asset_id))
 
     def get_asset(
-            self,
-            asset_id: int | str,
-            bypass_blocklist: bool = False) -> returns.base_type:
+        self,
+        asset_id: int | str,
+        bypass_blocklist: bool = False
+    ) -> returns.base_type:
         if not bypass_blocklist and self.is_blocklisted(asset_id):
             returns.construct(error='Asset is blocklisted.')
 

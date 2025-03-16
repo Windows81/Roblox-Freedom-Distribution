@@ -17,6 +17,14 @@ class config_type(allocateable.obj_type):
     class game_setup(allocateable.obj_type):
         class asset_cache(allocateable.obj_type):
             dir_path: wrappers.path_str = './AssetCache'
+            name_template: callable[[int | str], str] = textwrap.dedent('''\
+            def f(asset_iden):
+                return (
+                    f'{asset_iden:011d}'
+                    if isinstance(asset_iden, int) else
+                    asset_iden
+                )
+            ''')
             clear_on_start: bool = False
 
         class persistence(allocateable.obj_type):
@@ -43,8 +51,7 @@ class config_type(allocateable.obj_type):
 
         chat_style: structs.chat_style = structs.chat_style.CLASSIC_CHAT
 
-        retrieve_default_user_code: callable[[float], str] = textwrap.dedent(
-            '''\
+        retrieve_default_user_code: callable[[float], str] = textwrap.dedent('''\
         def f(tick):
             return 'Player%d' % tick
         ''')
@@ -72,21 +79,18 @@ class config_type(allocateable.obj_type):
             return count
         ''')
 
-        retrieve_avatar_type: callable[[int, str], structs.avatar_type] = textwrap.dedent(
-            '''\
-        def f():
+        retrieve_avatar_type: callable[[int, str], structs.avatar_type] = textwrap.dedent('''\
+        def f(*a):
             return 'R6'
         ''')
 
-        retrieve_avatar_items: callable[[int, str], list[int]] = textwrap.dedent(
-            '''\
-        def f():
+        retrieve_avatar_items: callable[[int, str], list[int]] = textwrap.dedent('''\
+        def f(*a):
             return []
         ''')
 
-        retrieve_avatar_scales: callable[[
-            int, str], structs.avatar_scales] = textwrap.dedent('''\
-        def f():
+        retrieve_avatar_scales: callable[[int, str], structs.avatar_scales] = textwrap.dedent('''\
+        def f(*a):
             return {
                 "height": 1,
                 "width": 1,
@@ -97,9 +101,8 @@ class config_type(allocateable.obj_type):
             }
         ''')
 
-        retrieve_avatar_colors: callable[[
-            int, str], structs.avatar_colors] = textwrap.dedent('''\
-        def f():
+        retrieve_avatar_colors: callable[[int, str], structs.avatar_colors] = textwrap.dedent('''\
+        def f(*a):
             return {
                 "head": 1,
                 "left_arm": 1,
@@ -110,8 +113,7 @@ class config_type(allocateable.obj_type):
             }
         ''')
 
-        retrieve_groups: callable[[int, str], dict[str, int]] = textwrap.dedent(
-            '''\
+        retrieve_groups: callable[[int, str], dict[str, int]] = textwrap.dedent('''\
         def f(*a):
             return []
         ''')
@@ -121,8 +123,7 @@ class config_type(allocateable.obj_type):
             return 0
         ''')
 
-        retrieve_default_funds: callable[[int, str], int] = textwrap.dedent(
-            '''\
+        retrieve_default_funds: callable[[int, str], int] = textwrap.dedent('''\
         def f(*a):
             return 0
         ''')
@@ -134,8 +135,7 @@ class config_type(allocateable.obj_type):
 
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses = []
-        asset_redirects: callable[[
-            int | str], structs.asset_redirect | None] = textwrap.dedent('''\
+        asset_redirects: callable[[int | str], structs.asset_redirect | None] = textwrap.dedent('''\
         def f(*a):
             return None
         ''')
