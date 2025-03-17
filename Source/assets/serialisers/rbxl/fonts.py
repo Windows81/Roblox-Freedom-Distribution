@@ -73,10 +73,9 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
         )
     )
 
-    # Fonts (just like all enums) are stored as an interleaved array of big-endian `uint32`s.
+    # Fonts (just like all enums) are stored as an INTERLEAVED array of big-endian `uint32`s.
     # Why the large string of zeroes?  We're taking advantage of the fact that `Enum.Font` never goes above 256.
-    # Because integers here are big-endian, we put the least significant bytes
-    # at the end.
+    # Because integers here are big-endian, we put the least significant bytes at the end.
     return b''.join([
         class_id,
         new_prop_name,

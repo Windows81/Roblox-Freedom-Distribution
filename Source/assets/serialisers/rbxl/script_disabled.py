@@ -5,7 +5,7 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
     if _logic.get_first_chunk_str(info) != b'Enabled':
         return None
 
-    class_id = _logic.get_class_id(info)
+    class_id = _logic.get_class_iden(info)
     if class_id is None:
         return None
 

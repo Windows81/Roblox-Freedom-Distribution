@@ -1,14 +1,14 @@
 from . import rbxmesh
 
 
-def parse(originalData: bytes) -> bytes | None:
+def parse(original_data: bytes) -> bytes | None:
     try:
-        meshVersion = rbxmesh.get_mesh_version(originalData)
-        if meshVersion < 4.0:
-            return originalData
+        version = rbxmesh.get_mesh_version(original_data)
+        if version < 4.0:
+            return original_data
 
-        meshData = rbxmesh.read_mesh_data(originalData)
-        return bytes(rbxmesh.export_mesh_v2(meshData))
+        mesh_data = rbxmesh.read_mesh_data(original_data)
+        return bytes(rbxmesh.export_mesh_v2(mesh_data))
 
     except Exception:
         return

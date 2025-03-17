@@ -1,135 +1,40 @@
 from typing import Callable
 import dataclasses
-import itertools
 import lz4.block
 import pyzstd
 import io
-import re
 
-HEADER_SIGNATURE = b'\x3c\x72\x6f\x62\x6c\x6f\x78\x21\x89\xff\x0d\x0a\x1a\x0a'
+# b'<roblox!\x89\xff\r\n\x1a\n'
+HEADER_SIGNATURE = bytes([
+    60, 114, 111, 98, 108, 111, 120, 33, 137, 255, 13, 10, 26, 10,
+])
 
 INT_SIZE = 4
 
 
-class string_replacer:
-    '''
-    Rōblox has its own way of storing variable-length strings.
-    This class gracefully replaces instances of one such string with another.
-    '''
+def wrap_string(v: bytes) -> bytes:
+    return len(v).to_bytes(INT_SIZE, 'little') + v
 
-    @dataclasses.dataclass
-    class input_info:
-        match: re.Match[bytes]
-        string_size: int
-        match_size: int
-        match_bytes: bytes
-        match_start: int
-        match_end: int
 
-    def __init__(
-        self,
-        pattern: bytes,
-        replacement_func: Callable[[re.Match[bytes]], bytes],
-        chunk_data: bytes,
-        max_replacements: int | None = None,
-        prepend_new_length: bool = True,
-    ) -> None:
-        super().__init__()
-        self.data = chunk_data
+def split_prop_values(data: bytes) -> list[bytes]:
+    splits: list[bytes] = []
+    length = len(data)
+    index = 0
+    while index < length:
+        size = int.from_bytes(data[index:index+INT_SIZE], 'little')
+        offset = size + INT_SIZE
+        chunk = data[index+INT_SIZE:index+offset]
 
-        self.pattern = pattern
-        self.replacement_func = replacement_func
-        self.max_replacements = max_replacements
-        self.prepend_new_length = prepend_new_length
+        splits.append(chunk)
+        index += offset
+    return splits
 
-    def calc(self) -> bytes:
-        # Extracts data on where existing strings are.
-        infos = [
-            info
-            for match in itertools.islice(
-                re.finditer(
-                    br'(.{%d})(?=%s)' % (INT_SIZE, self.pattern),
-                    self.data,
-                ),
-                self.max_replacements,
-            )
-            if (info := self.get_input_info(match))
-        ]
 
-        splits: list[tuple[int, string_replacer.input_info | None]] = [
-            (0, None),
-            *[
-                split
-                for info in infos
-                for split in (
-                    (info.match_start, info),
-                    (info.match_end, None),
-                )
-            ],
-            (len(self.data), None),
-        ]
-
-        parts = [
-            self.process_info(split_start[1])
-            if split_start[1] else
-            self.data[split_start[0]:split_end[0]]
-            for split_start, split_end in zip(splits, splits[1:])
-        ]
-
-        return b''.join(parts)
-
-    def get_input_info(self, arg: re.Match[bytes]) -> input_info | None:
-        (match_start, span_end) = arg.span()
-        string_pos = match_start + INT_SIZE
-
-        string_size = int.from_bytes(
-            self.data[match_start:string_pos],
-            byteorder='little',
-        )
-
-        string_end = string_pos + string_size
-        full_string = arg.string[string_pos:string_end]
-
-        new_match = re.match(
-            b'%s$' % self.pattern,
-            full_string,
-        )
-
-        if new_match is None:
-            return None
-
-        new_match_bytes = new_match.group()
-        new_match_size = len(new_match_bytes)
-        match_end = match_start + INT_SIZE + new_match_size
-        assert new_match_size == string_size
-        return string_replacer.input_info(
-            match=new_match,
-            string_size=string_size,
-            match_size=new_match_size,
-            match_bytes=new_match_bytes,
-            match_start=match_start,
-            match_end=match_end,
-        )
-
-    def process_info(self, info: input_info) -> bytes:
-        result = self.replacement_func(info.match)
-        result_size = len(result)
-
-        new_size = info.string_size - info.match_size + result_size
-        prefix = (
-            int.to_bytes(
-                new_size,
-                byteorder='little',
-                length=4,
-            )
-            if self.prepend_new_length
-            else b''
-        )
-
-        return b''.join([
-            prefix,
-            result,
-        ])
+def join_prop_values(data: list[bytes]) -> bytes:
+    return b''.join(
+        wrap_string(d)
+        for d in data
+    )
 
 
 @dataclasses.dataclass
@@ -146,7 +51,7 @@ class inst_dict_item:
     instance_count: int
 
 
-def get_class_id(info: chunk_info) -> bytes | None:
+def get_class_iden(info: chunk_info) -> bytes | None:
     '''
     For `INST` or `PROP`, refer to `ClassID`.
     https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#instances-chunk
@@ -174,7 +79,7 @@ def get_first_chunk_str(info: chunk_info) -> bytes | None:
     return info.chunk_data[str_start:str_start + str_size]
 
 
-def get_prop_values(info: chunk_info) -> bytes | None:
+def get_prop_values_bytes(info: chunk_info) -> bytes | None:
     '''
     For `PROP`, refer to `Values`.
     https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#values
@@ -189,7 +94,7 @@ def get_prop_values(info: chunk_info) -> bytes | None:
     return info.chunk_data[str_start + str_size + 1:]
 
 
-def get_type_id(info: chunk_info) -> int | None:
+def get_type_iden(info: chunk_info) -> int | None:
     '''
     For `PROP`, refer to `TypeID`.
     https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#values
@@ -231,6 +136,7 @@ class rbxl_parser:
         self,
         transforms: list[Callable[['rbxl_parser', chunk_info], bytes | None]],
     ) -> bytes:
+
         self.read_stream = io.BytesIO(self.file_data)
         self.write_stream = io.BytesIO()
 
@@ -292,7 +198,7 @@ class rbxl_parser:
             return None
 
         if info.chunk_name == b'INST':
-            class_id = get_class_id(info)
+            class_id = get_class_iden(info)
             if class_id is None:
                 return
 

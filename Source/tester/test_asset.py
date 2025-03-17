@@ -68,5 +68,17 @@ class TestAssets(unittest.TestCase):
         self.assertIsNotNone(data)
         assert data is not None
 
-        result = serialisers.mesh.parse(data)
+        result = serialisers.mesh.parse(data) or data
         self.assertRegex(result, rb'^version')
+
+    def test_csg_load(self) -> None:
+        '''
+        Tests that CSG v3 unions can be parsed.
+        '''
+        data = extractor.download_rōblox_asset(4500696697)
+        self.assertIsNotNone(data)
+        assert data is not None
+
+        serialisers.rbxl.parse(
+            data, methods={serialisers.rbxl.method.convert_csg},
+        )

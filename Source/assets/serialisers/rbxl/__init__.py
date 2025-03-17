@@ -7,6 +7,7 @@ from . import (
     script_disabled,
     skip_bytecode,
     roblox_links,
+    convert_csg,
 )
 
 
@@ -17,6 +18,7 @@ class method(enum.Enum):
     # script_disabled = partial(script_disabled.replace)
     roblox_links = enum.member(partial(roblox_links.replace))
     skip_bytecode = enum.member(partial(skip_bytecode.replace))
+    convert_csg = enum.member(partial(convert_csg.replace))
 
 
 ALL_METHODS = set(method)

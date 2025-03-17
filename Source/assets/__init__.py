@@ -15,6 +15,7 @@ class asseter:
         asset_name_func: callable.obj_type[[int | str], str],
         clear_on_start: bool,
     ) -> None:
+        super().__init__()
         self.dir_path = dir_path
         self.redirect_func = redirect_func
         self.asset_name_func = asset_name_func
@@ -154,7 +155,7 @@ class asseter:
 
         if isinstance(asset_id, str):
             return returns.construct(data=self._load_asset_str(asset_id))
-        elif isinstance(asset_id, int):
+        else:
             return returns.construct(data=self._load_asset_num(asset_id))
 
     def get_asset(
