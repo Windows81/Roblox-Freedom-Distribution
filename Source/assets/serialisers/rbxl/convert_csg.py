@@ -3,8 +3,8 @@ from .. import csg
 
 
 def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
-    old_prop_head = b'\x08\x00\x00\x00MeshData\x01'
-    if not info.chunk_data.startswith(old_prop_head, _logic.INT_SIZE):
+    prop_name = _logic.get_first_chunk_str(info)
+    if prop_name is None or not prop_name.startswith(b'MeshData'):
         return None
 
     prop_data = _logic.get_prop_values_bytes(info)
@@ -17,4 +17,7 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
         for data in prop_values
     ]
 
-    return _logic.join_prop_values(results)
+    return (
+        _logic.get_pre_prop_values_bytes(info) +
+        _logic.join_prop_values(results)
+    )

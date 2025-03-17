@@ -27,6 +27,7 @@ def split_prop_values(data: bytes) -> list[bytes]:
 
         splits.append(chunk)
         index += offset
+    assert index == length
     return splits
 
 
@@ -77,6 +78,20 @@ def get_first_chunk_str(info: chunk_info) -> bytes | None:
     )
     str_start = 8
     return info.chunk_data[str_start:str_start + str_size]
+
+
+def get_pre_prop_values_bytes(info: chunk_info) -> bytes:
+    '''
+    Returns all chunk data *prior* to whatever `PROP` values there are.
+    '''
+    if info.chunk_name not in {b'PROP'}:
+        return info.chunk_data
+    str_size = int.from_bytes(
+        info.chunk_data[4:8],
+        byteorder='little',
+    )
+    str_start = 8
+    return info.chunk_data[:str_start + str_size + 1]
 
 
 def get_prop_values_bytes(info: chunk_info) -> bytes | None:

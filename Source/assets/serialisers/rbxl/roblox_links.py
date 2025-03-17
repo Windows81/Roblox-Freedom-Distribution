@@ -9,6 +9,8 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
     prop_data = _logic.get_prop_values_bytes(info)
     if prop_data is None:
         return
+    if _logic.get_type_iden(info) != 0x01:
+        return
 
     prop_values = _logic.split_prop_values(prop_data)
     results = [
@@ -20,4 +22,7 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
         for v in prop_values
     ]
 
-    return _logic.join_prop_values(results)
+    return (
+        _logic.get_pre_prop_values_bytes(info) +
+        _logic.join_prop_values(results)
+    )
