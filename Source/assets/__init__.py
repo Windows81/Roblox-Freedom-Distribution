@@ -18,7 +18,6 @@ class asseter:
         self.dir_path = dir_path
         self.redirect_func = redirect_func
         self.asset_name_func = asset_name_func
-        self.redirect_iden_flags = set[int | str]()
         self.queuer = queue.queuer()
 
         if os.path.isdir(dir_path):
@@ -114,18 +113,9 @@ class asseter:
 
     def _load_redir_asset(self, asset_id: int | str, redirect: structs.asset_redirect) -> returns.base_type:
         asset_path = self.get_asset_path(asset_id)
-
-        # Checks if it's the first time for a redirect to be called.
-        # If it is, remove any file it might point to from the cache.
-        # This is done dynamically to keep redirects compliant with config.
-        if asset_id not in self.redirect_iden_flags:
-            if os.path.isfile(asset_path):
-                os.remove(asset_path)
-            self.redirect_iden_flags.add(asset_id)
-        else:
-            local_data = self._load_file(asset_path)
-            if local_data is not None:
-                return returns.construct(data=local_data)
+        local_data = self._load_file(asset_path)
+        if local_data is not None:
+            return returns.construct(data=local_data)
 
         if redirect.uri is not None:
             if redirect.uri.uri_type == wrappers.uri_type.ONLINE:
