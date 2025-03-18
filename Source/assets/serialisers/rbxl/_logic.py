@@ -60,7 +60,7 @@ def get_class_iden(info: chunk_info) -> bytes | None:
     '''
     if info.chunk_name not in {b'PROP', b'INST'}:
         return None
-    return info.chunk_data[0:4]
+    return info.chunk_data[0:INT_SIZE]
 
 
 def get_first_chunk_str(info: chunk_info) -> bytes | None:
@@ -73,10 +73,10 @@ def get_first_chunk_str(info: chunk_info) -> bytes | None:
     if info.chunk_name not in {b'PROP', b'INST'}:
         return None
     str_size = int.from_bytes(
-        info.chunk_data[4:8],
+        info.chunk_data[INT_SIZE:INT_SIZE*2],
         byteorder='little',
     )
-    str_start = 8
+    str_start = 2 * INT_SIZE
     return info.chunk_data[str_start:str_start + str_size]
 
 
@@ -87,10 +87,10 @@ def get_pre_prop_values_bytes(info: chunk_info) -> bytes:
     if info.chunk_name not in {b'PROP'}:
         return info.chunk_data
     str_size = int.from_bytes(
-        info.chunk_data[4:8],
+        info.chunk_data[INT_SIZE:INT_SIZE*2],
         byteorder='little',
     )
-    str_start = 8
+    str_start = 2 * INT_SIZE
     return info.chunk_data[:str_start + str_size + 1]
 
 
@@ -102,10 +102,10 @@ def get_prop_values_bytes(info: chunk_info) -> bytes | None:
     if info.chunk_name not in {b'PROP'}:
         return None
     str_size = int.from_bytes(
-        info.chunk_data[4:8],
+        info.chunk_data[INT_SIZE:INT_SIZE*2],
         byteorder='little',
     )
-    str_start = 8
+    str_start = 2 * INT_SIZE
     return info.chunk_data[str_start + str_size + 1:]
 
 
@@ -117,10 +117,10 @@ def get_type_iden(info: chunk_info) -> int | None:
     if info.chunk_name not in {b'PROP'}:
         return None
     str_size = int.from_bytes(
-        info.chunk_data[4:8],
+        info.chunk_data[INT_SIZE:INT_SIZE*2],
         byteorder='little',
     )
-    str_end = 8 + str_size
+    str_end = 2 * INT_SIZE + str_size
     return info.chunk_data[str_end]
 
 
@@ -132,12 +132,12 @@ def get_instance_count(info: chunk_info) -> int | None:
     if info.chunk_name not in {b'INST'}:
         return None
     str_size = int.from_bytes(
-        info.chunk_data[4:8],
+        info.chunk_data[INT_SIZE:INT_SIZE*2],
         byteorder='little',
     )
-    prop_start = 8 + str_size + 1
+    prop_start = 2 * INT_SIZE + str_size + 1
     return int.from_bytes(
-        info.chunk_data[prop_start:prop_start + 4],
+        info.chunk_data[prop_start:prop_start + INT_SIZE],
         byteorder='little',
     )
 

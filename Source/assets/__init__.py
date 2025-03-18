@@ -118,15 +118,10 @@ class asseter:
         if local_data is not None:
             return returns.construct(data=local_data)
 
-        if redirect.uri is not None:
-            if redirect.uri.uri_type == wrappers.uri_type.ONLINE:
-                return returns.construct(
-                    redirect_url=redirect.uri.value,
-                )
-            with open(redirect.uri.value, 'rb') as f:
-                return returns.construct(
-                    data=f.read(),
-                )
+        if redirect.forward_url is not None:
+            return returns.construct(
+                redirect_url=redirect.forward_url,
+            )
         elif redirect.cmd_line is not None:
             # NOTE: redirect asset ids which share the same command line may also share the same output dump.
             # This happens when both assets are loaded near the same time.

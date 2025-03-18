@@ -804,35 +804,38 @@ When an RFD server receives a request to load an asset by id, it does so from Ro
 
 However, entries in [`asset_redirects`](#remote_dataasset_redirects) override that default.
 
-Through the `uri` field, assets can load either from a local or remote resource.
-
 The following examples notate the structure into the [dict mode](#dict-mode) syntax:
+
+Through the `forward_url` field, clients are automatically redirected to a new URL to load any assets.
+
+Asset redirects with this scheme are *not* saved to `./AssetCache`.
 
 ```toml
 [remote_data.asset_redirects.13] # asset iden 13
-uri = 'c:\Users\USERNAME\Pictures\Image.jpg'
+forward_url = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 ```
+
+You can include a `cmd_line` field if you want the loaded asset to *literally* come from the `stdout` of a program installed on the server.
+
+Asset redirects with this scheme *are* saved to `./AssetCache`.
 
 ```toml
 [remote_data.asset_redirects.14] # asset iden 14
-raw_data = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
-```
-
-You can include a `cmd_line` field if you want the loaded asset to literally come from the `stdout` of a program.
-
-```toml
-[remote_data.asset_redirects.15] # asset iden 15
 cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm -L --output -'
 ```
 
 A `raw_data` field works here too. That literally encapsuates the binary data that will be sent as an asset.
 
+Asset redirects with this scheme *are* saved to `./AssetCache`.
+
 ```toml
-[remote_data.asset_redirects.16] # asset iden 15
+[remote_data.asset_redirects.15]
 raw_data = '\0'
 ```
 
-This should also work. It redirects asset iden strings starting wtih `time_music_` to static files on the internet.
+---
+
+This script (in [Python mode](#python-mode)) should work. It redirects asset iden strings starting wtih `time_music_` to static files on the internet.
 
 ```toml
 remote_data.asset_redirects = "python"
@@ -842,7 +845,7 @@ def f(asset_iden):
     if asset_iden.startswith(PREFIX):
         h = int(asset_iden[len(PREFIX):])
         return {
-            "uri": "https://github.com/Windows81/Time-Is-Musical/blob/main/hour_%02d.wav" % (h % 24)
+            "forward_url": "https://github.com/Windows81/Time-Is-Musical/blob/main/hour_%02d.wav" % (h % 24)
         }
     return None
 '''

@@ -20,16 +20,17 @@ class badge:
 
 @dataclasses.dataclass
 class asset_redirect:
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if sum([
             self.cmd_line is not None,
             self.raw_data is not None,
-            self.uri is not None,
+            self.forward_url is not None,
         ]) > 1:
             raise Exception(
-                'Entries for `asset_redirects` should not have '
-                'more than one of a `uri`, a pipeable `cmd_line`, or a `raw_data` chunk.')
-    uri: wrappers.uri_obj | None = None
+                'Entries for `asset_redirects` should not have ' +
+                'more than one of a `forward_url`, a pipeable `cmd_line`, or a `raw_data` chunk.'
+            )
+    forward_url: str | None = None
     raw_data: bytes | None = None
     cmd_line: str | None = None
 

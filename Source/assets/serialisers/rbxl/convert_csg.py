@@ -3,9 +3,14 @@ from .. import csg
 
 
 def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
+    if info.chunk_name == b'SSTR':
+
     prop_name = _logic.get_first_chunk_str(info)
     if prop_name is None or not prop_name.startswith(b'MeshData'):
         return None
+
+    if _logic.get_type_iden(info) == b'\x1C':
+        break
 
     prop_data = _logic.get_prop_values_bytes(info)
     if prop_data is None:
