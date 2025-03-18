@@ -73,23 +73,6 @@
 			"justMyCode": true
 		},
 		{
-			"name": "Python: Launch Server from Place File with Local Client",
-			"type": "debugpy",
-			"request": "launch",
-			"program": "${workspaceFolder}/Source/_main.py",
-			"cwd": "${workspaceFolder}",
-			"args": [
-				"server",
-				"--place_path",
-				"./Examples/Crossroads 2007/Crossroads.rbxl",
-				"--run_client",
-				"--user_code",
-				"VisualPlugin",
-			],
-			"console": "integratedTerminal",
-			"justMyCode": true
-		},
-		{
 			"name": "Python: Launch Server with Local Client (Debug)",
 			"type": "debugpy",
 			"request": "launch",

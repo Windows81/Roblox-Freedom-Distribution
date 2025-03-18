@@ -1,8 +1,8 @@
 from launcher.routines import player, web, rcc, studio
 
-from web_server._logic import port_typ, server_mode
 import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
+from web_server._logic import server_mode
 import game_config as config
 import logger.flog_table
 import util.resource
@@ -47,7 +47,7 @@ def subparse(
         type=int,
         nargs='?',
         default=None,
-        help='Port number for the web server to run from.',
+        help='Port number for the locally-hosted web server to run from.',
     )
 
     subparser.add_argument(
@@ -72,15 +72,7 @@ def _(
     else:
         game_config = config.get_cached_config(args.config_path)
 
-    if args.web_port is None:
-        args.web_port = 20059
-
-    web_port = port_typ(
-        port_num=args.web_port,
-        is_ssl=True,
-        is_ipv6=False,
-    )
-
+    web_port = args.web_port or 20059
     log_filter = logger.filter.filter_type(
         other_logs=not args.quiet,
     )
@@ -89,7 +81,9 @@ def _(
     if not args.skip_web:
         routine_args.extend([
             web.arg_type(
-                web_ports=[web_port],
+                web_port=web_port,
+                is_ipv6=False,
+                is_ssl=True,
                 log_filter=log_filter,
                 game_config=game_config,
                 server_mode=server_mode.STUDIO,

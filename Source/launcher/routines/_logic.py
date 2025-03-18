@@ -1,4 +1,3 @@
-import web_server._logic as web_server_logic
 import game_config.structure
 import game_config as config
 from typing import override
@@ -11,11 +10,13 @@ import http.client
 import downloader
 import subprocess
 import threading
+import ipaddress
 import shutil
 import atexit
 import logger
 import copy
 import ssl
+import re
 
 
 class _entry:
@@ -59,13 +60,13 @@ class bin_arg_type(popen_arg_type, loggable_arg_type):
 
 class bin_ssl_arg_type(bin_arg_type):
     web_host: str
-    web_port: web_server_logic.port_typ
+    web_port: int
 
     def send_request(
             self,
             path: str,
             timeout: float = 30) -> http.client.HTTPResponse:
-        assert self.web_port.port_num is not None
+        assert self.web_port is not None
         try:
             return urllib.request.urlopen(
                 f'{self.get_base_url()}{path}',
@@ -81,20 +82,42 @@ class bin_ssl_arg_type(bin_arg_type):
 
 class host_arg_type(arg_type):
     rcc_host: str
-    rcc_port_num: int
+    rcc_port: int
 
     web_host: str
-    web_port: web_server_logic.port_typ
+    web_port: int
     user_code: str | None = None
     launch_delay: float = 0
+
+    @staticmethod
+    def ip_stuff(host: str = 'localhost', port: int = 2005):
+        if re.search(r':.*:', host) is not None:
+            host = '[%s]' % host
+            return (host, port)
+
+        port_in_host = re.search(r':(\d{1,5})$', host)
+        if port_in_host is not None:
+            port = int(port_in_host.group(1))
+            host = host[:port_in_host.start()]
+        return (host, port)
 
     @override
     def sanitise(self) -> None:
         super().sanitise()
+        (
+            self.web_host, self.web_port,
+        ) = self.ip_stuff(
+            self.web_host, self.web_port,
+        )
+        (
+            self.rcc_host, self.rcc_port,
+        ) = self.ip_stuff(
+            self.rcc_host, self.rcc_port,
+        )
 
         if self.rcc_host == 'localhost':
             self.rcc_host = '127.0.0.1'
-        elif ':' in self.rcc_host:
+        elif type(ipaddress.ip_address(self.rcc_host)) == ipaddress.IPv6Address:
             self.rcc_host = f'[{self.rcc_host}]'
 
         self.app_host = self.web_host

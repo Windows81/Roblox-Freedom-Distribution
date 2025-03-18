@@ -1,4 +1,3 @@
-import web_server._logic as web_server_logic
 from config_type.types import wrappers
 from . import _logic as logic
 from typing import override
@@ -115,7 +114,7 @@ class arg_type(logic.bin_ssl_arg_type, logic.loggable_arg_type):
     obj_type = obj_type
 
     web_host: str
-    web_port: web_server_logic.port_typ
+    web_port: int
     game_config: game_config.obj_type
     log_filter: logger.filter.filter_type
     launch_delay: float = 0
@@ -123,10 +122,7 @@ class arg_type(logic.bin_ssl_arg_type, logic.loggable_arg_type):
 
     @override
     def get_base_url(self) -> str:
-        return (
-            f'http{"s" if self.web_port.is_ssl else ""}://' +
-            f'{self.web_host}:{self.web_port.port_num}'
-        )
+        return f'https://{self.web_host}:{self.web_port}'
 
     @override
     def get_app_base_url(self) -> str:

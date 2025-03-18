@@ -2,7 +2,6 @@ from launcher.routines import player
 
 import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
-from web_server._logic import port_typ
 import argparse
 import logger
 
@@ -81,12 +80,9 @@ def _(
     return [
         player.arg_type(
             rcc_host=args.rcc_host,
-            rcc_port_num=args.rcc_port,
+            rcc_port=args.rcc_port,
             web_host=args.web_host,
-            web_port=port_typ(
-                port_num=args.web_port,
-                is_ssl=True,
-            ),
+            web_port=args.web_port,
             user_code=args.user_code,
             log_filter=log_filter,
         ),

@@ -5,11 +5,12 @@ from .endpoints import _
 
 
 def make_server(
-    port: web_server_logic.port_typ,
+    port: int,
+    is_ssl: bool = True,
     *args,
     **kwargs,
 ) -> web_server_logic.web_server:
-    if port.is_ssl:
+    if is_ssl:
         cls = web_server_logic.web_server_ssl
     else:
         cls = web_server_logic.web_server

@@ -1,4 +1,3 @@
-import web_server._logic as web_server_logic
 from . import _logic as logic
 from typing import override
 import urllib.request
@@ -50,7 +49,7 @@ class obj_type(logic.bin_ssl_entry, logic.restartable_entry):
                 'rcc-host-addr':
                     self.local_args.rcc_host,
                 'rcc-port':
-                    self.local_args.rcc_port_num,
+                    self.local_args.rcc_port,
                 'user-code':
                     self.local_args.user_code,
             }.items() if v}),
@@ -80,9 +79,9 @@ class arg_type(
     obj_type = obj_type
 
     rcc_host: str
-    rcc_port_num: int
+    rcc_port: int
     web_host: str
-    web_port: web_server_logic.port_typ
+    web_port: int
     # The `log_filter` field is only used for indicating download status.
     log_filter: logger.filter.filter_type = logger.filter.filter_type(
         other_logs=True,
@@ -103,14 +102,8 @@ class arg_type(
 
     @override
     def get_base_url(self) -> str:
-        return (
-            f'http{"s" if self.web_port.is_ssl else ""}://' +
-            f'{self.web_host}:{self.web_port.port_num}'
-        )
+        return f'https://{self.web_host}:{self.web_port}'
 
     @override
     def get_app_base_url(self) -> str:
-        return (
-            f'http{"s" if self.web_port.is_ssl else ""}://' +
-            f'{self.app_host}:{self.web_port.port_num}'
-        )
+        return f'https://{self.app_host}:{self.web_port}'

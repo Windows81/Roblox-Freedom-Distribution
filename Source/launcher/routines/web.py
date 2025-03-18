@@ -12,48 +12,32 @@ import logger
 
 class obj_type(logic.server_entry):
     game_config: config.obj_type
-    httpds: list[web_server_logic.web_server] | None
+    httpd: web_server_logic.web_server | None = None
     local_args: 'arg_type'
-
-    def __run_servers(
-        self,
-        web_ports: list[web_server_logic.port_typ],
-        game_config: config.obj_type,
-        *args, **kwargs,
-    ) -> None:
-        self.httpds = [
-            web_server.make_server(
-                port,
-                game_config,
-                self.local_args.server_mode,
-                self.local_args.log_filter,
-                *args,
-                **kwargs,
-            )
-            for port in web_ports
-        ]
-
-        for ht in self.httpds:
-            th = threading.Thread(
-                target=ht.serve_forever,
-                daemon=True,
-            )
-            self.threads.append(th)
-            th.start()
 
     @override
     def process(self) -> None:
-        self.__run_servers(
-            web_ports=self.local_args.web_ports,
-            game_config=self.game_config,
+        self.httpd = web_server.make_server(
+            self.local_args.web_port,
+            self.local_args.is_ssl,
+            self.local_args.is_ipv6,
+            self.game_config,
+            self.local_args.server_mode,
+            self.local_args.log_filter,
         )
+
+        th = threading.Thread(
+            target=self.httpd.serve_forever,
+            daemon=True,
+        )
+        self.threads.append(th)
+        th.start()
 
     @override
     def stop(self) -> None:
-        if self.httpds is None:
+        if self.httpd is None:
             return
-        for ht in self.httpds:
-            ht.shutdown()
+        self.httpd.shutdown()
         super().stop()
 
 
@@ -61,9 +45,10 @@ class obj_type(logic.server_entry):
 class arg_type(logic.arg_type):
     obj_type = obj_type
 
+    web_port: int
+    is_ipv6: bool
+    is_ssl: bool
+
     game_config: game_config.obj_type
     server_mode: web_server_logic.server_mode
-    web_ports: list[web_server_logic.port_typ] = dataclasses.field(
-        default_factory=list,
-    )
     log_filter: logger.filter.filter_type = logger.DEFAULT_FILTER

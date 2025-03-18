@@ -24,13 +24,6 @@ import ssl
 import re
 
 
-@dataclasses.dataclass(unsafe_hash=True)
-class port_typ:
-    port_num: int
-    is_ssl: bool = True
-    is_ipv6: bool = False
-
-
 class func_mode(enum.Enum):
     STATIC = 0
     REGEX = 1
@@ -98,7 +91,8 @@ def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
 class web_server(http.server.ThreadingHTTPServer):
     def __init__(
         self,
-        port: port_typ,
+        port: int,
+        is_ipv6: bool,
         game_config: game_config.obj_type,
         server_mode: server_mode,
         log_filter: logger.filter.filter_type,
@@ -109,24 +103,27 @@ class web_server(http.server.ThreadingHTTPServer):
         self.storage = game_config.storage
         self.server_mode = server_mode
         self.log_filter = log_filter
+        self.is_ipv6 = is_ipv6
+        self.address_family = (
+            socket.AF_INET6
+            if self.is_ipv6
+            else socket.AF_INET
+        )
 
         logger.log(
             (
                 f"{log_filter.bcolors.BOLD}[TCP %d %s]{log_filter.bcolors.ENDC}: " +
                 "initialising webserver"
             ) % (
-                port.port_num,
-                'IPv6' if port.is_ipv6 else 'IPv4',
+                port,
+                'IPv6' if self.is_ipv6 else 'IPv4',
             ),
             context=logger.log_context.PYTHON_SETUP,
             filter=log_filter,
         )
 
-        self.is_ipv6 = port.is_ipv6
-        self.address_family = socket.AF_INET6 if self.is_ipv6 else socket.AF_INET
-
         super().__init__(
-            ('', port.port_num),
+            ('', port),
             web_server_handler,
             *args, **kwargs,
         )
@@ -181,6 +178,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         length = int(self.headers.get('content-length', -1))
         return self.rfile.read(length)
 
+    @override
     def parse_request(self) -> bool:
         self.is_valid_request = False
         if not super().parse_request():

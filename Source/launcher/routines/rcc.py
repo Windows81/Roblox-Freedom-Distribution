@@ -1,5 +1,4 @@
 from config_type.types import structs, wrappers, callable
-import web_server._logic as web_server_logic
 from ..startup_scripts import rcc_server
 from collections import ChainMap
 from typing import IO, override
@@ -199,7 +198,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
                     "JobId":
                         "Test",
                     "PreferredPort":
-                        self.local_args.rcc_port_num,
+                        self.local_args.rcc_port,
                 },
                 "Arguments": {},
             }, f)
@@ -328,7 +327,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
                 f"{log_filter.bcolors.BOLD}[UDP %d]{log_filter.bcolors.ENDC}: " +
                 "initialising Rōblox Cloud Compute"
             ) % (
-                self.local_args.rcc_port_num,
+                self.local_args.rcc_port,
             ),
             context=logger.log_context.PYTHON_SETUP,
             filter=log_filter,
@@ -347,7 +346,9 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
 class arg_type(logic.bin_ssl_arg_type):
     obj_type = obj_type
 
-    rcc_port_num: int | None
+    web_host: str | None
+    rcc_port: int | None
+    web_port: int | None
     game_config: game_config.obj_type
     track_file_changes: bool = True
     skip_popen: bool = False
@@ -355,19 +356,11 @@ class arg_type(logic.bin_ssl_arg_type):
     # TODO: fix the way place idens work.
     place_iden: int = const.PLACE_IDEN_CONST
 
-    web_port: web_server_logic.port_typ = web_server_logic.port_typ(
-        port_num=80,
-        is_ssl=False,
-        is_ipv6=False,
-    )
     log_filter: logger.filter.filter_type = logger.DEFAULT_FILTER
 
     @override
     def get_base_url(self) -> str:
-        return (
-            f'http{"s" if self.web_port.is_ssl else ""}://' +
-            f'localhost:{self.web_port.port_num}'
-        )
+        return f'https://{self.web_host}:{self.web_port}'
 
     @override
     def get_app_base_url(self) -> str:

@@ -1,8 +1,8 @@
 from launcher.routines import player, web, rcc
 
-from web_server._logic import port_typ, server_mode
 import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
+from web_server._logic import server_mode
 import game_config as config
 import logger.flog_table
 import logger.bcolors
@@ -157,62 +157,59 @@ def _(
     if args.rcc_port is None:
         args.rcc_port = args.web_port or 2005
 
-    web_port_ipv4 = port_typ(
-        port_num=args.web_port,
-        is_ssl=True,
-        is_ipv6=False,
+    has_ipv6: bool = not args.ipv4_only
+    has_ipv4: bool = not args.ipv6_only
+
+    log_filter = gen_log_filter(
+        parser, args,
     )
 
-    web_port_ipv6 = port_typ(
-        port_num=args.web_port,
-        is_ssl=True,
-        is_ipv6=True,
-    )
-
-    if args.ipv6_only:
-        web_port_servers = [web_port_ipv6]
-    elif args.ipv4_only:
-        web_port_servers = [web_port_ipv4]
-    elif game_config.game_setup.roblox_version in {util.versions.rōblox.v463}:
-        web_port_servers = [web_port_ipv4, web_port_ipv6]
-    else:
-        web_port_servers = [web_port_ipv4]
-
-    log_filter = gen_log_filter(parser, args)
+    web_routine_args = []
+    if has_ipv6:
+        # IPv6 goes first since `localhost` also resolves first to
+        # [::1] on the client.
+        web_routine_args.append(web.arg_type(
+            web_port=args.web_port,
+            is_ssl=True,
+            is_ipv6=True,
+            server_mode=server_mode.RCC,
+            log_filter=log_filter,
+            game_config=game_config,
+        ))
+    if has_ipv4:
+        web_routine_args.append(web.arg_type(
+            web_port=args.web_port,
+            is_ssl=True,
+            is_ipv6=False,
+            server_mode=server_mode.RCC,
+            log_filter=log_filter,
+            game_config=game_config,
+        ))
 
     routine_args = []
     if not args.skip_web:
-        routine_args.extend([
-            web.arg_type(
-                # IPv6 goes first since `localhost` also resolves first to
-                # [::1] on the client.
-                web_ports=web_port_servers,
-                server_mode=server_mode.RCC,
-                log_filter=log_filter,
-                game_config=game_config,
-            ),
-        ])
+        routine_args.extend(web_routine_args)
 
     if not args.skip_rcc:
-        routine_args.extend([
+        routine_args.append(
             rcc.arg_type(
-                rcc_port_num=args.rcc_port,
-                # since RCC only really connects to 127.0.0.1.
-                web_port=web_port_ipv4,
+                # TODO: add support for RCC to connect to hosts other than `localhost`.
+                web_host='localhost',
+                web_port=args.web_port,
+                rcc_port=args.rcc_port,
                 log_filter=log_filter,
                 skip_popen=args.skip_rcc_popen,
                 game_config=game_config,
             ),
-        ])
+        )
 
     if args.run_client:
         routine_args.extend([
             player.arg_type(
                 rcc_host='127.0.0.1',
                 web_host='127.0.0.1',
-                rcc_port_num=args.rcc_port,
-                # since RCC only really connects to 127.0.0.1.
-                web_port=web_port_ipv4,
+                rcc_port=args.rcc_port,
+                web_port=args.web_port,
                 user_code=args.user_code,
                 log_filter=log_filter,
                 # Some CoreGUI elements don't render properly if we join too
