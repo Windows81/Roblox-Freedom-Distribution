@@ -63,9 +63,10 @@ class bin_ssl_arg_type(bin_arg_type):
     web_port: int
 
     def send_request(
-            self,
-            path: str,
-            timeout: float = 30) -> http.client.HTTPResponse:
+        self,
+        path: str,
+        timeout: float = 7,
+    ) -> http.client.HTTPResponse:
         assert self.web_port is not None
         try:
             return urllib.request.urlopen(
@@ -90,8 +91,8 @@ class host_arg_type(arg_type):
     launch_delay: float = 0
 
     @staticmethod
-    def ip_stuff(host: str = 'localhost', port: int = 2005):
-        if re.search(r':.*:', host) is not None:
+    def ip_stuff(host: str = 'localhost', port: int = 2005) -> tuple[str, int]:
+        if not host.startswith('[') and re.search(r':.*:', host) is not None:
             host = '[%s]' % host
             return (host, port)
 
@@ -117,19 +118,17 @@ class host_arg_type(arg_type):
 
         if self.rcc_host == 'localhost':
             self.rcc_host = '127.0.0.1'
-        elif type(ipaddress.ip_address(self.rcc_host)) == ipaddress.IPv6Address:
-            self.rcc_host = f'[{self.rcc_host}]'
 
         self.app_host = self.web_host
         if self.web_host == 'localhost':
             self.web_host = self.app_host = '127.0.0.1'
 
-        elif self.web_host and ':' in self.web_host:
+        elif self.web_host.startswith('['):
             # The ".ipv6-literal.net" replacement only works on Windows and might not translate well on Wine.
             # It's strictly necessary for 2021E because some CoreGUI stuff will
             # crash if the BaseUrl doesn't have a dot in it.
             unc_ip_str = (
-                self.web_host
+                self.web_host[1:-1]
                 .replace(':', '-')
                 .replace('%', 's')
             )

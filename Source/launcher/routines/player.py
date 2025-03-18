@@ -19,7 +19,8 @@ class obj_type(logic.bin_ssl_entry, logic.restartable_entry):
     def retr_version(self) -> util.versions.rōblox:
         res = self.local_args.send_request('/rfd/roblox-version')
         return util.versions.rōblox.from_name(
-            str(res.read(), encoding='utf-8'))
+            str(res.read(), encoding='utf-8'),
+        )
 
     def save_app_setting(self) -> str:
         '''
