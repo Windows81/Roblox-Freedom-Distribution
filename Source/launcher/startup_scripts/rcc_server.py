@@ -14,7 +14,6 @@ spawn(function()
 
     local c = 0
     while true do
-        print('RFD', c)
         c = c + 1
         local ResultsJson = HttpService:JSONEncode(Results)
     	CallsJson = HttpRbxApiService:PostAsync(Url, ResultsJson, Enum.ThrottlingPriority.Extreme)
@@ -24,14 +23,6 @@ spawn(function()
     		Results[guid] = _G.RFD[path](unpack(args))
             -- warn(path, unpack(args), Results[guid])
     	end
-    end
-end)
-
-spawn(function()
-    while wait(3) do
-        print('RFD 1', tick())
-        print(HttpRbxApiService:GetAsync('rfd/roblox-version'))
-        print('RFD 2', tick())
     end
 end)
 

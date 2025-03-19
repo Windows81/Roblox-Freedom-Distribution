@@ -152,8 +152,13 @@ def _(
     else:
         game_config = config.get_cached_config(args_ns.config_path)
 
-    web_port: int = args_ns.web_port or 2005
-    rcc_port: int = args_ns.rcc_port or 2005
+    web_port: int | None = args_ns.web_port
+    rcc_port: int | None = args_ns.rcc_port
+    if web_port is None:
+        web_port = rcc_port or 2005
+    if rcc_port is None:
+        rcc_port = web_port or 2005
+
     has_ipv6: bool = not args_ns.ipv4_only
     has_ipv4: bool = not args_ns.ipv6_only
 
