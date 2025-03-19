@@ -120,20 +120,20 @@ def subparse(
 
 def gen_log_filter(
     parser: argparse.ArgumentParser,
-    args: argparse.Namespace,
+    args_ns: argparse.Namespace,
 ) -> logger.filter.filter_type:
-    if args.quiet:
+    if args_ns.quiet:
         result = logger.filter.FILTER_QUIET
     else:
         result = logger.filter.FILTER_REASONABLE
 
-    if args.rcc_log_options is not None:
+    if args_ns.rcc_log_options is not None:
         result = dataclasses.replace(
             result,
-            rcc_logs=logger.filter.filter_type_rcc.parse(*args.rcc_log),
+            rcc_logs=logger.filter.filter_type_rcc.parse(*args_ns.rcc_log),
         )
 
-    if args.no_colour:
+    if args_ns.no_colour:
         result = dataclasses.replace(
             result,
             bcolors=logger.bcolors.BCOLORS_INVISIBLE,
@@ -145,23 +145,20 @@ def gen_log_filter(
 @sub_logic.serialise_args(sub_logic.launch_mode.SERVER, {web.arg_type, rcc.arg_type, player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
-    args: argparse.Namespace,
+    args_ns: argparse.Namespace,
 ) -> list[logic.arg_type]:
-    if args.place_path is not None:
-        game_config = config.generate_config(args.place_path)
+    if args_ns.place_path is not None:
+        game_config = config.generate_config(args_ns.place_path)
     else:
-        game_config = config.get_cached_config(args.config_path)
+        game_config = config.get_cached_config(args_ns.config_path)
 
-    if args.web_port is None:
-        args.web_port = args.rcc_port or 2005
-    if args.rcc_port is None:
-        args.rcc_port = args.web_port or 2005
-
-    has_ipv6: bool = not args.ipv4_only
-    has_ipv4: bool = not args.ipv6_only
+    web_port: int = args_ns.web_port or 2005
+    rcc_port: int = args_ns.rcc_port or 2005
+    has_ipv6: bool = not args_ns.ipv4_only
+    has_ipv4: bool = not args_ns.ipv6_only
 
     log_filter = gen_log_filter(
-        parser, args,
+        parser, args_ns,
     )
 
     web_routine_args = []
@@ -169,7 +166,7 @@ def _(
         # IPv6 goes first since `localhost` also resolves first to
         # [::1] on the client.
         web_routine_args.append(web.arg_type(
-            web_port=args.web_port,
+            web_port=web_port,
             is_ssl=True,
             is_ipv6=True,
             server_mode=server_mode.RCC,
@@ -178,7 +175,7 @@ def _(
         ))
     if has_ipv4:
         web_routine_args.append(web.arg_type(
-            web_port=args.web_port,
+            web_port=web_port,
             is_ssl=True,
             is_ipv6=False,
             server_mode=server_mode.RCC,
@@ -187,30 +184,30 @@ def _(
         ))
 
     routine_args = []
-    if not args.skip_web:
+    if not args_ns.skip_web:
         routine_args.extend(web_routine_args)
 
-    if not args.skip_rcc:
+    if not args_ns.skip_rcc:
         routine_args.append(
             rcc.arg_type(
                 # TODO: add support for RCC to connect to hosts other than `localhost`.
                 web_host='localhost',
-                web_port=args.web_port,
-                rcc_port=args.rcc_port,
+                web_port=web_port,
+                rcc_port=rcc_port,
                 log_filter=log_filter,
-                skip_popen=args.skip_rcc_popen,
+                skip_popen=args_ns.skip_rcc_popen,
                 game_config=game_config,
             ),
         )
 
-    if args.run_client:
+    if args_ns.run_client:
         routine_args.extend([
             player.arg_type(
                 rcc_host='127.0.0.1',
                 web_host='127.0.0.1',
-                rcc_port=args.rcc_port,
-                web_port=args.web_port,
-                user_code=args.user_code,
+                rcc_port=rcc_port,
+                web_port=web_port,
+                user_code=args_ns.user_code,
                 log_filter=log_filter,
                 # Some CoreGUI elements don't render properly if we join too
                 # early.

@@ -19,7 +19,7 @@ import json
 import os
 
 
-class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry):
+class obj_type(logic.bin_web_entry, logic.server_entry, logic.restartable_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
 
@@ -130,7 +130,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
 
                 json_data |= new_flags
                 with open(path, 'w', encoding='utf-8') as f:
-                    json.dump(json_data, f)
+                    json.dump(json_data, f, indent='\t')
 
             case util.versions.rōblox.v463:
                 path = self.get_versioned_path(
@@ -139,11 +139,10 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
                 with open(path, 'r', encoding='utf-8') as f:
                     json_data = json.load(f)
 
-                # 2021E stores the RCC flags in a JSON sub-dictionary named
-                # `applicationSettings`.
+                # 2021E stores the RCC flags in a JSON sub-dictionary named `applicationSettings`.
                 json_data['applicationSettings'] |= new_flags
                 with open(path, 'w', encoding='utf-8') as f:
-                    json.dump(json_data, f)
+                    json.dump(json_data, f, indent='\t')
 
     def save_gameserver(self) -> str:
         '''
@@ -343,7 +342,7 @@ class obj_type(logic.bin_ssl_entry, logic.server_entry, logic.restartable_entry)
 
 
 @dataclasses.dataclass
-class arg_type(logic.bin_ssl_arg_type):
+class arg_type(logic.bin_web_arg_type):
     obj_type = obj_type
 
     web_host: str | None

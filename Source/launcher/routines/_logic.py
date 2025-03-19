@@ -30,11 +30,6 @@ class arg_type:
     def sanitise(self) -> None:
         pass
 
-    def reconstruct(self):
-        result = copy.copy(self)
-        result.sanitise()
-        return result
-
 
 class popen_arg_type(arg_type):
     debug_x96: bool
@@ -58,40 +53,12 @@ class bin_arg_type(popen_arg_type, loggable_arg_type):
         raise NotImplementedError()
 
 
-class bin_ssl_arg_type(bin_arg_type):
+class bin_web_arg_type(bin_arg_type):
     web_host: str
     web_port: int
-
-    def send_request(
-        self,
-        path: str,
-        timeout: float = 7,
-    ) -> http.client.HTTPResponse:
-        assert self.web_port is not None
-        try:
-            return urllib.request.urlopen(
-                f'{self.get_base_url()}{path}',
-                context=bin_ssl_entry.get_none_ssl(),
-                timeout=timeout,
-            )
-        except urllib.error.URLError as _:
-            raise Exception(
-                'No server is currently running on %s (%s).' %
-                (self.get_base_url(), path),
-            )
-
-
-class host_arg_type(arg_type):
-    rcc_host: str
-    rcc_port: int
-
-    web_host: str
-    web_port: int
-    user_code: str | None = None
-    launch_delay: float = 0
 
     @staticmethod
-    def ip_stuff(host: str = 'localhost', port: int = 2005) -> tuple[str, int]:
+    def resolve_host_port(host: str, port: int) -> tuple[str, int]:
         if not host.startswith('[') and re.search(r':.*:', host) is not None:
             host = '[%s]' % host
             return (host, port)
@@ -107,12 +74,44 @@ class host_arg_type(arg_type):
         super().sanitise()
         (
             self.web_host, self.web_port,
-        ) = self.ip_stuff(
+        ) = self.resolve_host_port(
             self.web_host, self.web_port,
         )
+
+    def send_request(
+        self,
+        path: str,
+        timeout: float = 7,
+    ) -> http.client.HTTPResponse:
+        assert self.web_port is not None
+        try:
+            return urllib.request.urlopen(
+                f'{self.get_base_url()}{path}',
+                context=bin_web_entry.get_none_ssl(),
+                timeout=timeout,
+            )
+        except urllib.error.URLError as _:
+            raise Exception(
+                'No server is currently running on %s (%s).' %
+                (self.get_base_url(), path),
+            )
+
+
+class host_arg_type(bin_web_arg_type):
+    rcc_host: str
+    rcc_port: int
+
+    web_host: str
+    web_port: int
+    user_code: str | None = None
+    launch_delay: float = 0
+
+    @override
+    def sanitise(self) -> None:
+        super().sanitise()
         (
             self.rcc_host, self.rcc_port,
-        ) = self.ip_stuff(
+        ) = self.resolve_host_port(
             self.rcc_host, self.rcc_port,
         )
 
@@ -288,11 +287,11 @@ class bin_entry(ver_entry, popen_entry, loggable_entry):
         )
 
 
-class bin_ssl_entry(bin_entry):
+class bin_web_entry(bin_entry):
     '''
     Routine entry abstract class that corresponds to a binary with a special `./SSL` directory.
     '''
-    local_args: bin_ssl_arg_type
+    local_args: bin_web_arg_type
 
     @staticmethod
     def get_none_ssl() -> ssl.SSLContext:

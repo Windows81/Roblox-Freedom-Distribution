@@ -11,7 +11,7 @@ import logger
 import time
 
 
-class obj_type(logic.bin_ssl_entry, logic.restartable_entry):
+class obj_type(logic.bin_web_entry, logic.restartable_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.PLAYER
 
@@ -73,9 +73,8 @@ class obj_type(logic.bin_ssl_entry, logic.restartable_entry):
 
 @dataclasses.dataclass
 class arg_type(
-    logic.bin_ssl_arg_type,
+    logic.host_arg_type,
     logic.loggable_arg_type,
-    logic.host_arg_type
 ):
     obj_type = obj_type
 

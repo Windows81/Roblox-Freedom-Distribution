@@ -12,5 +12,6 @@ def _(self: web_server_handler) -> bool:
     if isinstance(input_data, dict):
         transferer.insert(input_data)
 
-    self.send_json(transferer.extract())
+    output_data = transferer.extract()
+    self.send_json(output_data)
     return True

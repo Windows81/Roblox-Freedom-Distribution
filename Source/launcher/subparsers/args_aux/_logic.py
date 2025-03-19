@@ -15,6 +15,6 @@ class action:
     @staticmethod
     def serialise_args(
         parser: argparse.ArgumentParser,
-        args: argparse.Namespace,
+        args_ns: argparse.Namespace,
     ) -> None:
         raise NotImplementedError()

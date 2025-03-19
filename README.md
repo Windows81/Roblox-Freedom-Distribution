@@ -580,6 +580,8 @@ end
 
 Resolves to [function](#functions) type `(int, str) -> bool`.
 
+Expect this function to be called multiple times for a single user.
+
 ```toml
 check_user_allowed_call_mode = "lua"
 check_user_allowed = '''

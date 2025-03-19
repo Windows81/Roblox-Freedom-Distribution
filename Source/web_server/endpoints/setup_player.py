@@ -32,7 +32,10 @@ def _(self: web_server_handler) -> bool:
 
     # This function was also called during joinscript creation.
     # It's called a second time here (potentially) for additional protection.
-    if self.game_config.server_core.check_user_allowed(id_num, user_code):
+    if self.game_config.server_core.check_user_allowed.cached_call(
+        7, user_code,
+        id_num, user_code,
+    ):
         self.send_data(b'true')
         return True
 
@@ -139,7 +142,8 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     if user_code is None:
         result = False
     else:
-        result = self.game_config.server_core.check_user_has_admin(
+        result = self.game_config.server_core.check_user_has_admin.cached_call(
+            7, user_code,
             id_num, user_code,
         )
 
@@ -161,7 +165,8 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     if user_code is None:
         result = False
     else:
-        result = self.game_config.server_core.check_user_has_admin(
+        result = self.game_config.server_core.check_user_has_admin.cached_call(
+            7, user_code,
             id_num, user_code,
         )
 

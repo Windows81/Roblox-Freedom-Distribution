@@ -13,7 +13,7 @@ import logger
 import time
 
 
-class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
+class obj_type(logic.bin_web_entry, logic.loggable_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.STUDIO
 
@@ -110,7 +110,7 @@ class obj_type(logic.bin_ssl_entry, logic.loggable_entry):
 
 
 @dataclasses.dataclass
-class arg_type(logic.bin_ssl_arg_type, logic.loggable_arg_type):
+class arg_type(logic.bin_web_arg_type, logic.loggable_arg_type):
     obj_type = obj_type
 
     web_host: str

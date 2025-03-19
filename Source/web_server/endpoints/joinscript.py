@@ -15,10 +15,10 @@ def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, i
         # Keeps generating an iden number until it finds one that is not yet in the database.
         while True:
             id_num = config.server_core.retrieve_user_id(user_code)
-
-            # The `check_user_allowed` function will also be called after the player is added.
-            # (Potentially) for additional protection.
-            if not config.server_core.check_user_allowed(id_num, user_code):
+            if not config.server_core.check_user_allowed.cached_call(
+                7, user_code,
+                id_num, user_code,
+            ):
                 return None
 
             username = config.server_core.retrieve_username(id_num, user_code)
@@ -42,12 +42,12 @@ def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, i
         return None
 
 
-def perform_join(self: web_server_handler) -> dict[str, Any]:
+def perform_join(self: web_server_handler, additional_data: dict[str, Any], sign_prefix: bytes | None) -> None:
     '''
     The query arguments in `Roblox-Session-Id` were previously serialised
     when `join.ashx` was called the first time a player joined.
 
-    Some methods (such as retrieving a user fund balance or rejoining in 2021E)
+    Some methods (such as retrieving a user fund balance, or rejoining in 2021E)
     need data from `Roblox-Session-Id`.
     '''
     config = self.game_config
@@ -64,8 +64,9 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     # Very hacky to call `send_error` when the webserver will later call `send_json`.
     result = init_player(self, user_code)
     if result is None:
-        self.send_error(403)
-        return {}
+        self.send_json({"error": "403: disallowed user"}, 403)
+        return
+
     (user_code, id_num, username) = result
 
     join_data = {
@@ -102,17 +103,16 @@ def perform_join(self: web_server_handler) -> dict[str, Any]:
     }
 
     # NOTE: the `SessionId` is saved as an HTTPS header `Roblox-Session-Id` for later requests.
-    # I'm placing the information which was passed into `join.ashx` here for
-    # simplicity.
+    # I'm placing the information which was passed into `join.ashx` here for simplicity.
     join_data |= {
         'SessionId': json.dumps(join_data | query_args)
     }
-    return join_data
+    self.send_json(join_data | additional_data, sign_prefix=sign_prefix)
 
 
 @server_path('/game/join.ashx', versions={versions.rōblox.v348})
 def _(self: web_server_handler) -> bool:
-    self.send_json(perform_join(self) | {
+    perform_join(self, {
         'ClientPort': 0,
         'PingUrl': '',
         'PingInterval': 0,
@@ -141,7 +141,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/game/join.ashx', versions={versions.rōblox.v463})
 def _(self: web_server_handler) -> bool:
-    self.send_json(perform_join(self) | {
+    perform_join(self, {
         'ClientPort': 0,
         'PingUrl': '',
         'PingInterval': 0,

@@ -1,8 +1,8 @@
-from calendar import c
-from typing import ParamSpec, TypeVar, Generic
+import dataclasses
 import textwrap
-import logger
 import enum
+import time
+from typing import Any, Hashable
 
 
 class call_mode_enum(enum.Enum):
@@ -12,11 +12,14 @@ class call_mode_enum(enum.Enum):
     dicted = 'dict'
 
 
-R = TypeVar("R")
-P = ParamSpec("P")
+@dataclasses.dataclass
+class call_cache_data[R]:
+    value: R
+    tick: float
 
 
-class obj_type(Generic[P, R]):
+class obj_type[**P, R]:
+
     def __init__(
         self,
         rep,
@@ -24,6 +27,7 @@ class obj_type(Generic[P, R]):
         path: str, config,
         caster_func,
     ) -> None:
+        super().__init__()
         self.rep = rep
         self.config = config
         self.field_path = path
@@ -34,10 +38,27 @@ class obj_type(Generic[P, R]):
             call_mode
         )
         self._call = self.get_call()
+        self.call_cache: dict[Hashable, call_cache_data[R]] = {}
 
     def __call__(self, *args: P.args, **kwargs: P.kwargs) -> R:
         result = self._call(*args, *kwargs.values())
         return self.caster_func(result)
+
+    def cached_call(self, dur: float, key: Hashable, *args: P.args, **kwargs: P.kwargs) -> R:
+        '''
+        Wrapper function which caches the result of `__call__` for `dur` seconds.
+        '''
+        tick = time.time()
+        existing = self.call_cache.get(key)
+        if existing is not None and tick > existing.tick:
+            return existing.value
+
+        value = self.__call__(*args, **kwargs)
+        self.call_cache[key] = call_cache_data(
+            value=value,
+            tick=tick + dur,
+        )
+        return value
 
     def assume_call_mode(self) -> call_mode_enum:
         rep = self.rep

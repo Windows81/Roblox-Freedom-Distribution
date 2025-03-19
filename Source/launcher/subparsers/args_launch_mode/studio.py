@@ -65,20 +65,20 @@ def subparse(
 @sub_logic.serialise_args(sub_logic.launch_mode.STUDIO, {web.arg_type, rcc.arg_type, player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
-    args: argparse.Namespace,
+    args_ns: argparse.Namespace,
 ) -> list[logic.arg_type]:
-    if args.place_path is not None:
-        game_config = config.generate_config(args.place_path)
+    if args_ns.place_path is not None:
+        game_config = config.generate_config(args_ns.place_path)
     else:
-        game_config = config.get_cached_config(args.config_path)
+        game_config = config.get_cached_config(args_ns.config_path)
 
-    web_port = args.web_port or 20059
+    web_port: int = args_ns.web_port or 20059
     log_filter = logger.filter.filter_type(
-        other_logs=not args.quiet,
+        other_logs=not args_ns.quiet,
     )
 
     routine_args: list[logic.arg_type] = []
-    if not args.skip_web:
+    if not args_ns.skip_web:
         routine_args.extend([
             web.arg_type(
                 web_port=web_port,

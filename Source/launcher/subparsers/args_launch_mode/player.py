@@ -60,30 +60,34 @@ def _(
 @sub_logic.serialise_args(sub_logic.launch_mode.PLAYER, {player.arg_type})
 def _(
     parser: argparse.ArgumentParser,
-    args: argparse.Namespace,
+    args_ns: argparse.Namespace,
 ) -> list[logic.arg_type]:
 
-    if args.web_host is None:
-        args.web_host = args.rcc_host or 'localhost'
-    if args.rcc_host is None:
-        args.rcc_host = args.web_host or 'localhost'
+    web_host: str | None = args_ns.web_host
+    rcc_host: str | None = args_ns.rcc_host
+    if web_host is None:
+        web_host = rcc_host or 'localhost'
+    if rcc_host is None:
+        rcc_host = web_host or 'localhost'
 
-    if args.web_port is None:
-        args.web_port = args.rcc_port or 2005
-    if args.rcc_port is None:
-        args.rcc_port = args.web_port or 2005
+    web_port: int | None = args_ns.web_port
+    rcc_port: int | None = args_ns.rcc_port
+    if web_port is None:
+        web_port = rcc_port or 2005
+    if rcc_port is None:
+        rcc_port = web_port or 2005
 
     log_filter = logger.filter.filter_type(
-        other_logs=not args.quiet,
+        other_logs=not args_ns.quiet,
     )
 
     return [
         player.arg_type(
-            rcc_host=args.rcc_host,
-            rcc_port=args.rcc_port,
-            web_host=args.web_host,
-            web_port=args.web_port,
-            user_code=args.user_code,
+            rcc_host=rcc_host,
+            rcc_port=rcc_port,
+            web_host=web_host,
+            web_port=web_port,
+            user_code=args_ns.user_code,
             log_filter=log_filter,
         ),
     ]

@@ -1,5 +1,4 @@
 import data_transfer
-import textwrap
 import game_config
 
 BASE_SCRIPT_FORMAT = """\
@@ -9,18 +8,30 @@ local HttpRbxApiService = game:GetService("HttpRbxApiService")
 local HttpService = game:GetService("HttpService")
 
 spawn(function()
-    local Url = BaseUrl .. "rfd/data-transfer"
+    local Url = "rfd/data-transfer"
     local Results = {}
-    local Calls = {}
+    local CallsJson = {}
 
+    local c = 0
     while true do
-    	Calls = HttpRbxApiService:PostAsync(Url, HttpService:JSONEncode(Results))
+        print('RFD', c)
+        c = c + 1
+        local ResultsJson = HttpService:JSONEncode(Results)
+    	CallsJson = HttpRbxApiService:PostAsync(Url, ResultsJson, Enum.ThrottlingPriority.Extreme)
     	Results = {}
-    	for guid, data in next, HttpService:JSONDecode(Calls) do
+    	for guid, data in next, HttpService:JSONDecode(CallsJson) do
     		local path, args = data.path, data.args
     		Results[guid] = _G.RFD[path](unpack(args))
             -- warn(path, unpack(args), Results[guid])
     	end
+    end
+end)
+
+spawn(function()
+    while wait(3) do
+        print('RFD 1', tick())
+        print(HttpRbxApiService:GetAsync('rfd/roblox-version'))
+        print('RFD 2', tick())
     end
 end)
 

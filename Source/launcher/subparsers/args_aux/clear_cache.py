@@ -22,9 +22,9 @@ def _(
         return
 
     sub_parser.add_argument(
-        '--keep_cache',
+        '--clear_cache',
         action='store_true',
-        help=r'Skips deleting cached content specific to the host you are connecting to.  Searches in the %%LocalAppData%%\Temp\Roblox\http directory.',
+        help=r'Deletes cached content specific to the host you are connecting to.  Searches in the %%LocalAppData%%\Temp\Roblox\http directory.',
     )
 
 
@@ -34,16 +34,20 @@ def _(
     args_ns: argparse.Namespace,
     args_list: list[logic.arg_type],
 ) -> list[logic.arg_type]:
+
     if not check_mode(mode):
         return []
 
+    if not args_ns.clear_cache:
+        return []
+
     base_args = [
-        a.reconstruct()
-        for a in args_list
-        if isinstance(a, logic.bin_arg_type)
+        arg
+        for arg in args_list
+        if isinstance(arg, logic.bin_arg_type)
     ]
 
-    if base_args is None:
+    if len(base_args) == 0:
         return []
 
     args_list[:0] = [

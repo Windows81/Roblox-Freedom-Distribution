@@ -35,25 +35,23 @@ class obj_type:
             args=call_args,
         ))
 
-        # Waits for the result to be passed in, then deletes the container to
-        # save memory.
+        # Waits for the result to be passed in, then deletes the container to save memory.
         result = temp_queue.get(block=True)
         del self.output_dict[guid]
         return result
 
     def extract(self) -> dict[str, dict[str, Any]]:
         result = {}
-        for i in itertools.count(0):
-            try:
-                item = self.input_queue.get(
-                    block=True,
-                    timeout=30 if i == 0 else 1 / 30,
-                )
-            except queue.Empty:
-                break
-
+        try:
+            item = self.input_queue.get(
+                block=True,
+                timeout=20,
+            )
             val = dataclasses.asdict(item)
             result[item.guid] = val
+        except queue.Empty:
+            pass
+
         return result
 
     def insert(self, data: dict[str, _input_type]) -> None:
