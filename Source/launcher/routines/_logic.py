@@ -30,6 +30,9 @@ class arg_type:
     def sanitise(self) -> None:
         pass
 
+    def __post_init__(self) -> None:
+        self.sanitise()
+
 
 class popen_arg_type(arg_type):
     debug_x96: bool
@@ -325,7 +328,6 @@ class routine:
         super().__init__()
         self.entries = []
         for args in args_list:
-            args.sanitise()
             e = args.obj_type(args)
             self.entries.append(e)
             e.process()
