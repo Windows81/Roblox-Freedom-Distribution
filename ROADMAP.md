@@ -40,4 +40,4 @@ This document outlines the planned features and improvements for our project. Pl
 - [x] Fix the auth fail error (might already be fixed, unsure)
 - [ ] Android support (native support is planned iirc) (u play with Winlator as of rn)
 - [ ] IOS support (might not happen)
-- [x] GNU/Linux support (playable thanks to wine🍷) (Use heroic games launcher)
+- [x] GNU/Linux support (playable thanks to wine🍷) (Use Lutris)
