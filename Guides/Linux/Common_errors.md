@@ -6,6 +6,6 @@ Error 1:
 
 Try using these wine versions (these tend to work fine with both server & player);
 
-1- [ElementalWarrior](https://github.com/Twig6943/ElementalWarrior-wine-binaries/releases)
+1- [GE-Proton](https://github.com/GloriousEggroll/proton-ge-custom/releases)
 
-2- [GE-Proton](https://github.com/GloriousEggroll/proton-ge-custom/releases)
+2- [ElementalWarrior](https://github.com/Twig6943/ElementalWarrior-wine-binaries/releases)
