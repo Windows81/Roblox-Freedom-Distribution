@@ -7,6 +7,7 @@ class launch_mode(enum.Enum):
     SERVER = 'server'
     STUDIO = 'studio'
     PLAYER = 'player'
+    SERIALISE_FILE = 'serialise'
     DOWNLOAD = 'download'
     TEST = 'test'
 
@@ -16,6 +17,7 @@ ENABLED_LAUNCH_MODES = {
     launch_mode.PLAYER,
     launch_mode.STUDIO,
     launch_mode.DOWNLOAD,
+    launch_mode.SERIALISE_FILE,
     launch_mode.TEST,
 }
 

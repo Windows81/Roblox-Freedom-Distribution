@@ -103,18 +103,27 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 [**Please review each option in the config file before starting your server up.**](#gameconfigtoml-structure)
 
-As of RFD 0.57.3, the available options are as follows:
+As of RFD 0.58.2, the available options are as follows:
 
 ```
-usage: _main.py server [--config_path [CONFIG_PATH] | --place_path [PLACE_PATH]] [--ipv4-only | --ipv6-only] [--rcc_port [RCC_PORT]] [--web_port [WEB_PORT]]
-                       [--run_client] [--user_code [USER_CODE]] [--quiet] [--rcc_log_options [FLog ...]] [--skip_rcc | --skip_rcc_popen | --skip_web]
-                       [--keep_cache] [--skip_download] [--debug | --debug_all] [--help]
+usage: _main.py server [--config_path [CONFIG_PATH] |
+                       --place_path [PLACE_PATH]] [--ipv4-only | --ipv6-only]
+                       [--rcc_port [RCC_PORT]] [--web_port [WEB_PORT]]
+                       [--run_client] [--user_code [USER_CODE]] [--quiet]
+                       [--no_colour] [--rcc_log_options [FLog ...]]
+                       [--skip_rcc | --skip_rcc_popen | --skip_web]
+                       [--clear_cache] [--skip_download] [--debug |
+                       --debug_all] [--help]
 
 options:
   --config_path, --config, -cp [CONFIG_PATH]
-                        Game-specific options; defaults to ./GameConfig.toml. Please review each option before starting a new server up.
+                        Game-specific options; defaults to ./GameConfig.toml.
+                        Please review each option before starting a new server
+                        up.
   --place_path, --place, -pl [PLACE_PATH]
-                        Path to the place file to be loaded. Argument `config_path` can't be passed in when using this option.
+                        Path to the place file to be loaded. Argument
+                        `config_path` can't be passed in when using this
+                        option.
   --ipv4-only           Run server using IPv4 only.
   --ipv6-only           Run server using IPv6 only.
   --rcc_port, --port, -rp, -p [RCC_PORT]
@@ -122,30 +131,42 @@ options:
   --web_port, -wp [WEB_PORT]
                         Port number for the web server to run from.
   --run_client, -rc, --run_player
-                        Runs an instance of the player immediately after starting the server.
+                        Runs an instance of the player immediately after
+                        starting the server.
   --user_code, -u [USER_CODE]
                         If -run_client is passed in, .
   --quiet, -q           Suppresses console output.
+  --no_colour, --no_color
+                        Suppresses ANSI colour codes.
   --rcc_log_options, --rcc_log, -log [FLog ...]
                         Filter list for which FLog types to print in RCC.
-  --skip_rcc            Only runs the webserver, skipping the RCC binary completely.
-  --skip_rcc_popen      Runs the webserver and initialises RCC configuration, but doesn't execute `RCCService.exe`.
-  --skip_web            Only runs the Studio binary, skipping hosting the webserver.
-  --keep_cache          Skips deleting cached content specific to the host you are connecting to. Searches in the %LocalAppData%\Temp\Roblox\http directory.
-  --skip_download       Disables auto-download of RFD binaries from the internet.
-  --debug               Opens an instance of x96dbg and attaches it to the running "server" binary.
-  --debug_all           Opens instances of x96dbg and attaches them to all running binaries.
+  --skip_rcc            Only runs the webserver, skipping the RCC binary
+                        completely.
+  --skip_rcc_popen      Runs the webserver and initialises RCC configuration,
+                        but doesn't execute `RCCService.exe`.
+  --skip_web            Only runs the Studio binary, skipping hosting the
+                        webserver.
+  --clear_cache         Deletes cached content specific to the host you are
+                        connecting to. Searches in the
+                        %LocalAppData%\Temp\Roblox\http directory.
+  --skip_download       Disables auto-download of RFD binaries from the
+                        internet.
+  --debug               Opens an instance of x96dbg and attaches it to the
+                        running "server" binary.
+  --debug_all           Opens instances of x96dbg and attaches them to all
+                        running binaries.
   --help, -?            show this help message and exit
+
 ```
 
 ### `player`
 
-As of RFD 0.57.3, the available options are as follows:
+As of RFD 0.58.2, the available options are as follows:
 
 ```
 usage: _main.py player [--rcc_host [RCC_HOST]] [--rcc_port [RCC_PORT]]
                        [--web_host [WEB_HOST]] [--web_port [WEB_PORT]]
-                       [--user_code [USER_CODE]] [--quiet] [--keep_cache]
+                       [--user_code [USER_CODE]] [--quiet] [--clear_cache]
                        [--skip_download] [--debug | --debug_all] [--help]
 
 options:
@@ -161,8 +182,8 @@ options:
                         Port number to connect this program to the web server.
   --user_code, -u [USER_CODE]
   --quiet, -q           Suppresses console output.
-  --keep_cache          Skips deleting cached content specific to the host you
-                        are connecting to. Searches in the
+  --clear_cache         Deletes cached content specific to the host you are
+                        connecting to. Searches in the
                         %LocalAppData%\Temp\Roblox\http directory.
   --skip_download       Disables auto-download of RFD binaries from the
                         internet.
@@ -178,7 +199,50 @@ options:
 
 The `studio` command allows developers to modify existing place files whilst connected to RFD's webserver.
 
-As of RFD 0.57.3, the available options are as follows:
+As of RFD 0.58.2, the available options are as follows:
+
+```
+usage: _main.py studio [--config_path [CONFIG_PATH] |
+                       --place_path [PLACE_PATH]] [--web_port [WEB_PORT]]
+                       [--quiet] [--skip_web] [--clear_cache]
+                       [--skip_download] [--debug | --debug_all] [--help]
+
+RFD's bundled Studio binaries are very very very ill-prepared. Unless you're
+creating CSG unions which won't work otherwise, I recommend using modern
+versions of Roblox Studio instead.
+
+options:
+  --config_path, --config, -cp [CONFIG_PATH]
+                        Game-specific options; defaults to ./GameConfig.toml.
+                        Please review each option before starting a new server
+                        up.
+  --place_path, --place, -pl [PLACE_PATH]
+                        Path to the place file to be loaded. Argument
+                        `config_path` can't be passed in when using this
+                        option.
+  --web_port, -wp, -p [WEB_PORT]
+                        Port number for the locally-hosted web server to run
+                        from.
+  --quiet, -q           Suppresses console output.
+  --skip_web            Skips hosting the webserver.
+  --clear_cache         Deletes cached content specific to the host you are
+                        connecting to. Searches in the
+                        %LocalAppData%\Temp\Roblox\http directory.
+  --skip_download       Disables auto-download of RFD binaries from the
+                        internet.
+  --debug               Opens an instance of x96dbg and attaches it to the
+                        running "studio" binary.
+  --debug_all           Opens instances of x96dbg and attaches them to all
+                        running binaries.
+  --help, -?            show this help message and exit
+
+```
+
+### `serialise`
+
+The `serialise` command allows developers to modify files to be compatible with RFD's asset-loading systems.
+
+As of RFD 0.58.2, the available options are as follows:
 
 ```
 usage: _main.py studio [--config_path [CONFIG_PATH] |
@@ -219,7 +283,7 @@ options:
 
 The `download` command allows you to download specific versions of Rōblox components.
 
-As of RFD 0.57.3, the available options are as follows:
+As of RFD 0.58.2, the available options are as follows:
 
 ```
 usage: _main.py download [--rbx_version RBX_VERSION]
@@ -232,6 +296,7 @@ options:
   --bin_subtype, -b {Player,Server,Studio} [{Player,Server,Studio} ...]
                         Directories to download.
   --help, -?            show this help message and exit
+
 ```
 
 ## Network Ports in Use
@@ -339,7 +404,7 @@ The [config data](#gameconfigtoml-structure) can also be piped from `stdin`.
 
 ## `GameConfig.toml` Structure
 
-This specification is current as of 0.57.3. Some options might be different in future versions.
+This specification is current as of 0.58.2. Some options might be different in future versions.
 
 Optionally, `toml` files can be expressed in `json`. The following basic configurations work the same way:
 
@@ -810,16 +875,16 @@ The following examples notate the structure into the [dict mode](#dict-mode) syn
 
 Through the `forward_url` field, clients are automatically redirected to a new URL to load any assets.
 
-Asset redirects with this scheme are *not* saved to `./AssetCache`.
+Asset redirects with this scheme are _not_ saved to `./AssetCache`.
 
 ```toml
 [remote_data.asset_redirects.13] # asset iden 13
 forward_url = 'https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.webm'
 ```
 
-You can include a `cmd_line` field if you want the loaded asset to *literally* come from the `stdout` of a program installed on the server.
+You can include a `cmd_line` field if you want the loaded asset to _literally_ come from the `stdout` of a program installed on the server.
 
-Asset redirects with this scheme *are* saved to `./AssetCache`.
+Asset redirects with this scheme _are_ saved to `./AssetCache`.
 
 ```toml
 [remote_data.asset_redirects.14] # asset iden 14
@@ -828,7 +893,7 @@ cmd_line = 'curl https://archive.org/download/youtube-WmNfDXTnKMw/WmNfDXTnKMw.we
 
 A `raw_data` field works here too. That literally encapsuates the binary data that will be sent as an asset.
 
-Asset redirects with this scheme *are* saved to `./AssetCache`.
+Asset redirects with this scheme _are_ saved to `./AssetCache`.
 
 ```toml
 [remote_data.asset_redirects.15]

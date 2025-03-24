@@ -12,6 +12,7 @@ from .subparsers.args_launch_mode import (
     player as _,
     server as _,
     studio as _,
+    serialiser as _,
     test as _,
 )
 
