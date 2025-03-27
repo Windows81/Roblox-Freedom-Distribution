@@ -50,7 +50,7 @@ class obj_type[**P, R]:
         '''
         tick = time.time()
         existing = self.call_cache.get(key)
-        if existing is not None and tick > existing.tick:
+        if existing is not None and tick < existing.tick:
             return existing.value
 
         value = self.__call__(*args, **kwargs)
