@@ -7,7 +7,7 @@ This document outlines the planned features and improvements for our project. Pl
 ### Server Customisability
 
 - [x] Implement server-authoritative materials.
-- [ ] Allow users to define badges and gamepasses in `GameConfig.toml`.
+- [x] Allow users to define badges and gamepasses in `GameConfig.toml`.
 
 ### Peer-to-Peer Support
 
@@ -29,15 +29,16 @@ This document outlines the planned features and improvements for our project. Pl
 
 ### Support for Different Client Versions
 
-- [ ] Ensure backward compatibility with clients from earlier years, e.g., ~2016, ~2013, etc.
 - [x] Implement version negotiation and compatibility checks for seamless cross-version interactions.
 
 ### Other
 
+- [ ] IPv6 support for v348.
 - [x] Write documentation about asset packs.
-- [x] Polish the default config.
+- [x] Polish default config options.
 - [ ] Switch to GitLab?
-- [x] Fix the auth fail error (might already be fixed, unsure)
-- [ ] Android support (native support is planned iirc) (u play with Winlator as of rn)
-- [ ] IOS support (might not happen)
-- [x] GNU/Linux support (playable thanks to wine🍷) (Use Lutris)
+- [x] Fix the auth-fail error (might already be fixed, unsure)
+- [ ] Native Android support
+      _Note: use Winlator for now._
+- [x] GNU/Linux support
+      _Note: use Lutris._

@@ -1,3 +1,6 @@
 [submodule "Examples"]
 	path = Examples
 	url = https://github.com/Windows81/Roblox-Freedom-Distribution-Examples
+[submodule "Guides"]
+	path = Guides
+	url = https://github.com/Windows81/Roblox-Freedom-Distribution-Guides
