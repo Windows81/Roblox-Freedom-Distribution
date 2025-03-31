@@ -325,7 +325,7 @@ Host is optionally specified by the `--webserver_host` or `-wh` option, in case 
 
 Port is specified by the `--webserver_port` or `-wp` option.
 
-# Loading Assets from Rōblox
+### Loading Assets from Rōblox
 
 To load assets directly from Roblox.com, set your environment variable `ROBLOSECURITY` to a valid cookie value:
 
