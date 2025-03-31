@@ -9,12 +9,6 @@ This document outlines the planned features and improvements for our project. Pl
 - [x] Implement server-authoritative materials.
 - [x] Allow users to define badges and gamepasses in `GameConfig.toml`.
 
-### Peer-to-Peer Support
-
-- [x] Implement peer-to-peer support for seamless communication between users.
-- [x] Ensure secure and efficient data transfer between peers.
-- [x] Enable real-time collaboration and interaction among users.
-
 ### Freecam Toggle with Rōblox Logo Hide
 
 - [x] Add a freecam toggle feature for enhanced user experience.

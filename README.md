@@ -89,6 +89,8 @@ cd rfd/Source
 pip install -r requirements.txt
 ```
 
+Wanna use _venv_? That works too!
+
 To launch RFD, your command line will look something like this:
 
 ```
@@ -322,6 +324,20 @@ The webserver is responsible for facilitating player connections and loading in-
 Host is optionally specified by the `--webserver_host` or `-wh` option, in case RCC is hosted elsewhere.
 
 Port is specified by the `--webserver_port` or `-wp` option.
+
+# Loading Assets from Rōblox
+
+To load assets directly from Roblox.com, set your environment variable `ROBLOSECURITY` to a valid cookie value:
+
+```
+_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_BFA...
+```
+
+You can whether you inserted your environment variable correctly in a Python shell:
+
+```py
+print(os.environ.get('ROBLOSECURITY'))
+```
 
 ## Asset Packs
 

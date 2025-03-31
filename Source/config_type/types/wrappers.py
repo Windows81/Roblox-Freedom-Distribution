@@ -1,14 +1,10 @@
-from typing import Self, TypeVar, get_args
+from typing import Self, get_args
 import util.const as const
 import urllib.request
 import extractor
 import fnmatch
 import enum
 import os
-
-
-item_typ = TypeVar('item_typ')
-key_typ = TypeVar('key_typ')
 
 
 class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
