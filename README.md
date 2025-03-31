@@ -89,6 +89,8 @@ cd rfd/Source
 pip install -r requirements.txt
 ```
 
+Wanna use _venv_? That works too!
+
 To launch RFD, your command line will look something like this:
 
 ```
