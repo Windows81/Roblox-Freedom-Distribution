@@ -29,16 +29,8 @@ def download_item(url: str, cookie: str = COOKIE) -> bytes | None:
 def download_rōblox_asset(asset_id: int, cookie: str = COOKIE) -> bytes | None:
     for key in {'id'}:
         result = download_item(
-            'https://assetdelivery.roblox.com/v1/asset/?%s=%s' %
-            (key, asset_id),
-            cookie=cookie
-        )
-        if result is not None:
-            return result
-    for key in {'id'}:
-        result = download_item(
-            'https://assetdelivery.roblox.com/v1/asset/?%s=%s' %
-            (key, asset_id)
+            'https://assetdelivery.roblox.com/v1/asset/?%s=%s' % (key, asset_id),
+            cookie=cookie,
         )
         if result is not None:
             return result
