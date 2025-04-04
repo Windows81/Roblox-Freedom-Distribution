@@ -1,11 +1,20 @@
 import subprocess
 import urllib3
+import os
+
+COOKIE = os.environ.get('ROBLOSECURITY', '')
 
 
-def download_item(url: str) -> bytes | None:
+def download_item(url: str, cookie: str = COOKIE) -> bytes | None:
     headers = {
         'User-Agent': 'Roblox/WinInet',
         'Referer': 'https://www.roblox.com/',
+        'Cookie': "; ".join(
+            str(x)+"="+str(y)
+            for x, y in {
+                '.ROBLOSECURITY': cookie,
+            }
+        ),
     }
     try:
         http = urllib3.PoolManager()
@@ -17,11 +26,11 @@ def download_item(url: str) -> bytes | None:
         return None
 
 
-def download_rōblox_asset(asset_id: int) -> bytes | None:
+def download_rōblox_asset(asset_id: int, cookie: str = COOKIE) -> bytes | None:
     for key in {'id'}:
         result = download_item(
-            'https://assetdelivery.roblox.com/v1/asset/?%s=%s' %
-            (key, asset_id)
+            'https://assetdelivery.roblox.com/v1/asset/?%s=%s' % (key, asset_id),
+            cookie=cookie,
         )
         if result is not None:
             return result

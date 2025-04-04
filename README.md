@@ -325,6 +325,20 @@ Host is optionally specified by the `--webserver_host` or `-wh` option, in case 
 
 Port is specified by the `--webserver_port` or `-wp` option.
 
+### Loading Assets from Rōblox
+
+To load assets directly from Roblox.com, set your environment variable `ROBLOSECURITY` to a valid cookie value:
+
+```
+_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_BFA...
+```
+
+You can whether you inserted your environment variable correctly in a Python shell:
+
+```py
+print(os.environ.get('ROBLOSECURITY'))
+```
+
 ## Asset Packs
 
 Assets are automatically cached server-side in directory `./AssetCache`. To manually add assets, place the raw data in a file named with the iden number or string _without_ any extension.
