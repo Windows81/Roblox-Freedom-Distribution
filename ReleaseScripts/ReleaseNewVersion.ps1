@@ -1,7 +1,7 @@
 # Checks if the appropriate software is installed.
 foreach ($e in @("gh", "7z")) {
 	if ($null -eq (Get-Command "$e.exe" -ErrorAction SilentlyContinue)) {
-		Write-Output "You need to install `$e`!"
+		Write-Output "You need to install ``$e``!"
 		return
 	}
 }

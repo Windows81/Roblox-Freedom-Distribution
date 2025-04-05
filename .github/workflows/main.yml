@@ -17,8 +17,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
-      fail-fast: false # Allows jobs to fail independently
+        os: [ubuntu-latest, windows-latest]
+      fail-fast: false # Allows jobs to fail independently.
 
     steps:
       - name: Checkout Repository
