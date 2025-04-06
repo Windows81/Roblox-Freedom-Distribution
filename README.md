@@ -879,6 +879,12 @@ name = 'EnforcersPowers'
 price = 100
 ```
 
+```toml
+[remote_data.gamepasses.163231044]
+name = 'EnforcersPowers'
+price = 100
+```
+
 #### `remote_data.asset_redirects`
 
 Resolves to [function](#functions) type `(int | str) -> asset_redirect`.
@@ -941,6 +947,12 @@ Resolves to a data dictionary.
 ```toml
 [[remote_data.badges]]
 id_num = 757
+name = 'Awardable Badge'
+price = 1
+```
+
+```toml
+[remote_data.badges.757]
 name = 'Awardable Badge'
 price = 1
 ```
