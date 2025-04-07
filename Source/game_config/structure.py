@@ -135,6 +135,7 @@ class config_type(allocateable.obj_type):
 
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses = []
+        dev_products: structs.dev_products = []
         asset_redirects: callable[[int | str], structs.asset_redirect | None] = textwrap.dedent('''\
         def f(*a):
             return None

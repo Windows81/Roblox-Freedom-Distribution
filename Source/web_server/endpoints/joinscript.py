@@ -1,7 +1,6 @@
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
 from typing import Any
-import util.resource
 import util.const
 import json
 

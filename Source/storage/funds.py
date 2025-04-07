@@ -64,7 +64,10 @@ class database(_logic.sqlite_connector_base):
             WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
             """,
         ))
+        # The `result` looks something like this:
+        # [(6969,)]
+        # Tricky.
         assert result is not None
         if len(result) > 0:
-            return result[0]
+            return result[0][0]
         return None

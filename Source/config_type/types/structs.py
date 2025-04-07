@@ -11,11 +11,31 @@ class gamepass:
     icon: wrappers.uri_obj | None = None
 
 
+class gamepasses(wrappers.dicter[int, gamepass]):
+    key_name = 'id_num'
+
+
+@dataclasses.dataclass
+class dev_product:
+    id_num: int
+    name: str
+    price: int
+    icon: wrappers.uri_obj | None = None
+
+
+class dev_products(wrappers.dicter[int, dev_product]):
+    key_name = 'id_num'
+
+
 @dataclasses.dataclass
 class badge:
     id_num: int
     name: str
     icon: wrappers.uri_obj | None = None
+
+
+class badges(wrappers.dicter[int, badge]):
+    key_name = 'id_num'
 
 
 @dataclasses.dataclass
@@ -33,14 +53,6 @@ class asset_redirect:
     forward_url: str | None = None
     raw_data: bytes | None = None
     cmd_line: str | None = None
-
-
-class gamepasses(wrappers.dicter[gamepass, int]):
-    key_name = 'id_num'
-
-
-class badges(wrappers.dicter[badge, int]):
-    key_name = 'id_num'
 
 
 @dataclasses.dataclass

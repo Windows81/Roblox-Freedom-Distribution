@@ -7,7 +7,7 @@ import enum
 import os
 
 
-class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
+class dicter[key_typ, item_typ](dict[key_typ, item_typ]):
     '''
     Inputs a list of `item_typ` values.
     Acts a subclass of `dict[key_typ, item_typ]`,
@@ -20,14 +20,14 @@ class dicter[item_typ, key_typ](dict[key_typ, item_typ]):
     # https://stackoverflow.com/a/71720366
     def __init_subclass__(cls) -> None:
         super().__init_subclass__()
-        # `typed_base` should be something like `dicter[config.types.structs.gamepass, int]`.
-        # We're extracting the generic types which `__init__` will cast the input values into.
-        typed_base = next(
+        # `base_type` should be something like `dicter[int, config.types.structs.gamepass]`.
+        # We're extracting the generic types which dicter's `__init__` will cast the input values into.
+        base_type: type = next(
             c
             for c in getattr(cls, '__orig_bases__', [])
             if getattr(c, '__origin__', None) == dicter
         )
-        (cls.item_type, cls.key_type) = get_args(typed_base)
+        (cls.key_type, cls.item_type) = get_args(base_type)
 
     def __init__(self, item_list: list[item_typ]) -> None:
         super().__init__()
