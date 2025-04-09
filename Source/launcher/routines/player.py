@@ -1,13 +1,12 @@
 from . import _logic as logic
 from typing import override
-import urllib.request
+from textwrap import dedent
 import util.resource
 import util.versions
 import urllib.parse
-import urllib.error
 import dataclasses
-import util.const
 import logger
+import json
 import time
 
 
@@ -29,16 +28,38 @@ class obj_type(logic.bin_web_entry, logic.restartable_entry):
         path = self.get_versioned_path('AppSettings.xml')
         app_base_url = self.local_args.get_app_base_url()
         with open(path, 'w', encoding='utf-8') as f:
-            f.write('\n'.join([
-                """<?xml version="1.0" encoding="UTF-8"?>""",
-                """<Settings>""",
-                f"""\t<BaseUrl>{app_base_url}</BaseUrl>""",
-                """</Settings>""",
-            ]))
+            f.write(dedent(f'''\
+                <?xml version="1.0" encoding="UTF-8"?>
+                <Settings>
+                    <ContentFolder>Content</ContentFolder>
+                    <BaseUrl>{app_base_url}</BaseUrl>
+                </Settings>
+            '''))
         return path
+
+    def update_fflags(self) -> None:
+        '''
+        Updates the FFlags in the game configuration.
+        '''
+        # TODO: move FFlag loading to an API endpoint.
+        new_flags = {
+            **self.local_args.log_filter.rcc_logs.get_level_table(),
+        }
+
+        path = self.get_versioned_path(
+            'ClientSettings',
+            'ClientAppSettings.json',
+        )
+        with open(path, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+
+        json_data |= new_flags
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, indent='\t')
 
     def bootstrap(self) -> None:
         self.save_app_setting()
+        self.update_fflags()
 
     def make_client_popen(self) -> None:
         base_url = self.local_args.get_base_url()
@@ -82,10 +103,7 @@ class arg_type(
     rcc_port: int
     web_host: str
     web_port: int
-    # The `log_filter` field is only used for indicating download status.
-    log_filter: logger.filter.filter_type = logger.filter.filter_type(
-        other_logs=True,
-    )
+    log_filter: logger.filter.filter_type
     user_code: str | None = None
     launch_delay: float = 0
 

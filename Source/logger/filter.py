@@ -5,32 +5,40 @@ import re
 
 
 @dataclasses.dataclass(frozen=True)
-class filter_type_rcc:
-    flogs: set[int] = dataclasses.field(default_factory=set)
+class filter_type_bin:
+    flogs: set[int]
 
     @staticmethod
     def serialise_key(flog: str) -> str:
         return re.sub('^(D?FLog)?', 'FLog', flog)
 
     @staticmethod
-    def parse(*flogs: str) -> "filter_type_rcc":
-        return filter_type_rcc(flogs=set(
-            flog_table.LOG_LEVEL_DICT[filter_type_rcc.serialise_key(flog)]
+    def parse(*flogs: str) -> "filter_type_bin":
+        return filter_type_bin(flogs=set(
+            flog_table.LOG_LEVEL_DICT[filter_type_bin.serialise_key(flog)]
             for flog in flogs
         ))
-
-    @staticmethod
-    def get_loud_type() -> "filter_type_rcc":
-        return filter_type_rcc(flogs=set(range(
-            flog_table.INDEX_OFFSET,
-            len(flog_table.LOG_LEVEL_LIST) + flog_table.INDEX_OFFSET
-        )))
 
     def __contains__(self, item: int) -> bool:
         return item in self.flogs
 
     def is_empty(self) -> bool:
         return len(self.flogs) == 0
+
+    def get_level_table(self) -> dict[str, int]:
+        return {
+            i: (v if v in self.flogs else 0)
+            for i, v in flog_table.LOG_LEVEL_DICT.items()
+        }
+
+
+FILTER_BIN_QUIET = filter_type_bin(set())
+FILTER_BIN_LOUD = filter_type_bin(
+    flogs=set(range(
+        flog_table.INDEX_OFFSET,
+        len(flog_table.LOG_LEVEL_LIST) + flog_table.INDEX_OFFSET
+    ))
+)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -41,14 +49,16 @@ class filter_type_web:
 
 @dataclasses.dataclass(frozen=True)
 class filter_type:
-    rcc_logs: filter_type_rcc = filter_type_rcc()
-    web_logs: filter_type_web = filter_type_web()
-    other_logs: bool = False
+    rcc_logs: filter_type_bin
+    player_logs: filter_type_bin
+    web_logs: filter_type_web
+    other_logs: bool
     bcolors: bc.bcolors = bc.BCOLORS_VISIBLE
 
 
 FILTER_QUIET = filter_type(
-    rcc_logs=filter_type_rcc(),
+    rcc_logs=FILTER_BIN_QUIET,
+    player_logs=FILTER_BIN_QUIET,
     web_logs=filter_type_web(
         urls=False,
         errors=False,
@@ -57,14 +67,20 @@ FILTER_QUIET = filter_type(
 )
 
 FILTER_REASONABLE = filter_type(
-    rcc_logs=filter_type_rcc.parse(
-        "RCCServiceInit",
+    rcc_logs=filter_type_bin.parse(
+        "Output",
+        "Error",
         "LocalStorage",
+        "RCCServiceInit",
         "RCCServiceJobs",
         "RCCExecuteInfo",
-        "Output",
         "NetworkAudit",
+    ),
+    player_logs=filter_type_bin.parse(
+        "Output",
         "Error",
+        "LocalStorage",
+        "GameJoinLoadTime",
     ),
     web_logs=filter_type_web(
         urls=True,
@@ -75,7 +91,8 @@ FILTER_REASONABLE = filter_type(
 
 
 FILTER_LOUD = filter_type(
-    rcc_logs=filter_type_rcc.get_loud_type(),
+    rcc_logs=FILTER_BIN_LOUD,
+    player_logs=FILTER_BIN_LOUD,
     web_logs=filter_type_web(
         urls=True,
         errors=True,

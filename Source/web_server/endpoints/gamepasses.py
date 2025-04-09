@@ -1,5 +1,6 @@
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
+import util.const
 import re
 
 
@@ -108,6 +109,69 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
+@server_path('/marketplace/productinfo')
+def _(self: web_server_handler) -> bool:
+    asset_id = int(self.query['assetId'])
+
+    gamepasses = self.game_config.remote_data.gamepasses
+    metadata = self.game_config.server_core.metadata
+    if asset_id in gamepasses:
+        gamepass_data = gamepasses[asset_id]
+        self.send_json({
+            "PriceInRobux": gamepass_data.price,
+            "MinimumMembershipLevel": 0,
+            "TargetId": gamepass_data.id_num,
+            "AssetId": gamepass_data.id_num,
+            "ProductId": gamepass_data.id_num,
+            "Name": gamepass_data.name,
+            "Description": "",
+            "AssetTypeId": "GamePass",
+            "IsForSale": True,
+            "IsPublicDomain": False,
+            'Creator': {
+                'Id': 1,
+                'Name': metadata.creator_name,
+                'CreatorType': 'User',
+                'CreatorTargetId': 1
+            },
+        })
+        return True
+
+    # Returns an error if the thing trying to be accessed isn't the place we're in.
+    if asset_id != util.const.PLACE_IDEN_CONST:
+        self.send_error(404)
+        return True
+
+    self.send_json({
+        'AssetId': util.const.PLACE_IDEN_CONST,
+        'ProductId': 13831621,
+        'Name': metadata.title,
+        'Description': metadata.description,
+        'AssetTypeId': 19,
+        'Creator': {
+            'Id': 1,
+            'Name': metadata.creator_name,
+            'CreatorType': 'User',
+            'CreatorTargetId': 1
+        },
+        'IconImageAssetId': 0,
+        'Created': '2012-09-28T01:09:47.077Z',
+        'Updated': '2017-01-03T00:25:45.8813192Z',
+        'PriceInRobux': None,
+        'PriceInTickets': None,
+        'Sales': 0,
+        'IsNew': False,
+        'IsForSale': True,
+        'IsPublicDomain': False,
+        'IsLimited': False,
+        'IsLimitedUnique': False,
+        'Remaining': None,
+        'MinimumMembershipLevel': 0,
+        'ContentRatingTypeId': 0,
+    })
+    return True
+
+
 @server_path('/productDetails')
 @server_path('/marketplace/productDetails')
 def _(self: web_server_handler) -> bool:
@@ -123,25 +187,32 @@ def _(self: web_server_handler) -> bool:
         return True
 
     self.send_json({
-        "AssetId": dev_product.id_num,
+        "TargetId": 1,
+        "ProductType": "Developer Product",
+        "AssetId": 0,
         "ProductId": dev_product.id_num,
         "Name": dev_product.name,
         "Description": dev_product.name,
-        "AssetTypeId": 19,
-        "Creator": 1,
+        "AssetTypeId": 0,
+        "Creator": {
+            "Id": 0,
+            "Name": None,
+            "CreatorType": None,
+            "CreatorTargetId": 0
+        },
         "IconImageAssetId": 0,
-        "Created": 0,
-        "Updated": 0,
-        "PriceInRobux": 0,
-        "PriceInTickets": 0,
-        "Sales": 0,
+        "Created": "2000-01-01T00:00:00Z",
+        "Updated": "2000-01-01T00:00:00Z",
+        "PriceInRobux": dev_product.price,
+        "PremiumPriceInRobux": dev_product.price,
+        "PriceInTickets": dev_product.price,
         "IsNew": False,
         "IsForSale": True,
         "IsPublicDomain": False,
         "IsLimited": False,
         "IsLimitedUnique": False,
-        "Remaining": False,
+        "Remaining": None,
+        "Sales": None,
         "MinimumMembershipLevel": 0,
-        "ContentRatingTypeId": 0,
     })
     return True

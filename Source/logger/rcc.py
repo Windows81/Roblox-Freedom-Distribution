@@ -126,15 +126,6 @@ patterns = [
 ]
 
 
-def get_level_table(filter: filter.filter_type) -> dict[str, int]:
-    return {
-        i: (v if v in filter.rcc_logs.flogs else 0)
-        for i, v in flog_table.LOG_LEVEL_DICT.items()
-    }
-    # TODO: allow hosters to determine if they want a verbose log file or not.
-    return flog_table.LOG_LEVEL_DICT
-
-
 def get_log_name(i: int) -> str:
     if i - flog_table.INDEX_OFFSET < len(flog_table.LOG_LEVEL_LIST):
         return flog_table.LOG_LEVEL_LIST[i - flog_table.INDEX_OFFSET]

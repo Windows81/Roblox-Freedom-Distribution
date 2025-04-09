@@ -41,6 +41,21 @@
 			"justMyCode": true
 		},
 		{
+			"name": "Python: Launch Custom GameConfig'd Server (Debug)",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/Source/_main.py",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"server",
+				"--config",
+				"${file}",
+				"--debug",
+			],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
+		{
 			"name": "Python: Launch Custom GameConfig'd Server with Local Client",
 			"type": "debugpy",
 			"request": "launch",

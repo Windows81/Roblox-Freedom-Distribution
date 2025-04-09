@@ -13,14 +13,10 @@ class log_context(enum.Enum):
     WEB_SERVER = 2
 
 
-# All messages are allowed by default.
-DEFAULT_FILTER = filter.filter_type()
-
-
 def get_message(
     text: bytes | str,
     context: log_context,
-    filter: filter.filter_type = DEFAULT_FILTER
+    filter: filter.filter_type,
 ) -> str | None:
     if isinstance(text, str):
         text = text.encode('utf-8')

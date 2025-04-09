@@ -51,4 +51,4 @@ class arg_type(logic.arg_type):
 
     game_config: game_config.obj_type
     server_mode: web_server_logic.server_mode
-    log_filter: logger.filter.filter_type = logger.DEFAULT_FILTER
+    log_filter: logger.filter.filter_type

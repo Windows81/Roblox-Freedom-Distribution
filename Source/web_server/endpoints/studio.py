@@ -49,20 +49,9 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/users/account-info')
 def _(self: web_server_handler) -> bool:
+    user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
     self.send_json({
-        'UserId': 1630228,
-        'Username': 'nsg-cache-archive-x86',
-        'DisplayName': 'nsg-cache-archive-x86',
-        'HasPasswordSet': True,
-        'Email': {'Value': 'n**@roblox.com', 'IsVerified': True},
-        'AgeBracket': 0,
-        'Roles': ['BetaTester', 'Beta17', 'Roblox.Slack.Models.Contractor.Name', 'Soothsayer'],
-        'MembershipType': 0,
-        'RobuxBalance': 98763,
-        'NotificationCount': 223,
-        'EmailNotificationEnabled': False,
-        'PasswordNotificationEnabled': False,
-        'CountryCode': 'RU',
+        "UserId": user_id_num,
     })
     return True
 
