@@ -217,12 +217,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         assert isinstance(self.url, str)
         self.url_split = parse.urlsplit(self.url)
 
-        # Optimised for query values which may contain more than one of the
-        # same field.
+        # Optimised for query values which may contain more than one of the same field.
         self.query_lists = parse.parse_qs(self.url_split.query)
 
-        # Optimised for quick access for query indicies which only show up
-        # once.
+        # Optimised for quick access for query indicies which only show up once.
         self.query = {
             i: v[0]
             for i, v in self.query_lists.items()
