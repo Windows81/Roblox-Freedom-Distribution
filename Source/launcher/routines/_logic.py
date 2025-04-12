@@ -136,7 +136,7 @@ class host_arg_type(bin_web_arg_type):
             )
             if unc_ip_str.startswith('-'):
                 unc_ip_str = '0%s' % unc_ip_str
-            self.web_host = self.app_host = '%s.ipv6-literal.net' % unc_ip_str
+            self.app_host = '%s.ipv6-literal.net' % unc_ip_str
 
 
 class entry(_entry):
