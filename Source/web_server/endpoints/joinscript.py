@@ -1,8 +1,14 @@
-from web_server._logic import web_server_handler, server_path
-import util.versions as versions
-from typing import Any
-import util.const
+# Standard library imports
 import json
+
+# Typing imports
+from typing import Any
+
+# Local application imports
+import util.const
+import util.versions as versions
+from web_server._logic import web_server_handler, server_path
+
 
 
 def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, int, str] | None:

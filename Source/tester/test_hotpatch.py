@@ -1,7 +1,11 @@
-from assets.serialisers import rbxl as parser
+# Standard library imports
+import unittest
+
+# Local application imports
 import util.resource
 import util.versions
-import unittest
+from assets.serialisers import rbxl as parser
+
 
 
 class TestPatchDataModelPatch(unittest.TestCase):

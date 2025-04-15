@@ -1,22 +1,29 @@
-import game_config.structure
-import game_config as config
-from typing import override
-import urllib.request
-import util.versions
-import util.resource
-import urllib.error
-import urllib.parse
+# Standard library imports
+import atexit
+import copy
 import http.client
-import downloader
+import ipaddress
+import re
+import shutil
+import ssl
 import subprocess
 import threading
-import ipaddress
-import shutil
-import atexit
+import urllib.error
+import urllib.parse
+import urllib.request
+
+# Typing imports
+from typing import override
+
+# Local application imports
+import downloader
 import logger
-import copy
-import ssl
-import re
+import game_config as config
+import game_config.structure
+import util.resource
+import util.versions
+
+
 
 
 class _entry:

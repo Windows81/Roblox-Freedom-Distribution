@@ -1,10 +1,15 @@
 # pyright: reportAssignmentType=false
-from config_type.types.callable import obj_type as callable
-from config_type.types import structs, wrappers
-from . import allocateable
-import util.versions
-import util.resource
+
+# Standard library imports
 import textwrap
+
+# Local application imports
+from config_type.types import structs, wrappers
+from config_type.types.callable import obj_type as callable
+from . import allocateable
+import util.resource
+import util.versions
+
 
 
 class config_type(allocateable.obj_type):

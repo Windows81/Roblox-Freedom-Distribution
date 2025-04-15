@@ -160,7 +160,7 @@
 			"justMyCode": true
 		},
 		{
-			"name": "Python: Launch Client from IPv4 Address",
+			"name": "Python: Launch The Client from IPv4 Address",
 			"type": "debugpy",
 			"request": "launch",
 			"program": "${workspaceFolder}/Source/_main.py",

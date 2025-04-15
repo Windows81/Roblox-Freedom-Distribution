@@ -1,16 +1,21 @@
-from config_type.types import wrappers
-from . import _logic as logic
-from typing import override
-from textwrap import dedent
-import util.resource
-import util.versions
-import game_config
+# Standard library imports
 import dataclasses
 import util.const
 import functools
 import threading
-import logger
 import time
+from textwrap import dedent
+
+# Typing imports
+from typing import override
+
+# Local application imports
+import game_config
+import logger
+import util.resource
+import util.versions
+from config_type.types import wrappers
+from . import _logic as logic
 
 
 class obj_type(logic.bin_web_entry, logic.loggable_entry):

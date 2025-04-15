@@ -1,13 +1,18 @@
-from . import _logic as logic
+# Standard library imports
+import dataclasses
+import time
+import urllib.parse
+import json
+
+# Typing imports
 from typing import override
+
+# Local application imports
+import logger
 from textwrap import dedent
 import util.resource
 import util.versions
-import urllib.parse
-import dataclasses
-import logger
-import json
-import time
+from . import _logic as logic
 
 
 class obj_type(logic.bin_web_entry, logic.restartable_entry):

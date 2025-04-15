@@ -1,7 +1,12 @@
-from web_server._logic import web_server_handler, server_path
-import urllib.parse
+# Standard library imports
 import itertools
+import urllib.parse
+
 import json
+
+# Local application imports
+from web_server._logic import web_server_handler, server_path
+
 
 
 @server_path('/persistence/set')  # Usually expects POST.

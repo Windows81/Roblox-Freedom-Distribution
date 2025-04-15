@@ -1,7 +1,11 @@
-from web_server._logic import web_server_handler, server_path
-import util.versions as versions
-import urllib.parse
+# Standard library imports
 import json
+import urllib.parse
+
+# Local application imports
+import util.versions as versions
+from web_server._logic import web_server_handler, server_path
+
 
 
 @server_path('/currency/balance', commands={'GET'})

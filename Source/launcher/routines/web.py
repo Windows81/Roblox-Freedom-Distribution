@@ -1,13 +1,16 @@
-import web_server._logic as web_server_logic
-import web_server
-
-from . import _logic as logic
-import game_config.structure
-import game_config as config
-from typing import override
+# Standard library imports
 import dataclasses
 import threading
+from typing import override
+
+# Local application/library specific imports
+import game_config as config
+import game_config.structure
 import logger
+import web_server
+import web_server._logic as web_server_logic
+from . import _logic as logic
+
 
 
 class obj_type(logic.server_entry):

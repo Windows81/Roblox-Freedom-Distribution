@@ -1,9 +1,15 @@
-from . import _logic as logic
-from typing import override
+# Standard library imports
 import dataclasses
-import threading
-import os.path
 import os
+import os.path
+import threading
+
+# Typing imports
+from typing import override
+
+# Local application imports
+from . import _logic as logic
+
 
 NUM_THREADS = 4
 

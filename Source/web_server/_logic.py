@@ -1,27 +1,33 @@
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives import hashes
-
-from typing import Any, Callable, override
-import util.versions as versions
-import util.const as const
-from urllib import parse
-import logger.bcolors
-import http.server
-import dataclasses
-import game_config
-import traceback
-import functools
-import tempfile
-import trustme
-import logger
+# Standard library imports
 import base64
-import socket
+import dataclasses
 import enum
+import functools
+import http.server
 import json
-import ssl
 import re
+import socket
+import ssl
+import tempfile
+import traceback
+from urllib import parse
+
+# Typing imports
+from typing import Any, Callable, override
+
+# Local application imports
+import game_config
+import logger
+import logger.bcolors
+import util.const as const
+import util.versions as versions
+
+import trustme
+
+# Cryptography imports
+from cryptography.hazmat.primitives import hashes, padding, serialization
+from cryptography.hazmat.backends import default_backend
+
 
 
 class func_mode(enum.Enum):

@@ -1,7 +1,11 @@
-from web_server._logic import web_server_handler, server_path
-import util.versions as versions
-import time
+# Standard library imports
 import json
+import time
+
+# Local application imports
+import util.versions as versions
+from web_server._logic import web_server_handler, server_path
+
 
 
 @server_path('/studio/e.png')
