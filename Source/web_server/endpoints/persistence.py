@@ -25,8 +25,8 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/persistence/getv2')  # Usually expects POST.
-@server_path('/persistence/getV2')  # Usually expects POST.
+@server_path('/persistence/getv2', commands={'POST'})
+@server_path('/persistence/getV2', commands={'POST'})
 def _(self: web_server_handler) -> bool:
     '''
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/datastoreservice.py#L162
