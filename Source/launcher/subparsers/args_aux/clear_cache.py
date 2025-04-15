@@ -1,8 +1,12 @@
+# Standard library imports
+import argparse
+import functools
+
+# Local application imports
 import launcher.routines.clear_cache as clear_cache
 import launcher.subparsers._logic as sub_logic
 from ...routines import _logic as logic
-import functools
-import argparse
+
 
 CACHEABLE_ARG_SUPERTYPE = logic.bin_arg_type
 

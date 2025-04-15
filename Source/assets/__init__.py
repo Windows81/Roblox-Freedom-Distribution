@@ -1,10 +1,16 @@
-from config_type.types import structs, wrappers, callable
-from . import returns, material, serialisers, queue
-import util.const
+# Standard library imports
 import functools
-import extractor
-import shutil
 import os
+import shutil
+
+# Third-party or external imports 
+import extractor  
+
+# Internal or local application imports
+import util.const
+from config_type.types import callable, structs, wrappers
+from . import material, queue, returns, serialisers
+
 
 
 class asseter:

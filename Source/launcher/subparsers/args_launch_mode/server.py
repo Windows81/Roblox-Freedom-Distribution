@@ -1,17 +1,20 @@
-from launcher.routines import player, web, rcc
+# Standard library imports
+import argparse
+import dataclasses
 
-import launcher.subparsers._logic as sub_logic
-from launcher.routines import _logic as logic
-from web_server._logic import server_mode
+# Local application imports
 import game_config as config
-import logger.flog_table
+import logger
 import logger.bcolors
+import logger.flog_table
+import util.const
 import util.resource
 import util.versions
-import dataclasses
-import util.const
-import argparse
-import logger
+from launcher.routines import player, rcc, web
+from launcher.routines import _logic as logic
+import launcher.subparsers._logic as sub_logic
+from web_server._logic import server_mode
+
 
 
 @sub_logic.add_args(sub_logic.launch_mode.SERVER)

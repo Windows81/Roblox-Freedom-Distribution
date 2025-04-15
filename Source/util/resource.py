@@ -1,8 +1,12 @@
-import util.versions
-import functools
+# Standard library imports
 import enum
-import sys
 import os
+import sys
+
+# Local application imports
+import functools
+import util.versions
+
 
 MADE_WITH_PYINSTALLER = hasattr(sys, '_MEIPASS')
 

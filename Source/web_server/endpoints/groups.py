@@ -1,7 +1,11 @@
-from web_server._logic import web_server_handler, server_path
-import util.versions as versions
-from game_config import obj_type
+# Standard library imports
 import re
+
+# Local application imports
+from game_config import obj_type
+import util.versions as versions
+from web_server._logic import web_server_handler, server_path
+
 
 
 def get_rank_dict(user_id_num: int, game_config: obj_type) -> dict[str, int]:

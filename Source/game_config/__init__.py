@@ -1,17 +1,26 @@
 # pyright: reportImportCycles=false
+
+# Standard library imports
+import functools
+import json
+import os.path
+import sys
+import tomllib
+
+# Typing imports
 from typing import Any, Callable
+
+# Third-party or external imports 
+import storage 
+
+# Local application imports
 import data_transfer.transferer
 from config_type import _logic
 from assets import asseter
 from . import structure
 import util.resource
 import util.versions
-import functools
-import os.path
-import tomllib
-import storage
-import json
-import sys
+
 
 PARSERS: dict[str, Callable[[bytes], dict]] = {
     'toml': lambda f: tomllib.loads(f.decode('utf-8')),

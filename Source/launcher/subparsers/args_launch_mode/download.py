@@ -1,12 +1,13 @@
-from launcher.routines import rcc, player, studio, download
+# Standard library imports
+import argparse
 
-from launcher.routines import _logic as logic
-import launcher.subparsers._logic as sub_logic
-
+# Local application imports
+import logger
 import util.resource
 import util.versions
-import argparse
-import logger
+from launcher.routines import player, rcc, studio, download
+from launcher.routines import _logic as logic
+import launcher.subparsers._logic as sub_logic
 
 
 @sub_logic.add_args(sub_logic.launch_mode.DOWNLOAD)

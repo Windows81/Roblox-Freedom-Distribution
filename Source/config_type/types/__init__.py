@@ -1,9 +1,15 @@
-from typing import Callable, Union, Any
-from ._logic import type_call_data
-from . import wrappers, callable
-import util.versions
+# Standard library imports
 import dataclasses
 import functools
+
+# Typing imports
+from typing import Any, Callable, Union
+
+# Internal or local application imports
+import util.versions
+from . import callable, wrappers
+from ._logic import type_call_data
+
 
 
 @functools.cache

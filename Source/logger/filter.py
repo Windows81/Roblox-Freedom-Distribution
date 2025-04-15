@@ -1,7 +1,11 @@
-from . import bcolors as bc
-from . import flog_table
+# Standard library imports
 import dataclasses
 import re
+
+# Local application imports
+from . import bcolors as bc
+from . import flog_table
+
 
 
 @dataclasses.dataclass(frozen=True)

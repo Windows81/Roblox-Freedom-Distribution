@@ -1,9 +1,14 @@
+# Local application imports
+
 from launcher.routines import player
 
 import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
+
+# Standard library imports
 import argparse
 import logger
+
 
 
 @sub_logic.add_args(sub_logic.launch_mode.PLAYER)

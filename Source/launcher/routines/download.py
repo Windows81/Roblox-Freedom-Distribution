@@ -1,12 +1,17 @@
+# Standard library imports
+import dataclasses
+
+# Typing imports
 from typing import override
+
+# Local application imports
+import downloader
+import logger
+import util.const
 import util.resource
 import util.versions
-import dataclasses
-import util.const
-import logger
-
 from . import _logic as logic
-import downloader
+
 
 
 @dataclasses.dataclass

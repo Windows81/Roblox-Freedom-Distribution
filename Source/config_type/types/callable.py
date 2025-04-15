@@ -1,8 +1,12 @@
+# Standard library imports
 import dataclasses
-import textwrap
 import enum
+import textwrap
 import time
+
+# Typing imports
 from typing import Any, Hashable
+
 
 
 class call_mode_enum(enum.Enum):

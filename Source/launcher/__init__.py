@@ -1,10 +1,12 @@
-import launcher.subparsers._logic as sub_logic
-import launcher.routines._logic as routine_logic
-
-import traceback
+# Standard library imports
 import argparse
 import shlex
 import sys
+import traceback
+
+# Local application imports
+import launcher.routines._logic as routine_logic
+import launcher.subparsers._logic as sub_logic
 
 
 from .subparsers.args_launch_mode import (

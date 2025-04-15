@@ -1,7 +1,13 @@
-from . import _logic as logic
-from typing import override
-import assets.serialisers
+# Standard library imports
 import dataclasses
+
+# Typing imports
+from typing import override
+
+# Local application imports
+import assets.serialisers
+from . import _logic as logic
+
 
 
 class obj_type(logic.entry):

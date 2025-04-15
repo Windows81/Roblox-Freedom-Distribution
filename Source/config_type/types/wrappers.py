@@ -1,10 +1,17 @@
-from typing import Self, get_args
-import util.const as const
-import urllib.request
-import extractor
-import fnmatch
+# Standard library imports
 import enum
+import fnmatch
 import os
+import urllib.request
+
+# Typing imports
+from typing import Self, get_args
+
+
+# Local application imports
+import util.const as const
+import extractor  
+
 
 
 class dicter[key_typ, item_typ](dict[key_typ, item_typ]):

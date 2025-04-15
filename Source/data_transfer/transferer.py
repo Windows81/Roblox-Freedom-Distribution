@@ -1,8 +1,12 @@
-from typing import Any
+# Standard library imports
 import dataclasses
 import itertools
 import queue
 import uuid
+
+# Typing imports
+from typing import Any
+
 
 
 @dataclasses.dataclass
