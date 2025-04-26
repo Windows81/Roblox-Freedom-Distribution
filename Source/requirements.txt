@@ -1,5 +1,5 @@
 sqlite-worker==0.0.4
-cryptography==44.0.1
+cryptography==44.0.5
 certifi==2024.8.30
 trustme==1.2.0
 urllib3==2.2.3
