@@ -25,9 +25,11 @@ import util.versions as versions
 import trustme
 
 # Cryptography imports
-from cryptography.hazmat.primitives import hashes, padding, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
-
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
 
 
 class func_mode(enum.Enum):
@@ -305,21 +307,28 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         )
 
         func = SERVER_FUNCS.get(key)
+        should_print_exception = True
+
         if func is None:
             return False
+
         try:
             return func(self)
+
         except ssl.SSLEOFError:
-            return False
+            should_print_exception = False
         except ConnectionResetError:
-            return False
-        except Exception as _:
+            should_print_exception = False
+        except ConnectionAbortedError:
+            should_print_exception = False
+
+        if should_print_exception:
             logger.log(
                 traceback.format_exc().encode('utf-8'),
                 context=logger.log_context.WEB_SERVER,
                 filter=self.server.log_filter,
             )
-            return False
+        return False
 
     def __open_from_regex(self) -> bool:
         for key, func in SERVER_FUNCS.items():

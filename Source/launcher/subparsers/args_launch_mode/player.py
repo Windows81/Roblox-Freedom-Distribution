@@ -1,7 +1,5 @@
 # Local application imports
-
 from launcher.routines import player
-
 import launcher.subparsers._logic as sub_logic
 from launcher.routines import _logic as logic
 
@@ -53,6 +51,7 @@ def _(
         type=str,
         nargs='?',
         default=None,
+        help='Determines the user code for the player which joins the server.\nUser codes derive a user name, user iden number, and other characteristics of any particular player.',
     )
     subparser.add_argument(
         '--quiet', '-q',

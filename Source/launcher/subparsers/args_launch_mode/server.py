@@ -7,9 +7,7 @@ import game_config as config
 import logger
 import logger.bcolors
 import logger.flog_table
-import util.const
 import util.resource
-import util.versions
 from launcher.routines import player, rcc, web
 from launcher.routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
@@ -77,7 +75,7 @@ def subparse(
         type=str,
         nargs='?',
         default=None,
-        help='If -run_client is passed in, .',
+        help='If --run_client is passed in, determines the user code for the player which joins the server.\nUser codes derive a user name, user iden number, and other characteristics of any particular player',
     )
 
     log_group = subparser.add_mutually_exclusive_group()
@@ -179,8 +177,7 @@ def _(
 
     web_routine_args = []
     if has_ipv6:
-        # IPv6 goes first since `localhost` also resolves first to
-        # [::1] on the client.
+        # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
         web_routine_args.append(web.arg_type(
             web_port=web_port,
             is_ssl=True,

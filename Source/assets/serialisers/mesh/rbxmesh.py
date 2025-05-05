@@ -10,6 +10,7 @@
 import struct
 from dataclasses import dataclass
 import sys
+from typing import override
 
 
 def debug_print(message: str) -> None:
@@ -72,24 +73,24 @@ class FileMeshVertexNormalTexture3d:
         self.a = int.from_bytes(data[39:40], "little")
 
     def export_data(self) -> bytes:
-        return bytearray(
-            struct.pack("<f", self.vx) +
-            struct.pack("<f", self.vy) +
-            struct.pack("<f", self.vz) +
-            struct.pack("<f", self.nx) +
-            struct.pack("<f", self.ny) +
-            struct.pack("<f", self.nz) +
-            struct.pack("<f", self.tu) +
-            struct.pack("<f", self.tv) +
-            self.tx.to_bytes(1, "little") +
-            self.ty.to_bytes(1, "little") +
-            self.tz.to_bytes(1, "little") +
-            self.ts.to_bytes(1, "little") +
-            self.r.to_bytes(1, "little") +
-            self.g.to_bytes(1, "little") +
-            self.b.to_bytes(1, "little") +
-            self.a.to_bytes(1, "little")
-        )
+        return bytes(b''.join([
+            struct.pack("<f", self.vx),
+            struct.pack("<f", self.vy),
+            struct.pack("<f", self.vz),
+            struct.pack("<f", self.nx),
+            struct.pack("<f", self.ny),
+            struct.pack("<f", self.nz),
+            struct.pack("<f", self.tu),
+            struct.pack("<f", self.tv),
+            self.tx.to_bytes(1, "little"),
+            self.ty.to_bytes(1, "little"),
+            self.tz.to_bytes(1, "little"),
+            self.ts.to_bytes(1, "little"),
+            self.r.to_bytes(1, "little"),
+            self.g.to_bytes(1, "little"),
+            self.b.to_bytes(1, "little"),
+            self.a.to_bytes(1, "little"),
+        ]))
 
 
 """
@@ -138,20 +139,20 @@ class FileMeshVertexNormalTexture3dNoRGBA:
         self.ts = int.from_bytes(data[35:36], "little")
 
     def export_data(self) -> bytes:
-        return bytearray(
-            struct.pack("<f", self.vx) +
-            struct.pack("<f", self.vy) +
-            struct.pack("<f", self.vz) +
-            struct.pack("<f", self.nx) +
-            struct.pack("<f", self.ny) +
-            struct.pack("<f", self.nz) +
-            struct.pack("<f", self.tu) +
-            struct.pack("<f", self.tv) +
-            self.tx.to_bytes(1, "little") +
-            self.ty.to_bytes(1, "little") +
-            self.tz.to_bytes(1, "little") +
-            self.ts.to_bytes(1, "little")
-        )
+        return bytes(b''.join([
+            struct.pack("<f", self.vx),
+            struct.pack("<f", self.vy),
+            struct.pack("<f", self.vz),
+            struct.pack("<f", self.nx),
+            struct.pack("<f", self.ny),
+            struct.pack("<f", self.nz),
+            struct.pack("<f", self.tu),
+            struct.pack("<f", self.tv),
+            self.tx.to_bytes(1, "little"),
+            self.ty.to_bytes(1, "little"),
+            self.tz.to_bytes(1, "little"),
+            self.ts.to_bytes(1, "little"),
+        ]))
 
 
 """
@@ -180,11 +181,11 @@ class FileMeshFace:
         self.c = int.from_bytes(data[8:12], "little")
 
     def export_data(self) -> bytes:
-        return bytearray(
-            self.a.to_bytes(4, "little") +
-            self.b.to_bytes(4, "little") +
-            self.c.to_bytes(4, "little")
-        )
+        return bytes(b''.join([
+            self.a.to_bytes(4, "little"),
+            self.b.to_bytes(4, "little"),
+            self.c.to_bytes(4, "little"),
+        ]))
 
 
 """
@@ -223,17 +224,19 @@ class FileMeshHeader:
         self.num_faces = int.from_bytes(data[8:12], "little")
 
     def export_data(self) -> bytes:
-        return bytearray(
-            self.cbSize.to_bytes(2, "little") +
-            self.cbVerticesStride.to_bytes(1, "little") +
-            self.cbFaceStride.to_bytes(1, "little") +
-            self.num_vertices.to_bytes(4, "little") +
-            self.num_faces.to_bytes(4, "little")
-        )
+        return bytes(b''.join([
+            self.cbSize.to_bytes(2, "little"),
+            self.cbVerticesStride.to_bytes(1, "little"),
+            self.cbFaceStride.to_bytes(1, "little"),
+            self.num_vertices.to_bytes(4, "little"),
+            self.num_faces.to_bytes(4, "little"),
+        ]))
 
+    @override
     def __str__(self) -> str:
         return f"FileMeshHeader(cbSize={self.cbSize}, cbVerticesStride={self.cbVerticesStride}, cbFaceStride={self.cbFaceStride}, num_vertices={self.num_vertices}, num_faces={self.num_faces})"
 
+    @override
     def __repr__(self) -> str:
         return str(self)
 
@@ -280,15 +283,15 @@ class FileMeshHeaderV3:
         self.num_faces = int.from_bytes(data[12:16], "little")
 
     def export_data(self) -> bytes:
-        return bytearray(
-            self.cbSize.to_bytes(2, "little") +
-            self.cbVerticesStride.to_bytes(1, "little") +
-            self.cbFaceStride.to_bytes(1, "little") +
-            self.sizeof_LOD.to_bytes(2, "little") +
-            self.numLODs.to_bytes(2, "little") +
-            self.num_vertices.to_bytes(4, "little") +
-            self.num_faces.to_bytes(4, "little")
-        )
+        return bytes(b''.join([
+            self.cbSize.to_bytes(2, "little"),
+            self.cbVerticesStride.to_bytes(1, "little"),
+            self.cbFaceStride.to_bytes(1, "little"),
+            self.sizeof_LOD.to_bytes(2, "little"),
+            self.numLODs.to_bytes(2, "little"),
+            self.num_vertices.to_bytes(4, "little"),
+            self.num_faces.to_bytes(4, "little"),
+        ]))
 
 
 """
@@ -347,18 +350,18 @@ class FileMeshHeaderV4:
         self.unused = int.from_bytes(data[23:24], "little")
 
     def export_data(self) -> bytes:
-        return bytearray(
-            self.sizeof_MeshHeader.to_bytes(2, "little") +
-            self.lodType.to_bytes(2, "little") +
-            self.numVerts.to_bytes(4, "little") +
-            self.numFaces.to_bytes(4, "little") +
-            self.numLODs.to_bytes(2, "little") +
-            self.numBones.to_bytes(2, "little") +
-            self.sizeof_boneNamesBuffer.to_bytes(4, "little") +
-            self.numSubsets.to_bytes(2, "little") +
-            self.numHighQualityLODs.to_bytes(1, "little") +
-            self.unused.to_bytes(1, "little")
-        )
+        return bytes(b''.join([
+            self.sizeof_MeshHeader.to_bytes(2, "little"),
+            self.lodType.to_bytes(2, "little"),
+            self.numVerts.to_bytes(4, "little"),
+            self.numFaces.to_bytes(4, "little"),
+            self.numLODs.to_bytes(2, "little"),
+            self.numBones.to_bytes(2, "little"),
+            self.sizeof_boneNamesBuffer.to_bytes(4, "little"),
+            self.numSubsets.to_bytes(2, "little"),
+            self.numHighQualityLODs.to_bytes(1, "little"),
+            self.unused.to_bytes(1, "little"),
+        ]))
 
 
 """
@@ -381,11 +384,11 @@ class Envelope:
                 f"Envelope.read_data: data is too short ({len(data)} bytes)")
 
         for i in range(0, 4):
-            self.bones.append(int.from_bytes(data[i:i+1], "little"))
+            self.bones.append(int.from_bytes(data[i+0:i+1], "little"))
             self.weights.append(int.from_bytes(data[i+4:i+5], "little"))
 
     def export_data(self) -> bytes:
-        return bytearray(
+        return bytes(b''.join([
             self.bones[0].to_bytes(1, "little") +
             self.bones[1].to_bytes(1, "little") +
             self.bones[2].to_bytes(1, "little") +
@@ -394,7 +397,7 @@ class Envelope:
             self.weights[1].to_bytes(1, "little") +
             self.weights[2].to_bytes(1, "little") +
             self.weights[3].to_bytes(1, "little")
-        )
+        ]))
 
 
 """
@@ -456,24 +459,24 @@ class Bone:
         self.z = struct.unpack("<f", data[56:60])[0]
 
     def export_data(self) -> bytes:
-        return bytearray(
-            self.boneNameIndex.to_bytes(4, "little") +
-            self.parentIndex.to_bytes(2, "little") +
-            self.lodParentIndex.to_bytes(2, "little") +
-            struct.pack("<f", self.culling) +
-            struct.pack("<f", self.r00) +
-            struct.pack("<f", self.r01) +
-            struct.pack("<f", self.r02) +
-            struct.pack("<f", self.r10) +
-            struct.pack("<f", self.r11) +
-            struct.pack("<f", self.r12) +
-            struct.pack("<f", self.r20) +
-            struct.pack("<f", self.r21) +
-            struct.pack("<f", self.r22) +
-            struct.pack("<f", self.x) +
-            struct.pack("<f", self.y) +
-            struct.pack("<f", self.z)
-        )
+        return bytes(b''.join([
+            self.boneNameIndex.to_bytes(4, "little"),
+            self.parentIndex.to_bytes(2, "little"),
+            self.lodParentIndex.to_bytes(2, "little"),
+            struct.pack("<f", self.culling),
+            struct.pack("<f", self.r00),
+            struct.pack("<f", self.r01),
+            struct.pack("<f", self.r02),
+            struct.pack("<f", self.r10),
+            struct.pack("<f", self.r11),
+            struct.pack("<f", self.r12),
+            struct.pack("<f", self.r20),
+            struct.pack("<f", self.r21),
+            struct.pack("<f", self.r22),
+            struct.pack("<f", self.x),
+            struct.pack("<f", self.y),
+            struct.pack("<f", self.z),
+        ]))
 
 
 """
@@ -514,13 +517,13 @@ class MeshSubset:
             self.boneIndicies.append(int.from_bytes(data[20+i:21+i], "little"))
 
     def export_data(self) -> bytes:
-        subsetData: bytes = bytearray(
-            self.facesBegin.to_bytes(4, "little") +
-            self.facesLength.to_bytes(4, "little") +
-            self.vertsBegin.to_bytes(4, "little") +
-            self.vertsLength.to_bytes(4, "little") +
-            self.numBoneIndicies.to_bytes(4, "little")
-        )
+        subsetData: bytes = bytes(b''.join([
+            self.facesBegin.to_bytes(4, "little"),
+            self.facesLength.to_bytes(4, "little"),
+            self.vertsBegin.to_bytes(4, "little"),
+            self.vertsLength.to_bytes(4, "little"),
+            self.numBoneIndicies.to_bytes(4, "little"),
+        ]))
         for i in range(0, 26):
             subsetData += self.boneIndicies[i].to_bytes(1, "little")
 
@@ -590,20 +593,20 @@ class FileMeshHeaderV5:
         self.facsDataSize = int.from_bytes(data[28:32], "little")
 
     def export_data(self) -> bytes:
-        return bytearray(
-            self.sizeof_MeshHeader.to_bytes(2, "little") +
-            self.lodType.to_bytes(2, "little") +
-            self.numVerts.to_bytes(4, "little") +
-            self.numFaces.to_bytes(4, "little") +
-            self.numLODs.to_bytes(2, "little") +
-            self.numBones.to_bytes(2, "little") +
-            self.sizeof_boneNamesBuffer.to_bytes(4, "little") +
-            self.numSubsets.to_bytes(2, "little") +
-            self.numHighQualityLODs.to_bytes(1, "little") +
-            self.unusedPadding.to_bytes(1, "little") +
-            self.facsDataFormat.to_bytes(4, "little") +
-            self.facsDataSize.to_bytes(4, "little")
-        )
+        return bytes(b''.join([
+            self.sizeof_MeshHeader.to_bytes(2, "little"),
+            self.lodType.to_bytes(2, "little"),
+            self.numVerts.to_bytes(4, "little"),
+            self.numFaces.to_bytes(4, "little"),
+            self.numLODs.to_bytes(2, "little"),
+            self.numBones.to_bytes(2, "little"),
+            self.sizeof_boneNamesBuffer.to_bytes(4, "little"),
+            self.numSubsets.to_bytes(2, "little"),
+            self.numHighQualityLODs.to_bytes(1, "little"),
+            self.unusedPadding.to_bytes(1, "little"),
+            self.facsDataFormat.to_bytes(4, "little"),
+            self.facsDataSize.to_bytes(4, "little"),
+        ]))
 
 
 @dataclass
@@ -631,7 +634,7 @@ def read_data(data: bytes, offset: int, size: int) -> bytes:
     return data[offset:offset+size]
 
 
-def get_mesh_version(data: bytes) -> float:
+def get_mesh_version(data: bytes) -> str:
     """Gets the version of the mesh file. Throws an exception if the version is not supported."""
 
     if len(data) < 12:
@@ -640,41 +643,22 @@ def get_mesh_version(data: bytes) -> float:
     if not data[0:8] == b"version ":
         raise Exception(f"get_mesh_version: invalid mesh header ({data[0:8]})")
 
-    if data[0:12] == b"version 1.00":
-        return 1.0
-    elif data[0:12] == b"version 1.01":
-        return 1.1
-    elif data[0:12] == b"version 2.00":
-        return 2.0
-    elif data[0:12] == b"version 3.00":
-        return 3.0
-    elif data[0:12] == b"version 3.01":
-        return 3.1
-    elif data[0:12] == b"version 4.00":
-        return 4.0
-    elif data[0:12] == b"version 4.01":
-        return 4.1
-    elif data[0:12] == b"version 5.00":
-        return 5.0
-    elif data[0:12] == b"version 5.01":
-        return 5.1
-    else:
-        raise Exception(
-            f"get_mesh_version: unsupported mesh version ({data[0:12]})")
+    return data[8:].decode('ASCII')
 
 
 def read_mesh_v1(data_bytes: bytes, offset: int, scale: float = 0.5, invertUV: bool = True) -> FileMeshData:
-    data = data_bytes.decode("ASCII")
+    data_ascii = data_bytes[offset:].decode("ASCII")
 
     meshData: FileMeshData = FileMeshData(
-        [], [], FileMeshHeader(0, 0, 0, 0, 0), [], [], "", [], [], [])
-    numFaces: int = int(data.split("\n")[1])
+        [], [], FileMeshHeader(0, 0, 0, 0, 0), [], [], "", [], [], [],
+    )
+    numFaces: int = int(data_ascii.split("\n", 1)[0])
     debug_print(f"read_mesh_v1: numFaces={numFaces}")
 
     # [0.551563,-0.0944613,0.0862401] we need to find every vector3 in the file
     # Each vert has 3 vector3 values so we need to find 3 vector3 values for each vert
-    startingIndex = data.find("[")
-    allVectorStrs: list[str] = data[startingIndex:].split("]")
+    startingIndex = data_ascii.find("[")
+    allVectorStrs: list[str] = data_ascii[startingIndex:].split("]")
     allVectors: list[list[float]] = []
 
     for vecStr in allVectorStrs:
@@ -831,11 +815,13 @@ def read_mesh_v3(data: bytes, offset: int) -> FileMeshData:
 
 def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
     meshData: FileMeshData = FileMeshData(
-        [], [], FileMeshHeader(0, 0, 0, 0, 0), [], [], "", [], [], [])
+        [], [], FileMeshHeader(0, 0, 0, 0, 0), [], [], "", [], [], [],
+    )
     meshHeader: FileMeshHeaderV4 = FileMeshHeaderV4(
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    )
     meshHeader.read_data(read_data(data, offset, 24))
-    offset += 24
+    offset += meshHeader.sizeof_MeshHeader
 
     debug_print(f"read_mesh_v4: meshHeader={meshHeader}")
     if meshHeader.numVerts == 0 or meshHeader.numFaces == 0:
@@ -843,7 +829,8 @@ def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
     meshData.header = meshHeader
     for i in range(0, meshHeader.numVerts):
         meshData.vnts.append(FileMeshVertexNormalTexture3d(
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 127, 127, 127, 127, 127))
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 127, 127, 127, 127, 127,
+        ))
         meshData.vnts[i].read_data(read_data(data, offset + i * 40, 40))
 
         debug_print(f"read_mesh_v4: vnts[{i}]={meshData.vnts[i]}")
@@ -1010,7 +997,7 @@ def read_mesh_v5(data: bytes, offset: int) -> FileMeshData:
     return meshData
 
 
-def export_mesh_v2(meshData: FileMeshData) -> bytes:
+def export_mesh_v2(meshData: FileMeshData | None) -> bytes:
     if meshData is None:
         raise Exception(f"export_mesh_v2: meshData is None")
     if len(meshData.vnts) == 0 or len(meshData.faces) == 0:
@@ -1036,7 +1023,7 @@ def export_mesh_v2(meshData: FileMeshData) -> bytes:
     return finalmesh
 
 
-def export_mesh_v3(meshData: FileMeshData) -> bytes:
+def export_mesh_v3(meshData: FileMeshData | None) -> bytes:
     if meshData is None:
         raise Exception(f"export_mesh_v3: meshData is None")
     if len(meshData.vnts) == 0 or len(meshData.faces) == 0:
@@ -1078,22 +1065,22 @@ def export_mesh_v3(meshData: FileMeshData) -> bytes:
 
 def read_mesh_data(data: bytes) -> FileMeshData:
     meshVersion = get_mesh_version(data)
-    startingOffset = data.find(b"\n")
+    startingOffset = data.find(b"\n") + 1
     debug_print(f"meshVersion={meshVersion}, startingOffset={startingOffset}")
 
-    if meshVersion == 1.0:
-        meshData: FileMeshData = read_mesh_v1(data, startingOffset + 1, 0.5)
-    elif meshVersion == 1.1:
-        meshData: FileMeshData = read_mesh_v1(
-            data, startingOffset + 1, 1.0, False)
-    elif meshVersion == 2.0:
-        meshData: FileMeshData = read_mesh_v2(data, startingOffset + 1)
-    elif meshVersion == 3.0 or meshVersion == 3.1:
-        meshData: FileMeshData = read_mesh_v3(data, startingOffset + 1)
-    elif meshVersion == 4.0 or meshVersion == 4.1:
-        meshData: FileMeshData = read_mesh_v4(data, startingOffset + 1)
-    elif meshVersion == 5.0 or meshVersion == 5.1:
-        meshData: FileMeshData = read_mesh_v5(data, startingOffset + 1)
+    meshData: FileMeshData
+    if meshVersion == "1.00":
+        meshData = read_mesh_v1(data, startingOffset, 0.5, True)
+    elif meshVersion == "1.01":
+        meshData = read_mesh_v1(data, startingOffset, 1.0, False)
+    elif meshVersion == "2.00":
+        meshData = read_mesh_v2(data, startingOffset)
+    elif meshVersion == "3.00" or meshVersion == "3.01":
+        meshData = read_mesh_v3(data, startingOffset)
+    elif meshVersion == "4.00" or meshVersion == "4.01":
+        meshData = read_mesh_v4(data, startingOffset)
+    elif meshVersion == "5.00" or meshVersion == "5.01":
+        meshData = read_mesh_v5(data, startingOffset)
     else:
         raise Exception(
             f"read_mesh_data: unsupported mesh version ({meshVersion})")

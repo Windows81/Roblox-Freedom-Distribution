@@ -7,8 +7,6 @@ from typing import override
 # Local application imports
 import downloader
 import logger
-import util.const
-import util.resource
 import util.versions
 from . import _logic as logic
 

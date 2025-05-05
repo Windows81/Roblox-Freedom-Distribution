@@ -79,7 +79,7 @@ function MarkLatestVersion() {
 
 # Creates a GitHub release with specified files.
 function ReleaseToGitHub() {
-	gh release create $script:release_name_suffixed --notes "" $files --prerelease
+	gh release create $script:release_name_suffixed $files --prerelease --generate-notes
 }
 
 # Prompts user to select build mode.
