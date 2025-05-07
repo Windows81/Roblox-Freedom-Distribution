@@ -87,6 +87,7 @@ jobs:
           files: "dist/*"
           name: ${{ env.release_name }}
           tag_name: ${{ env.tag_name }}
+          generate_release_notes: true
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

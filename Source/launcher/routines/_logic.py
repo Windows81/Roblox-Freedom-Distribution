@@ -13,7 +13,7 @@ import urllib.parse
 import urllib.request
 
 # Typing imports
-from typing import override
+from typing import Any, override
 
 # Local application imports
 import downloader
@@ -22,8 +22,6 @@ import game_config as config
 import game_config.structure
 import util.resource
 import util.versions
-
-
 
 
 class _entry:
@@ -132,18 +130,16 @@ class host_arg_type(bin_web_arg_type):
         if self.web_host == 'localhost':
             self.web_host = self.app_host = '127.0.0.1'
 
-        elif self.web_host.startswith('['):
-            # The ".ipv6-literal.net" replacement only works on Windows and might not translate well on Wine.
-            # It's strictly necessary for 2021E because some CoreGUI stuff will
-            # crash if the BaseUrl doesn't have a dot in it.
-            unc_ip_str = (
-                self.web_host[1:-1]
-                .replace(':', '-')
-                .replace('%', 's')
-            )
-            if unc_ip_str.startswith('-'):
-                unc_ip_str = '0%s' % unc_ip_str
-            self.app_host = '%s.ipv6-literal.net' % unc_ip_str
+        elif self.app_host.startswith('['):
+            # Converts
+            # - "[2607:fb91:1b74:d4d8:3dfb:5a51:55c3:d516]" into
+            # - "[2607:fb91:1b74:d4d8:3dfb:5a51:85.195.213.22]"
+            # This is because Rōblox's CoreScripts do not like working with `BaseUrl` settings which don't have dots.
+            prefix_len = 30
+            ipv6_obj = ipaddress.IPv6Address(self.web_host[1:-1])
+            ipv4_mapped = ipaddress.IPv4Address(int(ipv6_obj) & 0xFFFFFFFF)
+            exploded_str = ipv6_obj.exploded
+            self.app_host = f"[{exploded_str[:prefix_len]}{ipv4_mapped!s}]"
 
 
 class entry(_entry):
