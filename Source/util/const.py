@@ -1,8 +1,8 @@
 # The `GIT_RELEASE_VERSION` and `ZIPPED_RELEASE_VERSION` lines change automatically per a PowerShell script.
 
-GIT_RELEASE_VERSION = '''0.58.7'''
+GIT_RELEASE_VERSION = '''0.59.0'''
 
-ZIPPED_RELEASE_VERSION = '''0.58.6-binaries'''
+ZIPPED_RELEASE_VERSION = '''0.59.0-binaries'''
 ZIPPED_RELEASE_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/%s/%s.%s.7z'
 
 PLACE_IDEN_CONST = 1818
