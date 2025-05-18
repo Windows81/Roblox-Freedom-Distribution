@@ -28,7 +28,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/marketplace/game-pass-product-info', commands={'GET'}, versions={versions.rōblox.v348})
+@server_path('/marketplace/game-pass-product-info', commands={'GET'})
 def _(self: web_server_handler) -> bool:
     '''
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/marketplace.py#L21

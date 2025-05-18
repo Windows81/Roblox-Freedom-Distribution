@@ -7,6 +7,7 @@ import traceback
 # Local application imports
 import launcher.routines._logic as routine_logic
 import launcher.subparsers._logic as sub_logic
+import util.const as const
 
 
 from .subparsers.args_launch_mode import (
@@ -30,6 +31,15 @@ def parse_arg_list(args: list[str] | None) -> list[routine_logic.arg_type] | Non
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--version',
+        '-V',
+        action='version',
+        version=(
+            "GIT_RELEASE_VERSION = '%s', ZIPPED_RELEASE_VERSION = '%s'" %
+            (const.GIT_RELEASE_VERSION, const.ZIPPED_RELEASE_VERSION)
+        ),
+    )
     mode_parser = parser.add_subparsers(
         dest='mode',
     )

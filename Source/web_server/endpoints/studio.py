@@ -7,7 +7,6 @@ import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
 
-
 @server_path('/studio/e.png')
 def _(self: web_server_handler) -> bool:
     self.send_data(b'')
@@ -25,9 +24,10 @@ def _(self: web_server_handler) -> bool:
 @server_path('/v2/login')
 def _(self: web_server_handler) -> bool:
     try:
+        # Password must not contain '1'.  This for debugging purposes only.
         assert (
             '1' not in json.loads(self.read_content())['password']
-        )  # Password must not contain '1'.  This for debugging purposes only.
+        )
         self.send_response(200)
         self.send_header('set-cookie', '.ROBLOSECURITY=_ROBLOSECURITY_')
         self.send_json({
@@ -53,7 +53,12 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/users/account-info')
 def _(self: web_server_handler) -> bool:
-    user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
+    try:
+        user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
+    except TypeError:
+        self.send_error(403)
+        return False
+
     self.send_json({
         "UserId": user_id_num,
     })
