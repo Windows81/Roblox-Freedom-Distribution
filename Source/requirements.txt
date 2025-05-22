@@ -8,3 +8,4 @@ py7zr==0.22.0
 lz4==4.3.3
 tqdm_vendored @ git+https://github.com/Windows81/Vendored-Tqdm
 sqlite_worker @ git+https://github.com/Windows81/sqlite-worker.git@patch-2
+pywin32=310 ; sys_platform == 'win32'

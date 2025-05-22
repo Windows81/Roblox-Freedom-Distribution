@@ -16,8 +16,10 @@ function RetrieveInput($suffix = '') {
 	$script:release_name = (Read-Host "Version title?")
 	$script:release_name_suffixed = $script:release_name + $suffix
 	# Packs Rōblox executables into GitHub releases that can be downloaded.
-	$script:commit_name = $args[1] ?? (Get-Date -Format "yyyy-MM-ddTHHmmZ" `
-		(curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
+	$script:commit_name = (
+		$args[1] ??
+		(Get-Date -Format "yyyy-MM-ddTHHmmZ" (curl -I -s http://1.1.1.1 | grep "Date:" | cut -d " " -f 2-))
+	)
 }
 
 # Adds changes to git repository and push.
@@ -52,20 +54,33 @@ function CreateZippedDirs() {
 		# Writes to the version-flag file.
 		$script:release_name_suffixed | Set-Content "$($dir.FullName)/rfd_version"
 
-		# The `-xr` switches are for excluding specific file names (https://documentation.help/7-Zip-18.0/exclude.htm).
-		7z a $zip "$($dir.FullName)/*" `
-			"-xr!RFDStarterScript.lua" `
-			"-xr!dxgi.dll" "-xr!_dxgi.dll" "-xr!Reshade.ini" "-xr!ReShade.log" "-xr!ReShade_RobloxPlayerBeta.log" `
-			`
-			"-xr!AppSettings.xml" `
-			"-xr!GlobalBasicSettings_13.xml" `
-			"-xr!AnalysticsSettings.xml" `
-			"-xr!LocalStorage" `
-			"-xr!logs" `
-			`
-			"-xr!*.id1" `
-			"-xr!*.i32" "-xr!*.i64" `
-			"-x!_*.exe"
+		# The `-xr` switches are for excluding specific file names recursively (https://documentation.help/7-Zip-18.0/exclude.htm).
+		7z a $zip "$($dir.FullName)/*" @(
+			"-xr!RFDStarterScript.lua";
+
+			# Temporary EXE files (it's customary to prefix them with an underscore)
+			"-x!_*.exe";
+
+			# Reshade
+			"-xr!dxgi.dll";
+			"-xr!_dxgi.dll";
+			"-xr!Reshade.ini";
+			"-xr!ReShade.log";
+			"-xr!ReShade_RobloxPlayerBeta.log";
+
+			# Rōblox-specific files
+			"-xr!AppSettings.xml";
+			"-xr!GlobalBasicSettings_13.xml";
+			"-xr!AnalysticsSettings.xml";
+			"-xr!LocalStorage";
+			"-xr!logs";
+
+			# IDA debug files
+			"-xr!*.id1"; "-xr!*.i32"; "-xr!*.i64";
+
+			# x96dbg databases
+			"-xr!*.dd32"; "-xr!*.dd64";
+		)
 
 		$files.Add($zip)
 	}

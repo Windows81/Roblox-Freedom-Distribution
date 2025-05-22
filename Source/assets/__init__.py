@@ -1,24 +1,38 @@
 # Standard library imports
+from typing import Callable
+import dataclasses
 import functools
 import os
 import shutil
 
-# Third-party or external imports 
-import extractor  
-
 # Internal or local application imports
 import util.const
-from config_type.types import callable, structs, wrappers
-from . import material, queue, returns, serialisers
+from . import material, queue, returns, serialisers, extractor
 
+
+@dataclasses.dataclass
+class asset_redirect:
+    def __post_init__(self) -> None:
+        if sum([
+            self.cmd_line is not None,
+            self.raw_data is not None,
+            self.forward_url is not None,
+        ]) > 1:
+            raise Exception(
+                'Entries for `asset_redirects` should not have ' +
+                'more than one of a `forward_url`, a pipeable `cmd_line`, or a `raw_data` chunk.'
+            )
+    forward_url: str | None = None
+    raw_data: bytes | None = None
+    cmd_line: str | None = None
 
 
 class asseter:
     def __init__(
         self,
         dir_path: str,
-        redirect_func: callable.obj_type[[int | str], structs.asset_redirect | None],
-        asset_name_func: callable.obj_type[[int | str], str],
+        redirect_func: Callable[[int | str], asset_redirect | None],
+        asset_name_func: Callable[[int | str], str],
         clear_on_start: bool,
     ) -> None:
         super().__init__()
@@ -118,7 +132,7 @@ class asseter:
             return material.load_asset(asset_id)
         return None
 
-    def _load_redir_asset(self, asset_id: int | str, redirect: structs.asset_redirect) -> returns.base_type:
+    def _load_redir_asset(self, asset_id: int | str, redirect: asset_redirect) -> returns.base_type:
         asset_path = self.get_asset_path(asset_id)
         local_data = self._load_file(asset_path)
         if local_data is not None:

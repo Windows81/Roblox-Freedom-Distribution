@@ -1,13 +1,9 @@
 # Standard library imports
 import unittest
 
-# Typing imports
-from typing import Any
-
 # Local application imports
 import assets.serialisers as serialisers
-import extractor
-
+import assets.extractor as extractor
 
 
 class TestAssets(unittest.TestCase):

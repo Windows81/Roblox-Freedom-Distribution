@@ -6,13 +6,11 @@ import os
 import subprocess
 import threading
 import time
-from collections import ChainMap
 from typing import IO, override
 
 # Local application/library specific imports
 import assets.serialisers
 import game_config
-import game_config.structure
 import logger
 from . import _logic as logic
 from textwrap import dedent

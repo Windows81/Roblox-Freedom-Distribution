@@ -10,8 +10,7 @@ from typing import Self, get_args
 
 # Local application imports
 import util.const as const
-import extractor  
-
+import assets.extractor as extractor
 
 
 class dicter[key_typ, item_typ](dict[key_typ, item_typ]):
