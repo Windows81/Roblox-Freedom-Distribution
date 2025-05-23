@@ -327,17 +327,10 @@ Port is specified by the `--webserver_port` or `-wp` option.
 
 ### Loading Assets from Rōblox
 
-To load assets directly from Roblox.com, set your environment variable `ROBLOSECURITY` to a valid cookie value:
+To load assets directly from Roblox.com, our software needs to provide a valid `ROBLOSECURITY` token. RFD can extract this token through two methods:
 
-```
-_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_BFA...
-```
-
-You can whether you inserted your environment variable correctly in a Python shell:
-
-```py
-print(os.environ.get('ROBLOSECURITY'))
-```
+1. _If you are on a Windows and play Rōblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat`.
+2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
 
 ## Asset Packs
 
@@ -381,7 +374,7 @@ If you need any help, please shoot me an issue on GitHub or a message to an acco
 
 The program is mostly portable; RFD does not store any persistent settings to your machine.
 
-However, the Rōblox executables it hooks to write to the following directories:
+However, the Rōblox executables that we hook to will write to the following directories:
 
 - `%LocalAppData%\Temp\Roblox\http\`
 - `%LocalAppData%\Temp\Roblox\`
@@ -390,7 +383,7 @@ You'll also probably find some registry keys written to:
 
 - `Computer\HKEY_CURRENT_USER\Software\Roblox`
 
-## Examples
+## Usage Examples
 
 Where `...` is [your command-line prefix](#download),
 

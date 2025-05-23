@@ -33,11 +33,16 @@ def get_cookie_from_system() -> str | None:
     if encoded_cookies is None:
         return
 
-    import win32crypt
+    try:
+        import win32crypt
+    except ImportError:
+        return
+
     decoded_cookies = base64.b64decode(encoded_cookies)
     decrypted_cookies: bytes = win32crypt.CryptUnprotectData(
         decoded_cookies, None, None, None, 0,
     )[1]
+
     match = re.match(br'.ROBLOSECURITY\t(.?+); ', decrypted_cookies)
     if match == None:
         return

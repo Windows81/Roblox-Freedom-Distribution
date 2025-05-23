@@ -36,7 +36,7 @@ class obj_type(logic.entry):
                 continue
             try:
                 os.remove(full_path)
-            except Exception as e:
+            except Exception:
                 pass
 
     @override

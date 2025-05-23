@@ -34,7 +34,6 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"server",
-				"--clear_cache",
 				"--config",
 				"${file}",
 			],
@@ -49,7 +48,6 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"server",
-				"--clear_cache",
 				"--config",
 				"${file}",
 				"--debug",
@@ -65,7 +63,6 @@
 			"cwd": "${workspaceFolder}",
 			"args": [
 				"server",
-				"--clear_cache",
 				"--run_client",
 				"--user_code",
 				"VisualPlugin",
