@@ -53,7 +53,10 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/users/account-info')
 def _(self: web_server_handler) -> bool:
-    user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
+    try:
+        user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
+    except TypeError:
+        return True
 
     funds = self.server.storage.funds.check(user_id_num)
     self.send_json({
