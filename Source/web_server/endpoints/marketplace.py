@@ -97,7 +97,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
             "assetType": "Gamepass",
             "assetTypeDisplayName": "Gamepass",
             "assetIsWearable": False,
-            "sellerName": "Robloxxx",
+            "sellerName": "",
             "transactionVerb": "bought",
             "isMultiPrivateSale": False,
         })
