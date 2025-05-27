@@ -247,37 +247,17 @@ The `serialise` command allows developers to modify files to be compatible with 
 As of RFD 0.58.2, the available options are as follows:
 
 ```
-usage: _main.py studio [--config_path [CONFIG_PATH] |
-                       --place_path [PLACE_PATH]] [--web_port [WEB_PORT]]
-                       [--quiet] [--skip_web] [--keep_cache] [--skip_download]
-                       [--debug | --debug_all] [--help]
-
-RFD's bundled Studio binaries are very very very ill-prepared. Unless you're
-creating CSG unions which won't work otherwise, I recommend using modern
-versions of Roblox Studio instead.
+usage: _main.py serialise [--load LOAD [LOAD ...]] [--save SAVE [SAVE ...]]
+                          [--method {method.csg,method.rbxl,method.video,method.mesh} [{method.csg,method.rbxl,method.video,method.mesh} ...]]
+                          [--help]
 
 options:
-  --config_path, --config, -cp [CONFIG_PATH]
-                        Game-specific options; defaults to ./GameConfig.toml.
-                        Please review each option before starting a new server
-                        up.
-  --place_path, --place, -pl [PLACE_PATH]
-                        Path to the place file to be loaded. Argument
-                        `config_path` can't be passed in when using this
-                        option.
-  --web_port, -wp, -p [WEB_PORT]
-                        Port number for the web server to run from.
-  --quiet, -q           Suppresses console output.
-  --skip_web            Skips hosting the webserver.
-  --keep_cache          Skips deleting cached content specific to the host you
-                        are connecting to. Searches in the
-                        %LocalAppData%\Temp\Roblox\http directory.
-  --skip_download       Disables auto-download of RFD binaries from the
-                        internet.
-  --debug               Opens an instance of x96dbg and attaches it to the
-                        running "studio" binary.
-  --debug_all           Opens instances of x96dbg and attaches them to all
-                        running binaries.
+  --load, --read, -r LOAD [LOAD ...]
+                        Path to the file(s) to be loaded.
+  --save, --write, -w SAVE [SAVE ...]
+                        Path to the file(s) to be saved.
+  --method {method.csg,method.rbxl,method.video,method.mesh} [{method.csg,method.rbxl,method.video,method.mesh} ...]
+                        Serialisers to use on the file(s) provided.
   --help, -?            show this help message and exit
 ```
 
