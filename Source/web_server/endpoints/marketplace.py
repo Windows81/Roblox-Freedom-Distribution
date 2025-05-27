@@ -2,6 +2,7 @@
 import urllib.parse
 import json
 import re
+import uuid
 
 # Local application imports
 from web_server._logic import web_server_handler, server_path
@@ -44,7 +45,7 @@ def purchase_dev_product(self: web_server_handler, user_id_num: int, gamepass_id
     if funds < dev_product.price:
         return False  # Too poor!
 
-    storage.gamepasses.update(user_id_num, gamepass_id)
+    storage.dev_products.update(user_id_num, gamepass_id)
     storage.funds.add(user_id_num, -1 * dev_product.price)
     return True
 
@@ -131,7 +132,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
             "transactionStatus": "Success",
             "productId": user_id_num,
             "price": 0,
-            "receipt": "",
+            "receipt": f"{dev_product_id}-{user_id_num}",
         })
     else:
         self.send_json({
@@ -139,8 +140,6 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
             "success": False,
             "transactionStatus": "ApplicationError",
             "productId": user_id_num,
-            "price": 0,
-            "receipt": "",
         })
     return True
 
@@ -241,10 +240,41 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 def _(self: web_server_handler) -> bool:
     '''
     Something to do with developer products.
-    Won't be implemented in RFD right now.
-    https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/gametransactions.py#L8
+    https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/gametransactions.py#L26
     '''
-    self.send_json([])
+    receipt_dict = []
+    for (user_id_num, dev_product_id) in self.server.storage.dev_products.receipts():
+        receipt_dict.append({
+            "playerId": user_id_num,
+            "receipt": f"{dev_product_id}-{user_id_num}",
+            "actionArgs": [
+                {
+                    "Key": "productId",
+                    "Value": dev_product_id,
+                },
+                {
+                    "Key": "currencyTypeId",
+                    "Value": 1,
+                },
+                {
+                    "Key": "unitPrice",
+                    "Value": 0,
+                }
+            ]
+        })
+
+    self.send_json(receipt_dict)
+    return True
+
+
+@server_path('/marketplace/validatepurchase', commands={'GET'})
+def _(self: web_server_handler) -> bool:
+    receipt = self.query['receipt'].split('-')
+    dev_product_id = int(receipt[0])
+    user_id_num = int(receipt[1])
+    self.send_json({
+        'playerId': user_id_num, 'placeId': 1, 'isValid': True, 'productId': dev_product_id,
+    })
     return True
 
 
