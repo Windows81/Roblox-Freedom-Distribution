@@ -221,7 +221,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
         assert gamepass is not None
         gamepass_data = [
             {
-                "type": "GamePass",
+                "type": "Gamepass",
                 "id": gamepass_iden,
                 "name": gamepass.name,
                 "instanceId": None,
@@ -246,6 +246,7 @@ def _(self: web_server_handler) -> bool:
     for (user_id_num, dev_product_id) in self.server.storage.dev_products.receipts():
         receipt_dict.append({
             "playerId": user_id_num,
+            "placeId": util.const.PLACE_IDEN_CONST,
             "receipt": f"{dev_product_id}-{user_id_num}",
             "actionArgs": [
                 {
@@ -273,7 +274,10 @@ def _(self: web_server_handler) -> bool:
     dev_product_id = int(receipt[0])
     user_id_num = int(receipt[1])
     self.send_json({
-        'playerId': user_id_num, 'placeId': 1, 'isValid': True, 'productId': dev_product_id,
+        'playerId': user_id_num,
+        'placeId': 1,
+        'isValid': True,
+        'productId': dev_product_id,
     })
     return True
 

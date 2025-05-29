@@ -43,7 +43,8 @@ class database(_logic.sqlite_connector_base):
             VALUES (?, ?, 1)
             ON CONFLICT({self.field.USER_ID_NUM.value}, {self.field.DEV_PRODUCT_ID.value})
             DO UPDATE SET
-                {self.field.PURCHASE_COUNT.value} = {self.field.PURCHASE_COUNT.value} + 1
+                {self.field.PURCHASE_COUNT.value} = {self.field.PURCHASE_COUNT.value} + 1,
+                {self.field.IS_CALLED_BACK.value} = FALSE
             """,
             (
                 user_id_num,
