@@ -43,7 +43,7 @@ def get_cookie_from_system() -> str | None:
         decoded_cookies, None, None, None, 0,
     )[1]
 
-    match = re.match(br'.ROBLOSECURITY\t(.?+); ', decrypted_cookies)
+    match = re.search(br'\.ROBLOSECURITY\t([^;]+)', decrypted_cookies)
     if match == None:
         return
     return match[1].decode('utf-8', errors='ignore')
