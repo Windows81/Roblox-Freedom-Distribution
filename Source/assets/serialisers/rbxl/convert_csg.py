@@ -18,7 +18,7 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
     if prop_data is None:
         return
 
-    prop_values = _logic.split_prop_values(prop_data)
+    prop_values = _logic.split_prop_strings(prop_data)
     results = [
         csg.parse(data) or data
         for data in prop_values
@@ -26,5 +26,5 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
 
     return (
         _logic.get_pre_prop_values_bytes(info) +
-        _logic.join_prop_values(results)
+        _logic.join_prop_strings(results)
     )

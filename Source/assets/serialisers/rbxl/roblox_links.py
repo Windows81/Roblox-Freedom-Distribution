@@ -12,7 +12,7 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
     if _logic.get_type_iden(info) != 0x01:
         return
 
-    prop_values = _logic.split_prop_values(prop_data)
+    prop_values = _logic.split_prop_strings(prop_data)
     results = [
         re.sub(
             br'https?://(?:assetgame\.|assetdelivery\.|www\.)?roblox\.com/(?:v1/)?asset/?\?id=([\d]{1,17})',
@@ -24,5 +24,5 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
 
     return (
         _logic.get_pre_prop_values_bytes(info) +
-        _logic.join_prop_values(results)
+        _logic.join_prop_strings(results)
     )

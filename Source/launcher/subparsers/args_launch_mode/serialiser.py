@@ -12,7 +12,6 @@ from launcher.routines import _logic as logic
 import assets.serialisers
 
 
-
 @sub_logic.add_args(sub_logic.launch_mode.SERIALISE_FILE)
 def _(
     parser: argparse.ArgumentParser,
@@ -25,6 +24,7 @@ def _(
         '-r',
         type=str,
         nargs='+',
+        default=[],
         help='Path to the file(s) to be loaded.',
     )
     subparser.add_argument(
@@ -33,6 +33,7 @@ def _(
         '-w',
         type=str,
         nargs='+',
+        default=[],
         help='Path to the file(s) to be saved.',
     )
     subparser.add_argument(
@@ -41,6 +42,7 @@ def _(
         choices=assets.serialisers.ALL_METHODS,
         help='Serialisers to use on the file(s) provided.',
         nargs='+',
+        default=[],
     )
 
 

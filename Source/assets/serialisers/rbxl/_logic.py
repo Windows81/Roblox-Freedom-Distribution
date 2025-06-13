@@ -16,7 +16,10 @@ def wrap_string(v: bytes) -> bytes:
     return len(v).to_bytes(INT_SIZE, 'little') + v
 
 
-def split_prop_values(data: bytes) -> list[bytes]:
+def split_prop_strings(data: bytes, limit: int = -1) -> list[bytes]:
+    '''
+    Where `data` contains a bunch of concatenates `rbxl` strings.
+    '''
     splits: list[bytes] = []
     length = len(data)
     index = 0
@@ -27,11 +30,14 @@ def split_prop_values(data: bytes) -> list[bytes]:
 
         splits.append(chunk)
         index += offset
+        if limit >= 0 and len(splits) == limit:
+            return splits
+
     assert index == length
     return splits
 
 
-def join_prop_values(data: list[bytes]) -> bytes:
+def join_prop_strings(data: list[bytes]) -> bytes:
     return b''.join(
         wrap_string(d)
         for d in data
@@ -82,7 +88,7 @@ def get_first_chunk_str(info: chunk_info) -> bytes | None:
 
 def get_pre_prop_values_bytes(info: chunk_info) -> bytes:
     '''
-    Returns all chunk data *prior* to whatever `PROP` values there are.
+    Returns all `PROP` data up to the the data-type byte.
     '''
     if info.chunk_name not in {b'PROP'}:
         return info.chunk_data

@@ -1,18 +1,15 @@
 # Standard library imports
 import argparse
+import dataclasses
 
 # Local application imports
 import game_config as config
 import logger
-import logger.flog_table
-import util.const
 import util.resource
-import util.versions
 from launcher.routines import player, rcc, studio, web
 from launcher.routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
 from web_server._logic import server_mode
-
 
 
 @sub_logic.add_args(sub_logic.launch_mode.STUDIO)
@@ -76,7 +73,8 @@ def _(
         game_config = config.get_cached_config(args_ns.config_path)
 
     web_port: int = args_ns.web_port or 20059
-    log_filter = logger.filter.filter_type(
+    log_filter = dataclasses.replace(
+        logger.filter.FILTER_REASONABLE,
         other_logs=not args_ns.quiet,
     )
 
