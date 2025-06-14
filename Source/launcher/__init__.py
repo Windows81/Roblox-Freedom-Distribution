@@ -25,6 +25,8 @@ from .subparsers.args_aux import (
     debug as _,
 )
 
+INTERRUPT_MESSAGE = '** RECEIVED Ctrl+C **'
+
 
 def parse_arg_list(args: list[str] | None) -> list[routine_logic.arg_type] | None:
     '''
@@ -130,7 +132,7 @@ def read_eval_loop(args: list[str] | None = None) -> None:
         try:
             perform_with_args(args)
         except KeyboardInterrupt:
-            pass
+            print(INTERRUPT_MESSAGE)
         except Exception as e:
             traceback.print_exc()
             print(str(e))
@@ -145,11 +147,11 @@ def read_eval_loop(args: list[str] | None = None) -> None:
             try:
                 perform_with_args(shlex.split(arg_str))
             except KeyboardInterrupt:
-                pass
+                print(INTERRUPT_MESSAGE)
             except Exception as e:
                 traceback.print_exc()
                 print(e)
 
     # Handled when Ctrl+C is pressed whilst awaiting input.
     except KeyboardInterrupt:
-        pass
+        print(INTERRUPT_MESSAGE)
