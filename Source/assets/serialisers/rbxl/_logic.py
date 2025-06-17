@@ -25,11 +25,12 @@ def split_prop_strings(data: bytes, limit: int = -1) -> list[bytes]:
     index = 0
     while index < length:
         size = int.from_bytes(data[index:index+INT_SIZE], 'little')
-        offset = size + INT_SIZE
-        chunk = data[index+INT_SIZE:index+offset]
+        str_beg = index + INT_SIZE
+        str_end = str_beg + size
+        chunk = data[str_beg:str_end]
+        index = str_end
 
         splits.append(chunk)
-        index += offset
         if limit >= 0 and len(splits) == limit:
             return splits
 

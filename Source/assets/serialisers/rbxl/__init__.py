@@ -16,12 +16,12 @@ class method(enum.Enum):
     '''
     Why `partial`?  https://stackoverflow.com/a/58714331/6879778
     '''
-    # repack_fonts = enum.member(partial(fonts.replace))
-    # script_disabled = enum.member(partial(script_disabled.replace))
-    # roblox_links = enum.member(partial(roblox_links.replace))
-    # skip_bytecode = enum.member(partial(skip_bytecode.replace))
-    convert_csg = enum.member(partial(convert_csg.replace))
-    # image_content = enum.member(partial(image_content.replace))
+    repack_fonts = enum.member(partial(fonts.replace))
+    script_disabled = enum.member(partial(script_disabled.replace))
+    roblox_links = enum.member(partial(roblox_links.replace))
+    skip_bytecode = enum.member(partial(skip_bytecode.replace))
+    # convert_csg = enum.member(partial(convert_csg.replace))
+    image_content = enum.member(partial(image_content.replace))
 
 
 ALL_METHODS = set(method)
