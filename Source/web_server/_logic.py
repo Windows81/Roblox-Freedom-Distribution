@@ -83,17 +83,9 @@ def server_path(
     return inner
 
 
-def rbx_sign(data: bytes, key: bytes, prefix: bytes = b'--rbxsig') -> bytes:
+def rbx_sign(data: bytes, prefix: bytes = b'--rbxsig') -> bytes:
     data = b'\r\n' + data
-    key = b"-----BEGIN RSA PRIVATE KEY-----\n%s\n-----END RSA PRIVATE KEY-----" % key
-    private_key = serialization.load_pem_private_key(
-        key, None, default_backend())
-    signature = private_key.sign(   # type: ignore[reportAttributeAccessIssue]
-        data,
-        padding.PKCS1v15(),  # type: ignore[reportCallIssue]
-        hashes.SHA1(),  # type: ignore[reportCallIssue]
-    )
-    return prefix + b"%" + base64.b64encode(signature) + b'%' + data
+    return prefix + br"%0%" + data
 
 
 class web_server(http.server.ThreadingHTTPServer):
@@ -142,7 +134,7 @@ class web_server_ssl(web_server):
         self.tmp_cert = tempfile.NamedTemporaryFile(delete_on_close=False)
         self.tmp_key = tempfile.NamedTemporaryFile(delete_on_close=False)
 
-        auth = trustme.CA()
+        auth = trustme.CA(key_type=trustme.KeyType.RSA)
         cert = auth.issue_cert('localhost')
         for i, blob in enumerate(cert.cert_chain_pems):
             blob.write_to_path(
@@ -279,7 +271,6 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         assert isinstance(text, bytes)
 
         text = sign_prefix and rbx_sign(
-            key=const.JOIN_GAME_SIGN_KEY,
             prefix=sign_prefix,
             data=text,
         ) or text
