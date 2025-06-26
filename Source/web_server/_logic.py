@@ -1,5 +1,4 @@
 # Standard library imports
-import base64
 import dataclasses
 import enum
 import functools
@@ -81,11 +80,6 @@ def server_path(
 
         return func
     return inner
-
-
-def rbx_sign(data: bytes, prefix: bytes = b'--rbxsig') -> bytes:
-    data = b'\r\n' + data
-    return prefix + br"%0%" + data
 
 
 class web_server(http.server.ThreadingHTTPServer):
@@ -249,13 +243,12 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self,
         json_data,
         status: int | None = 200,
-        sign_prefix: bytes | None = None,
+        prefix: bytes = b'',
     ) -> None:
-        byts = json.dumps(json_data).encode('utf-8')
+        byts = prefix + json.dumps(json_data).encode('utf-8')
         self.send_data(
             byts,
             content_type='application/json',
-            sign_prefix=sign_prefix,
             status=status,
         )
 
@@ -264,16 +257,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         text: bytes | str,
         status: int | None = 200,
         content_type: str | None = None,
-        sign_prefix: bytes | None = None,
     ) -> None:
         if isinstance(text, str):
             text = text.encode('utf-8')
         assert isinstance(text, bytes)
-
-        text = sign_prefix and rbx_sign(
-            prefix=sign_prefix,
-            data=text,
-        ) or text
 
         # If `status` is None, we can add headers before calling `send_data`.
         if status is not None:

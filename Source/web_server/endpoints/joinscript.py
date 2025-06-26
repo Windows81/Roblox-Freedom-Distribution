@@ -10,7 +10,6 @@ import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
 
-
 def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, int, str] | None:
     try:
         config = self.game_config
@@ -47,7 +46,7 @@ def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, i
         return None
 
 
-def perform_join(self: web_server_handler, additional_data: dict[str, Any], sign_prefix: bytes | None) -> None:
+def perform_join(self: web_server_handler, additional_data: dict[str, Any], prefix: bytes | None) -> None:
     '''
     The query arguments in `Roblox-Session-Id` were previously serialised
     when `join.ashx` was called the first time a player joined.
@@ -112,7 +111,7 @@ def perform_join(self: web_server_handler, additional_data: dict[str, Any], sign
     join_data |= {
         'SessionId': json.dumps(join_data | query_args)
     }
-    self.send_json(join_data | additional_data, sign_prefix=sign_prefix)
+    self.send_json(join_data | additional_data)
 
 
 @server_path('/game/join.ashx', versions={versions.rōblox.v348})
@@ -140,7 +139,7 @@ def _(self: web_server_handler) -> bool:
         'DataCenterId': 0,
         'FollowUserId': 0,
         'UniverseId': 0,
-    }, sign_prefix=b'--rbxsig')
+    }, prefix=br'--rbxsig%0%')
     return True
 
 
@@ -185,7 +184,7 @@ def _(self: web_server_handler) -> bool:
                 }
             }
         }),
-    }, sign_prefix=b'--rbxsig2')
+    }, prefix=br'--rbxsig2%0%')
     return True
 
 
