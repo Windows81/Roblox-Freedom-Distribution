@@ -46,7 +46,7 @@ def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, i
         return None
 
 
-def perform_join(self: web_server_handler, additional_data: dict[str, Any], prefix: bytes | None) -> None:
+def perform_join(self: web_server_handler, additional_data: dict[str, Any], prefix: bytes) -> None:
     '''
     The query arguments in `Roblox-Session-Id` were previously serialised
     when `join.ashx` was called the first time a player joined.
@@ -111,7 +111,7 @@ def perform_join(self: web_server_handler, additional_data: dict[str, Any], pref
     join_data |= {
         'SessionId': json.dumps(join_data | query_args)
     }
-    self.send_json(join_data | additional_data)
+    self.send_json(join_data | additional_data, prefix=prefix)
 
 
 @server_path('/game/join.ashx', versions={versions.rōblox.v348})
