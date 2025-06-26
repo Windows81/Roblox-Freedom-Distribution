@@ -139,7 +139,7 @@ def _(self: web_server_handler) -> bool:
         'DataCenterId': 0,
         'FollowUserId': 0,
         'UniverseId': 0,
-    }, prefix=br'--rbxsig%0%')
+    }, prefix=b'--rbxsig%0%\r\n')
     return True
 
 
@@ -184,7 +184,7 @@ def _(self: web_server_handler) -> bool:
                 }
             }
         }),
-    }, prefix=br'--rbxsig2%0%')
+    }, prefix=b'--rbxsig2%0%\r\n')
     return True
 
 
