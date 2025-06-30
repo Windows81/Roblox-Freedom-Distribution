@@ -2,7 +2,6 @@
 import argparse
 import shlex
 import sys
-import traceback
 
 # Local application imports
 import launcher.routines._logic as routine_logic
@@ -24,8 +23,6 @@ from .subparsers.args_aux import (
     download as _,
     debug as _,
 )
-
-INTERRUPT_MESSAGE = '** RECEIVED Ctrl+C **'
 
 
 def parse_arg_list(args: list[str] | None) -> list[routine_logic.arg_type] | None:
@@ -116,8 +113,7 @@ def parse_arg_list(args: list[str] | None) -> list[routine_logic.arg_type] | Non
 
 def read_eval_loop(args: list[str] | None = None) -> None:
     '''
-    Highest-level main function which takes a list of arguments
-    and does everything in one go.
+    Highest-level main function which takes a list of arguments and does everything in one go.
     '''
     if args is None:
         args = sys.argv[1:]
@@ -129,29 +125,15 @@ def read_eval_loop(args: list[str] | None = None) -> None:
         return routine_logic.routine(*arg_list).wait()
 
     if len(args) > 0:
+        perform_with_args(args)
+
+    while True:
+        arg_str = input(
+            "Enter your command-line arguments [Ctrl+C to quit]: ",
+        )
         try:
-            perform_with_args(args)
+            perform_with_args(shlex.split(arg_str))
+        # Upon Ctrl+C, the program would not completely stop.
+        # Rather, we want to make RFD ask for `arg_str` again.
         except KeyboardInterrupt:
-            print(INTERRUPT_MESSAGE)
-        except Exception as e:
-            traceback.print_exc()
-            print(str(e))
-        finally:
-            return
-
-    try:
-        while True:
-            arg_str = input(
-                "Enter your command-line arguments [Ctrl+C to quit]: ",
-            )
-            try:
-                perform_with_args(shlex.split(arg_str))
-            except KeyboardInterrupt:
-                print(INTERRUPT_MESSAGE)
-            except Exception as e:
-                traceback.print_exc()
-                print(e)
-
-    # Handled when Ctrl+C is pressed whilst awaiting input.
-    except KeyboardInterrupt:
-        print(INTERRUPT_MESSAGE)
+            pass
