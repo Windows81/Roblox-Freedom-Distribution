@@ -1,7 +1,7 @@
 sqlite-worker==0.0.4
 cryptography~=44.0.1
 trustme~=1.2.0
-urllib3~=2.2.3
+urllib3~=2.5.0
 pyzstd~=0.16.2
 py7zr~=1.0.0
 lz4~=4.4.4

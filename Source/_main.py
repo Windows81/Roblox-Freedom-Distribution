@@ -10,7 +10,6 @@ if __name__ == '__main__':
         launcher.read_eval_loop()
     except KeyboardInterrupt:
         print(INTERRUPT_MESSAGE, flush=True)
-        exit(signal.SIGTERM)
     except Exception as e:
         traceback.print_exc()
         print(str(e))
