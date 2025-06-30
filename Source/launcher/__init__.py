@@ -126,6 +126,7 @@ def read_eval_loop(args: list[str] | None = None) -> None:
 
     if len(args) > 0:
         perform_with_args(args)
+        return
 
     while True:
         arg_str = input(
