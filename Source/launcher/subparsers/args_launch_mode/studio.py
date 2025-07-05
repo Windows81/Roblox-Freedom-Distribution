@@ -6,8 +6,8 @@ import dataclasses
 import game_config as config
 import logger
 import util.resource
-from launcher.routines import player, rcc, studio, web
-from launcher.routines import _logic as logic
+from routines import player, rcc, studio, web
+from routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
 from web_server._logic import server_mode
 

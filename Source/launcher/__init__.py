@@ -4,9 +4,9 @@ import shlex
 import sys
 
 # Local application imports
-import launcher.routines._logic as routine_logic
-import launcher.subparsers._logic as sub_logic
 import util.const as const
+import routines._logic as routine_logic
+import launcher.subparsers._logic as sub_logic
 
 
 from .subparsers.args_launch_mode import (
@@ -111,18 +111,20 @@ def parse_arg_list(args: list[str] | None) -> list[routine_logic.arg_type] | Non
     return routine_args_list
 
 
+def perform_with_args(args: list[str]) -> None:
+    arg_list = parse_arg_list(args)
+    if arg_list is None:
+        return
+    routine_group = routine_logic.routine(*arg_list)
+    routine_group.wait()
+
+
 def read_eval_loop(args: list[str] | None = None) -> None:
     '''
     Highest-level main function which takes a list of arguments and does everything in one go.
     '''
     if args is None:
         args = sys.argv[1:]
-
-    def perform_with_args(args: list[str]) -> None:
-        arg_list = parse_arg_list(args)
-        if arg_list is None:
-            return
-        return routine_logic.routine(*arg_list).wait()
 
     if len(args) > 0:
         perform_with_args(args)

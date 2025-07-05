@@ -8,10 +8,12 @@ import logger
 import logger.bcolors
 import logger.flog_table
 import util.resource
-from launcher.routines import player, rcc, web
-from launcher.routines import _logic as logic
-import launcher.subparsers._logic as sub_logic
 from web_server._logic import server_mode
+
+from routines import player, rcc, web
+from routines import _logic as logic
+
+import launcher.subparsers._logic as sub_logic
 
 
 @sub_logic.add_args(sub_logic.launch_mode.SERVER)
@@ -114,11 +116,6 @@ def subparse(
         help="Only runs the webserver, skipping the RCC binary completely.",
     )
     skip_mutex.add_argument(
-        "--skip_rcc_popen",
-        action="store_true",
-        help="Runs the webserver and initialises RCC configuration, but doesn't execute `RCCService.exe`.",
-    )
-    skip_mutex.add_argument(
         "--skip_web",
         action="store_true",
         help="Only runs the Studio binary, skipping hosting the webserver.",
@@ -208,7 +205,6 @@ def _(
                 web_port=web_port,
                 rcc_port=rcc_port,
                 log_filter=log_filter,
-                skip_popen=args_ns.skip_rcc_popen,
                 game_config=game_config,
             ),
         )

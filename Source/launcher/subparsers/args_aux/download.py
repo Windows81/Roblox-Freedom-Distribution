@@ -3,8 +3,8 @@ import argparse
 import functools
 
 # Local application imports
+from routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
-from ...routines import _logic as logic
 
 
 DOWNLOADABLE_ARG_SUPERTYPE = logic.bin_arg_type

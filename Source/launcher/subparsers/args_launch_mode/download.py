@@ -5,8 +5,10 @@ import argparse
 import logger
 import util.resource
 import util.versions
-from launcher.routines import player, rcc, studio, download
-from launcher.routines import _logic as logic
+
+from routines import player, rcc, studio, download
+from routines import _logic as logic
+
 import launcher.subparsers._logic as sub_logic
 
 

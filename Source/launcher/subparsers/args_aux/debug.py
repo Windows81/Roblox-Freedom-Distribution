@@ -1,6 +1,6 @@
-import launcher.subparsers._logic as sub_logic
-from ...routines import _logic as logic
 import argparse
+from routines import _logic as logic
+import launcher.subparsers._logic as sub_logic
 
 DEBUGGABLE_ARG_SUPERTYPE = logic.popen_arg_type
 

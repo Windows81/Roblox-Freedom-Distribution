@@ -4,10 +4,12 @@ import argparse
 # Local application imports
 import tester
 
-from launcher.routines import test
-from launcher.routines import _logic as logic
+from routines import test
+from routines import _logic as logic
 
 import launcher.subparsers._logic as sub_logic
+
+
 @sub_logic.add_args(sub_logic.launch_mode.TEST)
 def _(
     parser: argparse.ArgumentParser,
