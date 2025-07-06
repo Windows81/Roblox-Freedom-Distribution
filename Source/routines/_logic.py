@@ -145,7 +145,7 @@ class entry(_entry):
         super().__init__()
         self.local_args = local_args
         self.threads: list[threading.Thread] = []
-        self.terminate_others_in_group: bool = False
+        self.routine: 'routine | None' = None
 
     def wait(self) -> None:
         for t in self.threads:
@@ -156,8 +156,10 @@ class entry(_entry):
         entry.wait(self)
 
     def kill(self) -> None:
-        self.terminate_others_in_group = True
-        self.stop()
+        if self.routine is not None:
+            self.routine.stop()
+        else:
+            self.stop()
 
     def __del__(self) -> None:
         return self.stop()
@@ -344,6 +346,15 @@ class routine:
     Contains a list of `entry` objects.
     A routine is initialised with a list of argument data-class objects.
     Each of these objects points to a class whose `__init__` method is called with the data in that argument object.
+
+    Entries in `self.entries` have two stages of action:
+    1) the time it takes to *complete* the `process` function, and
+    2) the time it takes to join all subthreads in the `self.entries[*].threads` list field.
+
+    For entries in the `self.entries` list field:
+    - Entries evaluate stage (1) synchronously in forwards order.
+    - Entries evaluate stage (2) asynchronously.
+        - If an entry calls `kill` whilst in stage (2), forcibly terminate all entries in the `self.entries` list field.
     '''
     entries: list[entry]
 
@@ -353,17 +364,12 @@ class routine:
         for args in args_list:
             e = args.obj_type(args)
             self.entries.append(e)
+            e.routine = self
             e.process()
 
     def wait(self) -> None:
-        terminate = False
         for e in reversed(self.entries):
-            if terminate:
-                e.stop()
-            else:
-                e.wait()
-            if e.terminate_others_in_group:
-                terminate = True
+            e.wait()
 
     def stop(self) -> None:
         for e in reversed(self.entries):
