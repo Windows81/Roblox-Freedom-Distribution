@@ -218,8 +218,7 @@ def _(
                 web_port=web_port,
                 user_code=args_ns.user_code,
                 log_filter=log_filter,
-                # Some CoreGUI elements don't render properly if we join too
-                # early.
+                # Some CoreGUI elements don't render properly if we join too early.
                 launch_delay=3,
             ),
         ])

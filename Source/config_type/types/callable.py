@@ -1,3 +1,5 @@
+# pyright: reportUnknownLambdaType=false
+
 # Standard library imports
 import dataclasses
 import enum
@@ -5,8 +7,7 @@ import textwrap
 import time
 
 # Typing imports
-from typing import Any, Hashable
-
+from typing import Any, Callable, Hashable
 
 
 class call_mode_enum(enum.Enum):
@@ -41,11 +42,11 @@ class obj_type[**P, R]:
             if call_mode == call_mode_enum.assume else
             call_mode
         )
-        self._call = self.get_call()
         self.call_cache: dict[Hashable, call_cache_data[R]] = {}
+        self._func = self.gen_function()
 
     def __call__(self, *args: P.args, **kwargs: P.kwargs) -> R:
-        result = self._call(*args, *kwargs.values())
+        result = self._func(*args, *kwargs.values())
         return self.caster_func(result)
 
     def cached_call(self, dur: float, key: Hashable, *args: P.args, **kwargs: P.kwargs) -> R:
@@ -73,14 +74,16 @@ class obj_type[**P, R]:
             elif 'def ' in checked:
                 return call_mode_enum.python
             return call_mode_enum.lua
-        if isinstance(rep, dict):
+        elif isinstance(rep, dict):
             return call_mode_enum.dicted
+        elif isinstance(rep, Callable):
+            return call_mode_enum.python
         raise Exception(
             "Config option at path `%s` isn't valid." %
             (self.field_path),
         )
 
-    def get_call(self):
+    def gen_function(self) -> Callable[..., Any] | Any:
         match self.call_mode:
             case call_mode_enum.lua:
                 def call_lua(*args):
@@ -89,7 +92,8 @@ class obj_type[**P, R]:
                     )
                 return call_lua
             case call_mode_enum.python:
-                assert isinstance(self.rep, str)
+                if isinstance(self.rep, Callable):
+                    return lambda _, *a: self.rep(*a)
                 local_vars = {}
                 modded_rep = (
                     textwrap.dedent("""\

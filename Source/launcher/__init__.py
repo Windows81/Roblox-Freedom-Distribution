@@ -115,8 +115,8 @@ def perform_with_args(args: list[str]) -> None:
     arg_list = parse_arg_list(args)
     if arg_list is None:
         return
-    routine_group = routine_logic.routine(*arg_list)
-    routine_group.wait()
+    with routine_logic.routine(*arg_list) as routine_group:
+        routine_group.wait()
 
 
 def read_eval_loop(args: list[str] | None = None) -> None:
@@ -131,9 +131,13 @@ def read_eval_loop(args: list[str] | None = None) -> None:
         return
 
     while True:
-        arg_str = input(
-            "Enter your command-line arguments [Ctrl+C to quit]: ",
-        )
+        try:
+            arg_str = input(
+                "Enter your command-line arguments [Ctrl+C to quit]: ",
+            )
+        except KeyboardInterrupt:
+            break
+
         try:
             perform_with_args(shlex.split(arg_str))
         # Upon Ctrl+C, the program would not completely stop.

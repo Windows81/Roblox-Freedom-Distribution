@@ -10,7 +10,7 @@ import urllib.error
 import urllib.request
 
 # Typing imports
-from typing import Any, override
+from typing import Self, override
 
 # Local application imports
 import game_config as game_config_module
@@ -367,13 +367,16 @@ class routine:
             e.routine = self
             e.process()
 
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.stop()
+
     def wait(self) -> None:
-        for e in reversed(self.entries):
+        for e in self.entries:
             e.wait()
 
     def stop(self) -> None:
-        for e in reversed(self.entries):
+        for e in self.entries:
             e.stop()
-
-    def __del__(self) -> None:
-        self.stop()

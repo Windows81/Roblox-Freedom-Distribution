@@ -3,14 +3,15 @@ import util.versions as versions
 from game_config import obj_type
 
 
-def get_user_code(id_num: int, game_config: obj_type) -> str:
+def get_user_code(id_num: int, game_config: obj_type) -> str | None:
     database = game_config.storage.players
     user_code = database.get_player_field_from_index(
         database.player_field.ID_NUMBER,
         id_num,
         database.player_field.USER_CODE,
     )
-    assert user_code is not None
+    if user_code is None:
+        return None
     return user_code[0]
 
 

@@ -1,3 +1,6 @@
+# pyright: reportImportCycles=false
+# TODO: simplify import heirarchy
+
 # Standard library imports
 from typing import Callable
 import dataclasses

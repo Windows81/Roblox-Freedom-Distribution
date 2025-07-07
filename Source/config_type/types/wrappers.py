@@ -100,3 +100,13 @@ class rfd_version_check(str):
                 "what was specified in the file."
             )
         return str.__new__(cls, val)
+
+
+class counter:
+    def __init__(self) -> None:
+        super().__init__()
+        self.count = 0
+
+    def __call__(self, *a) -> int:
+        self.count += 1
+        return self.count

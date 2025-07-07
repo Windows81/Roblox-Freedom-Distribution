@@ -67,3 +67,11 @@ class chat_style(enum.Enum):
 class avatar_type(enum.Enum):
     R6 = "R6"
     R15 = "R15"
+
+
+@dataclasses.dataclass
+class avatar_data:
+    type: avatar_type
+    items: list[int]
+    scales: avatar_scales
+    colors: avatar_colors

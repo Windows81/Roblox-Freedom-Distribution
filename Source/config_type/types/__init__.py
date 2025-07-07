@@ -11,9 +11,8 @@ from . import callable, wrappers
 from ._logic import type_call_data
 
 
-
 @functools.cache
-def get_type_call(object_type: type) -> Callable:
+def get_type_call(object_type: type) -> Callable[..., Any]:
     if dataclasses.is_dataclass(object_type):
         return type_calls[dataclasses.dataclass]
 
@@ -65,7 +64,7 @@ def _type_call_rōblox_version(value, call_data: type_call_data) -> util.version
     return util.versions.rōblox.from_name(value)
 
 
-def _type_call_callable(value, call_data: type_call_data) -> Callable:
+def _type_call_callable(value, call_data: type_call_data) -> Callable[..., Any]:
     result_typ = call_data.typ.__args__[-1]
     result_type_call = get_type_call(result_typ)
 
@@ -96,7 +95,7 @@ def _type_call_callable(value, call_data: type_call_data) -> Callable:
     )
 
 
-def _type_call_dataclass_as_dict(value, call_data: type_call_data) -> Callable:
+def _type_call_dataclass_as_dict(value, call_data: type_call_data) -> Callable[..., Any]:
     '''
     Entries which are typed as `dataclass` in-program
     should be written as Python `dict` objects in the config file.
