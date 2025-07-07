@@ -14,6 +14,9 @@ def _(self: web_server_handler) -> bool:
     # Paramater can either be `id` or `assetversionid`.
     asset_id = asset_cache.resolve_asset_query(self.query)
 
+    if asset_id is None:
+        self.send_error(404)
+
     if (
         asset_id == util.const.PLACE_IDEN_CONST and
         not self.is_privileged
