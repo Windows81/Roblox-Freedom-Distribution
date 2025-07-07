@@ -75,8 +75,8 @@ class obj_type:
         '''
         if key in self.kwargs:
             return self.kwargs[key]
-        if hasattr(self, key):
-            return getattr(self, key)
+        if hasattr(self.__class__, key):
+            return getattr(self.__class__, key)
         raise Exception(
             'Unable to find setting "%s" in config file.' %
             (key),
@@ -89,8 +89,7 @@ class obj_type:
         path_prefix: str = '',
         **kwargs,
     ) -> None:
-        # Iterates through sub-sections; makes recursive calls to this
-        # `__init__`.
+        # Iterates through sub-sections; makes recursive calls to this `__init__`.
         self.subsections = [
             subsection(
                 key,
