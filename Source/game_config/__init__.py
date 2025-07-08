@@ -10,8 +10,8 @@ import tomllib
 # Typing imports
 from typing import Any, Callable
 
-# Third-party or external imports 
-import storage 
+# Third-party or external imports
+import storage
 
 # Local application imports
 import data_transfer.transferer
@@ -22,7 +22,7 @@ import util.resource
 import util.versions
 
 
-PARSERS: dict[str, Callable[[bytes], dict]] = {
+PARSERS: dict[str, Callable[[bytes], dict[Any, Any]]] = {
     'toml': lambda f: tomllib.loads(f.decode('utf-8')),
     'json': lambda f: json.loads(f),
 }
