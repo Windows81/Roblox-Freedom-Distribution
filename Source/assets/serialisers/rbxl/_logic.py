@@ -1,5 +1,6 @@
 from typing import Callable
 import dataclasses
+import functools
 import lz4.block
 import pyzstd
 import io
@@ -12,6 +13,7 @@ HEADER_SIGNATURE = bytes([
 INT_SIZE = 4
 
 
+@functools.cache
 def wrap_string(v: bytes) -> bytes:
     return len(v).to_bytes(INT_SIZE, 'little') + v
 

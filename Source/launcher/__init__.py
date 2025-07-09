@@ -140,7 +140,7 @@ def read_eval_loop(args: list[str] | None = None) -> None:
 
         try:
             perform_with_args(shlex.split(arg_str))
-        # Upon Ctrl+C, the program would not completely stop.
+        # Upon Ctrl+C, the program should not completely stop.
         # Rather, we want to make RFD ask for `arg_str` again.
         except KeyboardInterrupt:
             pass
