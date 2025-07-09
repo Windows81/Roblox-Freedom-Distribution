@@ -318,7 +318,7 @@ class obj_type(logic.bin_web_entry, logic.server_entry):
         file_path = place_uri.value
         last_modified = os.path.getmtime(file_path)
 
-        while not self.is_running and not self.is_terminated:
+        while self.is_running and not self.is_terminated:
             current_modified = os.path.getmtime(file_path)
             if current_modified == last_modified:
                 time.sleep(1)
