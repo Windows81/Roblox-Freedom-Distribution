@@ -72,7 +72,7 @@ class config_type(allocateable.obj_type):
 
         retrieve_avatar: callable[[int, str], structs.avatar_data] = (
             lambda *a: {
-                "type": "R16",
+                "type": "R15",
                 "items": [],
                 "scales": {
                     "height": 1,
