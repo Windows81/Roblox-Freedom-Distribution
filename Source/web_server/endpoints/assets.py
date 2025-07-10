@@ -16,6 +16,7 @@ def _(self: web_server_handler) -> bool:
 
     if asset_id is None:
         self.send_error(404)
+        return True
 
     if (
         asset_id == util.const.PLACE_IDEN_CONST and

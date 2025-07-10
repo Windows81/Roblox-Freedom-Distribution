@@ -178,6 +178,7 @@ class popen_entry(entry):
         self.popen_mains: list[subprocess.Popen[str]] = []
         self.popen_daemons: list[subprocess.Popen[str]] = []
         self.is_terminated: bool = False
+        self.is_running: bool = False
 
     def make_popen(self, cmd_args: list[str], *args, **kwargs) -> None:
         '''
