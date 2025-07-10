@@ -95,7 +95,7 @@ class asseter:
         # RFD treats 'asset version idens' the same way as just plain 'version idens'.
         return self.resolve_asset_id(id_str)
 
-    def resolve_asset_query(self, query: dict[str, str]) -> int | str:
+    def resolve_asset_query(self, query: dict[str, str]) -> int | str | None:
         candidate_funcs = [
             (query.get('id'), self.resolve_asset_id),
             (query.get('assetversionid'), self.resolve_asset_version_id),
@@ -110,7 +110,6 @@ class asseter:
         for (prop_val, func) in candidate_funcs:
             if prop_val is not None:
                 return prop_val
-        raise Exception('Unable to extract asset id from URL query.')
 
     def add_asset(self, asset_id: int | str, data: bytes) -> None:
         path = self.get_asset_path(asset_id)

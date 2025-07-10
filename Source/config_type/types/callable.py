@@ -76,7 +76,7 @@ class obj_type[**P, R]:
             return call_mode_enum.lua
         elif isinstance(rep, dict):
             return call_mode_enum.dicted
-        elif isinstance(rep, Callable):
+        elif callable(rep):
             return call_mode_enum.python
         raise Exception(
             "Config option at path `%s` isn't valid." %
@@ -92,8 +92,8 @@ class obj_type[**P, R]:
                     )
                 return call_lua
             case call_mode_enum.python:
-                if isinstance(self.rep, Callable):
-                    return lambda _, *a: self.rep(*a)
+                if callable(self.rep):
+                    return self.rep
                 local_vars = {}
                 modded_rep = (
                     textwrap.dedent("""\

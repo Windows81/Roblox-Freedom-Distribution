@@ -73,13 +73,15 @@ function CreateZippedDirs() {
 			"-xr!GlobalBasicSettings_13.xml";
 			"-xr!AnalysticsSettings.xml";
 			"-xr!LocalStorage";
+			"-xr!minidump";
 			"-xr!logs";
 
 			# IDA debug files
 			"-xr!*.id1"; "-xr!*.i32"; "-xr!*.i64";
 
-			# x96dbg databases
+			# x96dbg debug files
 			"-xr!*.dd32"; "-xr!*.dd64";
+			"-xr!*.1337";
 		)
 
 		$files.Add($zip)
