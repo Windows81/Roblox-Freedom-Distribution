@@ -1,6 +1,12 @@
 from web_server._logic import web_server_handler, server_path
+from config_type.types import structs, wrappers
 import util.versions as versions
 from game_config import obj_type
+
+
+def get_avatar(id_num: int, game_config: obj_type) -> structs.avatar_data:
+    user_code = get_user_code(id_num, game_config)
+    return game_config.server_core.retrieve_avatar(id_num, user_code)
 
 
 def get_user_code(id_num: int, game_config: obj_type) -> str | None:
@@ -15,27 +21,13 @@ def get_user_code(id_num: int, game_config: obj_type) -> str | None:
     return user_code[0]
 
 
-class avatar_data:
-    def __init__(self, id_num: int, game_config: obj_type) -> None:
-        super().__init__()
-        user_code = get_user_code(id_num, game_config)
-        self.type = game_config.server_core\
-            .retrieve_avatar_type(id_num, user_code)
-        self.items = game_config.server_core\
-            .retrieve_avatar_items(id_num, user_code)
-        self.scales = game_config.server_core\
-            .retrieve_avatar_scales(id_num, user_code)
-        self.colors = game_config.server_core\
-            .retrieve_avatar_colors(id_num, user_code)
-
-
 @server_path('/v1.1/avatar-fetch/', versions={versions.rōblox.v348})
 def _(self: web_server_handler) -> bool:
     '''
     Character appearance for v348.
     '''
     id_num = int(self.query['userId'])
-    avatar = avatar_data(id_num, self.game_config)
+    avatar = get_avatar(id_num, self.game_config)
 
     self.send_json({
         "animations": {},
@@ -72,7 +64,7 @@ def _(self: web_server_handler) -> bool:
     Character appearance for v463.
     '''
     id_num = int(self.query['userId'])
-    avatar = avatar_data(id_num, self.game_config)
+    avatar = get_avatar(id_num, self.game_config)
 
     self.send_json({
         "resolvedAvatarType": avatar.type.name,

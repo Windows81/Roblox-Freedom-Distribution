@@ -70,34 +70,27 @@ class config_type(allocateable.obj_type):
 
         retrieve_user_id: callable[[str], int] = wrappers.counter().__call__
 
-        retrieve_avatar_scales: callable[[int, str], structs.avatar_scales] = (
+        retrieve_avatar: callable[[int, str], structs.avatar_data] = (
             lambda *a: {
-                "height": 1,
-                "width": 1,
-                "head": 1,
-                "depth": 1,
-                "proportion": 0,
-                "body_type": 0,
+                "type": "R16",
+                "items": [],
+                "scales": {
+                    "height": 1,
+                    "width": 1,
+                    "head": 1,
+                    "depth": 1,
+                    "proportion": 0,
+                    "body_type": 0,
+                },
+                "colors": {
+                    "head": 1,
+                    "left_arm": 1,
+                    "left_leg": 1,
+                    "right_arm": 1,
+                    "right_leg": 1,
+                    "torso": 1,
+                },
             }
-        )
-
-        retrieve_avatar_colors: callable[[int, str], structs.avatar_colors] = (
-            lambda *a: {
-                "head": 1,
-                "left_arm": 1,
-                "left_leg": 1,
-                "right_arm": 1,
-                "right_leg": 1,
-                "torso": 1,
-            }
-        )
-
-        retrieve_avatar_type: callable[[int, str], structs.avatar_type] = (
-            lambda *a: 'R6'
-        )
-
-        retrieve_avatar_items: callable[[int, str], list[str]] = (
-            lambda *a: []
         )
 
         retrieve_groups: callable[[int, str], dict[str, int]] = (

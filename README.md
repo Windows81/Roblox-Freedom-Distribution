@@ -688,90 +688,59 @@ end
 '''
 ```
 
-#### `server_core.retrieve_avatar_type`
+#### `server_core.retrieve_avatar`
 
-Resolves to [function](#functions) type `(int, str) -> Enum.HumanoidRigType`.
+Resolves to [function](#functions) type `(int, str) -> util.types.structs.avatar`.
 
-Where Rōblox [`Enum.HumanoidRigType`](https://create.roblox.com/docs/reference/engine/enums/HumanoidRigType) can either be `"R6"` or `"R15"`.
+This function replaces the following options from versions 0.59.X and earlier:
 
-```toml
-retrieve_avatar_type_call_mode = "lua"
-retrieve_avatar_type = '''
-function(user_id_num, user_code)
-    return 'R15'
-end
-'''
-```
-
-#### `server_core.retrieve_avatar_items`
-
-Resolves to [function](#functions) type `(int, str) -> [int]`.
-
-The returned list contains asset idens from the Rōblox catalogue.
+- `retrieve_avatar_type`,
+- `retrieve_avatar_items`,
+- `retrieve_avatar_scales`, and
+- `retrieve_avatar_colors`.
 
 ```toml
-retrieve_avatar_items_call_mode = "lua"
-retrieve_avatar_items = '''
+retrieve_avatar_call_mode = "lua"
+retrieve_avatar = '''
 function(user_id_num, user_code)
     return {
-        10726856854,
-        9482991343,
-        9481782649,
-        9120251003,
-        4381817635,
-        6969309778,
-        5731052645,
-        2846257298,
-        121390054,
-        261826995,
-        154386348,
-        201733574,
-        48474294,
-        6340101,
-        192483960,
-        190245296,
-        183808364,
-        34247191,
-    }
-end
-'''
-```
-
-#### `server_core.retrieve_avatar_scales`
-
-Resolves to [function](#functions) type `(int, str) -> util.types.structs.avatar_scales`.
-
-```toml
-retrieve_avatar_scales_call_mode = "lua"
-retrieve_avatar_scales = '''
-function(user_id_num, user_code)
-    return {
-        height = 1,
-        width = 0.8,
-        head = 1,
-        depth = 0.8,
-        proportion = 0,
-        body_type = 0,
-    }
-end
-'''
-```
-
-#### `server_core.retrieve_avatar_colors`
-
-Resolves to [function](#functions) type `(int, str) -> util.types.structs.avatar_colors`.
-
-```toml
-retrieve_avatar_colors_call_mode = "lua"
-retrieve_avatar_colors = '''
-function(user_id_num, user_code)
-    return {
-        head = 315,
-        left_arm = 315,
-        left_leg = 315,
-        right_arm = 315,
-        right_leg = 315,
-        torso = 315,
+        type = 'R15',
+        items = {
+            10726856854,
+            9482991343,
+            9481782649,
+            9120251003,
+            4381817635,
+            6969309778,
+            5731052645,
+            2846257298,
+            121390054,
+            261826995,
+            154386348,
+            201733574,
+            48474294,
+            6340101,
+            192483960,
+            190245296,
+            183808364,
+            34247191,
+        },
+        scales = {
+            height = 1,
+            width = 0.8,
+            head = 1,
+            depth = 0.8,
+            proportion = 0,
+            body_type = 0,
+        },
+        colors = {
+            head = 315,
+            left_arm = 315,
+            left_leg = 315,
+            right_arm = 315,
+            right_leg = 315,
+            torso = 315,
+        },
     }
 end
 '''
