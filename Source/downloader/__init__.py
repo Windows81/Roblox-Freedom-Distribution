@@ -7,7 +7,6 @@ import urllib.request
 
 # Third-party imports
 import py7zr
-import py7zr.exceptions
 import tqdm_vendored as tqdm
 
 # Local application/library specific imports
@@ -93,7 +92,14 @@ def bootstrap_binary(
             return
 
     logger.log(
-        text=f'Downloading {rōblox_version.name}/{bin_type.name}...',
+        text=(
+            'Downloading %s/%s (%s)...' %
+            (
+                rōblox_version.name,
+                bin_type.name,
+                util.const.ZIPPED_RELEASE_VERSION,
+            )
+        ),
         context=logger.log_context.PYTHON_SETUP,
         filter=log_filter,
     )

@@ -68,8 +68,9 @@ class uri_obj:
         if value.startswith(rbx_asset_prefix):
             self.uri_type = uri_type.RŌBLOX
             self.value = value[len(rbx_asset_prefix):]
+            return
 
-        if value.startswith('http://') or value.startswith('https://'):
+        elif value.startswith('http://') or value.startswith('https://'):
             self.uri_type = uri_type.ONLINE
             self.value = value
             return
@@ -96,8 +97,8 @@ class rfd_version_check(str):
     def __new__(cls, val: str) -> Self:
         if not fnmatch.fnmatch(const.GIT_RELEASE_VERSION, val):
             raise Exception(
-                "The RFD version you're using doesn't match " +
-                "what was specified in the file."
+                "The RFD version you're using doesn't match what was specified in the file (i.e. %s)." %
+                (val,)
             )
         return str.__new__(cls, val)
 
