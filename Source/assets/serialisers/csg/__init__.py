@@ -21,6 +21,9 @@ hashSize: int = 0x10
 
 
 def createHash(data: bytes, saltIn: bytes = b'rfd') -> str:
+    '''
+    TODO: decide whether we should `jmp` this function in the EXEs or to actually use `createHash` and have the client validate the hash.
+    '''
     verticesSize: int = 0  # vertices.size() * sizeof(CSGVertex);
     indicesSize: int = 0  # indices.size() * sizeof(unsigned int);
     buffSize: int = verticesSize + indicesSize + saltSize

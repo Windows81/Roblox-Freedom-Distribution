@@ -1,21 +1,21 @@
-from typing import Callable
+import copy
+import hashlib
+from typing import Callable, override
 import dataclasses
-import functools
 import lz4.block
 import pyzstd
 import io
 
-# b'<roblox!\x89\xff\r\n\x1a\n'
-HEADER_SIGNATURE = bytes([
-    60, 114, 111, 98, 108, 111, 120, 33, 137, 255, 13, 10, 26, 10,
-])
-
+HEADER_SIGNATURE = b'<roblox!\x89\xff\r\n\x1a\n'
 INT_SIZE = 4
 
 
-@functools.cache
 def wrap_string(v: bytes) -> bytes:
     return len(v).to_bytes(INT_SIZE, 'little') + v
+
+
+def read_int(data: bytes) -> int:
+    return int.from_bytes(data, byteorder='little')
 
 
 def split_prop_strings(data: bytes, limit: int = -1) -> list[bytes]:
@@ -26,7 +26,7 @@ def split_prop_strings(data: bytes, limit: int = -1) -> list[bytes]:
     length = len(data)
     index = 0
     while index < length:
-        size = int.from_bytes(data[index:index+INT_SIZE], 'little')
+        size = int.from_bytes(data[index:index+INT_SIZE])
         str_beg = index + INT_SIZE
         str_end = str_beg + size
         chunk = data[str_beg:str_end]
@@ -47,12 +47,106 @@ def join_prop_strings(data: list[bytes]) -> bytes:
     )
 
 
-@dataclasses.dataclass
-class chunk_info:
-    chunk_name: bytes
-    reserved_metadata: bytes
-    chunk_data: bytes
-    '''All chunk information which comes *after* the `chunk_name`'''
+class chunk_data_type:
+    CLASS_MAPPING: dict[bytes, type['chunk_data_type']] = {}
+    CLASS_NAME = b''
+
+    def __init__(self, chunk_data: bytes) -> None:
+        super().__init__()
+        self.__chunk_data = chunk_data
+
+    @staticmethod
+    def from_bytes(chunk_name: bytes, data: bytes) -> 'chunk_data_type':
+        return chunk_data_type.CLASS_MAPPING[chunk_name](data)
+
+    def to_bytes(self) -> bytes:
+        return self.__chunk_data
+
+    def __init_subclass__(cls) -> None:
+        super().__init_subclass__()
+        chunk_data_type.CLASS_MAPPING[cls.CLASS_NAME] = cls
+
+
+def write_int(value: int) -> bytes:
+    return value.to_bytes(INT_SIZE, byteorder='little')
+
+
+class chunk_data_type_prop(chunk_data_type):
+    CHUNK_NAME = b'PROP'
+
+    def __init__(self, chunk_data: bytes) -> None:
+        super().__init__(chunk_data)
+        reader = io.BytesIO(chunk_data)
+        self.class_iden: int = read_int(reader.read(INT_SIZE))
+        strlen: int = read_int(reader.read(INT_SIZE))
+        self.prop_name: bytes = reader.read(strlen)
+        self.prop_type: int = read_int(reader.read(1))
+        self.prop_values: bytes = reader.read()
+
+    @override
+    def to_bytes(self) -> bytes:
+        writer = io.BytesIO()
+        writer.write(write_int(self.class_iden))
+        writer.write(wrap_string(self.prop_name))
+        writer.write(self.prop_type.to_bytes(1))
+        writer.write(self.prop_values)
+        return writer.getvalue()
+
+
+class chunk_data_type_sstr(chunk_data_type):
+    CHUNK_NAME = b'SSTR'
+
+    def __init__(self, chunk_data: bytes) -> None:
+        super().__init__(chunk_data)
+        reader = io.BytesIO(chunk_data)
+        self.version: int = read_int(reader.read(INT_SIZE))
+        self.length: int = read_int(reader.read(INT_SIZE))
+        self.strings: list[tuple[bytes, bytes]] = []
+        for _ in range(self.length):
+            hash_value: bytes = reader.read(16)
+            strlen: int = read_int(reader.read(INT_SIZE))
+            string_value: bytes = reader.read(strlen)
+            self.strings.append((hash_value, string_value))
+
+    @override
+    def to_bytes(self) -> bytes:
+        writer = io.BytesIO()
+        writer.write(write_int(self.version))
+        writer.write(write_int(self.length))
+
+        # @21098765432109: Is the `md5` taken for the whole shared string *including* or *excluding* its length?
+        # @regg.ie: Excluding, it's a sum of the payload itself. The hash is ignored by the engine and not actually ever emitted by Studio, though
+        # @regg.ie: As per rbx-dom's spec
+        for _, string_value in self.strings:
+            wrapped = wrap_string(string_value)
+            md5_hash = hashlib.md5(string_value).digest()
+            writer.write(md5_hash)
+            writer.write(wrapped)
+        return writer.getvalue()
+
+
+class chunk_data_type_inst(chunk_data_type):
+    CHUNK_NAME = b'INST'
+
+    def __init__(self, chunk_data: bytes) -> None:
+        super().__init__(chunk_data)
+        reader = io.BytesIO(chunk_data)
+        self.class_iden: int = read_int(reader.read(INT_SIZE))
+        str_size: int = read_int(reader.read(INT_SIZE))
+        self.class_name: bytes = reader.read(str_size)
+        self.has_service: bool = reader.read(1) != b'\x00'
+        self.instant_count: int = read_int(reader.read(INT_SIZE))
+        self.rest_of_data: bytes = reader.read()
+
+    @override
+    def to_bytes(self) -> bytes:
+        writer = io.BytesIO()
+        writer.write(write_int(self.class_iden))
+        writer.write(wrap_string(self.class_name))
+        writer.write(b'\x01' if self.has_service else b'\x00')
+        writer.write(write_int(self.instant_count))
+        writer.write(self.rest_of_data)
+        return writer.getvalue()
 
 
 @dataclasses.dataclass
@@ -61,94 +155,15 @@ class inst_dict_item:
     instance_count: int
 
 
-def get_class_iden(info: chunk_info) -> bytes | None:
-    '''
-    For `INST` or `PROP`, refer to `ClassID`.
-    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#instances-chunk
-    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
-    '''
-    if info.chunk_name not in {b'PROP', b'INST'}:
-        return None
-    return info.chunk_data[0:INT_SIZE]
+@dataclasses.dataclass
+class chunk_info:
+    chunk_name: bytes
+    reserved_metadata: bytes
+    chunk_data: chunk_data_type
 
 
-def get_first_chunk_str(info: chunk_info) -> bytes | None:
-    '''
-    For `INST`, refer to `ClassName`.
-    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#instances-chunk
-    For `PROP`, refer to `Name`.
-    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
-    '''
-    if info.chunk_name not in {b'PROP', b'INST'}:
-        return None
-    str_size = int.from_bytes(
-        info.chunk_data[INT_SIZE:INT_SIZE*2],
-        byteorder='little',
-    )
-    str_start = 2 * INT_SIZE
-    return info.chunk_data[str_start:str_start + str_size]
-
-
-def get_pre_prop_values_bytes(info: chunk_info) -> bytes:
-    '''
-    Returns all `PROP` data up to the the data-type byte.
-    '''
-    if info.chunk_name not in {b'PROP'}:
-        return info.chunk_data
-    str_size = int.from_bytes(
-        info.chunk_data[INT_SIZE:INT_SIZE*2],
-        byteorder='little',
-    )
-    str_start = 2 * INT_SIZE
-    return info.chunk_data[:str_start + str_size + 1]
-
-
-def get_prop_values_bytes(info: chunk_info) -> bytes | None:
-    '''
-    For `PROP`, refer to `Values`.
-    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#values
-    '''
-    if info.chunk_name not in {b'PROP'}:
-        return None
-    str_size = int.from_bytes(
-        info.chunk_data[INT_SIZE:INT_SIZE*2],
-        byteorder='little',
-    )
-    str_start = 2 * INT_SIZE
-    return info.chunk_data[str_start + str_size + 1:]
-
-
-def get_type_iden(info: chunk_info) -> int | None:
-    '''
-    For `PROP`, refer to `TypeID`.
-    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#values
-    '''
-    if info.chunk_name not in {b'PROP'}:
-        return None
-    str_size = int.from_bytes(
-        info.chunk_data[INT_SIZE:INT_SIZE*2],
-        byteorder='little',
-    )
-    str_end = 2 * INT_SIZE + str_size
-    return info.chunk_data[str_end]
-
-
-def get_instance_count(info: chunk_info) -> int | None:
-    '''
-    For `INST`, refer to `Length`.
-    https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#instances-chunk
-    '''
-    if info.chunk_name not in {b'INST'}:
-        return None
-    str_size = int.from_bytes(
-        info.chunk_data[INT_SIZE:INT_SIZE*2],
-        byteorder='little',
-    )
-    prop_start = 2 * INT_SIZE + str_size + 1
-    return int.from_bytes(
-        info.chunk_data[prop_start:prop_start + INT_SIZE],
-        byteorder='little',
-    )
+type TRANSFORM_TYPE = list[Callable[[
+    'rbxl_parser', chunk_data_type], chunk_data_type | None]]
 
 
 class rbxl_parser:
@@ -156,11 +171,7 @@ class rbxl_parser:
         super().__init__()
         self.file_data = data
 
-    def parse_file(
-        self,
-        transforms: list[Callable[['rbxl_parser', chunk_info], bytes | None]],
-    ) -> bytes:
-
+    def parse_file(self, transforms: TRANSFORM_TYPE) -> bytes:
         self.read_stream = io.BytesIO(self.file_data)
         self.write_stream = io.BytesIO()
 
@@ -172,16 +183,9 @@ class rbxl_parser:
 
         # https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
         while True:
-            info = self.__process_chunk()
+            info = self.__process_chunk(transforms)
             if info is None:
                 break
-            for trans in transforms:
-                info.chunk_data = (
-                    trans(self, info)
-                    or info.chunk_data
-                )
-            new_chunk = self.compile_chunk(info)
-            self.write_stream.write(new_chunk)
 
         result = self.write_stream.getvalue()
         self.read_stream.close()
@@ -209,37 +213,36 @@ class rbxl_parser:
             self.header_info[10:18],
             byteorder='little',
         )
-        self.class_dict: dict[bytes, inst_dict_item] = {}
+        self.class_dict: dict[int, inst_dict_item] = {}
 
         return b''.join([
             HEADER_SIGNATURE,
             self.header_info,
         ])
 
-    def __process_chunk(self) -> chunk_info | None:
+    def __process_chunk(self, transforms: TRANSFORM_TYPE) -> chunk_info | None:
         info = self.decompress_chunk()
         if info is None:
             return None
 
-        if info.chunk_name == b'INST':
-            class_id = get_class_iden(info)
-            if class_id is None:
-                return
+        if isinstance(info.chunk_data, chunk_data_type_inst):
+            class_iden = info.chunk_data.class_iden
+            class_name = info.chunk_data.class_name
+            instance_count = info.chunk_data.instant_count
 
-            class_name = get_first_chunk_str(info)
-            if class_name is None:
-                return
-
-            instance_count = get_instance_count(info)
-            if instance_count is None:
-                return
-
-            self.class_dict[class_id] = inst_dict_item(
+            self.class_dict[class_iden] = inst_dict_item(
                 class_name=class_name,
                 instance_count=instance_count,
             )
 
-        return info
+        for trans in transforms:
+            result = trans(self, copy.copy(info.chunk_data))
+            if result is None:
+                result = info.chunk_data
+            info.chunk_data = result
+
+        new_chunk = self.compile_chunk(info)
+        self.write_stream.write(new_chunk)
 
     def decompress_chunk(self) -> chunk_info | None:
         chunk_name = self.read_stream.read(4)
@@ -260,27 +263,29 @@ class rbxl_parser:
 
         # https://dom.rojo.space/binary.html#chunks
         if compressed_size == 0:
-            chunk_data = self.read_stream.read(uncompressed_size)
+            chunk_data_bytes = self.read_stream.read(uncompressed_size)
         else:
             compressed_chunk_data = self.read_stream.read(compressed_size)
             if compressed_chunk_data.startswith(b'\x28\xB5\x2F\xFD'):
-                chunk_data = pyzstd.decompress(compressed_chunk_data)
+                chunk_data_bytes = pyzstd.decompress(compressed_chunk_data)
             else:
-                chunk_data = lz4.block.decompress(
+                chunk_data_bytes = lz4.block.decompress(
                     source=compressed_chunk_data,
                     uncompressed_size=uncompressed_size,
                 )
 
-        assert len(chunk_data) == uncompressed_size
+        assert len(chunk_data_bytes) == uncompressed_size
         return chunk_info(
             chunk_name=chunk_name,
             reserved_metadata=reserved_metadata,
-            chunk_data=chunk_data,
+            chunk_data=chunk_data_type.from_bytes(
+                chunk_name, chunk_data_bytes),
         )
 
     @staticmethod
     def compile_chunk(info: chunk_info) -> bytes:
-        new_size = len(info.chunk_data)
+        chunk_data_bytes = info.chunk_data.to_bytes()
+        new_size = len(chunk_data_bytes)
         return b''.join([
             info.chunk_name,
             int.to_bytes(
@@ -294,5 +299,5 @@ class rbxl_parser:
                 length=4,
             ),
             info.reserved_metadata,
-            info.chunk_data,
+            info.chunk_data.to_bytes(),
         ])

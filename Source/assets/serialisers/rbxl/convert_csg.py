@@ -2,29 +2,22 @@ from . import _logic
 from .. import csg
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
-    if info.chunk_name == b'SSTR':
-        # TODO: fix CSGv3 SharedString objects.
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
+    if isinstance(chunk_data, _logic.chunk_data_type_prop):
+        sstr_data = chunk_data
+        prop_values = _logic.split_prop_strings(sstr_data, len_offset=-4)
         return
 
-    prop_name = _logic.get_first_chunk_str(info)
-    if prop_name is None or not prop_name.startswith(b'MeshData'):
-        return
+    if isinstance(chunk_data, _logic.chunk_data_type_prop):
+        if not chunk_data.prop_name.startswith(b'MeshData'):
+            return
 
-    if _logic.get_type_iden(info) == 0x1C:
-        return
+        if chunk_data.prop_type == 0x1C:
+            return
 
-    prop_data = _logic.get_prop_values_bytes(info)
-    if prop_data is None:
-        return
+        chunk_data.prop_values = _logic.join_prop_strings([
+            csg.parse(data) or data
+            for data in _logic.split_prop_strings(chunk_data.prop_values)
+        ])
 
-    prop_values = _logic.split_prop_strings(prop_data)
-    results = [
-        csg.parse(data) or data
-        for data in prop_values
-    ]
-
-    return (
-        _logic.get_pre_prop_values_bytes(info) +
-        _logic.join_prop_strings(results)
-    )
+        return chunk_data
