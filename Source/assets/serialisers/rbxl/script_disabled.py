@@ -1,30 +1,23 @@
 from . import _logic
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
-    if _logic.get_first_chunk_str(info) != b'Enabled':
+def replace(parser: _logic.rbxl_parser,  chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
+    if not isinstance(chunk_data, _logic.chunk_data_type_prop):
         return None
 
-    class_id = _logic.get_class_iden(info)
-    if class_id is None:
+    if chunk_data.prop_name != b'Enabled':
         return None
 
-    if not parser.class_dict[class_id].class_name.endswith(b'Script'):
+    class_iden = chunk_data.class_iden
+    if not parser.class_dict[class_iden].class_name.endswith(b'Script'):
         return None
 
-    class_id = info.chunk_data[0:_logic.INT_SIZE]
-    old_prop_name = b'\x07\x00\x00\x00Enabled\x02'
-    new_prop_name = b'\x08\x00\x00\x00Disabled\x02'
-    chunk_values = info.chunk_data[len(class_id + old_prop_name):]
-
-    new_values = bytes(
-        b ^ 1  # XORs booleaned uint8 between 0 and 1.
+    # Replace the enabled flag with its opposite.
+    # XORs booleaned uint8 between 0 and 1.
+    chunk_data.prop_values = bytes(
+        b ^ 1
         for b in
-        chunk_values
+        chunk_data.prop_values
     )
 
-    return b''.join([
-        class_id,
-        new_prop_name,
-        new_values,
-    ])
+    return chunk_data

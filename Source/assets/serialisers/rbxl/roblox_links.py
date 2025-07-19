@@ -2,27 +2,23 @@ import re
 from . import _logic
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
     '''
     Redirects `assetdelivery.roblox.com` links within any `rbxm` data container to `rbxassetid://`.
     '''
-    prop_data = _logic.get_prop_values_bytes(info)
-    if prop_data is None:
-        return
-    if _logic.get_type_iden(info) != 0x01:
+    if not isinstance(chunk_data, _logic.chunk_data_type_prop):
+        return None
+
+    if chunk_data.prop_type != 0x01:
         return
 
-    prop_values = _logic.split_prop_strings(prop_data)
-    results = [
+    chunk_data.prop_values = _logic.join_prop_strings([
         re.sub(
             br'https?://(?:assetgame\.|assetdelivery\.|www\.)?roblox\.com/(?:v1/)?asset/?\?id=([\d]{1,17})',
             lambda m: b'rbxassetid://%s' % m.group(1),
             v
         )
-        for v in prop_values
-    ]
+        for v in _logic.split_prop_strings(chunk_data.prop_values)
+    ])
 
-    return (
-        _logic.get_pre_prop_values_bytes(info) +
-        _logic.join_prop_strings(results)
-    )
+    return chunk_data

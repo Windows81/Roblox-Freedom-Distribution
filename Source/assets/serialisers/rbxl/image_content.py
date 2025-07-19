@@ -15,23 +15,24 @@ def pad_enums(enums: list[int], uri_list: list[bytes]) -> list[bytes]:
     # ]
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
     '''
     https://github.com/rojo-rbx/rbx-dom/blob/5ee4d9062b2d31d61c07bd81e39b0260c6f91a0e/docs/binary.md#content
     '''
-    old_prop_head = _logic.wrap_string(b'ImageContent') + b'\x22'
-    new_prop_head = _logic.wrap_string(b'Image') + b'\x01'
-    if not info.chunk_data.startswith(old_prop_head, _logic.INT_SIZE):
+    if not isinstance(chunk_data, _logic.chunk_data_type_prop):
         return None
 
-    class_id = _logic.get_class_iden(info)
-    if class_id is None:
+    if chunk_data.prop_name != b'ImageContent':
         return None
 
-    prop_data = _logic.get_prop_values_bytes(info)
-    if prop_data is None:
-        return
-    enum_count = parser.class_dict[class_id].instance_count
+    if chunk_data.prop_type != 0x22:
+        return None
+
+    chunk_data.prop_name = b'Image'
+    chunk_data.prop_type = 0x01
+
+    prop_data = chunk_data.prop_values
+    enum_count = parser.class_dict[chunk_data.class_iden].instance_count
 
     # `SourceTypes` objects (just like all enums) are stored as an INTERLEAVED array of big-endian `uint32`s.
     # Why take just a partial segment?  We're taking advantage of the fact that `SourceTypes` never goes above 256.
@@ -51,9 +52,6 @@ def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None
         limit=uri_count,
     )
     padded_uri_list = pad_enums(enums, uri_list)
+    chunk_data.prop_values = _logic.join_prop_strings(padded_uri_list)
 
-    return b''.join([
-        class_id,
-        new_prop_head,
-        _logic.join_prop_strings(padded_uri_list),
-    ])
+    return chunk_data
