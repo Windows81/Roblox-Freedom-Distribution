@@ -15,7 +15,7 @@ def pad_enums(enums: list[int], uri_list: list[bytes]) -> list[bytes]:
     # ]
 
 
-def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> bytes | None:
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
     '''
     https://github.com/rojo-rbx/rbx-dom/blob/5ee4d9062b2d31d61c07bd81e39b0260c6f91a0e/docs/binary.md#content
     '''
@@ -54,4 +54,4 @@ def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> b
     padded_uri_list = pad_enums(enums, uri_list)
     chunk_data.prop_values = _logic.join_prop_strings(padded_uri_list)
 
-    return chunk_data.to_bytes()
+    return chunk_data

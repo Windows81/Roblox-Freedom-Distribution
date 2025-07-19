@@ -26,7 +26,7 @@ def split_prop_strings(data: bytes, limit: int = -1) -> list[bytes]:
     length = len(data)
     index = 0
     while index < length:
-        size = int.from_bytes(data[index:index+INT_SIZE])
+        size = int.from_bytes(data[index:index+INT_SIZE], byteorder='little')
         str_beg = index + INT_SIZE
         str_end = str_beg + size
         chunk = data[str_beg:str_end]
@@ -48,8 +48,8 @@ def join_prop_strings(data: list[bytes]) -> bytes:
 
 
 class chunk_data_type:
-    CLASS_MAPPING: dict[bytes, type['chunk_data_type']] = {}
-    CLASS_NAME = b''
+    CHUNK_CLASS_MAPPING: dict[bytes, type['chunk_data_type']] = {}
+    CHUNK_NAME = b''
 
     def __init__(self, chunk_data: bytes) -> None:
         super().__init__()
@@ -57,14 +57,17 @@ class chunk_data_type:
 
     @staticmethod
     def from_bytes(chunk_name: bytes, data: bytes) -> 'chunk_data_type':
-        return chunk_data_type.CLASS_MAPPING[chunk_name](data)
+        cls = chunk_data_type.CHUNK_CLASS_MAPPING.get(
+            chunk_name, chunk_data_type,
+        )
+        return cls(data)
 
     def to_bytes(self) -> bytes:
         return self.__chunk_data
 
     def __init_subclass__(cls) -> None:
         super().__init_subclass__()
-        chunk_data_type.CLASS_MAPPING[cls.CLASS_NAME] = cls
+        chunk_data_type.CHUNK_CLASS_MAPPING[cls.CHUNK_NAME] = cls
 
 
 def write_int(value: int) -> bytes:
@@ -101,12 +104,12 @@ class chunk_data_type_sstr(chunk_data_type):
         reader = io.BytesIO(chunk_data)
         self.version: int = read_int(reader.read(INT_SIZE))
         self.length: int = read_int(reader.read(INT_SIZE))
-        self.strings: list[tuple[bytes, bytes]] = []
+        self.strings: list[bytes] = []
         for _ in range(self.length):
-            hash_value: bytes = reader.read(16)
+            _hash_value: bytes = reader.read(16)
             strlen: int = read_int(reader.read(INT_SIZE))
             string_value: bytes = reader.read(strlen)
-            self.strings.append((hash_value, string_value))
+            self.strings.append(string_value)
 
     @override
     def to_bytes(self) -> bytes:
@@ -117,7 +120,7 @@ class chunk_data_type_sstr(chunk_data_type):
         # @21098765432109: Is the `md5` taken for the whole shared string *including* or *excluding* its length?
         # @regg.ie: Excluding, it's a sum of the payload itself. The hash is ignored by the engine and not actually ever emitted by Studio, though
         # @regg.ie: As per rbx-dom's spec
-        for _, string_value in self.strings:
+        for string_value in self.strings:
             wrapped = wrap_string(string_value)
             md5_hash = hashlib.md5(string_value).digest()
             writer.write(md5_hash)
@@ -181,7 +184,6 @@ class rbxl_parser:
             return self.file_data
         self.write_stream.write(header)
 
-        # https://github.com/RobloxAPI/spec/blob/master/formats/rbxl.md#properties-chunk
         while True:
             info = self.__process_chunk(transforms)
             if info is None:
@@ -238,11 +240,12 @@ class rbxl_parser:
         for trans in transforms:
             result = trans(self, copy.copy(info.chunk_data))
             if result is None:
-                result = info.chunk_data
+                continue
             info.chunk_data = result
 
         new_chunk = self.compile_chunk(info)
         self.write_stream.write(new_chunk)
+        return info
 
     def decompress_chunk(self) -> chunk_info | None:
         chunk_name = self.read_stream.read(4)

@@ -1,7 +1,7 @@
 from . import _logic
 
 
-def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> bytes | None:
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
     '''
     This function removes bytecode from any `rbxm` files.
     '''
@@ -18,4 +18,4 @@ def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> b
         [b''] * len(chunk_data.prop_values)
     )
 
-    return chunk_data.to_bytes()
+    return chunk_data

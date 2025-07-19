@@ -83,7 +83,7 @@ def get_new_values(chunk_data: bytes) -> bytes:
     return bytes(new_values)
 
 
-def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> bytes | None:
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
     if not isinstance(chunk_data, _logic.chunk_data_type_prop):
         return None
 
@@ -105,4 +105,4 @@ def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> b
         new_values,
     ])
 
-    return chunk_data.to_bytes()
+    return chunk_data
