@@ -12,8 +12,6 @@ def _(self: web_server_handler) -> bool:
     self.send_data(b'')
     return True
 
-#
-
 
 @server_path('/login/RequestAuth.ashx')
 def _(self: web_server_handler) -> bool:
