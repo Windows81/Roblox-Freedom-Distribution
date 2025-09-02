@@ -1,4 +1,4 @@
-ID_PREFIX = 'rbx-mtl-'
+ID_PREFIX = 'rbxmtl-'
 
 MATERIAL_DICT_2014 = {
     'aluminum-diffuse.dds': 153465459,
