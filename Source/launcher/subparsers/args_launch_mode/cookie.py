@@ -1,6 +1,5 @@
 # Standard library imports
 import argparse
-import logger
 
 # Local application imports
 from routines import cookie

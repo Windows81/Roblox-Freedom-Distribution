@@ -278,7 +278,37 @@ options:
   --bin_subtype, -b {Player,Server,Studio} [{Player,Server,Studio} ...]
                         Directories to download.
   --help, -?            show this help message and exit
+```
 
+### `test`
+
+The `test` command performs a pre-determined series of unit tests. Useful for debugging RFD's compatibility with modern Rōblox systems over time.
+
+As of RFD 0.61.0, the available options are as follows:
+
+```
+usage: _main.py test [--help] [tests_to_run ...]
+
+positional arguments:
+  tests_to_run  Unit tests which are run by RFD.
+
+options:
+  --help, -?    show this help message and exit
+```
+
+### `cookie`
+
+Extracts the `ROBLOSECURITY` cookie which a running instance of RFD would use to extract assets from Roblox.com.
+
+As of RFD 0.61.0, the available options are as follows:
+
+```
+usage: _main.py cookie [--verbose] [--help]
+
+options:
+  --verbose, --show, -v
+                        Exposes the entire cookie in plaintext.
+  --help, -?            show this help message and exit
 ```
 
 ## Network Ports in Use

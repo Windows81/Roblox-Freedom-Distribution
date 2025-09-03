@@ -99,7 +99,7 @@ def download_item(url: str, cookie: str | None = None) -> bytes | None:
             return None
         return response.data
 
-    except urllib3.exceptions.HTTPError as e:
+    except urllib3.exceptions.HTTPError as _:
         return None
 
 
