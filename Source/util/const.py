@@ -1,6 +1,6 @@
 # The `GIT_RELEASE_VERSION` and `ZIPPED_RELEASE_VERSION` lines can change programmatically using a PowerShell script.
 
-GIT_RELEASE_VERSION = '''0.60.1'''
+GIT_RELEASE_VERSION = '''0.61.0'''
 
 ZIPPED_RELEASE_VERSION = '''0.59.8-binaries'''
 ZIPPED_RELEASE_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/%s/%s.%s.7z'

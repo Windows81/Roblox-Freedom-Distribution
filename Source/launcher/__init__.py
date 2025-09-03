@@ -16,6 +16,7 @@ from .subparsers.args_launch_mode import (
     studio as _,
     serialiser as _,
     test as _,
+    cookie as _,
 )
 
 from .subparsers.args_aux import (

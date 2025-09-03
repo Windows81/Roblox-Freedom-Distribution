@@ -10,16 +10,12 @@ class launch_mode(enum.Enum):
     SERIALISE_FILE = 'serialise'
     DOWNLOAD = 'download'
     TEST = 'test'
+    SHOW_COOKIE = 'cookie'
 
 
-ENABLED_LAUNCH_MODES = {
-    launch_mode.SERVER,
-    launch_mode.PLAYER,
-    launch_mode.STUDIO,
-    launch_mode.DOWNLOAD,
-    launch_mode.SERIALISE_FILE,
-    launch_mode.TEST,
-}
+ENABLED_LAUNCH_MODES = set(launch_mode).difference({
+    launch_mode.ALWAYS,
+})
 
 
 MODE_ALIASES = {

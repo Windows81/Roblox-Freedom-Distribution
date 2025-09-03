@@ -49,15 +49,26 @@ def get_cookie_from_system() -> str | None:
     return match[1].decode('utf-8', errors='ignore')
 
 
+def test_cookie(cookie: str | None) -> bool:
+    return (
+        cookie is not None and
+        cookie.startswith(
+            "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_"
+        )
+    )
+
+
 @functools.cache
 def get_rōblox_cookie() -> str | None:
     return next(
-        v for v in
         (
-            get_cookie_from_system(),
-            os.environ.get('ROBLOSECURITY', None),
-        )
-        if v is not None
+            v for v in
+            (
+                get_cookie_from_system(),
+                os.environ.get('ROBLOSECURITY', None),
+            )
+            if test_cookie(v)
+        ), None,
     )
 
 

@@ -26,7 +26,6 @@ def split_asset_str(asset_id: str) -> None | tuple[str, ...]:
 
 
 def load_asset(asset_id: str) -> bytes | None:
-
     # Example: `wood`, `diffuse`, `.dds`.
     # Reconstructs as `wood-diffuse.dds`.
     sub_pieces = split_asset_str(asset_id)
