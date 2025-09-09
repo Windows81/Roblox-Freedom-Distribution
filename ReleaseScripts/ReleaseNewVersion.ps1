@@ -82,6 +82,7 @@ function CreateZippedDirs() {
 			# x96dbg debug files
 			"-xr!*.dd32"; "-xr!*.dd64";
 			"-xr!*.1337";
+			"-x!*.bak";
 		)
 
 		$files.Add($zip)
