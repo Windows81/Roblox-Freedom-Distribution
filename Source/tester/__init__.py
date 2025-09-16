@@ -16,7 +16,7 @@ NAMED_SUITES = {
 DEFAULT_TEST_NAMES = set(NAMED_MODULES.keys())
 
 
-def run_test(tests: set[str] = DEFAULT_TEST_NAMES):
+def run_test(tests: set[str] = DEFAULT_TEST_NAMES) -> None:
     runner = unittest.TextTestRunner()
     runner.run(unittest.TestSuite(
         suite

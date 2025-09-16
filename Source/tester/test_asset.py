@@ -71,6 +71,17 @@ class TestAssets(unittest.TestCase):
         result = serialisers.mesh.parse(data) or data
         self.assertRegex(result, rb'^version')
 
+    def test_rbxlx_load(self) -> None:
+        '''
+        Tests that XML files can be loaded and parsed by the parser.
+        '''
+        data = extractor.download_rōblox_asset(63043890)
+        self.assertIsNotNone(data)
+        assert data is not None
+
+        result = serialisers.rbxlx.parse(data) or data
+        self.assertRegex(result, serialisers.rbxlx.HEADER_SIGNATURE)
+
     @unittest.skip("AttributeError: type object 'method' has no attribute 'convert_csg'")
     def test_csg_load(self) -> None:
         '''

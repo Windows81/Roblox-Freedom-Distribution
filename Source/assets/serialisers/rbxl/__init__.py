@@ -20,18 +20,20 @@ class method(enum.Enum):
     script_disabled = enum.member(partial(script_disabled.replace))
     roblox_links = enum.member(partial(roblox_links.replace))
     skip_bytecode = enum.member(partial(skip_bytecode.replace))
-    # convert_csg = enum.member(partial(convert_csg.replace))
+    convert_csg = enum.member(partial(convert_csg.replace))
     image_content = enum.member(partial(image_content.replace))
 
 
-ALL_METHODS = set(method)
+DEFAULT_METHODS = set(method).difference({
+    method.convert_csg,
+})
 
 
 def check(data: bytes) -> bool:
     return data.startswith(_logic.HEADER_SIGNATURE)
 
 
-def parse(data: bytes, methods: set[method] = ALL_METHODS) -> bytes | None:
+def parse(data: bytes, methods: set[method] = DEFAULT_METHODS) -> bytes | None:
     if not check(data):
         return
     parser = _logic.rbxl_parser(data)

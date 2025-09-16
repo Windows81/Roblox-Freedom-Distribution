@@ -821,7 +821,7 @@ def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     )
     meshHeader.read_data(read_data(data, offset, 24))
-    offset += meshHeader.sizeof_MeshHeader
+    offset += 24
 
     debug_print(f"read_mesh_v4: meshHeader={meshHeader}")
     if meshHeader.numVerts == 0 or meshHeader.numFaces == 0:
@@ -829,8 +829,7 @@ def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
     meshData.header = meshHeader
     for i in range(0, meshHeader.numVerts):
         meshData.vnts.append(FileMeshVertexNormalTexture3d(
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 127, 127, 127, 127, 127,
-        ))
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 127, 127, 127, 127, 127))
         meshData.vnts[i].read_data(read_data(data, offset + i * 40, 40))
 
         debug_print(f"read_mesh_v4: vnts[{i}]={meshData.vnts[i]}")

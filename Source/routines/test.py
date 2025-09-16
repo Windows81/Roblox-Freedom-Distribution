@@ -1,5 +1,7 @@
-from . import _logic as logic
+from typing import override
 import dataclasses
+
+from . import _logic as logic
 import tester
 
 
@@ -11,6 +13,7 @@ class _arg_type(logic.arg_type):
 class obj_type(logic.entry):
     local_args: _arg_type
 
+    @override
     def process(self) -> None:
         tester.run_test(self.local_args.tests)
 
