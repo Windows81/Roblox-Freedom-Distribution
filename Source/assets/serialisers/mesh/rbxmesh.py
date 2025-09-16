@@ -640,10 +640,12 @@ def get_mesh_version(data: bytes) -> str:
     if len(data) < 12:
         raise Exception(
             f"get_mesh_version: data is too short ({len(data)} bytes)")
-    if not data[0:8] == b"version ":
-        raise Exception(f"get_mesh_version: invalid mesh header ({data[0:8]})")
 
-    return data[8:].decode('ASCII')
+    if not data[0:8] == b"version ":
+        raise Exception(
+            f"get_mesh_version: invalid mesh header ({data[0:8]})")
+
+    return data[8:12].decode('ASCII')
 
 
 def read_mesh_v1(data_bytes: bytes, offset: int, scale: float = 0.5, invertUV: bool = True) -> FileMeshData:

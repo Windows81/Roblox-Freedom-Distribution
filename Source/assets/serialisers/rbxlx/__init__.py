@@ -25,6 +25,8 @@ def check(data: bytes) -> bool:
 
 
 def parse(data: bytes, methods: set[method] = ALL_METHODS) -> bytes | None:
+    if not check(data):
+        return
     tree = ElementTree.fromstring(data)
     for method in [m.value for m in methods]:
         tree = method(tree) or tree
