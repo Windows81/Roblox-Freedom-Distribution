@@ -9,7 +9,6 @@ import assets.serialisers
 from . import _logic as logic
 
 
-
 class obj_type(logic.entry):
     local_args: 'arg_type'
 
@@ -17,10 +16,12 @@ class obj_type(logic.entry):
     def process(self) -> None:
         for (r, w) in self.local_args.files:
             with open(r, 'rb') as fr:
-                data = assets.serialisers.parse(
+                data, changed = assets.serialisers.parse(
                     fr.read(),
                     self.local_args.methods,
                 )
+            if changed:
+                print(w)
             with open(w, 'wb') as fw:
                 fw.write(data)
 

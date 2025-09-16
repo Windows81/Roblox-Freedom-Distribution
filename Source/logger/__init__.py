@@ -34,7 +34,7 @@ def get_message(
 def log(
     text: bytes | str,
     context: log_context,
-        filter: filter.filter_type
+    filter: filter.filter_type,
 ) -> None:
     message = get_message(text, context, filter)
     if message is not None:

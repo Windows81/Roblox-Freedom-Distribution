@@ -67,7 +67,7 @@ class obj_type(logic.bin_web_entry, logic.server_entry):
             raise Exception(f'Failed to extract data from {place_uri}.')
 
         # Parses the raw data using the `rbxl` method.
-        rbxl_data = assets.serialisers.parse(
+        rbxl_data, _changed = assets.serialisers.parse(
             raw_data, {assets.serialisers.method.rbxl}
         )
 

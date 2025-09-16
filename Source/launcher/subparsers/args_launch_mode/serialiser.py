@@ -34,8 +34,7 @@ def _(
     )
     subparser.add_argument(
         '--method',
-        type=assets.serialisers.method.__getitem__,
-        choices=assets.serialisers.ALL_METHODS,
+        choices=[m.name for m in assets.serialisers.ALL_METHODS],
         help='Serialisers to use on the file(s) provided.',
         nargs='+',
         default=[],
@@ -50,6 +49,6 @@ def _(
     return [
         serialiser.arg_type(
             files=list(zip(args_ns.load, args_ns.save)),
-            methods=set(args_ns.method),
+            methods=set(assets.serialisers.method[m] for m in args_ns.method),
         ),
     ]

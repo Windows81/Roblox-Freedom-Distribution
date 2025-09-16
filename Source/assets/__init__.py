@@ -79,7 +79,7 @@ class asseter:
         if data is None:
             return None
 
-        data = serialisers.parse(data)
+        data, _changed = serialisers.parse(data)
         return data
 
     def resolve_asset_id(self, id_str: str | None) -> int | None:

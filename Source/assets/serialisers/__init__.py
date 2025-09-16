@@ -23,9 +23,9 @@ class method(enum.Enum):
 ALL_METHODS = set(method)
 
 
-def parse(data: bytes, items: set[method] = ALL_METHODS) -> bytes:
-    for m in items:
+def parse(data: bytes, methods: set[method] = ALL_METHODS) -> tuple[bytes, bool]:
+    for m in methods:
         result = m.value(data)
         if result is not None:
-            return result
-    return data
+            return (result, True)
+    return (data, False)
