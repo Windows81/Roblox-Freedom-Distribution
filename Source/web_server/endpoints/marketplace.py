@@ -289,13 +289,8 @@ def _(self: web_server_handler) -> bool:
         })
     else:
         self.send_json({
-            "purchased": False,
-            "reason": "InsufficientFunds",
-            "productId": dev_product_id,
-            "statusCode": 500,
-            "title": "Not Enough Robux",
-            "errorMsg": "You do not have enough Robux to purchase this item.",
-            "showDivId": "InsufficientFundsView",
+            "success": False,
+            "status": "Error",
         })
     return True
 

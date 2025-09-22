@@ -72,19 +72,14 @@ class obj_type(logic.bin_web_entry, logic.loggable_entry):
             '\n'
         )
         match version:
-            case util.versions.rōblox.v463:
+            case util.versions.rōblox.v348:
                 return prefix + dedent(f'''\
-                    When you open Studio, you will encounter a login page.
-                    You can type anything into the username and password fields.
-                    Or find your desired file in Explorer and drag it to the top of the Studio window.
+                    When you open Studio, you will encounter a loading page.
+                    Simply execute `game.CoreGui:ClearAllChildren()` in your Studio command line.
                     Press enter to continue.
                 ''')
             case _:
-                return prefix + dedent(f'''\
-                    When you open Studio, you will encounter a login page.
-                    Simply find your desired file in Explorer and drag it to the top of the Studio window.
-                    Press enter to continue.
-                ''')
+                return None
 
     @override
     def process(self) -> None:
@@ -137,5 +132,5 @@ class arg_type(logic.bin_web_arg_type, logic.loggable_arg_type):
     def sanitise(self) -> None:
         super().sanitise()
 
-        if self.web_host == 'localhost':
-            self.web_host = '127.0.0.1'
+        if self.web_host == '127.0.0.1':
+            self.web_host = 'localhost'

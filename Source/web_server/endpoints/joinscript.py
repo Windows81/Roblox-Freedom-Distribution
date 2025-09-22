@@ -46,7 +46,7 @@ def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, i
         return None
 
 
-def perform_join(self: web_server_handler, additional_data: dict[str, Any], prefix: bytes) -> None:
+def perform_and_send_join(self: web_server_handler, additional_data: dict[str, Any], prefix: bytes) -> None:
     '''
     The query arguments in `Roblox-Session-Id` were previously serialised
     when `join.ashx` was called the first time a player joined.
@@ -80,6 +80,8 @@ def perform_join(self: web_server_handler, additional_data: dict[str, Any], pref
                 'Port': rcc_port,
             }
         ],
+        'UserCode':
+            user_code,
         'UserId':
             id_num,
         'MachineAddress':
@@ -109,14 +111,14 @@ def perform_join(self: web_server_handler, additional_data: dict[str, Any], pref
     # NOTE: the `SessionId` is saved as an HTTPS header `Roblox-Session-Id` for later requests.
     # I'm placing the information which was passed into `join.ashx` here for simplicity.
     join_data |= {
-        'SessionId': json.dumps(join_data | query_args)
+        'SessionId': json.dumps(join_data | {'RFDJoinQuery': query_args})
     }
     self.send_json(join_data | additional_data, prefix=prefix)
 
 
 @server_path('/game/join.ashx', versions={versions.rōblox.v348})
 def _(self: web_server_handler) -> bool:
-    perform_join(self, {
+    perform_and_send_join(self, {
         'ClientPort': 0,
         'PingUrl': '',
         'PingInterval': 0,
@@ -145,7 +147,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/game/join.ashx', versions={versions.rōblox.v463})
 def _(self: web_server_handler) -> bool:
-    perform_join(self, {
+    perform_and_send_join(self, {
         'ClientPort': 0,
         'PingUrl': '',
         'PingInterval': 0,
