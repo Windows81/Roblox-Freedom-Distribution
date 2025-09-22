@@ -75,7 +75,7 @@ class obj_type(logic.bin_web_entry, logic.loggable_entry):
             case util.versions.rōblox.v348:
                 return prefix + dedent(f'''\
                     When you open Studio, you will encounter a loading page.
-                    Simply execute `game.CoreGui:ClearAllChildren()` in your Studio command line.
+                    Simply execute `game.CoreGui.RobloxLoadingGui:Destroy()` in your Studio command line.
                     Press enter to continue.
                 ''')
             case _:

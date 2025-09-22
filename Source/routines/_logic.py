@@ -153,7 +153,7 @@ class entry(_entry):
                 t.join(1)
 
     def stop(self) -> None:
-        entry.wait(self)
+        self.wait()
 
     def kill(self) -> None:
         if self.routine is not None:

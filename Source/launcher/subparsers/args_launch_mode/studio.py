@@ -79,6 +79,15 @@ def _(
     )
 
     routine_args: list[logic.arg_type] = []
+    routine_args.extend([
+        studio.arg_type(
+            game_config=game_config,
+            web_host='localhost',
+            web_port=web_port,
+            log_filter=log_filter,
+        ),
+    ])
+
     if not args_ns.skip_web:
         routine_args.extend([
             web.arg_type(
@@ -90,14 +99,5 @@ def _(
                 server_mode=server_mode.STUDIO,
             ),
         ])
-
-    routine_args.extend([
-        studio.arg_type(
-            game_config=game_config,
-            web_host='localhost',
-            web_port=web_port,
-            log_filter=log_filter,
-        ),
-    ])
 
     return routine_args

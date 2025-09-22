@@ -12,7 +12,6 @@ import web_server._logic as web_server_logic
 from . import _logic as logic
 
 
-
 class obj_type(logic.server_entry):
     game_config: config.obj_type
     httpd: web_server_logic.web_server | None = None
@@ -37,11 +36,15 @@ class obj_type(logic.server_entry):
         th.start()
 
     @override
-    def stop(self) -> None:
+    def wait(self) -> None:
         if self.httpd is None:
             return
         self.httpd.shutdown()
-        super().stop()
+        super().wait()
+
+    @override
+    def stop(self) -> None:
+        self.wait()
 
 
 @dataclasses.dataclass
