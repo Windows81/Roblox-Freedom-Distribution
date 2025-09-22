@@ -52,7 +52,7 @@ class database(_logic.sqlite_connector_base):
             ),
         )
 
-    def receipts(self) -> list[tuple[int, int]]:
+    def receipts(self) -> list[tuple[int, int, str]]:
         passes = self.sqlite.fetch_results(self.sqlite.execute(
             f"""
             SELECT
@@ -73,7 +73,10 @@ class database(_logic.sqlite_connector_base):
             """,
         )
 
-        return [p for p in passes]
+        return [
+            (user_id_num, dev_product_id, f"{dev_product_id}-{user_id_num}",)
+            for (user_id_num, dev_product_id) in passes
+        ]
 
     def check(self, user_id_num: int, dev_product_id: int) -> str | None:
         result = self.sqlite.fetch_results(self.sqlite.execute(

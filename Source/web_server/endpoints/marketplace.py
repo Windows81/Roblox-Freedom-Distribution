@@ -2,7 +2,6 @@
 import urllib.parse
 import json
 import re
-import uuid
 
 # Local application imports
 from web_server._logic import web_server_handler, server_path
@@ -31,23 +30,23 @@ def purchase_gamepass(self: web_server_handler, user_id_num: int, gamepass_id: i
     return True
 
 
-def purchase_dev_product(self: web_server_handler, user_id_num: int, gamepass_id: int):
-    dev_product = self.game_config.remote_data.dev_products.get(gamepass_id)
+def purchase_dev_product(self: web_server_handler, user_id_num: int, dev_product_id: int) -> str | None:
+    dev_product = self.game_config.remote_data.dev_products.get(dev_product_id)
 
     if dev_product is None:
-        return False  # Gamepass does not exist
+        return  # Gamepass does not exist
 
     storage = self.server.storage
     funds = storage.funds.check(user_id_num)
     if funds is None:
-        return False  # Couldn't load funds
+        return  # Couldn't load funds
 
     if funds < dev_product.price:
-        return False  # Too poor!
+        return  # Too poor!
 
-    storage.dev_products.update(user_id_num, gamepass_id)
+    storage.dev_products.update(user_id_num, dev_product_id)
     storage.funds.add(user_id_num, -1 * dev_product.price)
-    return True
+    return f"{dev_product_id}-{user_id_num}"
 
 
 @server_path('/Game/GamePass/GamePassHandler.ashx', commands={'GET'})
@@ -125,14 +124,15 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     # TODO: actually make gamepass sales secure.
     user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
 
-    if purchase_dev_product(self, user_id_num, dev_product_id):
+    receipt = purchase_dev_product(self, user_id_num, dev_product_id)
+    if receipt is not None:
         self.send_json({
             "purchased": True,
             "success": True,
             "transactionStatus": "Success",
             "productId": user_id_num,
             "price": 0,
-            "receipt": f"{dev_product_id}-{user_id_num}",
+            "receipt": receipt,
         })
     else:
         self.send_json({
@@ -243,11 +243,11 @@ def _(self: web_server_handler) -> bool:
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/gametransactions.py#L26
     '''
     receipt_dict = []
-    for (user_id_num, dev_product_id) in self.server.storage.dev_products.receipts():
+    for (user_id_num, dev_product_id, receipt) in self.server.storage.dev_products.receipts():
         receipt_dict.append({
             "playerId": user_id_num,
             "placeId": util.const.PLACE_IDEN_CONST,
-            "receipt": f"{dev_product_id}-{user_id_num}",
+            "receipt": receipt,
             "actionArgs": [
                 {
                     "Key": "productId",
@@ -265,6 +265,38 @@ def _(self: web_server_handler) -> bool:
         })
 
     self.send_json(receipt_dict)
+    return True
+
+
+@server_path('/marketplace/submitpurchase', commands={'POST'})
+def _(self: web_server_handler) -> bool:
+    '''
+    https://github.com/alainbacu27/RbxJs2016/blob/7b55c6c1b5f820b60e796ceadaacf2b808df26c2/controllers/api.js#L93
+    '''
+    form_content = str(self.read_content(), encoding='utf-8')
+    form_data = dict(urllib.parse.parse_qsl(form_content))
+    dev_product_id = int(form_data['productId'])
+
+    # TODO: actually make gamepass sales secure.
+    user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
+
+    receipt = purchase_dev_product(self, user_id_num, dev_product_id)
+    if receipt is not None:
+        self.send_json({
+            "success": True,
+            "status": "Bought",
+            "receipt": receipt,
+        })
+    else:
+        self.send_json({
+            "purchased": False,
+            "reason": "InsufficientFunds",
+            "productId": dev_product_id,
+            "statusCode": 500,
+            "title": "Not Enough Robux",
+            "errorMsg": "You do not have enough Robux to purchase this item.",
+            "showDivId": "InsufficientFundsView",
+        })
     return True
 
 
