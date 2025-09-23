@@ -64,6 +64,9 @@ class obj_type(logic.bin_web_entry, logic.loggable_entry):
 
     @staticmethod
     def get_warning_message(version: util.versions.rōblox, filter: logger.filter.filter_type) -> str | None:
+        '''
+        TODO: remove any need to display a warning message.
+        '''
         prefix = (
             '\n' +
             filter.bcolors.BOLD +
@@ -73,11 +76,7 @@ class obj_type(logic.bin_web_entry, logic.loggable_entry):
         )
         match version:
             case util.versions.rōblox.v348:
-                return prefix + dedent(f'''\
-                    When you open Studio, you will encounter a loading page.
-                    Simply execute `game.CoreGui.RobloxLoadingGui:Destroy()` in your Studio command line.
-                    Press enter to continue.
-                ''')
+                return None
             case _:
                 return None
 

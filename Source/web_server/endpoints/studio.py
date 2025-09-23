@@ -78,3 +78,9 @@ def _(self: web_server_handler) -> bool:
         "displayName": "ROBLOX"
     })
     return True
+
+
+@server_path('/my/settings/json', commands={'GET'})
+def _(self: web_server_handler) -> bool:
+    self.send_json({})
+    return True
