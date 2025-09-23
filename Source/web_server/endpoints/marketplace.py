@@ -186,7 +186,7 @@ def _(self: web_server_handler) -> bool:
         "IconImageAssetId": 0,
         "Created": 0,
         "Updated": 0,
-        "PriceInRobux": 0,
+        "PriceInRobux": gamepass.price,
         "PriceInTickets": 0,
         "Sales": 0,
         "IsNew": False,

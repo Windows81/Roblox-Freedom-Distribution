@@ -36,15 +36,11 @@ class obj_type(logic.server_entry):
         th.start()
 
     @override
-    def wait(self) -> None:
+    def stop(self) -> None:
         if self.httpd is None:
             return
         self.httpd.shutdown()
-        super().wait()
-
-    @override
-    def stop(self) -> None:
-        self.wait()
+        super().stop()
 
 
 @dataclasses.dataclass
