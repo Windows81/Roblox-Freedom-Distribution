@@ -60,6 +60,11 @@ def subparse(
         action="store_true",
         help="Skips hosting the webserver.",
     )
+    subparser.add_argument(
+        "--skip_studio",
+        action="store_true",
+        help="Skips opening Studio.",
+    )
 
 
 @sub_logic.serialise_args(sub_logic.launch_mode.STUDIO, {web.arg_type, rcc.arg_type, player.arg_type})
@@ -79,14 +84,15 @@ def _(
     )
 
     routine_args: list[logic.arg_type] = []
-    routine_args.extend([
-        studio.arg_type(
-            game_config=game_config,
-            web_host='localhost',
-            web_port=web_port,
-            log_filter=log_filter,
-        ),
-    ])
+    if not args_ns.skip_studio:
+        routine_args.extend([
+            studio.arg_type(
+                game_config=game_config,
+                web_host='localhost',
+                web_port=web_port,
+                log_filter=log_filter,
+            ),
+        ])
 
     if not args_ns.skip_web:
         routine_args.extend([

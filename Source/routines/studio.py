@@ -77,7 +77,7 @@ class obj_type(logic.bin_web_entry, logic.loggable_entry):
         match version:
             case util.versions.rōblox.v348:
                 return prefix + dedent(f'''\
-                    When you open Studio, you will encounter a loading page.
+                    When you open Studio, you may encounter a broken loading page.
                     Simply execute `game.CoreGui:ClearAllChildren()` in your Studio command line.
                     Press enter to continue.
                 ''')
