@@ -9,7 +9,6 @@ import util.resource
 from web_server._logic import web_server_handler, server_path, web_server_ssl
 
 
-
 @server_path('/rfd/default-user-code')
 def _(self: web_server_handler) -> bool:
     result = self.game_config.server_core.retrieve_default_user_code(
@@ -34,7 +33,7 @@ def _(self: web_server_handler) -> bool:
         self.send_data(b'false')
         return True
 
-    # This function was also called during joinscript creation.
+    # This function was also called during join-data creation.
     # It's called a second time here (potentially) for additional protection.
     if self.game_config.server_core.check_user_allowed.cached_call(
         7, user_code,
