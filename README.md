@@ -340,8 +340,25 @@ Port is specified by the `--webserver_port` or `-wp` option.
 To load assets directly from Roblox.com, our software needs to provide a valid `ROBLOSECURITY` token. RFD can extract this token through two methods:
 
 1. _If you are on a Windows and play Rōblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat`.
-2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
+2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable, keep scrolling if you need help on setting this up. (Tutorial for windows only)
 
+## PlaceID Spoofing
+There are some uncopylocks that somehow when you enter them the audio works fine but when you enter from outside the official uncopylock **the audios are privated** this is very rare for it to happen, but in case it happens setup an enviroment value called "rfdplaceid" with the PlaceID you want to spoof.
+
+##Setting up enviroment variables (Windows Powershell)
+This short snippet shows you how to setup Enviroment Variables from the Powershell for windows users as those are the most complicated ones to setup, **specifically the ROBLOSECURITY token**
+
+To setup your ROBLOSECURITY token 
+```
+$env:ROBLOSECURITY = 'YOURTOKEN'
+```
+with the word "YOURTOKEN" being replaced by your ROBLOSECURITY token.
+
+To setup PlaceID spoofing:
+```
+$env:rfdplaceid = '12345'
+```
+With the "12345" being replaced by your desired PlaceID
 ## Asset Packs
 
 Assets are automatically cached server-side in directory `./AssetCache`. To manually add assets, place the raw data in a file named with the iden number or string _without_ any extension.
