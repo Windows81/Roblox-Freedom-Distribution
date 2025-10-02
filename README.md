@@ -323,7 +323,7 @@ Port is specified by the `--webserver_port` or `-wp` option.
 
 To load assets directly from Roblox.com, our software needs to provide a valid `ROBLOSECURITY` token. RFD can extract this token through two methods:
 
-1. _If you are on a Windows and play Rōblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat`.
+1. _If you are on a Windows and play Roblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat`.
 2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
 
 ## Asset Packs
@@ -343,24 +343,21 @@ This behaviour can be changed in [your game configuration file](#game_setupasset
 
 ## How About Studio?
 
-You can modify `rbxl` file in current-day Studio as of September 2024. For compatibility with older clients, _RFD comes with its own [serialiser suite](./Source/assets/serialisers/)_. Objects transformed include:
+RFD [comes bundled with Studio builds](#studio). However, they are not fully usable as of 2025-10-02. These should be used only if modern Studio doesn't mesh well with your places.
 
-1. Fonts which existed in their respective versions,
-1. And meshes encoded with versions 4 or 5 _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
+RFD is designed to accommodate current-day `rbxl` (_not_ `rbxlx`) files. To accommodate breaking changes to the file format, RFD includes a [serialiser suite](./Source/assets/serialisers/) which automatically processes:
+
+1. Assets remotely loaded from Roblox.com into `./AssetCache`, and
+1. `rbxl` place files as used by RFD servers.
+
+Objects transformed include:
+
+1. Fonts which existed in their respective versions, and
+1. Meshes encoded with versions 4 or 5 _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
 
 Some modern programs do weird things to client-sided scripts. They use `Script` classs objects, but with a [`RunContext`](https://robloxapi.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://robloxapi.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
 
 And, **union operations done in current-day Studio (CSG v3) are not supported**. This is because CSG v2 support was completely removed in late 2022.
-
-In that case...
-
-RFD [comes bundled with Studio builds](#studio). These should be used if modern Studio doesn't mesh well with your old places.
-
-[Sodikm](https://archive.org/details/full-sodikm_202308) has a functional Studio build from 2018.
-
-[Rōblox Filtering Disabled](https://beepboopbap.itch.io/filtering-disabled) has a working Studio build from 2022.
-
-You can also use [this 2018M build](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2023-08-31T09%EA%9E%8910Z/v348.Studio.7z) whilst running the Rōblox Filtering Disabled webserver.
 
 If you need any help, please shoot me an issue on GitHub or a message to an account with some form of 'VisualPlugin' elsewhere.
 
@@ -368,7 +365,7 @@ If you need any help, please shoot me an issue on GitHub or a message to an acco
 
 The program is mostly portable; RFD does not store any persistent settings to your machine.
 
-However, the Rōblox executables that we hook to will write to the following directories:
+However, the Rōblox player and RCC executables that we hook to will write to the following directories:
 
 - `%LocalAppData%\Temp\Roblox\http\`
 - `%LocalAppData%\Temp\Roblox\`

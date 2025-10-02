@@ -1,5 +1,6 @@
 # Standard library imports
 import dataclasses
+import ipaddress
 import time
 import urllib.parse
 import json
@@ -15,7 +16,7 @@ import util.versions
 from . import _logic as logic
 
 
-class obj_type(logic.bin_web_entry):
+class obj_type(logic.bin_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.PLAYER
 
@@ -25,22 +26,6 @@ class obj_type(logic.bin_web_entry):
         return util.versions.rōblox.from_name(
             str(res.read(), encoding='utf-8'),
         )
-
-    def save_app_setting(self) -> str:
-        '''
-        Modifies settings to point to correct host name.
-        '''
-        path = self.get_versioned_path('AppSettings.xml')
-        app_base_url = self.local_args.get_app_base_url()
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(dedent(f'''\
-                <?xml version="1.0" encoding="UTF-8"?>
-                <Settings>
-                    <ContentFolder>Content</ContentFolder>
-                    <BaseUrl>{app_base_url}</BaseUrl>
-                </Settings>
-            '''))
-        return path
 
     def update_fflags(self) -> None:
         '''
@@ -63,7 +48,7 @@ class obj_type(logic.bin_web_entry):
             json.dump(json_data, f, indent='\t')
 
     def bootstrap(self) -> None:
-        self.save_app_setting()
+        self.save_app_settings()
         self.update_fflags()
 
     def make_client_popen(self) -> None:
@@ -98,19 +83,44 @@ class obj_type(logic.bin_web_entry):
 
 
 @dataclasses.dataclass
-class arg_type(
-    logic.host_arg_type,
-    logic.loggable_arg_type,
-):
+class arg_type(logic.bin_arg_type, logic.loggable_arg_type):
     obj_type = obj_type
 
     rcc_host: str
     rcc_port: int
     web_host: str
     web_port: int
+
     log_filter: logger.filter.filter_type
     user_code: str | None = None
     launch_delay: float = 0
+
+    @override
+    def sanitise(self) -> None:
+        super().sanitise()
+        (
+            self.rcc_host, self.rcc_port,
+        ) = self.resolve_host_port(
+            self.rcc_host, self.rcc_port,
+        )
+
+        if self.rcc_host == 'localhost':
+            self.rcc_host = '127.0.0.1'
+
+        self.app_host = self.web_host
+        if self.web_host == 'localhost':
+            self.web_host = self.app_host = '127.0.0.1'
+
+        elif self.app_host.startswith('['):
+            # Converts
+            # - "[2607:fb91:1b74:d4d8:3dfb:5a51:55c3:d516]" into
+            # - "[2607:fb91:1b74:d4d8:3dfb:5a51:85.195.213.22]"
+            # This is because Rōblox's CoreScripts do not like working with `BaseUrl` settings which don't have dots.
+            prefix_len = 30
+            ipv6_obj = ipaddress.IPv6Address(self.web_host[1:-1])
+            ipv4_mapped = ipaddress.IPv4Address(int(ipv6_obj) & 0xFFFFFFFF)
+            exploded_str = ipv6_obj.exploded
+            self.app_host = f"[{exploded_str[:prefix_len]}{ipv4_mapped!s}]"
 
     def finalise_user_code(self) -> None:
         '''

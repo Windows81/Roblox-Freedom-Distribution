@@ -12,7 +12,7 @@ import web_server._logic as web_server_logic
 from . import _logic as logic
 
 
-class obj_type(logic.server_entry):
+class obj_type(logic.gameconfig_entry):
     game_config: config.obj_type
     httpd: web_server_logic.web_server | None = None
     local_args: 'arg_type'
