@@ -92,6 +92,12 @@ def download_item(url: str, cookie: str | None = None) -> bytes | None:
             }.items()
         ),
     }
+
+    place_id = os.environ.get("rfdplaceid")
+    if place_id:
+        headers["Roblox-Place-Id"] = place_id
+        headers["Roblox-Browser-Asset-Request"] = "false"
+
     try:
         http = urllib3.PoolManager()
         response = http.request('GET', url, headers=headers)
