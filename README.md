@@ -323,18 +323,17 @@ Port is specified by the `--webserver_port` or `-wp` option.
 
 To load assets directly from Roblox.com, our software needs to provide a valid `ROBLOSECURITY` token. RFD can extract this token through two methods:
 
-1. _If you are on a Windows and play Roblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat`.
+1. _If you are on a Windows and play Roblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat` and there are no further actions needed to start loading assets.
 2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
 
 ### PlaceID Spoofing
 
 There are some uncopylocks that somehow when you enter them the audio works fine but when you enter from outside the official uncopylock **the audios are privated** this is very rare for it to happen, but in case it happens setup an enviroment value called "rfdplaceid" with the PlaceID you want to spoof.
-
+Tof you are the owner of the place you are loading assets and the account is logged in/set ROBLOSECURITY in enviroment, your privated audios **should** load fine without spoofing.
 ### Setting Up Enviroment Variables
 
-This short snippet shows you how to setup enviroment variables from the PowerShell for Windows users as those are the most complicated ones to set up, **specifically the `.ROBLOSECURITY` token**.
-
-To set your `.ROBLOSECURITY` token up, with `'YOURTOKEN'` being replaced by that token:
+This short snippet shows you how to setup enviroment variables from the PowerShell for Windows users as those are the most complicated ones to set up, **specifically the `.ROBLOSECURITY` token** however remember "_If you are on a Windows and play Roblox.com_" you can skip setting your ROBLOSECURITY token in the enviroment.
+Using the **PowerShell** is recommended as the **cmd** will not handle such large strings correctly, you can launch it by pressing the **WindowsKey + R** and typing "powershell.exe" To set your `.ROBLOSECURITY` token up, with `'YOURTOKEN'` being replaced by that token:
 
 ```ps1
 $env:ROBLOSECURITY = 'YOURTOKEN'
@@ -345,7 +344,7 @@ To set place-iden spoofing up, with the `12345` being replaced by your desired p
 ```ps1
 $env:rfdplaceid = '12345'
 ```
-
+**SIDENOTE: The way this commands setup enviroment tables will not persist once you close the PowerShell**
 ### Local Asset Persistence
 
 Assets are automatically cached server-side in directory `./AssetCache`. To manually add assets, place the raw data in a file named with the iden number or string _without_ any extension.
@@ -933,3 +932,4 @@ price = 1
 ---
 
 <p align="center"><img src="/Assets/Logo.png" height="60px"/></p>
+
