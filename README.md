@@ -19,7 +19,7 @@ Clients only need to keep track of which hosts and ports to connect to. That's b
 
 **If you worked with Python 3.12+ before, [_initial_ setup](#download) is supposed to take less than a minute. Why _initial_? Freedom Distribution automatically downloads additional data (at most 90 MiB) for you.**
 
-Initial adaptation from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
+Initial adaptation from the [Rōblox Filtering Disabled](https://web.archive.org/web/20241113091646/https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
 
 All the code is free-as-in-freedom software and is licensed under the GNU GPL v3.
 
@@ -935,5 +935,6 @@ price = 1
 ---
 
 <p align="center"><img src="/Assets/Logo.png" height="60px"/></p>
+
 
 
