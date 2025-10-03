@@ -326,6 +326,8 @@ To load assets directly from Roblox.com, our software needs to provide a valid `
 1. _If you are on a Windows and play Roblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat` and there are no further actions needed to start loading assets.
 2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
 
+**Freedom Distribution will NOT save/upload your token anywhere and will not use It outside roblox assetdelivery services.** The cookie handling can be found in the Source "extractor.py" file.
+
 ### PlaceID Spoofing
 
 There are some uncopylocks that somehow when you enter them the audio works fine but when you enter from outside the official uncopylock **the audios are privated** this is very rare for it to happen, but in case it happens setup an enviroment value called "rfdplaceid" with the PlaceID you want to spoof.
@@ -935,6 +937,7 @@ price = 1
 ---
 
 <p align="center"><img src="/Assets/Logo.png" height="60px"/></p>
+
 
 
 
