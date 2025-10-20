@@ -18,14 +18,17 @@ def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _
     while i < l:
         val = prop_values[i]
         prop_values[i] &= 0x01
-        match val & 0x04:
-            case 0x00 | 0x02:
+        match val:
+            case 0:
                 i += 1
-            case 0x01:
+            case 1:
                 i += 21
-            case 0x03:
+            case 2:
+                i += 1
+            case 3:
                 i += 21
-                prop_values[i:i+_logic.INT_SIZE] = []
+                del prop_values[i:i+4]
+                l -= 4
             case _:
                 assert False
 
