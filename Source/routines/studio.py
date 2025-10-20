@@ -93,5 +93,5 @@ class arg_type(logic.bin_arg_type, logic.loggable_arg_type, logic.gameconfig_arg
     def sanitise(self) -> None:
         super().sanitise()
 
-        if self.web_host == '127.0.0.1':
-            self.web_host = 'localhost'
+        if self.web_host == 'localhost':
+            self.web_host = '127.0.0.1'

@@ -69,6 +69,7 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
+@server_path('/Setting/QuietGet/StudioAppSettings/')
 @server_path('/Setting/QuietGet/ClientAppSettings/')
 def _(self: web_server_handler) -> bool:
     self.send_json({})
