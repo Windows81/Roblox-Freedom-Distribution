@@ -13,22 +13,22 @@ def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _
         return None
 
     prop_values = list(chunk_data.prop_values)
-    l = len(prop_values)
-    i = 0
-    while i < l:
-        val = prop_values[i]
-        prop_values[i] &= 0x01
+    data_len = len(prop_values)
+    data_index = 0
+    while data_index < data_len:
+        val = prop_values[data_index]
+        prop_values[data_index] &= 0b01
         match val:
-            case 0:
-                i += 1
-            case 1:
-                i += 21
-            case 2:
-                i += 1
-            case 3:
-                i += 21
-                del prop_values[i:i+4]
-                l -= 4
+            case 0b00:
+                data_index += 1
+            case 0b01:
+                data_index += 21
+            case 0b10:
+                data_index += 1
+            case 0b11:
+                data_index += 21
+                data_len -= 4
+                del prop_values[data_index:data_index+4]
             case _:
                 assert False
 
