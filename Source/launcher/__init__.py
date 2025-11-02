@@ -50,9 +50,11 @@ def parse_arg_list(args: list[str] | None) -> list[routine_logic.arg_type] | Non
 
     # Begins populating the argument namespace; errors aren't thrown because
     # the subparser arguments aren't added yet.
-    args_namespace = parser.parse_known_args(args)[0]
+    try:
+        args_namespace = parser.parse_known_args(args)[0]
+        assert args_namespace is not None
 
-    if not args_namespace.mode:
+    except (Exception, SystemExit):
         parser.print_help()
         return None
 

@@ -27,7 +27,7 @@ class method(enum.Enum):
 
 
 DEFAULT_METHODS = set(method).difference({
-    method.convert_csg,
+    # method.convert_csg,
 })
 
 

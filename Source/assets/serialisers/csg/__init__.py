@@ -1,9 +1,12 @@
+import functools
 import hashlib
 import collections.abc
 from typing import Any, Never
 OBFUSCATION_NOISE_CYCLE_XOR = bytes([
     86, 46, 110, 88, 49, 32, 48, 4, 52, 105, 12, 119, 12, 1, 94, 0, 26, 96, 55, 105, 29, 82, 43, 7, 79, 36, 89, 101, 83, 4, 122,
 ])
+
+INT_SIZE = 4
 
 LCM_A = 0b0000_0011_0100_0011_1111_1101
 LCM_C = 0b0010_0110_1001_1110_1100_0011
@@ -57,29 +60,92 @@ def createHash(data: bytes, saltIn: bytes = b'rfd') -> str:
     return hashStr
 
 
-def xor_encrypt(code: bytes, key=OBFUSCATION_NOISE_CYCLE_XOR) -> bytes:
+@functools.cache
+def xor_encrypt(code: bytes, key=OBFUSCATION_NOISE_CYCLE_XOR, offset: int = 0) -> bytes:
     l = len(key)
     return bytes(
         c ^ key[i % l]
-        for i, c in enumerate(code)
+        for i, c in enumerate(code, offset)
     )
 
 
+@functools.cache
 def get_header(prefix: bytes, version: int) -> bytes:
-    return xor_encrypt(
-        prefix + version.to_bytes(length=4, byteorder='little')
+    return prefix + version.to_bytes(length=INT_SIZE, byteorder='little')
+
+
+def replace_header_version(data: bytes, versioned_header: bytes, from_version: int, to_version: int) -> bytes:
+    '''
+    The redundant `from_version` argument is used here to account for the possibility of the data being XOR-encrypted.
+    '''
+    version_loc = len(versioned_header) - INT_SIZE
+    old_version = int.from_bytes(
+        data[version_loc:version_loc+INT_SIZE],
+        byteorder='little',
     )
+    new_version = old_version ^ (from_version ^ to_version)
+
+    return b''.join([
+        data[:version_loc],
+        new_version.to_bytes(length=INT_SIZE, byteorder='little'),
+        data[version_loc+INT_SIZE:],
+    ])
 
 
-HEADER_CSG2 = get_header(b"CSGMDL", 2)
-HEADER_CSG4 = get_header(b"CSGMDL", 4)
-HEADER_CSG5 = get_header(b"CSGMDL", 5)
+def splice(data: bytes, fr: int, ln: int) -> bytes:
+    return b''.join([
+        data[:fr],
+        data[fr+ln:],
+    ])
+
+
+HEADER_CSG2 = xor_encrypt(get_header(b'CSGMDL', 2))
+HEADER_CSG4 = xor_encrypt(get_header(b'CSGMDL', 4))
+HEADER_CSG5 = xor_encrypt(get_header(b'CSGMDL', 5))
+HEADER_CSGPHYS5 = get_header(b'CSGPHS', 5)
+HEADER_CSGPHYS6 = get_header(b'CSGPHS', 6)
+HEADER_CSGPHYS7 = get_header(b'CSGPHS', 7)
 
 
 def parse(data: bytes) -> bytes | None:
-    if not data.startswith(HEADER_CSG4):
-        return
-    return (
-        HEADER_CSG2 +
-        data[len(HEADER_CSG4):]
-    )
+    if data.startswith(HEADER_CSG4):
+        return replace_header_version(data, HEADER_CSG4, 4, 2)
+
+    if data.startswith(HEADER_CSGPHYS5):
+        return replace_header_version(data, HEADER_CSGPHYS5, 5, 3)
+
+    if data.startswith(HEADER_CSGPHYS6):
+        '''
+        Why 40 bytes?
+        ```rs
+        #[binrw::binrw]
+        #[brw(little)]
+        #[derive(Debug,Clone)]
+        pub struct PhysicsInfo{
+            pub volume:f32,
+            pub center_of_gravity:[f32;3],
+            // upper triangular matrix read left to right top to bottom
+            pub moment_of_inertia_packed:[f32;6],
+        }
+        ```
+        CSGPHYS6 and CSGPHYS7 both contain `PhysicsInfo` structs, which as above indicate a length of 40 bytes.
+        https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L8-L16
+        '''
+        return splice(
+            replace_header_version(data, HEADER_CSGPHYS6, 6, 3),
+            len(HEADER_CSGPHYS6), 40,
+        )
+
+    if data.startswith(HEADER_CSGPHYS7):
+        '''
+        Why 41 bytes?
+        +40: `PhysicsInfo`, as per above.
+        + 1: the mysterious magic number `03` (one byte) that takes place after the versioned header.
+        https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L54
+        '''
+        return splice(
+            replace_header_version(data, HEADER_CSGPHYS7, 7, 3),
+            len(HEADER_CSGPHYS7), 41,
+        )
+
+    return data
