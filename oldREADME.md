@@ -1,14 +1,3 @@
-<h1 align="center"><img src="/Assets/Logo.png" height="20px"/> Rōblox: Freedom Distribution <img src="/Assets/Logo.png" height="20px"/></h1>
-
-<p align="right">
-<a href="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml"><img src="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml/badge.svg"></a>
-<a href="https://matrix.to/#/#robloxfreedomdistribution:matrix.org"><img src="https://matrix.org/images/matrix-logo.svg" height="20"></a>
-</p>
-
-_Want to host your own Rōblox LAN parties? Looking for a way to deploy your Rōblox experiences, new and old, on your own machine?_
-
-https://github.com/user-attachments/assets/483c4263-db43-4ec2-9243-b0b885e625f6
-
 Rōblox Freedom Distribution is one such solution. It's a revival launcher built on existing research for self-hosting Rōblox servers.
 
 Using RFD, users can host their own server instances from compiled Rōblox binaries from 2018-07-25 or 2021-01-25.
