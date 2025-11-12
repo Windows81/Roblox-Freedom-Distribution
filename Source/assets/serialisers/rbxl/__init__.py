@@ -9,6 +9,7 @@ from . import (
     roblox_links,
     image_content,
     convert_csg,
+    physics_props,
 )
 
 
@@ -22,10 +23,11 @@ class method(enum.Enum):
     skip_bytecode = enum.member(partial(skip_bytecode.replace))
     convert_csg = enum.member(partial(convert_csg.replace))
     image_content = enum.member(partial(image_content.replace))
+    physics_props = enum.member(partial(physics_props.replace))
 
 
 DEFAULT_METHODS = set(method).difference({
-    method.convert_csg,
+    # method.convert_csg,
 })
 
 

@@ -26,7 +26,7 @@ from . import (
 )
 
 
-class obj_type(logic.bin_web_entry, logic.server_entry):
+class obj_type(logic.bin_entry, logic.gameconfig_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
 
@@ -90,22 +90,6 @@ class obj_type(logic.bin_web_entry, logic.server_entry):
                 filter=self.local_args.log_filter,
             )
 
-    def save_app_setting(self) -> str:
-        '''
-        Simply modifies `AppSettings.xml` to point to correct host name.
-        '''
-        path = self.get_versioned_path('AppSettings.xml')
-        app_base_url = self.local_args.get_app_base_url()
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(dedent(f'''\
-                <?xml version="1.0" encoding="UTF-8"?>
-                <Settings>
-                    <ContentFolder>Content</ContentFolder>
-                    <BaseUrl>{app_base_url}</BaseUrl>
-                </Settings>
-            '''))
-        return path
-
     def save_starter_scripts(self) -> None:
         server_path = self.get_versioned_path(os.path.join(
             'Content',
@@ -114,8 +98,8 @@ class obj_type(logic.bin_web_entry, logic.server_entry):
             'RFDStarterScript.lua',
         ))
         with open(server_path, 'w', encoding='utf-8') as f:
-            rcc_script = startup_scripts.get_script(self.game_config)
-            f.write(rcc_script)
+            startup_script = startup_scripts.get_script(self.game_config)
+            f.write(startup_script)
 
     def update_fflags(self) -> None:
         '''
@@ -298,14 +282,6 @@ class obj_type(logic.bin_web_entry, logic.server_entry):
             file_change_thread,
         ])
 
-    def bootstrap(self) -> None:
-        self.save_starter_scripts()
-        self.save_place_file()
-        self.save_thumbnail()
-        self.save_app_setting()
-        self.update_fflags()
-        self.save_gameserver()
-
     def track_file_changes(self) -> None:
         config = self.game_config
         if not config.server_core.place_file.track_file_changes:
@@ -342,12 +318,17 @@ class obj_type(logic.bin_web_entry, logic.server_entry):
             context=logger.log_context.PYTHON_SETUP,
             filter=log_filter,
         )
-        self.bootstrap()
+        self.save_starter_scripts()
+        self.save_place_file()
+        self.save_thumbnail()
+        self.save_app_settings()
+        self.update_fflags()
+        self.save_gameserver()
         self.make_popen_threads()
 
 
 @dataclasses.dataclass
-class arg_type(logic.bin_web_arg_type):
+class arg_type(logic.bin_arg_type):
     obj_type = obj_type
 
     web_host: str | None

@@ -1,13 +1,13 @@
 # Standard library imports
+import textwrap
+import urllib.request
+import urllib.error
 import http.client
-import ipaddress
-import re
-import shutil
-import ssl
 import subprocess
 import threading
-import urllib.error
-import urllib.request
+import shutil
+import ssl
+import re
 
 # Typing imports
 from typing import Self, override
@@ -39,7 +39,7 @@ class popen_arg_type(arg_type):
     debug_x96: bool
 
 
-class server_arg_type(arg_type):
+class gameconfig_arg_type(arg_type):
     game_config: game_config_module.obj_type
 
 
@@ -49,17 +49,15 @@ class loggable_arg_type(arg_type):
 
 class bin_arg_type(popen_arg_type, loggable_arg_type):
     auto_download: bool
-
-    def get_base_url(self) -> str:
-        raise NotImplementedError()
-
-    def get_app_base_url(self) -> str:
-        raise NotImplementedError()
-
-
-class bin_web_arg_type(bin_arg_type):
     web_host: str
     web_port: int
+
+    @staticmethod
+    def get_none_ssl() -> ssl.SSLContext:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        return ctx
 
     @staticmethod
     def resolve_host_port(host: str, port: int) -> tuple[str, int]:
@@ -91,7 +89,7 @@ class bin_web_arg_type(bin_arg_type):
         try:
             return urllib.request.urlopen(
                 f'{self.get_base_url()}{path}',
-                context=bin_web_entry.get_none_ssl(),
+                context=self.get_none_ssl(),
                 timeout=timeout,
             )
         except urllib.error.URLError as _:
@@ -100,42 +98,11 @@ class bin_web_arg_type(bin_arg_type):
                 (self.get_base_url(), path),
             )
 
+    def get_base_url(self) -> str:
+        raise NotImplementedError()
 
-class host_arg_type(bin_web_arg_type):
-    rcc_host: str
-    rcc_port: int
-
-    web_host: str
-    web_port: int
-    user_code: str | None = None
-    launch_delay: float = 0
-
-    @override
-    def sanitise(self) -> None:
-        super().sanitise()
-        (
-            self.rcc_host, self.rcc_port,
-        ) = self.resolve_host_port(
-            self.rcc_host, self.rcc_port,
-        )
-
-        if self.rcc_host == 'localhost':
-            self.rcc_host = '127.0.0.1'
-
-        self.app_host = self.web_host
-        if self.web_host == 'localhost':
-            self.web_host = self.app_host = '127.0.0.1'
-
-        elif self.app_host.startswith('['):
-            # Converts
-            # - "[2607:fb91:1b74:d4d8:3dfb:5a51:55c3:d516]" into
-            # - "[2607:fb91:1b74:d4d8:3dfb:5a51:85.195.213.22]"
-            # This is because Rōblox's CoreScripts do not like working with `BaseUrl` settings which don't have dots.
-            prefix_len = 30
-            ipv6_obj = ipaddress.IPv6Address(self.web_host[1:-1])
-            ipv4_mapped = ipaddress.IPv4Address(int(ipv6_obj) & 0xFFFFFFFF)
-            exploded_str = ipv6_obj.exploded
-            self.app_host = f"[{exploded_str[:prefix_len]}{ipv4_mapped!s}]"
+    def get_app_base_url(self) -> str:
+        raise NotImplementedError()
 
 
 class entry(_entry):
@@ -254,26 +221,6 @@ class popen_entry(entry):
         self.process()
 
 
-class ver_entry(entry):
-    '''
-    Routine entry abstract class that corresponds to a versioned directory of Rōblox.
-    '''
-    rōblox_version: util.versions.rōblox
-
-    def retr_version(self) -> util.versions.rōblox:
-        '''
-        Gets called once on `bin_entry.__init__` to initialise `self.rōblox_version`
-        '''
-        raise NotImplementedError()
-
-    def get_versioned_path(
-            self,
-            bin_type: util.resource.bin_subtype,
-            *paths: str) -> str:
-        return util.resource.retr_rōblox_full_path(
-            self.rōblox_version, bin_type, *paths)
-
-
 class loggable_entry(entry):
     local_args: loggable_arg_type
 
@@ -285,11 +232,12 @@ class loggable_entry(entry):
         )
 
 
-class bin_entry(ver_entry, popen_entry, loggable_entry):
+class bin_entry(popen_entry, loggable_entry):
     '''
     Routine entry abstract class that corresponds to a versioned binary of Rōblox.
     '''
     local_args: bin_arg_type
+    rōblox_version: util.versions.rōblox
     BIN_SUBTYPE: util.resource.bin_subtype
 
     def __init__(self, *args, **kwargs) -> None:
@@ -297,11 +245,14 @@ class bin_entry(ver_entry, popen_entry, loggable_entry):
         self.rōblox_version = self.retr_version()
         self.maybe_download_binary()
 
-    @override
     def get_versioned_path(self, *paths: str) -> str:
-        return super().get_versioned_path(
-            self.BIN_SUBTYPE, *paths,
-        )
+        return util.resource.retr_rōblox_full_path(self.rōblox_version, self.BIN_SUBTYPE, *paths)
+
+    def retr_version(self) -> util.versions.rōblox:
+        '''
+        Gets called once on `bin_entry.__init__` to initialise `self.rōblox_version`
+        '''
+        raise NotImplementedError()
 
     def maybe_download_binary(self) -> None:
         '''
@@ -315,27 +266,29 @@ class bin_entry(ver_entry, popen_entry, loggable_entry):
             log_filter=self.local_args.log_filter,
         )
 
+    def save_app_settings(self) -> str:
+        '''
+        Simply modifies `AppSettings.xml` to point to correct host name.
+        '''
+        path = self.get_versioned_path('AppSettings.xml')
+        app_base_url = self.local_args.get_app_base_url()
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(textwrap.dedent(f'''\
+                <?xml version="1.0" encoding="UTF-8"?>
+                <Settings>
+                    <ContentFolder>Content</ContentFolder>
+                    <BaseUrl>{app_base_url}</BaseUrl>
+                </Settings>
+            '''))
+        return path
 
-class bin_web_entry(bin_entry):
+
+class gameconfig_entry(entry):
     '''
-    Routine entry abstract class that corresponds to a binary with a special `./SSL` directory.
-    '''
-    local_args: bin_web_arg_type
-
-    @staticmethod
-    def get_none_ssl() -> ssl.SSLContext:
-        ctx = ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        return ctx
-
-
-class server_entry(entry):
-    '''
-    Routine entry class that corresponds to a server-sided component.
+    Routine entry class that maps to a GameConfig structure.
     '''
     game_config: game_config_module.obj_type
-    local_args: server_arg_type
+    local_args: gameconfig_arg_type
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
