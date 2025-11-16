@@ -59,7 +59,7 @@ def subparse(
         help='Port number for the RCC server to run from.',
     )
     subparser.add_argument(
-        '--web_port', '-wp',
+        '--webserver_port', '--web_port', '-wp',
         type=int,
         nargs='?',
         default=None,
