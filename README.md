@@ -315,9 +315,9 @@ Port is specified by the `-p` option (also by `--rcc_port` or `-rp`).
 
 The webserver is responsible for facilitating player connections and loading in-game assets.
 
-Host is optionally specified by the `--webserver_host` or `-wh` option, in case RCC is hosted elsewhere.
+Host is optionally specified by the `--web_host` or `-wh` option, in case RCC is hosted elsewhere.
 
-Port is specified by the `--webserver_port` or `-wp` option.
+Port is specified by the `--web_port` or `-wp` option.
 
 ### Loading Assets from Rōblox
 
