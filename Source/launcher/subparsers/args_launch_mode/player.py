@@ -33,6 +33,7 @@ def _(
         help='Port number to connect this program to the RCC server.',
     )
     subparser.add_argument(
+        '--webserver_host',
         '--web_host',
         '-wh',
         type=str,
@@ -41,7 +42,7 @@ def _(
         help='Hostname or IP address to connect this program to the web server.',
     )
     subparser.add_argument(
-        '--web_port', '-wp',
+        '--webserver_port', '--web_port', '-wp',
         type=int,
         nargs='?',
         default=None,
