@@ -11,52 +11,62 @@ import game_config
 import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
-JOIN_CACHE = dict[int, str]()
 
-
-@functools.cache
-def init_player(config: game_config.obj_type, user_code: str) -> tuple[int, str] | None:
+def gen_player(config: game_config.obj_type, usercode: str) -> tuple[int, str, bool] | None:
     '''
     Returns a tuple with the following:
-    `int`: corresponds with that user's id_num.
-    `str`: corresponds with that user's username.
+    `int`: corresponds with the iden number of a user whose `index` field matches `value`.
+    `str`: corresponds with the username of a user whose `index` field matches `value`.
+    `bool`: returns `True` if the player is being created for the first time.
     '''
-    try:
-        # Keeps generating an iden number until it finds one that is not yet in the database.
-        while True:
-            id_num = config.server_core.retrieve_user_id(user_code)
-            if not config.server_core.check_user_allowed.cached_call(
-                7, user_code, id_num, user_code,
-            ):
-                return None
+    database = config.storage.players
+    existing = database.check(usercode)
+    if existing is not None:
+        return (*existing, False)
 
-            username = config.server_core.retrieve_username(id_num, user_code)
+    # Keeps generating an iden number until it finds one that is not yet in the database.
+    while True:
+        iden_num = config.server_core.retrieve_user_id(usercode)
+        if not config.server_core.check_user_allowed.cached_call(
+            7, usercode,
+            iden_num, usercode,
+        ):
+            return None
 
-            result = config.storage.players.add_player(
-                user_code, id_num, username,
-            )
+        username = config.server_core.retrieve_username(iden_num, usercode)
 
-            if result is not None:
-                break
+        result = database.add_player(
+            usercode, iden_num, username,
+        )
 
-        (_, id_num, username) = result
+        if result is not None:
+            return (*result, True)
 
-        # The player's fund balance is only affected if they're joining for the first time.
-        funds = config.server_core.retrieve_default_funds(id_num, user_code)
-        config.storage.funds.first_init(id_num, funds)
 
-        return (id_num, username)
-    except Exception as _:
+def init_player(config: game_config.obj_type, usercode: str) -> tuple[int, str] | None:
+    '''
+    Returns a tuple with the following:
+    `int`: corresponds with that user's `id_num`.
+    `str`: corresponds with that user's `username`.
+    '''
+    player_data = gen_player(config, usercode)
+    if player_data is None:
         return None
+    (iden_num, username, first_time) = player_data
+
+    if first_time:
+        funds = config.server_core.retrieve_default_funds(iden_num, usercode)
+        config.storage.funds.first_init(iden_num, funds)
+
+    return (iden_num, username)
 
 
 def perform_and_send_join(self: web_server_handler, additional_return_data: dict[str, Any], prefix: bytes) -> None:
     '''
-    The query arguments in `Roblox-Session-Id` were previously serialised
-    when `join.ashx` was called the first time a player joined.
+    The query arguments in `Roblox-Session-Id` were previously serialised.
+    For example, when `join.ashx` was called the first time a player joined.
 
-    Some methods (such as retrieving a user fund balance, or rejoining in 2021E)
-    need data from `Roblox-Session-Id`.
+    Some methods (such as retrieving a user fund balance, or rejoining in 2021E) need data from `Roblox-Session-Id`.
     '''
     config = self.game_config
     server_core = config.server_core
@@ -208,25 +218,25 @@ def _(self: web_server_handler) -> bool:
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
     user_code = query_args.get('user-code')
-    init_player(self.game_config, user_code)
 
-    if user_code in JOIN_CACHE:
+    result = init_player(self.game_config, user_code)
+    if result is None:
         self.send_json({
-            'status': JOIN_CACHE[user_code],
+            'status': 12,
+            'jobId': '',
             'joinScriptUrl': f'{self.hostname}/game/join.ashx?{self.url_split.query}',
             'authenticationUrl': f'{self.hostname}/login/negotiate.ashx',
-            'authenticationTicket': '',
-            'jobId': '',
+            'authenticationTicket': '67',
             'message': None,
         })
         return True
 
     self.send_json({
-        'status': 0,
-        'jobId': '',
+        'status': 2,
         'joinScriptUrl': f'{self.hostname}/game/join.ashx?{self.url_split.query}',
         'authenticationUrl': f'{self.hostname}/login/negotiate.ashx',
-        'authenticationTicket': '67',
-        'message': None,
+        'authenticationTicket': '',
+        'jobId': '',
+        'message': "gggjlkdsjgkls",
     })
     return True

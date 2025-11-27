@@ -173,8 +173,8 @@ def _(self: web_server_handler) -> bool:
         return True
 
     self.send_json({
-        "AssetId": gamepass.iden,
-        "ProductId": gamepass.iden,
+        "AssetId": gamepass.id_num,
+        "ProductId": gamepass.id_num,
         "Name": gamepass.name,
         "Description": gamepass.name,
         "AssetTypeId": "GamePass",
@@ -320,9 +320,9 @@ def _(self: web_server_handler) -> bool:
         self.send_json({
             "PriceInRobux": gamepass_data.price,
             "MinimumMembershipLevel": 0,
-            "TargetId": gamepass_data.iden,
-            "AssetId": gamepass_data.iden,
-            "ProductId": gamepass_data.iden,
+            "TargetId": gamepass_data.id_num,
+            "AssetId": gamepass_data.id_num,
+            "ProductId": gamepass_data.id_num,
             "Name": gamepass_data.name,
             "Description": "",
             "AssetTypeId": "GamePass",
@@ -390,7 +390,7 @@ def _(self: web_server_handler) -> bool:
         "TargetId": 1,
         "ProductType": "Developer Product",
         "AssetId": 0,
-        "ProductId": devproduct.iden,
+        "ProductId": devproduct.id_num,
         "Name": devproduct.name,
         "Description": devproduct.name,
         "AssetTypeId": 0,
