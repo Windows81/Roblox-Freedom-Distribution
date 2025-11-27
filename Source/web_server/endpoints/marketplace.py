@@ -30,10 +30,10 @@ def purchase_gamepass(self: web_server_handler, user_id_num: int, gamepass_id: i
     return True
 
 
-def purchase_dev_product(self: web_server_handler, user_id_num: int, dev_product_id: int) -> str | None:
-    dev_product = self.game_config.remote_data.dev_products.get(dev_product_id)
+def purchase_devproduct(self: web_server_handler, user_id_num: int, devproduct_id: int) -> str | None:
+    devproduct = self.game_config.remote_data.devproducts.get(devproduct_id)
 
-    if dev_product is None:
+    if devproduct is None:
         return  # Gamepass does not exist
 
     storage = self.server.storage
@@ -41,12 +41,12 @@ def purchase_dev_product(self: web_server_handler, user_id_num: int, dev_product
     if funds is None:
         return  # Couldn't load funds
 
-    if funds < dev_product.price:
+    if funds < devproduct.price:
         return  # Too poor!
 
-    storage.dev_products.update(user_id_num, dev_product_id)
-    storage.funds.add(user_id_num, -1 * dev_product.price)
-    return f"{dev_product_id}-{user_id_num}"
+    storage.devproducts.update(user_id_num, devproduct_id)
+    storage.funds.add(user_id_num, -1 * devproduct.price)
+    return f"{devproduct_id}-{user_id_num}"
 
 
 @server_path('/Game/GamePass/GamePassHandler.ashx', commands={'GET'})
@@ -119,12 +119,12 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     https://github.com/Username10101023/RobloxLabsTemp/blob/cc3fcd0df84e515af76cffa05afeab1367711630/StaticPages/ApiSites/Roblox.Economy.Api/docs/json/v2.json#L275
     '''
-    dev_product_id = int(match[1])
+    devproduct_id = int(match[1])
 
     # TODO: actually make gamepass sales secure.
     user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
 
-    receipt = purchase_dev_product(self, user_id_num, dev_product_id)
+    receipt = purchase_devproduct(self, user_id_num, devproduct_id)
     if receipt is not None:
         self.send_json({
             "purchased": True,
@@ -173,8 +173,8 @@ def _(self: web_server_handler) -> bool:
         return True
 
     self.send_json({
-        "AssetId": gamepass.id_num,
-        "ProductId": gamepass.id_num,
+        "AssetId": gamepass.iden,
+        "ProductId": gamepass.iden,
         "Name": gamepass.name,
         "Description": gamepass.name,
         "AssetTypeId": "GamePass",
@@ -243,7 +243,7 @@ def _(self: web_server_handler) -> bool:
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/gametransactions.py#L26
     '''
     receipt_dict = []
-    for (user_id_num, dev_product_id, receipt) in self.server.storage.dev_products.receipts():
+    for (user_id_num, devproduct_id, receipt) in self.server.storage.devproducts.receipts():
         receipt_dict.append({
             "playerId": user_id_num,
             "placeId": util.const.PLACE_IDEN_CONST,
@@ -251,7 +251,7 @@ def _(self: web_server_handler) -> bool:
             "actionArgs": [
                 {
                     "Key": "productId",
-                    "Value": dev_product_id,
+                    "Value": devproduct_id,
                 },
                 {
                     "Key": "currencyTypeId",
@@ -275,12 +275,12 @@ def _(self: web_server_handler) -> bool:
     '''
     form_content = str(self.read_content(), encoding='utf-8')
     form_data = dict(urllib.parse.parse_qsl(form_content))
-    dev_product_id = int(form_data['productId'])
+    devproduct_id = int(form_data['productId'])
 
     # TODO: actually make gamepass sales secure.
     user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
 
-    receipt = purchase_dev_product(self, user_id_num, dev_product_id)
+    receipt = purchase_devproduct(self, user_id_num, devproduct_id)
     if receipt is not None:
         self.send_json({
             "success": True,
@@ -298,13 +298,13 @@ def _(self: web_server_handler) -> bool:
 @server_path('/marketplace/validatepurchase', commands={'GET'})
 def _(self: web_server_handler) -> bool:
     receipt = self.query['receipt'].split('-')
-    dev_product_id = int(receipt[0])
+    devproduct_id = int(receipt[0])
     user_id_num = int(receipt[1])
     self.send_json({
         'playerId': user_id_num,
         'placeId': 1,
         'isValid': True,
-        'productId': dev_product_id,
+        'productId': devproduct_id,
     })
     return True
 
@@ -320,9 +320,9 @@ def _(self: web_server_handler) -> bool:
         self.send_json({
             "PriceInRobux": gamepass_data.price,
             "MinimumMembershipLevel": 0,
-            "TargetId": gamepass_data.id_num,
-            "AssetId": gamepass_data.id_num,
-            "ProductId": gamepass_data.id_num,
+            "TargetId": gamepass_data.iden,
+            "AssetId": gamepass_data.iden,
+            "ProductId": gamepass_data.iden,
             "Name": gamepass_data.name,
             "Description": "",
             "AssetTypeId": "GamePass",
@@ -379,10 +379,10 @@ def _(self: web_server_handler) -> bool:
     Something to do with developer products.
     https://github.com/essentialsasset/RBLX15/blob/d7c5a76e6c1526e86156410a0b4f024a689920a1/shesnotkewlfgdjkhasdfjhsdf/marketplace/productDetails.php#L4
     '''
-    dev_product_id = int(self.query['productId'])
-    dev_products = self.game_config.remote_data.dev_products
-    dev_product = dev_products.get(dev_product_id)
-    if dev_product is None:
+    devproduct_id = int(self.query['productId'])
+    devproducts = self.game_config.remote_data.devproducts
+    devproduct = devproducts.get(devproduct_id)
+    if devproduct is None:
         self.send_error(404)
         return True
 
@@ -390,9 +390,9 @@ def _(self: web_server_handler) -> bool:
         "TargetId": 1,
         "ProductType": "Developer Product",
         "AssetId": 0,
-        "ProductId": dev_product.id_num,
-        "Name": dev_product.name,
-        "Description": dev_product.name,
+        "ProductId": devproduct.iden,
+        "Name": devproduct.name,
+        "Description": devproduct.name,
         "AssetTypeId": 0,
         "Creator": {
             "Id": 0,
@@ -403,9 +403,9 @@ def _(self: web_server_handler) -> bool:
         "IconImageAssetId": 0,
         "Created": "2000-01-01T00:00:00Z",
         "Updated": "2000-01-01T00:00:00Z",
-        "PriceInRobux": dev_product.price,
-        "PremiumPriceInRobux": dev_product.price,
-        "PriceInTickets": dev_product.price,
+        "PriceInRobux": devproduct.price,
+        "PremiumPriceInRobux": devproduct.price,
+        "PriceInTickets": devproduct.price,
         "IsNew": False,
         "IsForSale": True,
         "IsPublicDomain": False,

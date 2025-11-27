@@ -7,13 +7,12 @@ import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
 
-
 def get_rank_dict(user_id_num: int, game_config: obj_type) -> dict[str, int]:
     database = game_config.storage.players
     user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         user_id_num,
-        database.player_field.USER_CODE,
+        database.player_field.USERCODE,
     )
     assert user_code is not None
 

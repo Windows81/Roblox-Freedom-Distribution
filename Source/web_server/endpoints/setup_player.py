@@ -24,9 +24,9 @@ def _(self: web_server_handler) -> bool:
 
     id_num = int(self.query['userId'])
     user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         id_num,
-        database.player_field.USER_CODE,
+        database.player_field.USERCODE,
     )
 
     if user_code is None:
@@ -53,13 +53,6 @@ def _(self: web_server_handler) -> bool:
     '''
     version = self.game_config.game_setup.roblox_version
     self.send_data(bytes(version.name, encoding='utf-8'))
-    return True
-
-
-@server_path('/login/negotiate.ashx')
-@server_path('/universes/validate-place-join')
-def _(self: web_server_handler) -> bool:
-    self.send_json(True)
     return True
 
 
@@ -138,9 +131,9 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
     id_num = int(match.group(1))
     user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         id_num,
-        database.player_field.USER_CODE,
+        database.player_field.USERCODE,
     )
 
     if user_code is None:
@@ -161,9 +154,9 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
     id_num = int(match.group(1))
     user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         id_num,
-        database.player_field.USER_CODE,
+        database.player_field.USERCODE,
     )
 
     if user_code is None:

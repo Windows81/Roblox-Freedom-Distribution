@@ -1,3 +1,4 @@
+from typing import override
 from . import _logic
 import enum
 
@@ -6,58 +7,66 @@ class database(_logic.sqlite_connector_base):
     TABLE_NAME = "players"
 
     class player_field(enum.Enum):
-        USER_CODE = '"user_code"'
-        ID_NUMBER = '"id_number"'
+        USERCODE = '"user_code"'
+        IDEN_NUM = '"id_number"'
         USERNAME = '"username"'
 
+    @override
     def first_time_setup(self) -> None:
         self.sqlite.execute(
             f"""
             CREATE TABLE IF NOT EXISTS "{self.TABLE_NAME}" (
-                {self.player_field.USER_CODE.value} TEXT NOT NULL,
-                {self.player_field.ID_NUMBER.value} INTEGER NOT NULL,
+                {self.player_field.USERCODE.value} TEXT NOT NULL,
+                {self.player_field.IDEN_NUM.value} INTEGER NOT NULL,
                 {self.player_field.USERNAME.value} TEXT NOT NULL,
                 PRIMARY KEY(
-                    {self.player_field.USER_CODE.value}
+                    {self.player_field.USERCODE.value}
                 ) ON CONFLICT IGNORE,
-                UNIQUE ({self.player_field.USER_CODE.value}) ON CONFLICT IGNORE,
-                UNIQUE ({self.player_field.ID_NUMBER.value}) ON CONFLICT IGNORE,
+                UNIQUE ({self.player_field.USERCODE.value}) ON CONFLICT IGNORE,
+                UNIQUE ({self.player_field.IDEN_NUM.value}) ON CONFLICT IGNORE,
                 UNIQUE ({self.player_field.USERNAME.value}) ON CONFLICT IGNORE
             );
             """,
         )
 
-    def add_player(self, user_code: str, id_num: int, username: str) -> tuple[str, int, str] | None:
+    def add_player(self, usercode: str, iden_num: int, username: str) -> tuple[str, int, str] | None:
         '''
         Adds a new player to the database and returns the first entry which corresponds with the newly-added player.
-        Tries to get the entry whose username matches, else fail.
+        If a player already exists, return the player's iden number and username, which may be different from what gets provided as arguments.
+
+        Tries to get the entry whose user code matches, else fail.
+
+        Returns a tuple with the following:
+        `str`: the user code that was introduced as an argument.
+        `int`: corresponds with the iden number of a user with that user code in the database.
+        `str`: corresponds with the username of a user with that user code in the database.
         '''
         self.sqlite.execute(
             f"""
             INSERT INTO "{self.TABLE_NAME}"
             (
-                {self.player_field.USER_CODE.value},
-                {self.player_field.ID_NUMBER.value},
+                {self.player_field.USERCODE.value},
+                {self.player_field.IDEN_NUM.value},
                 {self.player_field.USERNAME.value}
             )
             VALUES (?, ?, ?)
             """,
             (
-                user_code,
-                id_num,
+                usercode,
+                iden_num,
                 username,
             ),
         )
         result = self.sqlite.fetch_results(self.sqlite.execute(
             f"""
             SELECT
-            {self.player_field.USER_CODE.value},
-            {self.player_field.ID_NUMBER.value},
+            {self.player_field.USERCODE.value},
+            {self.player_field.IDEN_NUM.value},
             {self.player_field.USERNAME.value}
 
             FROM "{self.TABLE_NAME}"
             WHERE
-            {self.player_field.USER_CODE.value} = {repr(user_code)}
+            {self.player_field.USERCODE.value} = {repr(usercode)}
             """,
         ))
         assert result is not None
@@ -70,7 +79,7 @@ class database(_logic.sqlite_connector_base):
             index: player_field,
             value,
             field: player_field):
-        if index == self.player_field.ID_NUMBER:
+        if index == self.player_field.IDEN_NUM:
             value = self.sanitise_player_id_num(value)
 
         if value is None:
@@ -90,7 +99,7 @@ class database(_logic.sqlite_connector_base):
         '''
         Checks if a player with a particular field value exists.
         '''
-        if index == self.player_field.ID_NUMBER:
+        if index == self.player_field.IDEN_NUM:
             value = self.sanitise_player_id_num(value)
 
         if value is None:
@@ -103,7 +112,7 @@ class database(_logic.sqlite_connector_base):
         ))
         return result is not None
 
-    def sanitise_player_id_num(self, id_num: int | str | None) -> int | None:
-        if id_num is None:
+    def sanitise_player_id_num(self, iden_num: int | str | None) -> int | None:
+        if iden_num is None:
             return None
-        return int(id_num)
+        return int(iden_num)

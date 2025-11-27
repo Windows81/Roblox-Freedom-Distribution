@@ -54,15 +54,16 @@ class asseter:
     @functools.cache
     def get_asset_path(self, asset_id: int | str) -> str:
         # Build the candidate path then normalise and convert to an absolute path.
-        candidate = os.path.normpath(os.path.join(self.dir_path, self.asset_name_func(asset_id)))
+        candidate_abs = os.path.abspath(os.path.join(
+            self.dir_path, self.asset_name_func(asset_id),
+        ))
         base_abs = os.path.abspath(self.dir_path)
-        candidate_abs = os.path.abspath(candidate)
 
         # Ensure the resolved candidate path is inside the asset cache directory.
         # This defends against path traversal (e.g. id="..\GameConfig.toml") and
         # absolute paths supplied as asset ids.
         if not (candidate_abs == base_abs or candidate_abs.startswith(base_abs + os.sep)):
-            # Construct a safe filename fallback derived from the asset id.
+            # Construct a safe filename fallback derived from the asset iden.
             # Keep only alphanumerics, dash and underscore; replace others with underscore.
             safe_name = ''.join(
                 (c if (c.isalnum() or c in ('-', '_')) else '_') for c in str(asset_id)

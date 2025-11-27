@@ -1,10 +1,8 @@
 from . import filter
 
-URL_PREFIX = b'http'
 
-
-def get_message(text: bytes, log_filter: filter.filter_type) -> str | None:
-    if text.startswith(URL_PREFIX):
+def get_message(text: bytes, log_filter: filter.filter_type, is_error: bool) -> str | None:
+    if not is_error:
         if not log_filter.web_logs.urls:
             return
         return (

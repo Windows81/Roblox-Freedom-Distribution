@@ -5,7 +5,7 @@ import enum
 
 @dataclasses.dataclass
 class gamepass:
-    id_num: int
+    iden: int
     name: str
     price: int
     icon: wrappers.uri_obj | None = None
@@ -16,20 +16,20 @@ class gamepasses(wrappers.dicter[int, gamepass]):
 
 
 @dataclasses.dataclass
-class dev_product:
-    id_num: int
+class devproduct:
+    iden: int
     name: str
     price: int
     icon: wrappers.uri_obj | None = None
 
 
-class dev_products(wrappers.dicter[int, dev_product]):
+class devproducts(wrappers.dicter[int, devproduct]):
     key_name = 'id_num'
 
 
 @dataclasses.dataclass
 class badge:
-    id_num: int
+    iden: int
     name: str
     icon: wrappers.uri_obj | None = None
 

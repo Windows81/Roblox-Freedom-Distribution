@@ -7,7 +7,7 @@ from . import (
     badges,
     funds,
     gamepasses,
-    dev_products,
+    devproducts,
 )
 
 
@@ -31,4 +31,4 @@ class storager:
         self.badges = badges.database(*arg_list)
         self.funds = funds.database(*arg_list)
         self.gamepasses = gamepasses.database(*arg_list)
-        self.dev_products = dev_products.database(*arg_list)
+        self.devproducts = devproducts.database(*arg_list)

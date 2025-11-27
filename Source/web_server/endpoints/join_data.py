@@ -1,4 +1,5 @@
 # Standard library imports
+import functools
 import json
 
 # Typing imports
@@ -6,47 +7,50 @@ from typing import Any
 
 # Local application imports
 import util.const
+import game_config
 import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
+JOIN_CACHE = dict[int, str]()
 
-def init_player(self: web_server_handler, user_code: str | None) -> tuple[str, int, str] | None:
+
+@functools.cache
+def init_player(config: game_config.obj_type, user_code: str) -> tuple[int, str] | None:
+    '''
+    Returns a tuple with the following:
+    `int`: corresponds with that user's id_num.
+    `str`: corresponds with that user's username.
+    '''
     try:
-        config = self.game_config
-        if user_code is None:
-            return None
-
         # Keeps generating an iden number until it finds one that is not yet in the database.
         while True:
             id_num = config.server_core.retrieve_user_id(user_code)
             if not config.server_core.check_user_allowed.cached_call(
-                7, user_code,
-                id_num, user_code,
+                7, user_code, id_num, user_code,
             ):
                 return None
 
             username = config.server_core.retrieve_username(id_num, user_code)
 
-            result = self.server.storage.players.add_player(
+            result = config.storage.players.add_player(
                 user_code, id_num, username,
             )
 
             if result is not None:
                 break
 
-        (user_code, id_num, username) = result
+        (_, id_num, username) = result
 
         # The player's fund balance is only affected if they're joining for the first time.
         funds = config.server_core.retrieve_default_funds(id_num, user_code)
-        self.server.storage.funds.first_init(id_num, funds)
+        config.storage.funds.first_init(id_num, funds)
 
-        return (user_code, id_num, username)
-    except Exception as e:
-        self.send_error(500)
+        return (id_num, username)
+    except Exception as _:
         return None
 
 
-def perform_and_send_join(self: web_server_handler, additional_data: dict[str, Any], prefix: bytes) -> None:
+def perform_and_send_join(self: web_server_handler, additional_return_data: dict[str, Any], prefix: bytes) -> None:
     '''
     The query arguments in `Roblox-Session-Id` were previously serialised
     when `join.ashx` was called the first time a player joined.
@@ -57,21 +61,20 @@ def perform_and_send_join(self: web_server_handler, additional_data: dict[str, A
     config = self.game_config
     server_core = config.server_core
 
-    query_args = json.loads(
+    query_args: dict[str, str] = json.loads(
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
 
-    rcc_host_addr = query_args.get('rcc-host-addr', self.hostname)
-    rcc_port = int(query_args.get('rcc-port'))
-    user_code = query_args.get('user-code')
+    rcc_host_addr = str(query_args.get('rcc-host-addr', self.hostname))
+    rcc_port = int(query_args.get('rcc-port', self.port_num))
+    user_code = query_args['user-code']
 
-    # Very hacky to call `send_error` when the webserver will later call `send_json`.
-    result = init_player(self, user_code)
+    result = init_player(self.game_config, user_code)
     if result is None:
         self.send_json({"error": "403: disallowed user"}, 403)
         return
 
-    (user_code, id_num, username) = result
+    (id_num, username) = result
 
     join_data = {
         'ServerConnections': [
@@ -113,7 +116,7 @@ def perform_and_send_join(self: web_server_handler, additional_data: dict[str, A
     join_data |= {
         'SessionId': json.dumps(join_data | {'RFDJoinQuery': query_args})
     }
-    self.send_json(join_data | additional_data, prefix=prefix)
+    self.send_json(join_data | additional_return_data, prefix=prefix)
 
 
 @server_path('/game/join.ashx', versions={versions.rōblox.v348})
@@ -190,15 +193,40 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
+@server_path('/login/negotiate.ashx')
+@server_path('/universes/validate-place-join')
+def _(self: web_server_handler) -> bool:
+    self.send_json(True)
+    return True
+
+
 @server_path('/game/PlaceLauncher.ashx')
 @server_path('/game/placelauncher.ashx')
 def _(self: web_server_handler) -> bool:
+
+    query_args = json.loads(
+        self.headers.get('Roblox-Session-Id', '{}'),
+    ) | self.query
+    user_code = query_args.get('user-code')
+    init_player(self.game_config, user_code)
+
+    if user_code in JOIN_CACHE:
+        self.send_json({
+            'status': JOIN_CACHE[user_code],
+            'joinScriptUrl': f'{self.hostname}/game/join.ashx?{self.url_split.query}',
+            'authenticationUrl': f'{self.hostname}/login/negotiate.ashx',
+            'authenticationTicket': '',
+            'jobId': '',
+            'message': None,
+        })
+        return True
+
     self.send_json({
-        'jobId': 'Test',
-        'status': 2,
+        'status': 0,
+        'jobId': '',
         'joinScriptUrl': f'{self.hostname}/game/join.ashx?{self.url_split.query}',
         'authenticationUrl': f'{self.hostname}/login/negotiate.ashx',
-        'authenticationTicket': '1',
+        'authenticationTicket': '67',
         'message': None,
     })
     return True

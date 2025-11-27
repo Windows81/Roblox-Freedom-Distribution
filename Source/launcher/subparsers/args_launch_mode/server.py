@@ -59,16 +59,14 @@ def subparse(
         help='Port number for the RCC server to run from.',
     )
     subparser.add_argument(
-        '--web_port', '-wp', '--webserver_port',
+        '--web_port', '--webserver_port', '-wp',
         type=int,
         nargs='?',
         default=None,
         help='Port number for the web server to run from.',
     )
     subparser.add_argument(
-        '--run_client',
-        '-rc',
-        '--run_player',
+        '--run_client', '-rc', '--run_player',
         action='store_true',
         help='Runs an instance of the player immediately after starting the server.',
     )

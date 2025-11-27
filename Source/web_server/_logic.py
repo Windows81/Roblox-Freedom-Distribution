@@ -15,20 +15,12 @@ from urllib import parse
 from typing import Any, Callable, override
 
 # Local application imports
+import util.versions as versions
 import game_config
 import logger
-import logger.bcolors
-import util.const as const
-import util.versions as versions
-
-import trustme
 
 # Cryptography imports
-from cryptography.hazmat.primitives.asymmetric import padding
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.backends import default_backend
+import trustme
 
 
 class func_mode(enum.Enum):
@@ -163,7 +155,6 @@ class web_server_ssl(web_server):
 
 class web_server_handler(http.server.BaseHTTPRequestHandler):
     default_request_version = "HTTP/1.1"
-    sockname: tuple[str, int]
     request: socket.socket
     server: web_server
 
@@ -178,30 +169,28 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         if not super().parse_request():
             return False
 
-        host: str | None = self.headers.get('Host')
-        if host is None:
+        host_header: str | None = self.headers.get('Host')
+        if host_header is None:
             return False
 
-        self.is_valid_request = True
-        self.game_config = self.server.game_config
+        domain_str, port_str = host_header.rsplit(':', 1)
+        self.port_num = int(port_str)
 
-        host_part, port_part = host.rsplit(':', 1)
-        self.sockname = (host_part, int(port_part))
-
-        if host_part == '127.0.0.1':
+        if domain_str == '127.0.0.1':
             self.domain = 'localhost'
+        elif domain_str.startswith('['):
+            # Format IPv6 addresses.
+            self.domain = domain_str[1:-1]
         else:
-            self.domain = host_part
-
-        if host_part.startswith('['):
-            self.ip_addr = host_part[1:-1]
-        else:
-            self.ip_addr = host_part
+            self.domain = domain_str
 
         self.hostname = (
             f'http{"s" if isinstance(self.server, web_server_ssl) else ""}://' +
-            f'{self.domain}:{self.sockname[1]}'
+            f'{self.domain}:{self.port_num}'
         )
+
+        self.is_valid_request = True
+        self.game_config = self.server.game_config
 
         # Some endpoints should only allow the RCC to do stuff.
         # TODO: use a proper allow-listing system.
@@ -222,16 +211,30 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         return True
 
     def handle_request(self) -> None:
+        should_print_exception = True
+
         try:
             if self.__open_from_static():
                 return
             if self.__open_from_regex():
                 return
             self.send_error(404)
-        except ssl.SSLError:
-            pass
+            return
+
+        except ssl.SSLEOFError:
+            should_print_exception = False
         except ConnectionResetError:
-            pass
+            should_print_exception = False
+        except ConnectionAbortedError:
+            should_print_exception = False
+
+        if should_print_exception:
+            logger.log(
+                traceback.format_exc().encode('utf-8'),
+                context=logger.log_context.WEB_SERVER,
+                filter=self.server.log_filter,
+                is_error=True,
+            )
 
     def do_GET(self) -> None: return self.handle_request()
     def do_POST(self) -> None: return self.handle_request()
@@ -285,28 +288,9 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         )
 
         func = SERVER_FUNCS.get(key)
-        should_print_exception = True
-
         if func is None:
             return False
-
-        try:
-            return func(self)
-
-        except ssl.SSLEOFError:
-            should_print_exception = False
-        except ConnectionResetError:
-            should_print_exception = False
-        except ConnectionAbortedError:
-            should_print_exception = False
-
-        if should_print_exception:
-            logger.log(
-                traceback.format_exc().encode('utf-8'),
-                context=logger.log_context.WEB_SERVER,
-                filter=self.server.log_filter,
-            )
-        return False
+        return func(self)
 
     def __open_from_regex(self) -> bool:
         for key, func in SERVER_FUNCS.items():
@@ -325,8 +309,14 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args) -> None:
         if not self.is_valid_request:
             return
+        log_filter = self.server.log_filter
         logger.log(
-            self.url.rstrip('\r\n').encode('utf-8'),
+            (
+                f"{log_filter.bcolors.BOLD}{{%+5s}}{log_filter.bcolors.ENDC} %s"
+            ) % (
+                self.command, self.url.rstrip('\r\n'),
+            ),
             context=logger.log_context.WEB_SERVER,
             filter=self.server.log_filter,
+            is_error=False,
         )

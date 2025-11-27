@@ -111,7 +111,7 @@ class config_type(allocateable.obj_type):
 
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses = []
-        dev_products: structs.dev_products = []
+        devproducts: structs.devproducts = []
         asset_redirects: callable[[int | str], assets.asset_redirect | None] = (
             lambda *a: None
         )

@@ -22,7 +22,7 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
 
     id_num = match.group(1)
     username = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         id_num,
         database.player_field.USERNAME,
     )
@@ -40,7 +40,7 @@ def _(self: web_server_handler) -> bool:
     id_num = database.get_player_field_from_index(
         database.player_field.USERNAME,
         username,
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
     )
     assert id_num is not None
 

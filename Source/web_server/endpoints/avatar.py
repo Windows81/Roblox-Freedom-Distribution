@@ -12,9 +12,9 @@ def get_avatar(id_num: int, game_config: obj_type) -> structs.avatar_data:
 def get_user_code(id_num: int, game_config: obj_type) -> str | None:
     database = game_config.storage.players
     user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         id_num,
-        database.player_field.USER_CODE,
+        database.player_field.USERCODE,
     )
     if user_code is None:
         return None

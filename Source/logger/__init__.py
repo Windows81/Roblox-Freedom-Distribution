@@ -17,6 +17,7 @@ def get_message(
     text: bytes | str,
     context: log_context,
     filter: filter.filter_type,
+    *a, **kwa,
 ) -> str | None:
     if isinstance(text, str):
         text = text.encode('utf-8')
@@ -24,9 +25,9 @@ def get_message(
 
     match context:
         case log_context.RCC_SERVER:
-            return rcc.get_message(text, filter)
+            return rcc.get_message(text, filter, *a, **kwa)
         case log_context.WEB_SERVER:
-            return web.get_message(text, filter)
+            return web.get_message(text, filter, *a, **kwa)
         case log_context.PYTHON_SETUP:
             return text.decode('utf-8')
 
@@ -35,7 +36,8 @@ def log(
     text: bytes | str,
     context: log_context,
     filter: filter.filter_type,
+    *a, **kwa,
 ) -> None:
-    message = get_message(text, context, filter)
+    message = get_message(text, context, filter, *a, **kwa)
     if message is not None:
         print(f'{message}\n', end='')

@@ -16,10 +16,7 @@ def _(
 ) -> None:
 
     subparser.add_argument(
-        '--rcc_host',
-        '--host',
-        '-rh',
-        '-h',
+        '--rcc_host', '--host', '-rh', '-h',
         type=str,
         nargs='?',
         default=None,
@@ -33,16 +30,14 @@ def _(
         help='Port number to connect this program to the RCC server.',
     )
     subparser.add_argument(
-        '--web_host',
-        '-wh',
-        '--webserver_host',
+        '--web_host', '--webserver_host', '-wh',
         type=str,
         nargs='?',
         default=None,
         help='Hostname or IP address to connect this program to the web server.',
     )
     subparser.add_argument(
-        '--web_port', '-wp', '--webserver_port',
+        '--web_port', '--webserver_port', '-wp',
         type=int,
         nargs='?',
         default=None,
