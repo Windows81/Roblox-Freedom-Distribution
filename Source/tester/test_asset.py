@@ -64,6 +64,22 @@ class TestAssets(unittest.TestCase):
             'Invalid mesh',
         )
 
+    def test_mesh_load_100(self) -> None:
+        '''
+        Tests that mesh data can be loaded and parsed by the parser.
+        Asserts that the data has been loaded at all, then checks if it has been processed by the `mesh` parser.
+        '''
+        data = self.get_rōblox_asset(54983181)
+        self.assertEqual(
+            serialisers.mesh.get_version(data), '1.00',
+            'Original mesh was probably modified by Rōblox before it was loaded here.',
+        )
+        result = serialisers.mesh.parse(data) or data
+        self.assertLess(
+            serialisers.mesh.get_version(result), '4.01',
+            'Mesh version processed by RFD is too high.',
+        )
+
     def test_mesh_load_401(self) -> None:
         '''
         Tests that mesh data can be loaded and parsed by the parser.
@@ -73,7 +89,7 @@ class TestAssets(unittest.TestCase):
         result = serialisers.mesh.parse(data) or data
         self.assertLess(
             serialisers.mesh.get_version(result), '4.01',
-            'Mesh version too high',
+            'Mesh version processed by RFD is too high.',
         )
 
     def test_rbxlx_load(self) -> None:
