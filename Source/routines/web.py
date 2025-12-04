@@ -5,7 +5,6 @@ from typing import override
 
 # Local application/library specific imports
 import game_config as config
-import game_config.structure
 import logger
 import web_server
 import web_server._logic as web_server_logic
@@ -51,6 +50,6 @@ class arg_type(logic.arg_type):
     is_ipv6: bool
     is_ssl: bool
 
-    game_config: game_config.obj_type
+    game_config: config.obj_type
     server_mode: web_server_logic.server_mode
     log_filter: logger.filter.filter_type
