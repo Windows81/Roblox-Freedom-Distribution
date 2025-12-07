@@ -59,9 +59,7 @@ To launch RFD, your command line will look something like this:
 
 Still needs work.
 
-RFD requires `wine` to be installed on your system.
-
-For balance of information, consult [this guide](https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Guides/Linux/README.MD).
+RFD requires `wine` to be installed in your terminal.
 
 ```
 mkdir rfd
@@ -336,7 +334,7 @@ Tof you are the owner of the place you are loading assets and the account is log
 ### Setting Up Enviroment Variables
 
 This short snippet shows you how to setup enviroment variables from the PowerShell for Windows users as those are the most complicated ones to set up, **specifically the `.ROBLOSECURITY` token** however remember "_If you are on a Windows and play Roblox.com_" you can skip setting your ROBLOSECURITY token in the enviroment.
-Using the **PowerShell** is recommended as the **cmd** will not handle such large strings correctly, you can launch it by pressing the **WindowsKey + R** and typing "powershell.exe" 
+Using the **PowerShell** is recommended as the **cmd** will not handle such large strings correctly, you can launch it by pressing the **WindowsKey + R** and typing "powershell.exe"
 
 To set your `.ROBLOSECURITY` token up, with `'YOURTOKEN'` being replaced by that token:
 
@@ -349,7 +347,9 @@ To set place-iden spoofing up, with the `12345` being replaced by your desired p
 ```ps1
 $env:rfdplaceid = '12345'
 ```
+
 **SIDENOTE: The way this commands setup enviroment tables will not persist once you close the PowerShell**
+
 ### Local Asset Persistence
 
 Assets are automatically cached server-side in directory `./AssetCache`. To manually add assets, place the raw data in a file named with the iden number or string _without_ any extension.
@@ -937,7 +937,3 @@ price = 1
 ---
 
 <p align="center"><img src="/Assets/Logo.png" height="60px"/></p>
-
-
-
-

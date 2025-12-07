@@ -223,7 +223,7 @@ def _(self: web_server_handler) -> bool:
     if result is None:
         self.send_json({
             'status': 12,
-            'jobId': '',
+            'jobId': '67',
             'joinScriptUrl': f'{self.hostname}/game/join.ashx?{self.url_split.query}',
             'authenticationUrl': f'{self.hostname}/login/negotiate.ashx',
             'authenticationTicket': '67',
@@ -235,8 +235,8 @@ def _(self: web_server_handler) -> bool:
         'status': 2,
         'joinScriptUrl': f'{self.hostname}/game/join.ashx?{self.url_split.query}',
         'authenticationUrl': f'{self.hostname}/login/negotiate.ashx',
-        'authenticationTicket': '',
-        'jobId': '',
-        'message': "gggjlkdsjgkls",
+        'authenticationTicket': '67',
+        'jobId': '67',
+        'message': '',
     })
     return True
