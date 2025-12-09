@@ -10,7 +10,6 @@ from typing import override
 
 # Local application imports
 import logger
-from textwrap import dedent
 import util.resource
 import util.versions
 from . import _logic as logic
@@ -53,7 +52,7 @@ class obj_type(logic.bin_entry):
 
     def make_client_popen(self) -> None:
         base_url = self.local_args.get_base_url()
-        self.make_popen([
+        self.make_popen((
             self.get_versioned_path('RobloxPlayerBeta.exe'),
             '-a', f'{base_url}/login/negotiate.ashx',
             '-j', f'{base_url}/game/PlaceLauncher.ashx?' +
@@ -66,7 +65,7 @@ class obj_type(logic.bin_entry):
                     self.local_args.user_code,
             }.items() if v}),
             '-t', '1',
-        ])
+        ))
 
     @override
     def process(self) -> None:

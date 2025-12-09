@@ -1,24 +1,22 @@
 # Standard library imports
+from typing import IO, override
 import dataclasses
+import subprocess
 import functools
+import threading
+import time
 import json
 import os
-import subprocess
-import threading
-from threading import Thread
-import time
-from typing import IO, override
 
 # Local application/library specific imports
-import assets.serialisers
-import game_config
-import logger
+from config_type.types import structs, wrappers, callable
 from .. import _logic as logic
-from textwrap import dedent
 import util.const as const
+import assets.serialisers
 import util.resource
 import util.versions
-from config_type.types import structs, wrappers, callable
+import game_config
+import logger
 
 from . import (
     startup_scripts,
@@ -196,7 +194,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             }, f)
         return path
 
-    def gen_cmd_args(self) -> list[str]:
+    def gen_cmd_args(self) -> tuple[str, ...]:
         suffix_args: list[str] = []
 
         # There is a chance that RFD can be overwhelmed with processing output.
@@ -206,16 +204,16 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
         match self.retr_version():
             case util.versions.rōblox.v348:
-                return [
+                return (
                     self.get_versioned_path('RCCService.exe'),
                     f'-PlaceId:{self.local_args.place_iden}',
                     '-LocalTest', self.get_versioned_path(
                         'GameServer.json',
                     ),
                     *suffix_args,
-                ]
+                )
             case util.versions.rōblox.v463:
-                return [
+                return (
                     self.get_versioned_path('RCCService.exe'),
                     f'-PlaceId:{self.local_args.place_iden}',
                     '-LocalTest', self.get_versioned_path(
@@ -225,14 +223,14 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                         'DevSettingsFile.json',
                     ),
                     *suffix_args,
-                ]
+                )
 
     def read_rcc_output(self) -> None:
         '''
         Pipes output from the RCC server to the logger module for processing.
         This is done in a separate thread to avoid blocking the main process from terminating RCC when necessary.
         '''
-        stdout: IO[bytes] = self.principal.stdout  # type: ignore[reportAssignmentType]
+        stdout: IO[bytes] = self.popen_mains[0].stdout  # type: ignore[reportAssignmentType]
         assert stdout is not None
         while True:
             line = stdout.readline()

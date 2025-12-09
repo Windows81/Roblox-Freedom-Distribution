@@ -3,8 +3,7 @@ import util.versions as versions
 import re
 
 
-@server_path(r'/v1/users/(\d+)/badges/awarded-dates', regex=True,
-             commands={'GET'}, versions={versions.rōblox.v463})
+@server_path(r'/v1/users/(\d+)/badges/awarded-dates', regex=True, commands={'GET'}, versions={versions.rōblox.v463})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     '''
     TODO: properly award badges.

@@ -1,11 +1,21 @@
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
 import util.const
+import re
 
 
 @server_path('/api.GetAllowedMD5Hashes/')
 def _(self: web_server_handler) -> bool:
     self.send_json(util.const.ALLOWED_MD5_HASHES)
+    return True
+
+
+@server_path(r'/v[12]/autolocalization/games/(\d+)/autolocalizationtable', regex=True)
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    self.send_json({
+        "isAutolocalizationEnabled": False,
+        "shouldUseLocalizationTable": False,
+    })
     return True
 
 

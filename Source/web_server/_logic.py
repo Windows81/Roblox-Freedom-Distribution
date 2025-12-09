@@ -53,11 +53,11 @@ def server_path(
     commands: set[str] = DEFAULT_COMMANDS
 ):
     def inner(func):
-        dict_mode = (
-            func_mode.REGEX
-            if regex
-            else func_mode.STATIC
-        )
+        match regex:
+            case True:
+                dict_mode = func_mode.REGEX
+            case False:
+                dict_mode = func_mode.STATIC
 
         SERVER_FUNCS.update({
             server_func_key(
@@ -299,6 +299,9 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             match = re.fullmatch(key.path, self.url_split.path)
             if match is None:
                 continue
+            if key.version != self.game_config.game_setup.roblox_version:
+                continue
+
             try:
                 return func(self, match)
             except Exception:

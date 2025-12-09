@@ -23,7 +23,7 @@ def get_rank_dict(user_id_num: int, game_config: obj_type) -> dict[str, int]:
 
 @server_path('/Game/LuaWebService/HandleSocialRequest.ashx', versions={versions.rōblox.v348})
 def _(self: web_server_handler) -> bool:
-    match self.query['method']:
+    match self.query.get('method'):
         case 'GetGroupRank':
             group_id_str = self.query['groupid']
             user_id_num = int(self.query['playerid'])
@@ -35,13 +35,12 @@ def _(self: web_server_handler) -> bool:
                 (rank),
             )
             return True
+        case _:
+            self.send_json({})
+            return True
 
-    self.send_json({})
-    return True
 
-
-@server_path(r'/v2/users/(\d+)/groups/roles',
-             regex=True, versions={versions.rōblox.v463})
+@server_path(r'/v2/users/(\d+)/groups/roles', regex=True, versions={versions.rōblox.v463})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     user_id_num = int(match.group(1))
     groups = get_rank_dict(user_id_num, self.game_config)

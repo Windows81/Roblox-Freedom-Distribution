@@ -147,33 +147,29 @@ class popen_entry(entry):
         self.is_terminated: bool = False
         self.is_running: bool = False
 
-    def make_popen(self, cmd_args: list[str], *args, **kwargs) -> None:
+    def make_popen(self, cmd_args: tuple[str, ...], *args, **kwargs) -> None:
         '''
         Creates new thread(s) for the Popen to operate under.
         '''
-
         # Checks if Wine is installed.  Redundant if using Windows.
         if shutil.which('wine') is not None:
-            cmd_args[:0] = ['wine']
+            cmd_args = ('wine', *cmd_args)
 
         self.is_running = True
-        self.is_terminated = False
-        self.principal = subprocess.Popen(cmd_args, *args, **kwargs)
-        self.popen_mains = [
-            self.principal,
-        ]
-        self.popen_daemons = [
-            *(
-                [
-                    subprocess.Popen[str]([
-                        'x96dbg',
-                        '-p', str(self.principal.pid),
-                    ])
-                ]
-                if self.local_args.debug_x96
-                else []
-            ),
-        ]
+        if self.is_terminated:
+            self.popen_mains.clear()
+            self.popen_daemons.clear()
+            self.is_terminated = False
+
+        principal = subprocess.Popen(cmd_args, *args, **kwargs)
+        self.popen_mains.append(principal)
+
+        if self.local_args.debug_x96:
+            popen_dbg = subprocess.Popen[str]([
+                'x96dbg',
+                '-p', str(principal.pid),
+            ])
+            self.popen_daemons.append(popen_dbg)
 
     @override
     def stop(self) -> None:
@@ -308,7 +304,7 @@ class routine:
     For entries in the `self.entries` list field:
     - Entries evaluate stage (1) synchronously in forwards order.
     - Entries evaluate stage (2) asynchronously.
-        - If an entry calls `kill` whilst in stage (2), forcibly terminate all entries in the `self.entries` list field.
+        - If an entry calls `kill` whilst in stage (2), forcibly terminate *all* the entries in the `self.entries` list field.
     '''
     entries: list[entry]
 

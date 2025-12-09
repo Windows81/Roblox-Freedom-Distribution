@@ -1,12 +1,10 @@
 # Standard library imports
 import dataclasses
 import os
+import subprocess
 from routines.rcc import startup_scripts
-import util.const
 import functools
-import threading
 import time
-from textwrap import dedent
 
 # Typing imports
 from typing import override
@@ -64,10 +62,16 @@ class obj_type(logic.bin_entry, logic.loggable_entry, logic.gameconfig_entry):
         self.save_app_settings()
         self.save_starter_scripts()
         time.sleep(self.local_args.launch_delay)
-        self.make_popen([
+        self.make_popen((
             self.get_versioned_path('RobloxStudioBeta.exe'),
+            '-localPlaceFile',
             self.setup_place(),
-        ])
+        ))
+
+    @override
+    def wait(self):
+        super().wait()
+        self.kill()
 
 
 @dataclasses.dataclass
