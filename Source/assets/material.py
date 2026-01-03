@@ -24,6 +24,9 @@ def split_asset_str(asset_id: str) -> None | tuple[str, ...]:
         sub_pieces[-1][extension_index:],
     )
 
+def check(asset_id:str):
+    return asset_id.startswith(const.ID_PREFIX)
+
 
 def load_asset(asset_id: str) -> bytes | None:
     # Example: `wood`, `diffuse`, `.dds`.

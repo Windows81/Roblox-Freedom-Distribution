@@ -142,7 +142,8 @@ class asseter:
         return self._load_online_asset(asset_id)
 
     def _load_asset_str(self, asset_id: str) -> bytes | None:
-        if asset_id.startswith(material.const.ID_PREFIX):
+        if material.check(asset_id):
+            print('5497849834986340986'+asset_id)
             return material.load_asset(asset_id)
         return None
 
