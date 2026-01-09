@@ -1,4 +1,61 @@
 <roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
 	<External>null</External>
 	<External>nil</External>
+	<Item class="UserGameSettings" referent="RBXB4828386FFC245909E0FCA4831EDF948">
+		<Properties>
+			<bool name="AllTutorialsDisabled">false</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<token name="CameraMode">0</token>
+			<bool name="CameraYInverted">false</bool>
+			<bool name="ChatVisible">true</bool>
+			<string name="CompletedTutorials"></string>
+			<bool name="ComputerCameraMovementChanged">false</bool>
+			<token name="ComputerCameraMovementMode">0</token>
+			<bool name="ComputerMovementChanged">false</bool>
+			<token name="ComputerMovementMode">0</token>
+			<token name="ControlMode">0</token>
+			<bool name="Fullscreen">false</bool>
+			<float name="GamepadCameraSensitivity">1</float>
+			<int name="GraphicsQualityLevel">21</int>
+			<bool name="HasEverUsedVR">false</bool>
+			<float name="MasterVolume">1</float>
+			<bool name="MicroProfilerWebServerEnabled">false</bool>
+			<float name="MouseSensitivity">1</float>
+			<Vector2 name="MouseSensitivityFirstPerson">
+				<X>1</X>
+				<Y>1</Y>
+			</Vector2>
+			<Vector2 name="MouseSensitivityThirdPerson">
+				<X>1</X>
+				<Y>1</Y>
+			</Vector2>
+			<string name="Name">GameSettings</string>
+			<bool name="OnScreenProfilerEnabled">false</bool>
+			<bool name="PerformanceStatsVisible">false</bool>
+			<int name="RCCProfilerRecordFrameRate">1</int>
+			<int name="RCCProfilerRecordTimeFrame">1</int>
+			<token name="SavedQualityLevel">10</token>
+			<int64 name="SourceAssetId">-1</int64>
+			<bool name="StartMaximized">true</bool>
+			<Vector2 name="StartScreenPosition">
+				<X>-8</X>
+				<Y>32</Y>
+			</Vector2>
+			<Vector2 name="StartScreenSize">
+				<X>1936</X>
+				<Y>1056</Y>
+			</Vector2>
+			<BinaryString name="Tags"></BinaryString>
+			<bool name="TouchCameraMovementChanged">false</bool>
+			<token name="TouchCameraMovementMode">0</token>
+			<bool name="TouchMovementChanged">false</bool>
+			<token name="TouchMovementMode">0</token>
+			<bool name="UsedCoreGuiIsVisibleToggle">false</bool>
+			<bool name="UsedCustomGuiIsVisibleToggle">false</bool>
+			<bool name="UsedHideHudShortcut">false</bool>
+			<bool name="VREnabled">true</bool>
+			<int name="VRRotationIntensity">1</int>
+			<string name="gaID"></string>
+		</Properties>
+	</Item>
 </roblox>

@@ -1,0 +1,10 @@
+{
+	"executionEnvironments": [
+		{
+			"root": "Source",
+			"reportIncompatibleVariableOverride": "none",
+			"reportUnsafeMultipleInheritance": "none",
+			"reportUnusedCallResult": "none",
+		}
+	]
+}

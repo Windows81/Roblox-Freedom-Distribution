@@ -27,6 +27,7 @@ from . import (
 class obj_type(logic.bin_entry, logic.gameconfig_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
+    DIRS_TO_ADD = ['logs', 'LocalStorage']
 
     @functools.cache
     def retr_version(self) -> util.versions.rōblox:
@@ -320,6 +321,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         self.save_place_file()
         self.save_thumbnail()
         self.save_app_settings()
+        self.make_aux_directories()
         self.update_fflags()
         self.save_gameserver()
         self.make_popen_threads()

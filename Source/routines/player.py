@@ -18,6 +18,7 @@ from . import _logic as logic
 class obj_type(logic.bin_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.PLAYER
+    DIRS_TO_ADD = ['logs', 'LocalStorage']
 
     @override
     def retr_version(self) -> util.versions.rōblox:
@@ -48,6 +49,7 @@ class obj_type(logic.bin_entry):
 
     def bootstrap(self) -> None:
         self.save_app_settings()
+        self.make_aux_directories()
         self.update_fflags()
 
     def make_client_popen(self) -> None:

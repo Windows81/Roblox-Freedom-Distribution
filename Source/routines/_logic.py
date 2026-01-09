@@ -235,6 +235,7 @@ class bin_entry(popen_entry, loggable_entry):
     local_args: bin_arg_type
     rōblox_version: util.versions.rōblox
     BIN_SUBTYPE: util.resource.bin_subtype
+    DIRS_TO_ADD: list[str]
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -277,6 +278,12 @@ class bin_entry(popen_entry, loggable_entry):
                 </Settings>
             '''))
         return path
+
+    def make_aux_directories(self):
+        return [
+            util.resource.retr_full_path(util.resource.dir_type.MISC, d)
+            for d in self.DIRS_TO_ADD
+        ]
 
 
 class gameconfig_entry(entry):

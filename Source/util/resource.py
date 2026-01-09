@@ -67,7 +67,7 @@ def get_path_pieces(d: dir_type) -> list[str]:
 
 @functools.cache
 def make_dirs(full_path: str) -> None:
-    pieces = []
+    pieces = list[str]()
     head = os.path.abspath(full_path)
     tail = True
     while tail:
@@ -86,14 +86,16 @@ def retr_full_path(d: dir_type, *paths: str) -> str:
 
 
 def retr_rōblox_full_path(
-        version: util.versions.rōblox,
-        bin_type: bin_subtype,
-        *paths: str) -> str:
+    version: util.versions.rōblox,
+    bin_type: bin_subtype,
+    *paths: str
+) -> str:
     return retr_full_path(
         dir_type.RŌBLOX,
         version.name,
         bin_type.value,
-        *paths)
+        *paths,
+    )
 
 
 def retr_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:

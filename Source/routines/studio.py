@@ -21,6 +21,11 @@ import logger
 class obj_type(logic.bin_entry, logic.loggable_entry, logic.gameconfig_entry):
     local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.STUDIO
+    DIRS_TO_ADD = [
+        'logs', 'LocalStorage',
+        'InstalledPlugins', 'placeIDEState',
+        'ClientSettings',
+    ]
 
     @override
     def retr_version(self) -> util.versions.rōblox:
@@ -60,6 +65,7 @@ class obj_type(logic.bin_entry, logic.loggable_entry, logic.gameconfig_entry):
     @override
     def process(self) -> None:
         self.save_app_settings()
+        self.make_aux_directories()
         self.save_starter_scripts()
         time.sleep(self.local_args.launch_delay)
         self.make_popen((
