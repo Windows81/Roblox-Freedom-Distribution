@@ -65,23 +65,8 @@ def get_path_pieces(d: dir_type) -> list[str]:
             return [os.getcwd()]
 
 
-@functools.cache
-def make_dirs(full_path: str) -> None:
-    pieces = list[str]()
-    head = os.path.abspath(full_path)
-    tail = True
-    while tail:
-        (head, tail) = os.path.split(head)
-        pieces.append(head)
-
-    for head in reversed(pieces):
-        if not os.path.isdir(head):
-            os.mkdir(head)
-
-
 def retr_full_path(d: dir_type, *paths: str) -> str:
     full_path = os.path.join(*get_path_pieces(d), *paths)
-    make_dirs(full_path)
     return full_path
 
 

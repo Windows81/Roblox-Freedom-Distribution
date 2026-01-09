@@ -54,20 +54,21 @@ class obj_type(logic.bin_entry):
 
     def make_client_popen(self) -> None:
         base_url = self.local_args.get_base_url()
-        self.make_popen((
+        self.make_popen(
             self.get_versioned_path('RobloxPlayerBeta.exe'),
-            '-a', f'{base_url}/login/negotiate.ashx',
-            '-j', f'{base_url}/game/PlaceLauncher.ashx?' +
-            urllib.parse.urlencode({k: v for k, v in {
-                'rcc-host-addr':
+            (
+                '-a', f'{base_url}/login/negotiate.ashx',
+                '-j', f'{base_url}/game/PlaceLauncher.ashx?' +
+                urllib.parse.urlencode({k: v for k, v in {
+                    'rcc-host-addr':
                     self.local_args.rcc_host,
-                'rcc-port':
+                    'rcc-port':
                     self.local_args.rcc_port,
-                'user-code':
+                    'user-code':
                     self.local_args.user_code,
-            }.items() if v}),
-            '-t', '1',
-        ))
+                }.items() if v}),
+                '-t', '1',
+            ))
 
     @override
     def process(self) -> None:

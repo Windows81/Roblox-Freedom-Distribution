@@ -8,6 +8,7 @@ import threading
 import shutil
 import ssl
 import re
+import os
 
 # Typing imports
 from typing import Self, override
@@ -147,13 +148,15 @@ class popen_entry(entry):
         self.is_terminated: bool = False
         self.is_running: bool = False
 
-    def make_popen(self, cmd_args: tuple[str, ...], *args, **kwargs) -> None:
+    def make_popen(self, exe_path: str, cmd_args: tuple[str, ...], *args, **kwargs) -> None:
         '''
         Creates new thread(s) for the Popen to operate under.
         '''
         # Checks if Wine is installed.  Redundant if using Windows.
         if shutil.which('wine') is not None:
-            cmd_args = ('wine', *cmd_args)
+            params = ('wine', exe_path, *cmd_args)
+        else:
+            params = (exe_path, *cmd_args)
 
         self.is_running = True
         if self.is_terminated:
@@ -161,7 +164,9 @@ class popen_entry(entry):
             self.popen_daemons.clear()
             self.is_terminated = False
 
-        principal = subprocess.Popen(cmd_args, *args, **kwargs)
+        principal = subprocess.Popen(
+            params, *args, **kwargs, cwd=os.path.dirname(exe_path),
+        )
         self.popen_mains.append(principal)
 
         if self.local_args.debug_x96:
@@ -280,10 +285,12 @@ class bin_entry(popen_entry, loggable_entry):
         return path
 
     def make_aux_directories(self):
-        return [
+        paths = [
             util.resource.retr_full_path(util.resource.dir_type.MISC, d)
             for d in self.DIRS_TO_ADD
         ]
+        for p in paths:
+            os.makedirs(p, exist_ok=True)
 
 
 class gameconfig_entry(entry):

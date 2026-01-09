@@ -206,7 +206,6 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         match self.retr_version():
             case util.versions.rōblox.v348:
                 return (
-                    self.get_versioned_path('RCCService.exe'),
                     f'-PlaceId:{self.local_args.place_iden}',
                     '-LocalTest', self.get_versioned_path(
                         'GameServer.json',
@@ -215,7 +214,6 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                 )
             case util.versions.rōblox.v463:
                 return (
-                    self.get_versioned_path('RCCService.exe'),
                     f'-PlaceId:{self.local_args.place_iden}',
                     '-LocalTest', self.get_versioned_path(
                         'GameServer.json',
@@ -258,8 +256,8 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
     def make_popen_threads(self) -> None:
         self.make_popen(
+            exe_path=self.get_versioned_path('RCCService.exe'),
             cmd_args=self.gen_cmd_args(),
-            cwd=self.get_versioned_path(),
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
         )
