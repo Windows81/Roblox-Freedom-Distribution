@@ -28,5 +28,5 @@ def _(
     args_ns: argparse.Namespace,
 ) -> list[logic.obj_type]:
     return [
-        cookie.obj_type(args_ns.verbose)
+        cookie.obj_type(verbose=args_ns.verbose)
     ]

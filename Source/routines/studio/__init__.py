@@ -1,15 +1,14 @@
 # Standard library imports
 import dataclasses
-import os
-import subprocess
-from routines.rcc import startup_scripts
 import functools
 import time
+import os
 
 # Typing imports
 from typing import ClassVar, override
 
 # Local application imports
+from routines.rcc import startup_scripts
 from config_type.types import wrappers
 from .. import _logic as logic
 import util.resource

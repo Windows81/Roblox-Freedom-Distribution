@@ -7,7 +7,6 @@ from typing import override
 import web_server._logic as web_server_logic
 from . import _logic as logic
 import web_server
-import logger
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)

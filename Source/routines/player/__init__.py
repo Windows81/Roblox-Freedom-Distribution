@@ -58,9 +58,9 @@ class obj_type(logic.bin_entry, logic.loggable_entry):
 
     def finalise_user_code(self) -> None:
         '''
-        This method is separate from `sanitise` because
+        This method is separate from `__post_init__` because
         it needs to be executed after `launch_delay` seconds.
-        The `sanitise` method gets executed before that delay.
+        The `__post_init__` method gets executed before that delay.
         '''
         if self.user_code is not None:
             return

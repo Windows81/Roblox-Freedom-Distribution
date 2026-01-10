@@ -61,7 +61,7 @@ class database(_logic.sqlite_connector_base):
     def get_player_field_from_index(
         self,
         index: player_field,
-        value,
+        value: int | str | None,
         field: player_field,
     ):
         if index == self.player_field.IDEN_NUM:

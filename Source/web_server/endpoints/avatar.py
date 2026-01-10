@@ -6,6 +6,7 @@ from game_config import obj_type
 
 def get_avatar(id_num: int, game_config: obj_type) -> structs.avatar_data:
     user_code = get_user_code(id_num, game_config)
+    assert user_code is not None
     return game_config.server_core.retrieve_avatar(id_num, user_code)
 
 

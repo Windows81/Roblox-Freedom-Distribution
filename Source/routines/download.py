@@ -16,7 +16,7 @@ class obj_type(logic.bin_entry, logic.loggable_entry):
     @override
     def process(self) -> None:
         downloader.bootstrap_binary(
-            rōblox_version=self.rōblox_version,
+            rōblox_version=self.retr_version(),
             bin_type=self.BIN_SUBTYPE,
             log_filter=self.log_filter,
         )

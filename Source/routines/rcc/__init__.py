@@ -1,5 +1,4 @@
 # Standard library imports
-import functools
 from typing import IO, override
 import dataclasses
 import subprocess
@@ -15,7 +14,6 @@ import util.const as const
 import assets.serialisers
 import util.resource
 import util.versions
-import game_config
 import logger
 
 from . import (
@@ -243,7 +241,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         Pipes output from the RCC server to the logger module for processing.
         This is done in a separate thread to avoid blocking the main process from terminating RCC when necessary.
         '''
-        stdout: IO[bytes] = self.popen_mains[0].stdout  # type: ignore[reportAssignmentType]
+        stdout: IO[bytes] = self.popen_mains[0].stdout  # pyright: ignore[reportAssignmentType]
         assert stdout is not None
         while True:
             line = stdout.readline()

@@ -5,6 +5,9 @@
 			"reportIncompatibleVariableOverride": "none",
 			"reportUnsafeMultipleInheritance": "none",
 			"reportUnusedCallResult": "none",
+			"reportUnknownMemberType": "information",
+			"reportUnannotatedClassAttribute": "none",
+			"reportAny": "hint",
 		}
 	]
 }

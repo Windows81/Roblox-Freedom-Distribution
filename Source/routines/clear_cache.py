@@ -18,6 +18,7 @@ NUM_THREADS = 4
 class obj_type(logic.obj_type):
     base_url: str
     base_url_bytes: bytes = dataclasses.field(init=False)
+    remove_count: int = dataclasses.field(init=False, default=0)
 
     def check_host(self, full_path: str) -> bool:
         try:
@@ -36,6 +37,7 @@ class obj_type(logic.obj_type):
             if not self.check_host(full_path):
                 continue
             try:
+                self.remove_count += 1
                 os.remove(full_path)
             except Exception:
                 pass
@@ -58,6 +60,7 @@ class obj_type(logic.obj_type):
             for fn in os.listdir(http_folder)
         ]
 
+        self.remove_count = 0
         threads = [
             threading.Thread(
                 target=self.remove_hosts,
