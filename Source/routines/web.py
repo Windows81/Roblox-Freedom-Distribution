@@ -4,27 +4,33 @@ import threading
 from typing import override
 
 # Local application/library specific imports
-import game_config as config
-import logger
-import web_server
 import web_server._logic as web_server_logic
 from . import _logic as logic
+import web_server
+import logger
 
 
-class obj_type(logic.gameconfig_entry):
-    game_config: config.obj_type
+@dataclasses.dataclass(kw_only=True, unsafe_hash=True)
+class obj_type(logic.gameconfig_entry, logic.loggable_entry):
+    web_port: int
+    is_ipv6: bool
+    is_ssl: bool
+
+    server_mode: web_server_logic.server_mode
     httpd: web_server_logic.web_server | None = None
-    local_args: 'arg_type'
+
+    def __post_init__(self) -> None:
+        self.threads: list[threading.Thread] = []
 
     @override
     def process(self) -> None:
         self.httpd = web_server.make_server(
-            self.local_args.web_port,
-            self.local_args.is_ssl,
-            self.local_args.is_ipv6,
+            self.web_port,
+            self.is_ssl,
+            self.is_ipv6,
             self.game_config,
-            self.local_args.server_mode,
-            self.local_args.log_filter,
+            self.server_mode,
+            self.log_filter,
         )
 
         th = threading.Thread(
@@ -40,16 +46,3 @@ class obj_type(logic.gameconfig_entry):
             return
         self.httpd.shutdown()
         super().stop()
-
-
-@dataclasses.dataclass
-class arg_type(logic.arg_type):
-    obj_type = obj_type
-
-    web_port: int
-    is_ipv6: bool
-    is_ssl: bool
-
-    game_config: config.obj_type
-    server_mode: web_server_logic.server_mode
-    log_filter: logger.filter.filter_type

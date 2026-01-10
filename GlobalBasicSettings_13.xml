@@ -1,7 +1,7 @@
 <roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
 	<External>null</External>
 	<External>nil</External>
-	<Item class="UserGameSettings" referent="RBXCBA235AF25B94B97B14A5837C55994A4">
+	<Item class="UserGameSettings" referent="RBX2E9831BDAF84481CABF26D4D323904DE">
 		<Properties>
 			<bool name="AllTutorialsDisabled">false</bool>
 			<BinaryString name="AttributesSerialize"></BinaryString>

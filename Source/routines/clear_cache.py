@@ -14,9 +14,10 @@ from . import _logic as logic
 NUM_THREADS = 4
 
 
-class obj_type(logic.entry):
-    local_args: 'arg_type'
-    base_url_bytes: bytes
+@dataclasses.dataclass
+class obj_type(logic.obj_type):
+    base_url: str
+    base_url_bytes: bytes = dataclasses.field(init=False)
 
     def check_host(self, full_path: str) -> bool:
         try:
@@ -41,7 +42,7 @@ class obj_type(logic.entry):
 
     @override
     def process(self) -> None:
-        self.base_url_bytes = bytes(self.local_args.base_url, encoding='utf-8')
+        self.base_url_bytes = bytes(self.base_url, encoding='utf-8')
         http_folder = os.path.join(
             os.getenv('LocalAppData', ''),
             'Temp',
@@ -71,9 +72,3 @@ class obj_type(logic.entry):
 
         for t in threads:
             t.join()
-
-
-@dataclasses.dataclass
-class arg_type(logic.arg_type):
-    obj_type = obj_type
-    base_url: str

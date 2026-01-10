@@ -9,7 +9,7 @@ from routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
 
 
-CACHEABLE_ARG_SUPERTYPE = logic.bin_arg_type
+CACHEABLE_ARG_SUPERTYPE = logic.bin_entry
 
 
 @functools.cache
@@ -33,12 +33,12 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS, {clear_cache.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS, {clear_cache.obj_type})
 def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
-    args_list: list[logic.arg_type],
-) -> list[logic.arg_type]:
+    args_list: list[logic.obj_type],
+) -> list[logic.obj_type]:
 
     if not check_mode(mode):
         return []
@@ -49,14 +49,14 @@ def _(
     base_args = [
         arg
         for arg in args_list
-        if isinstance(arg, logic.bin_arg_type)
+        if isinstance(arg, logic.bin_entry)
     ]
 
     if len(base_args) == 0:
         return []
 
     args_list[:0] = [
-        clear_cache.arg_type(
+        clear_cache.obj_type(
             base_url=base.get_app_base_url(),
         )
         for base in base_args

@@ -35,14 +35,14 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.DOWNLOAD, {download.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.DOWNLOAD, {download.obj_type})
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.arg_type]:
+) -> list[logic.obj_type]:
     log_filter = logger.filter.filter_type(other_logs=True)
     return [
-        download.arg_type(
+        download.obj_type(
             rōblox_version=args_ns.rbx_version,
             log_filter=log_filter,
             bin_subtype=b,

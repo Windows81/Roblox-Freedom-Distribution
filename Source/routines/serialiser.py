@@ -9,25 +9,20 @@ import assets.serialisers
 from . import _logic as logic
 
 
-class obj_type(logic.entry):
-    local_args: 'arg_type'
+@dataclasses.dataclass
+class obj_type(logic.obj_type):
+    methods: set[assets.serialisers.method]
+    files: list[tuple[str, str]]
 
     @override
     def process(self) -> None:
-        for (r, w) in self.local_args.files:
+        for (r, w) in self.files:
             with open(r, 'rb') as fr:
                 data, changed = assets.serialisers.parse(
                     fr.read(),
-                    self.local_args.methods,
+                    self.methods,
                 )
             if changed:
                 print(w)
             with open(w, 'wb') as fw:
                 fw.write(data)
-
-
-@dataclasses.dataclass
-class arg_type(logic.arg_type):
-    obj_type = obj_type
-    methods: set[assets.serialisers.method]
-    files: list[tuple[str, str]]

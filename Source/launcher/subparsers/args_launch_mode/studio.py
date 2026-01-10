@@ -61,11 +61,11 @@ def subparse(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO, {web.arg_type, rcc.arg_type, player.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO, {web.obj_type, rcc.obj_type, player.obj_type})
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.arg_type]:
+) -> list[logic.obj_type]:
     if args_ns.place_path is not None:
         game_config = config.generate_config(args_ns.place_path)
     else:
@@ -77,10 +77,10 @@ def _(
         other_logs=not args_ns.quiet,
     )
 
-    routine_args: list[logic.arg_type] = []
+    routine_args: list[logic.obj_type] = []
     if not args_ns.skip_studio:
         routine_args.extend([
-            studio.arg_type(
+            studio.obj_type(
                 game_config=game_config,
                 web_host='localhost',
                 web_port=web_port,
@@ -90,7 +90,7 @@ def _(
 
     if not args_ns.skip_web:
         routine_args.extend([
-            web.arg_type(
+            web.obj_type(
                 web_port=web_port,
                 is_ipv6=False,
                 is_ssl=True,

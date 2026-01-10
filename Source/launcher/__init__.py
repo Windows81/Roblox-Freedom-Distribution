@@ -26,7 +26,7 @@ from .subparsers.args_aux import (
 )
 
 
-def parse_arg_list(args: list[str] | None) -> list[routine_logic.arg_type] | None:
+def parse_arg_list(args: list[str] | None) -> list[routine_logic.obj_type] | None:
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''

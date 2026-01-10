@@ -1,8 +1,8 @@
 # Standard library imports
+import functools
 from typing import IO, override
 import dataclasses
 import subprocess
-import functools
 import threading
 import time
 import json
@@ -24,12 +24,26 @@ from . import (
 )
 
 
+@dataclasses.dataclass(kw_only=True, unsafe_hash=True)
 class obj_type(logic.bin_entry, logic.gameconfig_entry):
-    local_args: 'arg_type'
     BIN_SUBTYPE = util.resource.bin_subtype.SERVER
     DIRS_TO_ADD = ['logs', 'LocalStorage']
 
-    @functools.cache
+    track_file_changes: bool = True
+    rcc_port: int
+
+    # TODO: fix the way place idens work.
+    place_iden: int = const.PLACE_IDEN_CONST
+
+    @override
+    def get_base_url(self) -> str:
+        return f'https://{self.web_host}:{self.web_port}'
+
+    @override
+    def get_app_base_url(self) -> str:
+        return f'{self.get_base_url()}/'
+
+    @override
     def retr_version(self) -> util.versions.rōblox:
         return self.game_config.game_setup.roblox_version
 
@@ -50,7 +64,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             logger.log(
                 text='Warning: thumbnail data not found.',
                 context=logger.log_context.PYTHON_SETUP,
-                filter=self.local_args.log_filter,
+                filter=self.log_filter,
             )
 
     def save_place_file(self) -> None:
@@ -72,7 +86,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
         # Saves `rbxl_data` to a local file in `AssetCache`.
         cache.add_asset(
-            self.local_args.place_iden,
+            self.place_iden,
             rbxl_data,
         )
 
@@ -86,7 +100,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                     'when the place file is an online resource.'
                 ),
                 context=logger.log_context.PYTHON_SETUP,
-                filter=self.local_args.log_filter,
+                filter=self.log_filter,
             )
 
     def save_starter_scripts(self) -> None:
@@ -108,7 +122,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         # TODO: move FFlag loading to an API endpoint.
         version = self.retr_version()
         new_flags = {
-            **self.local_args.log_filter.rcc_logs.get_level_table(),
+            **self.log_filter.rcc_logs.get_level_table(),
         }
 
         match version:
@@ -140,7 +154,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         '''
         Saves `GameServer.json`, which will be used when the RCC process is created.
         '''
-        base_url = self.local_args.get_base_url()
+        base_url = self.get_base_url()
         path = self.get_versioned_path('GameServer.json')
 
         with open(path, 'w', encoding='utf-8') as f:
@@ -151,13 +165,13 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                     "Type":
                         "Avatar",
                     "PlaceId":
-                        self.local_args.place_iden,
+                        self.place_iden,
                     "GameId":
                         "Test",
                     "MachineAddress":
                         base_url,
                     "PlaceFetchUrl":
-                        f"{base_url}/asset/?id={self.local_args.place_iden}",
+                        f"{base_url}/asset/?id={self.place_iden}",
                     "MaxPlayers":
                         int(1e9),
                     "PreferredPlayerCapacity":
@@ -189,7 +203,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                     "JobId":
                         "Test",
                     "PreferredPort":
-                        self.local_args.rcc_port,
+                        self.rcc_port,
                 },
                 "Arguments": {},
             }, f)
@@ -200,13 +214,13 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
         # There is a chance that RFD can be overwhelmed with processing output.
         # Removing the `-verbose` flag here will reduce the amount of data piped from RCC.
-        if not self.local_args.log_filter.rcc_logs.is_empty():
+        if not self.log_filter.rcc_logs.is_empty():
             suffix_args.append('-verbose')
 
         match self.retr_version():
             case util.versions.rōblox.v348:
                 return (
-                    f'-PlaceId:{self.local_args.place_iden}',
+                    f'-PlaceId:{self.place_iden}',
                     '-LocalTest', self.get_versioned_path(
                         'GameServer.json',
                     ),
@@ -214,7 +228,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                 )
             case util.versions.rōblox.v463:
                 return (
-                    f'-PlaceId:{self.local_args.place_iden}',
+                    f'-PlaceId:{self.place_iden}',
                     '-LocalTest', self.get_versioned_path(
                         'GameServer.json',
                     ),
@@ -238,7 +252,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             logger.log(
                 line.rstrip(b'\r\n'),
                 context=logger.log_context.RCC_SERVER,
-                filter=self.local_args.log_filter,
+                filter=self.log_filter,
             )
 
             action = log_action.check(line)
@@ -269,7 +283,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         pipe_thread.start()
 
         file_change_thread = threading.Thread(
-            target=self.track_file_changes,
+            target=self.maybe_track_file_changes,
             daemon=True,
         )
         file_change_thread.start()
@@ -279,7 +293,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             file_change_thread,
         ])
 
-    def track_file_changes(self) -> None:
+    def maybe_track_file_changes(self) -> None:
         config = self.game_config
         if not config.server_core.place_file.track_file_changes:
             return
@@ -303,14 +317,13 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
     @override
     def process(self) -> None:
-        self.get_versioned_path()
-        log_filter = self.local_args.log_filter
+        log_filter = self.log_filter
         logger.log(
             (
                 f"{log_filter.bcolors.BOLD}[UDP %d]{log_filter.bcolors.ENDC}: " +
                 "initialising Rōblox Cloud Compute"
             ) % (
-                self.local_args.rcc_port,
+                self.rcc_port,
             ),
             context=logger.log_context.PYTHON_SETUP,
             filter=log_filter,
@@ -323,27 +336,3 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         self.update_fflags()
         self.save_gameserver()
         self.make_popen_threads()
-
-
-@dataclasses.dataclass
-class arg_type(logic.bin_arg_type):
-    obj_type = obj_type
-
-    web_host: str | None
-    rcc_port: int | None
-    web_port: int | None
-    game_config: game_config.obj_type
-    log_filter: logger.filter.filter_type
-
-    track_file_changes: bool = True
-
-    # TODO: fix the way place idens work.
-    place_iden: int = const.PLACE_IDEN_CONST
-
-    @override
-    def get_base_url(self) -> str:
-        return f'https://{self.web_host}:{self.web_port}'
-
-    @override
-    def get_app_base_url(self) -> str:
-        return f'{self.get_base_url()}/'

@@ -9,13 +9,9 @@ from . import _logic as logic
 from assets import extractor
 
 
-@dataclasses.dataclass
-class _arg_type(logic.arg_type):
+@dataclasses.dataclass(kw_only=True, unsafe_hash=True)
+class obj_type(logic.obj_type):
     verbose: bool
-
-
-class obj_type(logic.entry):
-    local_args: _arg_type
 
     @override
     def process(self) -> None:
@@ -24,11 +20,7 @@ class obj_type(logic.entry):
             print('No cookie is provided.')
             return
 
-        if self.local_args.verbose:
+        if self.verbose:
             print(cookie)
         else:
             print('A cookie is provided.')
-
-
-class arg_type(_arg_type):
-    obj_type = obj_type

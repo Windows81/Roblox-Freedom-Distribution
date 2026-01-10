@@ -22,11 +22,11 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.SHOW_COOKIE, {cookie.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.SHOW_COOKIE, {cookie.obj_type})
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.arg_type]:
+) -> list[logic.obj_type]:
     return [
-        cookie.arg_type(args_ns.verbose)
+        cookie.obj_type(args_ns.verbose)
     ]

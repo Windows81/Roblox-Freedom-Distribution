@@ -41,13 +41,13 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.SERIALISE_FILE, {serialiser.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.SERIALISE_FILE, {serialiser.obj_type})
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.arg_type]:
+) -> list[logic.obj_type]:
     return [
-        serialiser.arg_type(
+        serialiser.obj_type(
             files=list(zip(args_ns.load, args_ns.save)),
             methods=set(assets.serialisers.method[m] for m in args_ns.method),
         ),

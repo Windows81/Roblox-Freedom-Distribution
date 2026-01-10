@@ -146,11 +146,11 @@ def gen_log_filter(
     return result
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.SERVER, {web.arg_type, rcc.arg_type, player.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.SERVER, {web.obj_type, rcc.obj_type, player.obj_type})
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.arg_type]:
+) -> list[logic.obj_type]:
     if args_ns.place_path is not None:
         game_config = config.generate_config(args_ns.place_path)
     else:
@@ -173,7 +173,7 @@ def _(
     web_routine_args = []
     if has_ipv6:
         # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
-        web_routine_args.append(web.arg_type(
+        web_routine_args.append(web.obj_type(
             web_port=web_port,
             is_ssl=True,
             is_ipv6=True,
@@ -182,7 +182,7 @@ def _(
             game_config=game_config,
         ))
     if has_ipv4:
-        web_routine_args.append(web.arg_type(
+        web_routine_args.append(web.obj_type(
             web_port=web_port,
             is_ssl=True,
             is_ipv6=False,
@@ -197,7 +197,7 @@ def _(
 
     if not args_ns.skip_rcc:
         routine_args.append(
-            rcc.arg_type(
+            rcc.obj_type(
                 # TODO: add support for RCC to connect to hosts other than `localhost`.
                 web_host='localhost',
                 web_port=web_port,
@@ -209,7 +209,7 @@ def _(
 
     if args_ns.run_client:
         routine_args.extend([
-            player.arg_type(
+            player.obj_type(
                 rcc_host='127.0.0.1',
                 web_host='127.0.0.1',
                 rcc_port=rcc_port,

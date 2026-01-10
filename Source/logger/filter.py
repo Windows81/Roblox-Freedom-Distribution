@@ -7,10 +7,9 @@ from . import bcolors as bc
 from . import flog_table
 
 
-
 @dataclasses.dataclass(frozen=True)
 class filter_type_bin:
-    flogs: set[int]
+    flogs: frozenset[int]
 
     @staticmethod
     def serialise_key(flog: str) -> str:
@@ -18,7 +17,7 @@ class filter_type_bin:
 
     @staticmethod
     def parse(*flogs: str) -> "filter_type_bin":
-        return filter_type_bin(flogs=set(
+        return filter_type_bin(flogs=frozenset(
             flog_table.LOG_LEVEL_DICT[filter_type_bin.serialise_key(flog)]
             for flog in flogs
         ))
@@ -36,22 +35,22 @@ class filter_type_bin:
         }
 
 
-FILTER_BIN_QUIET = filter_type_bin(set())
+FILTER_BIN_QUIET = filter_type_bin(frozenset())
 FILTER_BIN_LOUD = filter_type_bin(
-    flogs=set(range(
+    flogs=frozenset(range(
         flog_table.INDEX_OFFSET,
         len(flog_table.LOG_LEVEL_LIST) + flog_table.INDEX_OFFSET
     ))
 )
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True, unsafe_hash=True)
 class filter_type_web:
     urls: bool = False
     errors: bool = False
 
 
-@dataclasses.dataclass(frozen=True)
+@dataclasses.dataclass(frozen=True, unsafe_hash=True)
 class filter_type:
     rcc_logs: filter_type_bin
     player_logs: filter_type_bin

@@ -7,7 +7,7 @@ from routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
 
 
-DOWNLOADABLE_ARG_SUPERTYPE = logic.bin_arg_type
+DOWNLOADABLE_ARG_SUPERTYPE = logic.bin_entry
 
 
 @functools.cache
@@ -35,8 +35,8 @@ def _(
 def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
-    args_list: list[logic.arg_type],
-) -> list[logic.arg_type]:
+    args_list: list[logic.obj_type],
+) -> list[logic.obj_type]:
     if not check_mode(mode):
         return []
 

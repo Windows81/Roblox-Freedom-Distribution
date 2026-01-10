@@ -2,7 +2,7 @@ import argparse
 from routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
 
-DEBUGGABLE_ARG_SUPERTYPE = logic.popen_arg_type
+DEBUGGABLE_ARG_SUPERTYPE = logic.popen_entry
 
 
 @sub_logic.add_args(sub_logic.launch_mode.ALWAYS)
@@ -31,8 +31,8 @@ def _(
 def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
-    args_list: list[logic.arg_type],
-) -> list[logic.arg_type]:
+    args_list: list[logic.obj_type],
+) -> list[logic.obj_type]:
 
     for i, a in enumerate(
         a
