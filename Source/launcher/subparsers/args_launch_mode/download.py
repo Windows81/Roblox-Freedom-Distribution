@@ -6,8 +6,9 @@ import logger
 import util.resource
 import util.versions
 
-from routines import player, rcc, studio, download
+from routines import player, rcc, studio
 from routines import _logic as logic
+from pretasks import download
 
 import launcher.subparsers._logic as sub_logic
 
@@ -35,17 +36,17 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.DOWNLOAD, {download.obj_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.DOWNLOAD)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.obj_type]:
-    log_filter = logger.filter.filter_type(other_logs=True)
-    return [
-        download.obj_type(
+) -> list[logic.base_entry]:
+
+    log_filter = logger.filter.FILTER_REASONABLE
+    for b in args_ns.bin_subtype:
+        download.bootstrap_binary(
             rōblox_version=args_ns.rbx_version,
             log_filter=log_filter,
-            bin_subtype=b,
+            bin_type=b,
         )
-        for b in args_ns.bin_subtype
-    ]
+    return []

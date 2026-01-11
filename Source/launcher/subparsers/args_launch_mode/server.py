@@ -146,11 +146,11 @@ def gen_log_filter(
     return result
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.SERVER, {web.obj_type, rcc.obj_type, player.obj_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.SERVER)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.obj_type]:
+) -> list[logic.base_entry]:
     if args_ns.place_path is not None:
         game_config = config.generate_config(args_ns.place_path)
     else:

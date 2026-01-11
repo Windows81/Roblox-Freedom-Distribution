@@ -10,12 +10,13 @@ from . import _logic as logic
 
 
 @dataclasses.dataclass
-class obj_type(logic.obj_type):
+class obj_type(logic.base_entry):
     methods: set[assets.serialisers.method]
     files: list[tuple[str, str]]
 
     @override
     def process(self) -> None:
+        super().process()
         for (r, w) in self.files:
             with open(r, 'rb') as fr:
                 data, changed = assets.serialisers.parse(

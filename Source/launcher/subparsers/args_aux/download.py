@@ -3,27 +3,22 @@ import argparse
 import functools
 
 # Local application imports
-from routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
+from routines import _logic as logic
+
+AUX_MODES = (
+    sub_logic.launch_mode.PLAYER,
+    sub_logic.launch_mode.SERVER,
+    sub_logic.launch_mode.STUDIO,
+)
 
 
-DOWNLOADABLE_ARG_SUPERTYPE = logic.bin_entry
-
-
-@functools.cache
-def check_mode(mode: sub_logic.launch_mode) -> bool:
-    return DOWNLOADABLE_ARG_SUPERTYPE in sub_logic.SERIALISE_TYPE_SETS[mode]
-
-
-@sub_logic.add_args(sub_logic.launch_mode.ALWAYS)
+@sub_logic.add_aux_args(*AUX_MODES)
 def _(
     mode: sub_logic.launch_mode,
     parser: argparse.ArgumentParser,
     subparser: argparse.ArgumentParser,
 ) -> None:
-    if not check_mode(mode):
-        return
-
     subparser.add_argument(
         '--skip_download',
         action='store_true',
@@ -31,19 +26,18 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS, set())
+@sub_logic.serialise_aux_args(*AUX_MODES)
 def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
-    args_list: list[logic.obj_type],
-) -> list[logic.obj_type]:
-    if not check_mode(mode):
-        return []
+    args_list: list[logic.base_entry],
+) -> list[logic.base_entry]:
 
     # Enables the `auto_download` flag for every routine, but adds no new routines of its own.
     auto_download = not args_ns.skip_download
+
     for a in args_list:
-        if not isinstance(a, DOWNLOADABLE_ARG_SUPERTYPE):
+        if not isinstance(a, logic.bin_entry):
             continue
         a.auto_download = auto_download
     return []

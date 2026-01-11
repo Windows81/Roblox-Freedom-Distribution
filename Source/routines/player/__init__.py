@@ -83,32 +83,12 @@ class obj_type(logic.bin_entry, logic.loggable_entry):
             str(res.read(), encoding='utf-8'),
         )
 
-    def update_fflags(self) -> None:
-        '''
-        Updates the FFlags in the game configuration.
-        '''
-        # TODO: move FFlag loading to an API endpoint.
-        new_flags = {
-            **self.log_filter.rcc_logs.get_level_table(),
-        }
-
-        path = self.get_versioned_path(
-            'ClientSettings',
-            'ClientAppSettings.json',
-        )
-        with open(path, 'r', encoding='utf-8') as f:
-            json_data = json.load(f)
-
-        json_data |= new_flags
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(json_data, f, indent='\t')
-
     @override
     def bootstrap(self) -> None:
         super().bootstrap()
-        self.save_app_settings()
-        self.make_aux_directories()
-        self.update_fflags()
+        time.sleep(self.launch_delay)
+        self.finalise_user_code()
+        self.make_client_popen()
 
     def make_client_popen(self) -> None:
         base_url = self.get_base_url()
@@ -124,13 +104,6 @@ class obj_type(logic.bin_entry, logic.loggable_entry):
                 }.items() if v}),
                 '-t', '1',
             ))
-
-    @override
-    def process(self) -> None:
-        self.bootstrap()
-        time.sleep(self.launch_delay)
-        self.finalise_user_code()
-        self.make_client_popen()
 
     @override
     def restart(self) -> None:

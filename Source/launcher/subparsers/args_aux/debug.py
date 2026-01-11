@@ -5,14 +5,19 @@ import launcher.subparsers._logic as sub_logic
 DEBUGGABLE_ARG_SUPERTYPE = logic.popen_entry
 
 
-@sub_logic.add_args(sub_logic.launch_mode.ALWAYS)
+AUX_MODES = (
+    sub_logic.launch_mode.PLAYER,
+    sub_logic.launch_mode.SERVER,
+    sub_logic.launch_mode.STUDIO,
+)
+
+
+@sub_logic.add_aux_args(*AUX_MODES)
 def _(
     mode: sub_logic.launch_mode,
     parser: argparse.ArgumentParser,
     subparser: argparse.ArgumentParser,
 ) -> None:
-    if DEBUGGABLE_ARG_SUPERTYPE not in sub_logic.SERIALISE_TYPE_SETS[mode]:
-        return
     debug_mutex = subparser.add_mutually_exclusive_group()
 
     debug_mutex.add_argument(
@@ -27,12 +32,12 @@ def _(
         help='Opens instances of x96dbg and attaches them to all running binaries.')
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS, set())
+@sub_logic.serialise_aux_args(*AUX_MODES)
 def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
-    args_list: list[logic.obj_type],
-) -> list[logic.obj_type]:
+    args_list: list[logic.base_entry],
+) -> list[logic.base_entry]:
 
     for i, a in enumerate(
         a

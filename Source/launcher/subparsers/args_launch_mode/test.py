@@ -24,11 +24,11 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.TEST, {test.obj_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.TEST)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.obj_type]:
+) -> list[logic.base_entry]:
     return [
         test.obj_type(
             tests=set(args_ns.tests_to_run),

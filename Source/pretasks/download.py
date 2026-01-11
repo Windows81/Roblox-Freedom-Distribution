@@ -1,20 +1,19 @@
 # Standard library imports
+import urllib.request
+import shutil
 import io
 import os
-import shutil
-import ssl
-import urllib.request
 
 # Third-party imports
-import py7zr
 import tqdm_vendored as tqdm
+import py7zr
 
 # Local application/library specific imports
-import logger
 import logger.filter
-import util.const
 import util.resource
 import util.versions
+import util.const
+import logger
 
 
 def get_remote_link(

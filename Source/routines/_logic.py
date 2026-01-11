@@ -8,6 +8,7 @@ import threading
 import functools
 import textwrap
 import shutil
+import json
 import ssl
 import re
 import os
@@ -17,25 +18,31 @@ from typing import ClassVar, Self, override
 
 # Local application imports
 import game_config as game_config_module
-import downloader
-import logger
 import util.resource
 import util.versions
+import logger
+from pretasks import (
+    download,
+    clear_cache,
+)
 
 
 @dataclasses.dataclass(unsafe_hash=True)
-class obj_type:
+class base_entry:
     threads: list[threading.Thread] = (
         dataclasses.field(default_factory=list, init=False, hash=False)
     )
     routine: 'routine | None' = (
         dataclasses.field(default=None, init=False)
     )
+    _completed: bool = (
+        dataclasses.field(default=False, init=False)
+    )
 
     def wait(self) -> None:
         for t in self.threads:
             while t.is_alive():
-                t.join(1)
+                t.join(timeout=1)
 
     def stop(self) -> None:
         self.wait()
@@ -50,11 +57,12 @@ class obj_type:
         return self.stop()
 
     def process(self) -> None:
-        raise NotImplementedError()
+        assert not self._completed
+        self._completed = True
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
-class popen_entry(obj_type):
+class popen_entry(base_entry):
     '''
     Routine entry class that corresponds to a Popen subprocess object.
     '''
@@ -139,11 +147,19 @@ class popen_entry(obj_type):
             p.terminate()
 
         self.is_running = True
-        self.process()
+        self.bootstrap()
+
+    @override
+    def process(self) -> None:
+        super().process()
+        self.bootstrap()
+
+    def bootstrap(self) -> None:
+        raise NotImplementedError()
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
-class loggable_entry(obj_type):
+class loggable_entry(base_entry):
     log_filter: logger.filter.filter_type
 
     def log(self, message: bytes | str) -> None:
@@ -161,6 +177,7 @@ class bin_entry(popen_entry, loggable_entry):
     '''
 
     auto_download: bool = False
+    clear_cache: bool = False
     web_host: str
     web_port: int
 
@@ -224,18 +241,6 @@ class bin_entry(popen_entry, loggable_entry):
     def retr_version(self) -> util.versions.rōblox:
         raise NotImplementedError()
 
-    def maybe_download_binary(self) -> None:
-        '''
-        Check if Rōblox is not downloaded; else skip.
-        '''
-        if not self.auto_download:
-            return
-        downloader.bootstrap_binary(
-            rōblox_version=self.retr_version(),
-            bin_type=self.BIN_SUBTYPE,
-            log_filter=self.log_filter,
-        )
-
     def save_app_settings(self) -> str:
         '''
         Simply modifies `AppSettings.xml` to point to correct host name.
@@ -260,12 +265,43 @@ class bin_entry(popen_entry, loggable_entry):
         for p in paths:
             os.makedirs(p, exist_ok=True)
 
+    def update_fflags(self) -> None:
+        '''
+        Updates the FFlags in the game configuration.
+        '''
+        # TODO: move FFlag loading to an API endpoint.
+        new_flags = {
+            **self.log_filter.rcc_logs.get_level_table(),
+        }
+
+        path = self.get_versioned_path(
+            'ClientSettings',
+            'ClientAppSettings.json',
+        )
+        with open(path, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+
+        json_data |= new_flags
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, indent='\t')
+
+    @override
     def bootstrap(self) -> None:
-        self.maybe_download_binary()
+        if self.auto_download:
+            download.bootstrap_binary(
+                rōblox_version=self.retr_version(),
+                bin_type=self.BIN_SUBTYPE,
+                log_filter=self.log_filter,
+            )
+        if self.clear_cache:
+            clear_cache.process(self.web_host)
+        self.save_app_settings()
+        self.make_aux_directories()
+        self.update_fflags()
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
-class gameconfig_entry(obj_type):
+class gameconfig_entry(base_entry):
     '''
     Routine entry class that maps to a GameConfig structure.
     '''
@@ -287,9 +323,9 @@ class routine:
     - Entries evaluate stage (2) asynchronously.
         - If an entry calls `kill` whilst in stage (2), forcibly terminate *all* the entries in the `self.entries` list field.
     '''
-    entries: list[obj_type]
+    entries: list[base_entry]
 
-    def __init__(self, *args_list: obj_type) -> None:
+    def __init__(self, *args_list: base_entry) -> None:
         super().__init__()
         self.entries = []
         for arg in args_list:

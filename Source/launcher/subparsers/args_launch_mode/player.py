@@ -76,11 +76,11 @@ def gen_log_filter(
     return result
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.PLAYER, {player.obj_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.PLAYER)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.obj_type]:
+) -> list[logic.base_entry]:
 
     web_host: str | None = args_ns.web_host
     rcc_host: str | None = args_ns.rcc_host

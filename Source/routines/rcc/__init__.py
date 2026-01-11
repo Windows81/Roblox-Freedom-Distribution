@@ -314,7 +314,13 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             return
 
     @override
-    def process(self) -> None:
+    def bootstrap(self) -> None:
+        super().bootstrap()
+        self.save_starter_scripts()
+        self.save_place_file()
+        self.save_thumbnail()
+        self.save_gameserver()
+
         log_filter = self.log_filter
         logger.log(
             (
@@ -326,11 +332,5 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             context=logger.log_context.PYTHON_SETUP,
             filter=log_filter,
         )
-        self.save_starter_scripts()
-        self.save_place_file()
-        self.save_thumbnail()
-        self.save_app_settings()
-        self.make_aux_directories()
-        self.update_fflags()
-        self.save_gameserver()
+
         self.make_popen_threads()

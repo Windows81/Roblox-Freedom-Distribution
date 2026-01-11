@@ -1,31 +1,24 @@
 # Standard library imports
 import argparse
-import functools
 
 # Local application imports
-import routines.clear_cache as clear_cache
 from routines import _logic as logic
 
 import launcher.subparsers._logic as sub_logic
 
-
-CACHEABLE_ARG_SUPERTYPE = logic.bin_entry
-
-
-@functools.cache
-def check_mode(mode: sub_logic.launch_mode) -> bool:
-    return CACHEABLE_ARG_SUPERTYPE in sub_logic.SERIALISE_TYPE_SETS[mode]
+AUX_MODES = (
+    sub_logic.launch_mode.PLAYER,
+    sub_logic.launch_mode.SERVER,
+    sub_logic.launch_mode.STUDIO,
+)
 
 
-@sub_logic.add_args(sub_logic.launch_mode.ALWAYS)
+@sub_logic.add_aux_args(*AUX_MODES)
 def _(
     mode: sub_logic.launch_mode,
     parser: argparse.ArgumentParser,
     sub_parser: argparse.ArgumentParser,
 ) -> None:
-    if not check_mode(mode):
-        return
-
     sub_parser.add_argument(
         '--clear_cache',
         action='store_true',
@@ -33,15 +26,12 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.ALWAYS, {clear_cache.obj_type})
+@sub_logic.serialise_aux_args(*AUX_MODES)
 def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
-    args_list: list[logic.obj_type],
-) -> list[logic.obj_type]:
-
-    if not check_mode(mode):
-        return []
+    args_list: list[logic.base_entry],
+) -> list[logic.base_entry]:
 
     if not args_ns.clear_cache:
         return []

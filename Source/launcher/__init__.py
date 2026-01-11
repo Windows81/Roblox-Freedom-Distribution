@@ -26,7 +26,7 @@ from .subparsers.args_aux import (
 )
 
 
-def parse_arg_list(args: list[str] | None) -> list[routine_logic.obj_type] | None:
+def parse_arg_list(args: list[str] | None) -> list[routine_logic.base_entry] | None:
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
@@ -64,7 +64,7 @@ def parse_arg_list(args: list[str] | None) -> list[routine_logic.obj_type] | Non
     # Adds parseable arguments for `chosen_sub_parser` which exist only under
     # the current launch mode.
     sub_logic.call_subparser(
-        sub_logic.ADD_MODE_ARGS,
+        sub_logic.ADD_MODAL_ARGS,
         mode,
         parser,
         chosen_sub_parser,
@@ -73,7 +73,7 @@ def parse_arg_list(args: list[str] | None) -> list[routine_logic.obj_type] | Non
     # Adds parseable arguments, which exist under all launch modes, into
     # `chosen_sub_parser`.
     sub_logic.call_auxs(
-        sub_logic.ADD_MODE_ARGS,
+        sub_logic.ADD_AUX_ARGS,
         mode,
         parser,
         chosen_sub_parser,
@@ -98,14 +98,14 @@ def parse_arg_list(args: list[str] | None) -> list[routine_logic.obj_type] | Non
         parser.exit(1)
 
     routine_args_list = sub_logic.call_subparser(
-        sub_logic.SERIALISE_ARGS,
+        sub_logic.SERIALISE_MODAL_ARGS,
         mode,
         parser,
         args_namespace,
     )
 
     routine_args_list += sub_logic.call_auxs(
-        sub_logic.SERIALISE_ARGS,
+        sub_logic.SERIALISE_AUX_ARGS,
         mode,
         args_namespace,
         routine_args_list,

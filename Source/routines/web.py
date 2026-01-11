@@ -23,6 +23,7 @@ class obj_type(logic.gameconfig_entry, logic.loggable_entry):
 
     @override
     def process(self) -> None:
+        super().process()
         self.httpd = web_server.make_server(
             self.web_port,
             self.is_ssl,

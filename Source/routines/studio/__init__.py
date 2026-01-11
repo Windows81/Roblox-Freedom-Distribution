@@ -84,7 +84,8 @@ class obj_type(logic.bin_entry, logic.loggable_entry, logic.gameconfig_entry):
         return new_path
 
     @override
-    def process(self) -> None:
+    def bootstrap(self) -> None:
+        super().bootstrap()
         self.save_app_settings()
         self.make_aux_directories()
         self.save_starter_scripts()

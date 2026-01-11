@@ -3,7 +3,6 @@ import enum
 
 
 class launch_mode(enum.Enum):
-    ALWAYS = 'always'
     SERVER = 'server'
     STUDIO = 'studio'
     PLAYER = 'player'
@@ -13,9 +12,7 @@ class launch_mode(enum.Enum):
     SHOW_COOKIE = 'cookie'
 
 
-ENABLED_LAUNCH_MODES = set(launch_mode).difference({
-    launch_mode.ALWAYS,
-})
+ENABLED_LAUNCH_MODES = set(launch_mode)
 
 
 MODE_ALIASES = {
@@ -27,21 +24,31 @@ MODE_ALIASES = {
 }
 
 
-ADD_MODE_ARGS: dict[launch_mode, list[Callable[..., Any]]] = {
-    m: [] for m in launch_mode
-}
-SERIALISE_ARGS: dict[launch_mode, list[Callable[..., Any]]] = {
-    m: [] for m in launch_mode
-}
-SERIALISE_TYPE_SETS: dict[launch_mode, set[type]] = {
-    m: set() for m in launch_mode
-}
+def prepare_var_and_func():
+    result_table: dict[launch_mode, list[Callable[..., Any]]] = {
+        m: [] for m in launch_mode
+    }
+
+    def outer(*launch_modes: launch_mode):
+        def inner(func):
+            for m in launch_modes:
+                result_table[m].append(func)
+            return func
+        return inner
+
+    return (outer, result_table)
+
+
+(add_args, ADD_MODAL_ARGS) = prepare_var_and_func()
+(add_aux_args, ADD_AUX_ARGS) = prepare_var_and_func()
+(serialise_args, SERIALISE_MODAL_ARGS) = prepare_var_and_func()
+(serialise_aux_args, SERIALISE_AUX_ARGS) = prepare_var_and_func()
 
 
 def call_auxs(args_table: dict[launch_mode, list[Callable[..., Any]]], l_mode: launch_mode, *args, **kwargs) -> list[Any]:
     return [
         result
-        for func in args_table[launch_mode.ALWAYS]
+        for func in args_table[l_mode]
         for result in (func(l_mode, *args, **kwargs) or [])
     ]
 
@@ -52,20 +59,3 @@ def call_subparser(args_table: dict[launch_mode, list[Callable[..., Any]]], l_mo
         for func in args_table[l_mode]
         for result in (func(*args, **kwargs) or [])
     ]
-
-
-def add_args(launch_mode: launch_mode):
-    def inner(func):
-        ADD_MODE_ARGS[launch_mode].append(func)
-        return func
-    return inner
-
-
-def serialise_args(launch_mode: launch_mode, types: set[type]):
-    resolved_types = {t for typ in types for t in typ.mro()}
-
-    def inner(func):
-        SERIALISE_TYPE_SETS[launch_mode].update(resolved_types)
-        SERIALISE_ARGS[launch_mode].append(func)
-        return func
-    return inner
