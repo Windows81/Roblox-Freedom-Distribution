@@ -29,8 +29,9 @@ class database(_logic.sqlite_connector_base):
             f"""
             UPDATE "{self.TABLE_NAME}"
             SET {self.field.FUNDS.value} = {self.field.FUNDS.value} + {delta}
-            WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
-            """
+            WHERE {self.field.USER_ID_NUM.value} = ?
+            """,
+            (user_id_num),
         )
 
     def first_init(self, user_id_num: int, value: int) -> None:
@@ -39,35 +40,28 @@ class database(_logic.sqlite_connector_base):
             INSERT INTO "{self.TABLE_NAME}"
             VALUES (?, ?)
             """,
-            (
-                user_id_num,
-                value,
-            ),
+            (user_id_num, value),
         )
 
     def set(self, user_id_num: int, value: int) -> None:
         self.sqlite.execute(
             f"""
             UPDATE "{self.TABLE_NAME}"
-            SET {self.field.FUNDS.value} = {value}
-            WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
-            """
+            SET {self.field.FUNDS.value} = ?
+            WHERE {self.field.USER_ID_NUM.value} = ?
+            """,
+            (value, user_id_num),
         )
 
     def check(self, user_id_num: int) -> int | None:
-        result = self.sqlite.fetch_results(self.sqlite.execute(
-            f"""
+        result = self.sqlite.execute_and_fetch(
+            query=f"""
             SELECT
             {self.field.FUNDS.value}
 
             FROM "{self.TABLE_NAME}"
-            WHERE {self.field.USER_ID_NUM.value} = {user_id_num}
+            WHERE {self.field.USER_ID_NUM.value} = ?
             """,
-        ))
-        # The `result` looks something like this:
-        # [(6969,)]
-        # Tricky.
-        assert result is not None
-        if len(result) > 0:
-            return result[0][0]
-        return None
+            values=(user_id_num,),
+        )
+        return self.unwrap_result(result, only_first_field=True)

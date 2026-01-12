@@ -53,8 +53,8 @@ class database(_logic.sqlite_connector_base):
         )
 
     def receipts(self) -> list[tuple[int, int, str]]:
-        passes = self.sqlite.fetch_results(self.sqlite.execute(
-            f"""
+        passes = self.sqlite.execute_and_fetch(
+            query=f"""
             SELECT
             {self.field.USER_IDEN_NUM.value},
             {self.field.DEVPRODUCT_ID.value}
@@ -62,7 +62,7 @@ class database(_logic.sqlite_connector_base):
             FROM "{self.TABLE_NAME}"
             WHERE {self.field.IS_CALLED_BACK.value} = FALSE
             """,
-        ))
+        )
         assert passes is not None
 
         # Updates the dev products so as to not repeat the same ones.
@@ -79,17 +79,15 @@ class database(_logic.sqlite_connector_base):
         ]
 
     def check(self, user_id_num: int, devproduct_id: int) -> str | None:
-        result = self.sqlite.fetch_results(self.sqlite.execute(
-            f"""
+        result = self.sqlite.execute_and_fetch(
+            query=f"""
             SELECT
             {self.field.LAST_TIMESTAMP.value}
 
             FROM "{self.TABLE_NAME}"
-            WHERE {self.field.USER_IDEN_NUM.value} = {user_id_num}
-            AND {self.field.DEVPRODUCT_ID.value} = {devproduct_id}
+            WHERE {self.field.USER_IDEN_NUM.value} = ?
+            AND {self.field.DEVPRODUCT_ID.value} = ?
             """,
-        ))
-        assert result is not None
-        if len(result) > 0:
-            return result[0]
-        return None
+            values=(user_id_num, devproduct_id),
+        )
+        return self.unwrap_result(result, only_first_field=True)

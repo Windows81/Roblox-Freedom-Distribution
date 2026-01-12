@@ -8,7 +8,6 @@ import json
 from web_server._logic import web_server_handler, server_path
 
 
-
 @server_path('/persistence/set')  # Usually expects POST.
 def _(self: web_server_handler) -> bool:
     '''
@@ -146,7 +145,7 @@ def _(self: web_server_handler) -> bool:
     self.send_json({
         "data": {
             "Entries": entries,
-            "ExclusiveStartKey": sorted_data.next_key,
+            "ExclusiveStartKey": sorted_data.next_start,
         }
     })
     return True

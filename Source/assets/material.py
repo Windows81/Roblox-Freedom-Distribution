@@ -1,5 +1,6 @@
-import urllib.request
 from . import const, extractor
+import urllib.request
+import urllib.error
 
 
 def transform_to_id_num(asset_id: str) -> int:
@@ -24,7 +25,8 @@ def split_asset_str(asset_id: str) -> None | tuple[str, ...]:
         sub_pieces[-1][extension_index:],
     )
 
-def check(asset_id:str):
+
+def check(asset_id: str):
     return asset_id.startswith(const.ID_PREFIX)
 
 
@@ -52,10 +54,11 @@ def load_asset(asset_id: str) -> bytes | None:
             ('/'.join(combo[:-1]), combo[-1])
         )
 
-        with urllib.request.urlopen(url) as response:
-            if response.status != 200:
-                continue
+        try:
+            response = urllib.request.urlopen(url)
             return response.read()
+        except urllib.error.HTTPError:
+            continue
 
     id_num = transform_to_id_num(asset_id)
     return extractor.download_rōblox_asset(id_num)

@@ -1,4 +1,5 @@
 # Standard library imports
+import functools
 import urllib.request
 import shutil
 import io
@@ -56,14 +57,21 @@ def download(remote_link: str, quiet: bool = False) -> io.BytesIO:
     return downloaded_data
 
 
+@functools.cache
 def should_overwrite(full_dir: str) -> bool:
     rfd_ver_path = os.path.join(
         full_dir, 'rfd_version',
     )
     if not os.path.isfile(rfd_ver_path):
-        return True
-    with open(rfd_ver_path, 'r') as f:
-        return not f.read().startswith(util.const.ZIPPED_RELEASE_VERSION)
+        version_str = ''
+    else:
+        with open(rfd_ver_path, 'r') as f:
+            version_str = f.read()
+
+    if version_str.startswith(util.const.ZIPPED_RELEASE_VERSION):
+        return False
+
+    return input('Should RFD overwrite the `%s`? (y/N) ' % full_dir).lower().startswith('y')
 
 
 def bootstrap_binary(
@@ -77,10 +85,6 @@ def bootstrap_binary(
 
     if os.path.isdir(full_dir):
         if should_overwrite(full_dir):
-            input(
-                'RFD will overwrite a directory in `./Roblox`.  ' +
-                'Press Enter to continue.'
-            )
             shutil.rmtree(full_dir)
         else:
             logger.log(

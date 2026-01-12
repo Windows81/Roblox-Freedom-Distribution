@@ -37,24 +37,19 @@ class database(_logic.sqlite_connector_base):
             )
             VALUES (?, ?)
             """,
-            (
-                user_id_num,
-                badge_id,
-            ),
+            (user_id_num, badge_id),
         )
 
     def check(self, user_id_num: int, badge_id: int) -> str | None:
-        result = self.sqlite.fetch_results(self.sqlite.execute(
-            f"""
+        result = self.sqlite.execute_and_fetch(
+            query=f"""
             SELECT
             {self.field.TIMESTAMP.value}
 
             FROM "{self.TABLE_NAME}"
-            WHERE {self.field.USER_IDEN_NUM.value} = {user_id_num}
-            AND {self.field.BADGE_IDEN.value} = {badge_id}
+            WHERE {self.field.USER_IDEN_NUM.value} = ?
+            AND {self.field.BADGE_IDEN.value} = ?
             """,
-        ))
-        assert result is not None
-        if len(result) > 0:
-            return result[0]
-        return None
+            values=(user_id_num, badge_id),
+        )
+        return self.unwrap_result(result, only_first_field=True)

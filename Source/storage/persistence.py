@@ -10,7 +10,6 @@ from typing import Any, override
 from . import _logic
 
 
-
 @dataclasses.dataclass
 class sorted_item:
     name: str
@@ -20,7 +19,7 @@ class sorted_item:
 @dataclasses.dataclass
 class sorted_struct:
     items: list[sorted_item]
-    next_key: int | None
+    next_start: int | None
 
 
 class database(_logic.sqlite_connector_base):
@@ -64,19 +63,19 @@ class database(_logic.sqlite_connector_base):
         self.sqlite.execute(query, (scope, target, key, value_str))
 
     def get(self, scope: str, target: str, key: str):
-        query = f"""
-        SELECT {self.field.VALUE.value}
-        FROM {self.TABLE_NAME}
-        WHERE {self.field.SCOPE.value} = ?
-        AND {self.field.TARGET.value} = ?
-        AND {self.field.KEY.value} = ?
-        """
-        result: list[tuple[Any]] | None = self.sqlite.fetch_results(
-            self.sqlite.execute(query, (scope, target, key))
+        result: list[tuple[Any]] | None = self.sqlite.execute_and_fetch(
+            query=f"""
+            SELECT {self.field.VALUE.value}
+            FROM {self.TABLE_NAME}
+            WHERE {self.field.SCOPE.value} = ?
+            AND {self.field.TARGET.value} = ?
+            AND {self.field.KEY.value} = ?
+            """,
+            values=(scope, target, key),
         )
-        assert result is not None
-        if len(result) > 0:
-            return json.loads(result[0][0])
+        json_str = self.unwrap_result(result, only_first_field=True)
+        if json_str is not None:
+            return json.loads(json_str)
         return None
 
     def query_sorted_data(
@@ -91,10 +90,11 @@ class database(_logic.sqlite_connector_base):
     ) -> sorted_struct:
         params: list[Any] = [scope, key]
 
-        int_casted_skeleton = (
-            "CAST(JSON_EXTRACT(%s, '$') AS INTEGER)" %
-            (self.field.VALUE.value,)
-        )
+        # In a sorted data store, values are stored as JSON dictionary.
+        # The value that gets sorted is stored a JSON key names "$".
+        int_casted_skeleton = f"""
+            CAST(JSON_EXTRACT({self.field.VALUE.value}, '$') AS INTEGER)
+        """
 
         value_bound_suffix = ''
         if min_value is not None:
@@ -123,8 +123,8 @@ class database(_logic.sqlite_connector_base):
         LIMIT ? OFFSET ?
         """
 
-        results: list[list[Any]] | None = self.sqlite.fetch_results(
-            self.sqlite.execute(query, params, always_return_token=True)
+        results: list[list[Any]] | None = (
+            self.sqlite.execute_and_fetch(query, params)
         )
         assert results is not None
 
@@ -136,13 +136,11 @@ class database(_logic.sqlite_connector_base):
             for row in results[:size]
         ]
 
-        next_key = (
-            start + size
-            if len(results) > size  # More keys exist if evaluated to true.
-            else None
-        )
+        next_start = None
+        if len(results) > size:  # More keys exist if line is true.
+            next_start = start + size
 
         return sorted_struct(
             items=items_list,
-            next_key=next_key,
+            next_start=next_start,
         )

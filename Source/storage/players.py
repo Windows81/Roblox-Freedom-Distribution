@@ -70,15 +70,13 @@ class database(_logic.sqlite_connector_base):
         if value is None:
             return None
 
-        result = self.sqlite.fetch_results(self.sqlite.execute(
+        result = self.sqlite.execute_and_fetch(
             f"""
-            SELECT {field.value} FROM "{self.TABLE_NAME}" WHERE {index.value} = {repr(value)}
+            SELECT {field.value} FROM "{self.TABLE_NAME}" WHERE {index.value} = ?
             """,
-        ))
-        assert result is not None
-        if len(result) > 0:
-            return result[0]
-        return None
+            (value,),
+        )
+        return self.unwrap_result(result)
 
     def check(self, usercode: str) -> tuple[int, str] | None:
         '''
@@ -88,19 +86,17 @@ class database(_logic.sqlite_connector_base):
         `int`: corresponds with the iden number of a user whose `index` field matches `value`.
         `str`: corresponds with the username of a user whose `index` field matches `value`.
         '''
-        result = self.sqlite.fetch_results(self.sqlite.execute(
+        result = self.sqlite.execute_and_fetch(
             f"""
             SELECT
             {self.player_field.IDEN_NUM.value},
             {self.player_field.USERNAME.value}
 
-            FROM "{self.TABLE_NAME}" WHERE {self.player_field.USERCODE.value} = {repr(usercode)}
+            FROM "{self.TABLE_NAME}" WHERE {self.player_field.USERCODE.value} = ?
             """,
-        ))
-        assert result is not None
-        if len(result) > 0:
-            return result[0]
-        return None
+            (usercode,),
+        )
+        return self.unwrap_result(result)
 
     def sanitise_player_iden_num(self, iden_num: int | str | None) -> int | None:
         if iden_num is None:

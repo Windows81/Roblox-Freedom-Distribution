@@ -2,9 +2,9 @@
 import argparse
 
 # Local application imports
-from routines import _logic as logic
-
 import launcher.subparsers._logic as sub_logic
+from routines import _logic as logic
+from pretasks import clear_cache
 
 AUX_MODES = (
     sub_logic.launch_mode.PLAYER,
@@ -45,11 +45,9 @@ def _(
     if len(base_args) == 0:
         return []
 
-    args_list[:0] = [
-        clear_cache.obj_type(
+    for base in base_args:
+        clear_cache.process(
             base_url=base.get_app_base_url(),
         )
-        for base in base_args
-    ]
 
     return []

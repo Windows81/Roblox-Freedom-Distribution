@@ -5,8 +5,13 @@
 			"reportIncompatibleVariableOverride": "none",
 			"reportUnsafeMultipleInheritance": "none",
 			"reportUnusedCallResult": "none",
-			"reportUnknownMemberType": "information",
+			"reportUnknownMemberType": "hint",
 			"reportUnannotatedClassAttribute": "none",
+			"reportUnknownParameterType": "hint",
+			"reportMissingParameterType": "hint",
+			"reportUnknownVariableType": "hint",
+			"reportUnknownArgumentType": "hint",
+			"reportExplicitAny": "none",
 			"reportAny": "hint",
 		}
 	]
