@@ -8,10 +8,10 @@ import os
 import re
 
 
-def get_cookie_from_system() -> str | None:
+def _get_cookie_from_system() -> str | None:
     '''
     Only works on Windows systems.
-    Do not count on a valid cookie being returned when you run this on a VPS.
+    Do not count on a valid cookie being returned when you run this on a remote server.
     https://github.com/Ramona-Flower/Roblox-Client-Cookie-Stealer/blob/main/main.py
     '''
     roblox_cookies_path = os.path.join(
@@ -64,7 +64,7 @@ def get_rōblox_cookie() -> str | None:
         (
             v for v in
             (
-                get_cookie_from_system(),
+                _get_cookie_from_system(),
                 os.environ.get('ROBLOSECURITY', None),
             )
             if test_cookie(v)

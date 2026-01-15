@@ -9,7 +9,6 @@ import util.resource
 from routines import player, rcc, studio, web
 from routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
-from web_server._logic import server_mode
 
 
 @sub_logic.add_args(sub_logic.launch_mode.STUDIO)
@@ -73,7 +72,7 @@ def _(
 
     web_port: int = args_ns.web_port or 20059
     log_filter = dataclasses.replace(
-        logger.filter.FILTER_REASONABLE,
+        logger.PRINT_REASONABLE,
         other_logs=not args_ns.quiet,
     )
 
@@ -84,7 +83,7 @@ def _(
                 game_config=game_config,
                 web_host='localhost',
                 web_port=web_port,
-                log_filter=log_filter,
+                logger=log_filter,
             ),
         ])
 
@@ -94,9 +93,9 @@ def _(
                 web_port=web_port,
                 is_ipv6=False,
                 is_ssl=True,
-                log_filter=log_filter,
+                logger=log_filter,
                 game_config=game_config,
-                server_mode=server_mode.STUDIO,
+                server_mode=web.SERVER_MODE_TYPE.STUDIO,
             ),
         ])
 

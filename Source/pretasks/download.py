@@ -10,7 +10,6 @@ import tqdm_vendored as tqdm
 import py7zr
 
 # Local application/library specific imports
-import logger.filter
 import util.resource
 import util.versions
 import util.const
@@ -77,24 +76,21 @@ def should_overwrite(full_dir: str) -> bool:
 def bootstrap_binary(
     rōblox_version: util.versions.rōblox,
     bin_type: util.resource.bin_subtype,
-    log_filter: logger.filter.filter_type,
+    log_filter: logger.obj_type,
 ) -> None:
-    full_dir = util.resource.retr_rōblox_full_path(
-        rōblox_version, bin_type,
-    )
+    full_dir = util.resource.retr_rōblox_full_path(rōblox_version, bin_type)
 
     if os.path.isdir(full_dir):
         if should_overwrite(full_dir):
             shutil.rmtree(full_dir)
         else:
-            logger.log(
+            log_filter.log(
                 text='Rōblox installation exists, skipping...',
                 context=logger.log_context.PYTHON_SETUP,
-                filter=log_filter,
             )
             return
 
-    logger.log(
+    log_filter.log(
         text=(
             'Downloading %s/%s (%s)...' %
             (
@@ -104,7 +100,6 @@ def bootstrap_binary(
             )
         ),
         context=logger.log_context.PYTHON_SETUP,
-        filter=log_filter,
     )
 
     remote_link = get_remote_link(
@@ -117,10 +112,9 @@ def bootstrap_binary(
         quiet=not log_filter.other_logs,
     )
 
-    logger.log(
+    log_filter.log(
         text=f'Extracting to {full_dir}...',
         context=logger.log_context.PYTHON_SETUP,
-        filter=log_filter,
     )
     py7zr.unpack_7zarchive(
         archive=download_response,

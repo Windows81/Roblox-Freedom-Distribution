@@ -71,10 +71,10 @@ class database(_logic.sqlite_connector_base):
             return None
 
         result = self.sqlite.execute_and_fetch(
-            f"""
+            query=f"""
             SELECT {field.value} FROM "{self.TABLE_NAME}" WHERE {index.value} = ?
             """,
-            (value,),
+            values=(value,),
         )
         return self.unwrap_result(result)
 

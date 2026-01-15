@@ -26,10 +26,6 @@ class obj_type(logic.bin_entry, logic.loggable_entry, logic.gameconfig_entry):
         'ClientSettings',
     ]
 
-    web_host: str
-    web_port: int
-    game_config: game_config.obj_type
-    log_filter: logger.filter.filter_type
     launch_delay: float = 0
     warn_drag: bool = True
 

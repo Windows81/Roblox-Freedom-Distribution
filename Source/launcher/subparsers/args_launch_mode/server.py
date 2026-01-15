@@ -4,11 +4,10 @@ import dataclasses
 
 # Local application imports
 import game_config as config
-import logger
-import logger.bcolors
 import logger.flog_table
+import logger.bcolors
 import util.resource
-from web_server._logic import server_mode
+import logger
 
 from routines import player, rcc, web
 from routines import _logic as logic
@@ -123,13 +122,13 @@ def subparse(
 def gen_log_filter(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> logger.filter.filter_type:
+) -> logger.obj_type:
     if args_ns.quiet:
-        result = logger.filter.FILTER_QUIET
+        result = logger.PRINT_QUIET
     elif args_ns.loud:
-        result = logger.filter.FILTER_LOUD
+        result = logger.PRINT_LOUD
     else:
-        result = logger.filter.FILTER_REASONABLE
+        result = logger.PRINT_REASONABLE
 
     if args_ns.rcc_log_options is not None:
         result = dataclasses.replace(
@@ -177,8 +176,8 @@ def _(
             web_port=web_port,
             is_ssl=True,
             is_ipv6=True,
-            server_mode=server_mode.RCC,
-            log_filter=log_filter,
+            server_mode=web.SERVER_MODE_TYPE.RCC,
+            logger=log_filter,
             game_config=game_config,
         ))
     if has_ipv4:
@@ -186,8 +185,8 @@ def _(
             web_port=web_port,
             is_ssl=True,
             is_ipv6=False,
-            server_mode=server_mode.RCC,
-            log_filter=log_filter,
+            server_mode=web.SERVER_MODE_TYPE.RCC,
+            logger=log_filter,
             game_config=game_config,
         ))
 
@@ -202,7 +201,7 @@ def _(
                 web_host='localhost',
                 web_port=web_port,
                 rcc_port=rcc_port,
-                log_filter=log_filter,
+                logger=log_filter,
                 game_config=game_config,
             ),
         )
@@ -215,7 +214,7 @@ def _(
                 rcc_port=rcc_port,
                 web_port=web_port,
                 user_code=args_ns.user_code,
-                log_filter=log_filter,
+                logger=log_filter,
                 # Some CoreGUI elements don't render properly if we join too early.
                 launch_delay=3,
             ),

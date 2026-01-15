@@ -4,7 +4,6 @@ import urllib.parse
 import dataclasses
 import ipaddress
 import time
-import json
 
 # Typing imports
 from typing import ClassVar, override
@@ -13,11 +12,10 @@ from typing import ClassVar, override
 from .. import _logic as logic
 import util.resource
 import util.versions
-import logger
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
-class obj_type(logic.bin_entry, logic.loggable_entry):
+class obj_type(logic.bin_entry):
     BIN_SUBTYPE: ClassVar = util.resource.bin_subtype.PLAYER
     DIRS_TO_ADD: ClassVar = ['logs', 'LocalStorage']
 
@@ -25,7 +23,6 @@ class obj_type(logic.bin_entry, logic.loggable_entry):
     rcc_port: int
     app_host: str = dataclasses.field(init=False)
 
-    log_filter: logger.filter.filter_type
     user_code: str | None = None
     launch_delay: float = 0
 

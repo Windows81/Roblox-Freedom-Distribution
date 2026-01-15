@@ -42,7 +42,7 @@ def _(
     args_ns: argparse.Namespace,
 ) -> list[logic.base_entry]:
 
-    log_filter = logger.filter.FILTER_REASONABLE
+    log_filter = logger.PRINT_REASONABLE
     for b in args_ns.bin_subtype:
         download.bootstrap_binary(
             rōblox_version=args_ns.rbx_version,

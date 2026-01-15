@@ -59,10 +59,9 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             thumbnail_data = icon_uri.extract() or bytes()
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
         except Exception as _:
-            logger.log(
+            self.logger.log(
                 text='Warning: thumbnail data not found.',
                 context=logger.log_context.PYTHON_SETUP,
-                filter=self.log_filter,
             )
 
     def save_place_file(self) -> None:
@@ -92,13 +91,12 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             place_uri.uri_type != wrappers.uri_type.LOCAL and
             config.server_core.place_file.enable_saveplace
         ):
-            logger.log(
+            self.logger.log(
                 (
                     'Warning: config option "enable_saveplace" is redundant '
                     'when the place file is an online resource.'
                 ),
                 context=logger.log_context.PYTHON_SETUP,
-                filter=self.log_filter,
             )
 
     def save_starter_scripts(self) -> None:
@@ -120,7 +118,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         # TODO: move FFlag loading to an API endpoint.
         version = self.retr_version()
         new_flags = {
-            **self.log_filter.rcc_logs.get_level_table(),
+            **self.logger.rcc_logs.get_level_table(),
         }
 
         match version:
@@ -212,7 +210,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
         # There is a chance that RFD can be overwhelmed with processing output.
         # Removing the `-verbose` flag here will reduce the amount of data piped from RCC.
-        if not self.log_filter.rcc_logs.is_empty():
+        if not self.logger.rcc_logs.is_empty():
             suffix_args.append('-verbose')
 
         match self.retr_version():
@@ -247,10 +245,9 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             line = stdout.readline()
             if not line:
                 break
-            logger.log(
+            self.logger.log(
                 line.rstrip(b'\r\n'),
                 context=logger.log_context.RCC_SERVER,
-                filter=self.log_filter,
             )
 
             action = log_action.check(line)
@@ -321,16 +318,14 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         self.save_thumbnail()
         self.save_gameserver()
 
-        log_filter = self.log_filter
-        logger.log(
+        self.logger.log(
             (
-                f"{log_filter.bcolors.BOLD}[UDP %d]{log_filter.bcolors.ENDC}: " +
+                f"{self.logger.bcolors.BOLD}[UDP %d]{self.logger.bcolors.ENDC}: " +
                 "initialising Rōblox Cloud Compute"
             ) % (
                 self.rcc_port,
             ),
             context=logger.log_context.PYTHON_SETUP,
-            filter=log_filter,
         )
 
         self.make_popen_threads()

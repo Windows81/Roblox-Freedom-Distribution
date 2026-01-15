@@ -65,13 +65,13 @@ def _(
 def gen_log_filter(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> logger.filter.filter_type:
+) -> logger.obj_type:
     if args_ns.quiet:
-        result = logger.filter.FILTER_QUIET
+        result = logger.PRINT_QUIET
     elif args_ns.loud:
-        result = logger.filter.FILTER_LOUD
+        result = logger.PRINT_LOUD
     else:
-        result = logger.filter.FILTER_REASONABLE
+        result = logger.PRINT_REASONABLE
 
     return result
 
@@ -107,6 +107,6 @@ def _(
             web_host=web_host,
             web_port=web_port,
             user_code=args_ns.user_code,
-            log_filter=log_filter,
+            logger=log_filter,
         ),
     ]

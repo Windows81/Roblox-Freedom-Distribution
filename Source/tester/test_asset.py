@@ -1,4 +1,5 @@
 # Standard library imports
+from typing import override
 import unittest
 
 # Local application imports
@@ -10,6 +11,14 @@ class TestAssets(unittest.TestCase):
     '''
     Tests for the asset extraction module.
     '''
+
+    @override
+    @classmethod
+    def setUpClass(cls):
+        if extractor.get_rōblox_cookie() is None:
+            raise unittest.SkipTest(
+                'No cookie provided; skipping asset tests.',
+            )
 
     def get_rōblox_asset(self, iden: int) -> bytes:
         data = extractor.download_rōblox_asset(iden)

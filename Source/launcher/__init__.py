@@ -5,8 +5,8 @@ import sys
 
 # Local application imports
 import util.const as const
-import routines._logic as routine_logic
 import launcher.subparsers._logic as sub_logic
+import routines
 
 
 from .subparsers.args_launch_mode import (
@@ -26,7 +26,7 @@ from .subparsers.args_aux import (
 )
 
 
-def parse_arg_list(args: list[str] | None) -> list[routine_logic.base_entry] | None:
+def parse_arg_list(args: list[str] | None) -> list[routines.base_entry] | None:
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
@@ -118,7 +118,7 @@ def perform_with_args(args: list[str]) -> None:
     arg_list = parse_arg_list(args)
     if arg_list is None:
         return
-    with routine_logic.routine(*arg_list) as routine_group:
+    with routines.routine(*arg_list) as routine_group:
         routine_group.wait()
 
 

@@ -160,13 +160,12 @@ class popen_entry(base_entry):
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
 class loggable_entry(base_entry):
-    log_filter: logger.filter.filter_type
+    logger: logger.obj_type
 
     def log(self, message: bytes | str) -> None:
-        logger.log(
+        self.logger.log(
             message,
             context=logger.log_context.PYTHON_SETUP,
-            filter=self.log_filter,
         )
 
 
@@ -178,7 +177,7 @@ class bin_entry(popen_entry, loggable_entry):
 
     auto_download: bool = False
     clear_cache: bool = False
-    web_host: str
+    web_host: str = 'localhost'
     web_port: int
 
     @staticmethod
@@ -235,7 +234,9 @@ class bin_entry(popen_entry, loggable_entry):
         )
 
     def get_versioned_path(self, *paths: str) -> str:
-        return util.resource.retr_rōblox_full_path(self.retr_version(), self.BIN_SUBTYPE, *paths)
+        return util.resource.retr_rōblox_full_path(
+            self.retr_version(), self.BIN_SUBTYPE, *paths,
+        )
 
     @functools.cache
     def retr_version(self) -> util.versions.rōblox:
@@ -271,7 +272,7 @@ class bin_entry(popen_entry, loggable_entry):
         '''
         # TODO: move FFlag loading to an API endpoint.
         new_flags = {
-            **self.log_filter.rcc_logs.get_level_table(),
+            **self.logger.rcc_logs.get_level_table(),
         }
 
         path = self.get_versioned_path(
@@ -291,7 +292,7 @@ class bin_entry(popen_entry, loggable_entry):
             download.bootstrap_binary(
                 rōblox_version=self.retr_version(),
                 bin_type=self.BIN_SUBTYPE,
-                log_filter=self.log_filter,
+                log_filter=self.logger,
             )
         if self.clear_cache:
             clear_cache.process(self.web_host)
@@ -346,3 +347,7 @@ class routine:
     def stop(self) -> None:
         for e in self.entries:
             e.stop()
+
+    def kill(self) -> None:
+        for e in self.entries:
+            e.kill()

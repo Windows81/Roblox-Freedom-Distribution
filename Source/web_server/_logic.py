@@ -81,14 +81,14 @@ class web_server(http.server.ThreadingHTTPServer):
         is_ipv6: bool,
         game_config: game_config.obj_type,
         server_mode: server_mode,
-        log_filter: logger.filter.filter_type,
+        log_filter: logger.obj_type,
         *args, **kwargs,
     ) -> None:
         self.game_config = game_config
         self.data_transferer = game_config.data_transferer
         self.storage = game_config.storage
         self.server_mode = server_mode
-        self.log_filter = log_filter
+        self.logger = log_filter
         self.is_ipv6 = is_ipv6
         self.address_family = (
             socket.AF_INET6
@@ -96,16 +96,15 @@ class web_server(http.server.ThreadingHTTPServer):
             else socket.AF_INET
         )
 
-        logger.log(
+        self.logger.log(
             (
-                f"{log_filter.bcolors.BOLD}[TCP %d %s]{log_filter.bcolors.ENDC}: " +
+                f"{self.logger.bcolors.BOLD}[TCP %d %s]{self.logger.bcolors.ENDC}: " +
                 "initialising webserver"
             ) % (
                 port,
                 'IPv6' if self.is_ipv6 else 'IPv4',
             ),
             context=logger.log_context.PYTHON_SETUP,
-            filter=log_filter,
         )
 
         super().__init__(
@@ -229,10 +228,9 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             should_print_exception = False
 
         if should_print_exception:
-            logger.log(
+            self.server.logger.log(
                 traceback.format_exc().encode('utf-8'),
                 context=logger.log_context.WEB_SERVER,
-                filter=self.server.log_filter,
                 is_error=True,
             )
 
@@ -312,14 +310,13 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args) -> None:
         if not self.is_valid_request:
             return
-        log_filter = self.server.log_filter
-        logger.log(
+        log_filter = self.server.logger
+        log_filter.log(
             (
                 f"{log_filter.bcolors.BOLD}{{%+5s}}{log_filter.bcolors.ENDC} %s"
             ) % (
                 self.command, self.url.rstrip('\r\n'),
             ),
             context=logger.log_context.WEB_SERVER,
-            filter=self.server.log_filter,
             is_error=False,
         )

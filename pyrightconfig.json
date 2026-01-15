@@ -7,10 +7,13 @@
 			"reportUnusedCallResult": "none",
 			"reportUnknownMemberType": "hint",
 			"reportUnannotatedClassAttribute": "none",
+			"reportUninitializedInstanceVariable": "hint",
 			"reportUnknownParameterType": "hint",
 			"reportMissingParameterType": "hint",
 			"reportUnknownVariableType": "hint",
 			"reportUnknownArgumentType": "hint",
+			"reportMissingTypeStubs": "none",
+			"reportImportCycles": "none",
 			"reportExplicitAny": "none",
 			"reportAny": "hint",
 		}
