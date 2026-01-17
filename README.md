@@ -387,14 +387,14 @@ If you need any help, please shoot me an issue on GitHub or a message to an acco
 
 ## Directories Affected
 
-The program is mostly portable; RFD does not store any persistent settings to your machine.
+RFD is mostly portable, with _player settings_ being stored in the program's directory; more work needs to be done.
 
-However, the Rōblox player and RCC executables that we hook to will write to the following directories:
+However, as of RFD 0.64.1, temporary cache files are currently being written to the following directories:
 
 - `%LocalAppData%\Temp\Roblox\http\`
 - `%LocalAppData%\Temp\Roblox\`
 
-You'll also probably find some registry keys written to:
+If you also use Studio, you'll find registry keys written to:
 
 - `Computer\HKEY_CURRENT_USER\Software\Roblox`
 
