@@ -113,6 +113,7 @@ class obj_type(logic.bin_entry):
                     'UserCode': self.user_code,
 
                     # Temporary backwards compatibility below 0.65.1.
+                    # Might get rid of in six or seven months.
                     'rcc-host-addr': self.rcc_host,
                     'rcc-port': self.rcc_port,
                     'user-code': self.user_code,
