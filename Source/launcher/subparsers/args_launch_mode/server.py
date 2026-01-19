@@ -225,7 +225,7 @@ def _(
             )
 
         if args_ns.run_client:
-            rcc_routine_args.add([
+            rcc_routine_args.add(
                 player.obj_type(
                     rcc_host='127.0.0.1',
                     web_host='127.0.0.1',
@@ -236,6 +236,6 @@ def _(
                     # Some CoreGUI elements don't render properly if we join too early.
                     launch_delay=3,
                 ),
-            ])
+            )
 
     return [*web_routine_args, *rcc_routine_args]
