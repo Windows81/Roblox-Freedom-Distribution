@@ -22,10 +22,10 @@ def get_user_code(id_num: int, game_config: obj_type) -> str | None:
     return user_code[0]
 
 
-@server_path('/v1.1/avatar-fetch/', versions={versions.rōblox.v348})
+@server_path('/v1.1/avatar-fetch/', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
     '''
-    Character appearance for v348.
+    Character appearance for v347.
     '''
     id_num = int(self.query['userId'])
     avatar = get_avatar(id_num, self.game_config)

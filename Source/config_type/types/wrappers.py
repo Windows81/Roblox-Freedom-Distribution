@@ -104,10 +104,15 @@ class rfd_version_check(str):
 
 
 class counter:
+    '''
+    We begin counting at 2 to avoid any potential bugs with beginning at iden no. 1.
+    '''
+
     def __init__(self) -> None:
         super().__init__()
-        self.count = 0
+        self.count = 2
 
     def __call__(self, *a) -> int:
+        result = self.count
         self.count += 1
-        return self.count
+        return result

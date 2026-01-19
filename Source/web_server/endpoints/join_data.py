@@ -129,7 +129,7 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
     self.send_json(join_data | additional_return_data, prefix=prefix)
 
 
-@server_path('/game/join.ashx', versions={versions.rōblox.v348})
+@server_path('/game/join.ashx', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
     perform_and_send_join(self, {
         'ClientPort': 0,

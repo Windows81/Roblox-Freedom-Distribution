@@ -20,9 +20,9 @@ def _(self: web_server_handler, match: re.Match[str]) -> bool:
         if date_str is None:
             continue
         results.append({
-            'badgeId': badge_id,
+            'badgeId': int(badge_id),
             'awardedDate': date_str,
         })
 
-    self.send_json(results)
+    self.send_json({f'data': results})
     return True

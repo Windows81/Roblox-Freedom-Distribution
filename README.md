@@ -612,7 +612,7 @@ When the file at `rbxl_uri` is modified, RCC is restarted such that RFD always r
 
 The following are valid version strings.
 
-| `"v348"`  | `"v463"`  |
+| `"v347"`  | `"v463"`  |
 | --------- | --------- |
 | `"2018M"` | `"2021E"` |
 | `"2018"`  | `"2021"`  |

@@ -20,7 +20,7 @@ def _(
     sub_parser: argparse.ArgumentParser,
 ) -> None:
     sub_parser.add_argument(
-        '--clear_cache',
+        '--clear_temp_cache',
         action='store_true',
         help=r'Deletes cached content specific to the host you are connecting to.  Searches in the %%LocalAppData%%\Temp\Roblox\http directory.',
     )
@@ -33,7 +33,7 @@ def _(
     args_list: list[logic.base_entry],
 ) -> list[logic.base_entry]:
 
-    if not args_ns.clear_cache:
+    if not args_ns.clear_temp_cache:
         return []
 
     base_args = [

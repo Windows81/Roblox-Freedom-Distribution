@@ -19,7 +19,7 @@ class database(_logic.sqlite_connector_base):
                 {self.field.FUNDS.value} INTEGER NOT NULL,
                 PRIMARY KEY(
                     {self.field.USER_ID_NUM.value}
-                ) ON CONFLICT IGNORE
+                ) ON CONFLICT REPLACE
             );
             """,
         )

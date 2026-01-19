@@ -176,7 +176,7 @@ class bin_entry(popen_entry, loggable_entry):
     '''
 
     auto_download: bool = False
-    clear_cache: bool = False
+    clear_temp_cache: bool = False
     web_host: str = 'localhost'
     web_port: int
 
@@ -266,7 +266,7 @@ class bin_entry(popen_entry, loggable_entry):
         for p in paths:
             os.makedirs(p, exist_ok=True)
 
-    def update_fflags(self) -> None:
+    def update_fvars(self) -> None:
         '''
         Updates the FFlags in the game configuration.
         '''
@@ -294,11 +294,11 @@ class bin_entry(popen_entry, loggable_entry):
                 bin_type=self.BIN_SUBTYPE,
                 log_filter=self.logger,
             )
-        if self.clear_cache:
+        if self.clear_temp_cache:
             clear_cache.process(self.web_host)
         self.save_app_settings()
         self.make_aux_directories()
-        self.update_fflags()
+        self.update_fvars()
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)

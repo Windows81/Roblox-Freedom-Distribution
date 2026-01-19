@@ -30,25 +30,28 @@ class database(_logic.sqlite_connector_base):
         TARGET = '"target"'
         KEY = '"key"'
         VALUE = '"value"'
+        TYPE = '"type"'
 
     @override
     def first_time_setup(self) -> None:
         query = f"""
         CREATE TABLE IF NOT EXISTS "{self.TABLE_NAME}" (
             {self.field.SCOPE.value} TEXT NOT NULL,
+            {self.field.TYPE.value} TEXT NOT NULL,
             {self.field.TARGET.value} TEXT NOT NULL,
             {self.field.KEY.value} TEXT NOT NULL,
             {self.field.VALUE.value} TEXT,
             PRIMARY KEY(
                 {self.field.SCOPE.value},
                 {self.field.TARGET.value},
+                {self.field.TYPE.value},
                 {self.field.KEY.value}
             ) ON CONFLICT REPLACE
         );
         """
         self.sqlite.execute(query)
 
-    def set(self, scope: str, target: str, key: str, value) -> None:
+    def set(self, scope: str, target: str, key: str, value, typ: str) -> None:
         value_str = json.dumps(value)
         query = f"""
         INSERT INTO {self.TABLE_NAME}
@@ -56,22 +59,24 @@ class database(_logic.sqlite_connector_base):
             {self.field.SCOPE.value},
             {self.field.TARGET.value},
             {self.field.KEY.value},
+            {self.field.TYPE.value},
             {self.field.VALUE.value}
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
         """
-        self.sqlite.execute(query, (scope, target, key, value_str))
+        self.sqlite.execute(query, (scope, target, key, typ, value_str))
 
-    def get(self, scope: str, target: str, key: str):
+    def get(self, scope: str, target: str, key: str, typ: str):
         result: list[tuple[Any]] | None = self.sqlite.execute_and_fetch(
             query=f"""
             SELECT {self.field.VALUE.value}
             FROM {self.TABLE_NAME}
             WHERE {self.field.SCOPE.value} = ?
             AND {self.field.TARGET.value} = ?
+            AND {self.field.TYPE.value} = ?
             AND {self.field.KEY.value} = ?
             """,
-            values=(scope, target, key),
+            values=(scope, target, typ, key),
         )
         json_str = self.unwrap_result(result, only_first_field=True)
         if json_str is not None:
@@ -113,6 +118,7 @@ class database(_logic.sqlite_connector_base):
             FROM {self.TABLE_NAME}
             WHERE {self.field.SCOPE.value} = ?
             AND {self.field.KEY.value} = ?
+            AND {self.field.TYPE.value} = "sorted"
             AND JSON_VALID({self.field.VALUE.value})
             AND {int_casted_skeleton} IS NOT NULL
             {value_bound_suffix}

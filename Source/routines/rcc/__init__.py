@@ -110,10 +110,11 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             startup_script = startup_scripts.get_script(self.game_config)
             f.write(startup_script)
 
-    def update_fflags(self) -> None:
+    @override
+    def update_fvars(self) -> None:
         '''
-        Updates the FFlags in the game configuration based on the Rōblox version.
-        Individual FFlags, rather than the entire file, override the ones that already exist.
+        Updates FFlags, FInts, et c. in the game configuration based on the Rōblox version.
+        Individual fast variables, stored in variable `new_flags`, are what get overwritten to the flile.
         '''
         # TODO: move FFlag loading to an API endpoint.
         version = self.retr_version()
@@ -122,7 +123,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         }
 
         match version:
-            case util.versions.rōblox.v348:
+            case util.versions.rōblox.v347:
                 path = self.get_versioned_path(
                     'ClientSettings',
                     'RCCService.json',
@@ -214,7 +215,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             suffix_args.append('-verbose')
 
         match self.retr_version():
-            case util.versions.rōblox.v348:
+            case util.versions.rōblox.v347:
                 return (
                     f'-PlaceId:{self.place_iden}',
                     '-LocalTest', self.get_versioned_path(

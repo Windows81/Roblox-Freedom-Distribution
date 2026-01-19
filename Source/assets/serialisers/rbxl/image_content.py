@@ -2,7 +2,8 @@ from . import _logic
 
 
 def pad_enums(enums: list[int], uri_list: list[bytes]) -> list[bytes]:
-    return uri_list+[b'']*max(0, len(enums)-len(uri_list))
+    blank_count = max(0, len(enums)-len(uri_list))
+    return uri_list + [b''] * blank_count
     # TODO: test which way actually works.
     # placeholder = b''
     # return [

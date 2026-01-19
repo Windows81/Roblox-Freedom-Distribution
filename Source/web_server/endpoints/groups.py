@@ -21,7 +21,7 @@ def get_rank_dict(user_id_num: int, game_config: obj_type) -> dict[str, int]:
     )
 
 
-@server_path('/Game/LuaWebService/HandleSocialRequest.ashx', versions={versions.rōblox.v348})
+@server_path('/Game/LuaWebService/HandleSocialRequest.ashx', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
     match self.query.get('method'):
         case 'GetGroupRank':

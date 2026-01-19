@@ -18,14 +18,15 @@ def _(self: web_server_handler) -> bool:
     database = self.server.storage.persistence
 
     scope = self.query.get('scope', 'global')
+    data_type = self.query['type']
     target = self.query['target']
     key = self.query['key']
 
     value_str = form_data.get('value', 'null')
     value = json.loads(value_str)
 
-    database.set(scope, target, key, value)
-    self.send_json({"data": value})
+    database.set(scope, target, key, value, data_type)
+    self.send_json({'data': value})
     return True
 
 
@@ -38,79 +39,80 @@ def _(self: web_server_handler) -> bool:
     form_content = str(self.read_content(), encoding='utf-8')
     form_data = dict(urllib.parse.parse_qsl(form_content))
     database = self.server.storage.persistence
+    data_type = self.query['type']
 
     return_data = []
     starting_count = 0
     for starting_count in itertools.count(0):
-        prefix = "qkeys[%d]" % starting_count
+        prefix = 'qkeys[%d]' % starting_count
         scope = form_data.get(
-            f"{prefix}.scope",
+            f'{prefix}.scope',
             'global',
         )
 
         target = form_data.get(
-            f"{prefix}.target",
+            f'{prefix}.target',
             None,
         )
         if target is None:
             break
 
         key = form_data.get(
-            f"{prefix}.key",
+            f'{prefix}.key',
             None,
         )
         if key is None:
             break
 
-        value = database.get(scope, target, key)
+        value = database.get(scope, target, key, data_type)
         return_data.append({
-            "Value": json.dumps(value),
-            "Scope": scope,
-            "Key": key,
-            "Target": target,
+            'Value': json.dumps(value),
+            'Scope': scope,
+            'Key': key,
+            'Target': target,
         })
 
     if starting_count == 0:
-        self.send_json({"data": [], "message": "No data being requested"})
+        self.send_json({'data': [], 'message': 'No data being requested'})
         return True
 
-    self.send_json({"data": return_data})
+    self.send_json({'data': return_data})
     return True
 
 
 @server_path('/persistence/getSortedValues')  # Expecting POST.
 def _(self: web_server_handler) -> bool:
-    """
+    '''
     Handles retrieval of sorted data from the persistence storage with pagination.
-    """
-    data_type = self.query.get("type", None)
-    scope = self.query.get("scope", "global")
+    '''
+    data_type = self.query['type']
+    scope = self.query.get('scope', 'global')
     key = self.query['key']
 
-    exclusive_start_key = int(self.query.get("exclusiveStartKey", 1))
-    is_ascending = self.query.get("ascending") == "True"
-    page_size = int(self.query.get("pageSize", 50))
+    exclusive_start_key = int(self.query.get('exclusiveStartKey', 1))
+    is_ascending = self.query.get('ascending') == 'True'
+    page_size = int(self.query.get('pageSize', 50))
 
-    inclusive_min_str = self.query.get("inclusiveMinValue")
+    inclusive_min_str = self.query.get('inclusiveMinValue')
     inclusive_min_value = (
         int(inclusive_min_str)
         if inclusive_min_str is not None
         else None
     )
 
-    exclusive_max_str = self.query.get("exclusiveMaxValue")
+    exclusive_max_str = self.query.get('exclusiveMaxValue')
     exclusive_max_value = (
         int(exclusive_max_str)
         if exclusive_max_str is not None
         else None
     )
 
-    if data_type != "sorted":
-        self.send_json({"data": [], "message": "Invalid data type"})
+    if data_type != 'sorted':
+        self.send_json({'data': [], 'message': 'Invalid data type'})
         return True
 
     if exclusive_start_key < 1:
-        self.send_json({"data": [], "message": "Invalid exclusive start key"})
+        self.send_json({'data': [], 'message': 'Invalid exclusive start key'})
         return True
 
     # Assuming persistence supports sorted data.
@@ -127,25 +129,25 @@ def _(self: web_server_handler) -> bool:
 
     if not sorted_data:
         self.send_json({
-            "data": {
-                "Entries": [],
-                "ExclusiveStartKey": None,
+            'data': {
+                'Entries': [],
+                'ExclusiveStartKey': None,
             }
         })
         return True
 
     entries = [
         {
-            "Target": entry.name,
-            "Value": entry.value,
+            'Target': entry.name,
+            'Value': entry.value,
         }
         for entry in sorted_data.items
     ]
 
     self.send_json({
-        "data": {
-            "Entries": entries,
-            "ExclusiveStartKey": sorted_data.next_start,
+        'data': {
+            'Entries': entries,
+            'ExclusiveStartKey': sorted_data.next_start,
         }
     })
     return True
@@ -153,10 +155,10 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/persistence/increment')  # Usually expects POST.
 def _(self: web_server_handler) -> bool:
-    """
+    '''
     Handles incrementing numeric values in the persistence storage.
     Supports both standard and sorted data types.
-    """
+    '''
     database = self.server.storage.persistence
 
     scope = self.query.get('scope', 'global')
@@ -167,15 +169,15 @@ def _(self: web_server_handler) -> bool:
     try:
         increment_value = int(self.query.get('value', 1))
     except (TypeError, ValueError):
-        self.send_json({"data": [], "message": "Increment must be an integer"})
+        self.send_json({'data': [], 'message': 'Increment must be an integer'})
         return True
 
     if not all([target, key]):
-        self.send_json({"data": [], "message": "Missing required parameters"})
+        self.send_json({'data': [], 'message': 'Missing required parameters'})
         return True
 
     # Get current value
-    current_value = database.get(scope, target, key)
+    current_value = database.get(scope, target, key, data_type)
 
     try:
         if current_value is None:
@@ -186,14 +188,14 @@ def _(self: web_server_handler) -> bool:
             new_value = current_value + increment_value
     except (TypeError, ValueError):
         self.send_json(
-            {"data": [], "message": "Current value is not an integer"})
+            {'data': [], 'message': 'Current value is not an integer'})
         return True
 
-    if data_type != "sorted":
+    if data_type != 'sorted':
         new_value = str(new_value)
 
     # Stores the new value.
-    database.set(scope, target, key, new_value)
+    database.set(scope, target, key, new_value, data_type)
 
-    self.send_json({"data": new_value})
+    self.send_json({'data': new_value})
     return True
