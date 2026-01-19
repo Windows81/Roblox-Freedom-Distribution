@@ -34,6 +34,15 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
     place_iden: int = const.PLACE_IDEN_CONST
 
     @override
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        (
+            self.web_port, self.rcc_port,
+        ) = self.maybe_differenciate_web_and_rcc_stuff(
+            self.web_port, self.rcc_port,
+        )
+
+    @override
     def get_base_url(self) -> str:
         return f'https://{self.web_host}:{self.web_port}'
 

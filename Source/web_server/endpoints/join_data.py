@@ -1,5 +1,4 @@
 # Standard library imports
-import functools
 import json
 
 # Typing imports
@@ -75,9 +74,9 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
 
-    rcc_host_addr = str(query_args.get('rcc-host-addr', self.hostname))
-    rcc_port = int(query_args.get('rcc-port', self.port_num))
-    user_code = query_args['user-code']
+    rcc_host_addr = str(query_args.get('MachineAddress', self.hostname))
+    rcc_port = int(query_args.get('ServerPort', self.port_num))
+    user_code = query_args['UserCode']
 
     result = init_player(self.game_config, user_code)
     if result is None:
@@ -217,7 +216,7 @@ def _(self: web_server_handler) -> bool:
     query_args = json.loads(
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
-    user_code = query_args.get('user-code')
+    user_code = query_args['UserCode']
 
     result = init_player(self.game_config, user_code)
     if result is None:

@@ -20,6 +20,7 @@ from typing import ClassVar, Self, override
 import game_config as game_config_module
 import util.resource
 import util.versions
+import util.const
 import logger
 from pretasks import (
     download,
@@ -59,6 +60,17 @@ class base_entry:
     def process(self) -> None:
         assert not self._completed
         self._completed = True
+
+    def __post_init__(self) -> None:
+        '''
+        https://stackoverflow.com/a/69944614/6879778
+        '''
+        for field in dataclasses.fields(self):
+            if isinstance(field.default, dataclasses._MISSING_TYPE):
+                continue
+            if getattr(self, field.name) is not None:
+                continue
+            setattr(self, field.name, field.default)
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
@@ -178,7 +190,7 @@ class bin_entry(popen_entry, loggable_entry):
     auto_download: bool = False
     clear_temp_cache: bool = False
     web_host: str = 'localhost'
-    web_port: int
+    web_port: int = util.const.RFD_DEFAULT_PORT
 
     @staticmethod
     def get_none_ssl() -> ssl.SSLContext:
@@ -188,7 +200,14 @@ class bin_entry(popen_entry, loggable_entry):
         return ctx
 
     @staticmethod
-    def resolve_host_port(host: str, port: int) -> tuple[str, int]:
+    def maybe_differenciate_web_and_rcc_stuff[T](web: T, rcc: T | None) -> tuple[T, T]:
+        has_rcc = rcc is not None
+        if has_rcc:
+            return (web, rcc)
+        return (web, web)
+
+    @staticmethod
+    def maybe_separate_host_and_port(host: str, port: int) -> tuple[str, int]:
         if not host.startswith('[') and re.search(r':.*:', host) is not None:
             host = '[%s]' % host
             return (host, port)
@@ -227,9 +246,10 @@ class bin_entry(popen_entry, loggable_entry):
     DIRS_TO_ADD: ClassVar[list[str]]
 
     def __post_init__(self) -> None:
+        super().__post_init__()
         (
             self.web_host, self.web_port,
-        ) = self.resolve_host_port(
+        ) = self.maybe_separate_host_and_port(
             self.web_host, self.web_port,
         )
 

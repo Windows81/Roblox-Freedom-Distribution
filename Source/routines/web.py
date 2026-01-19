@@ -6,6 +6,7 @@ from typing import override
 # Local application/library specific imports
 import web_server._logic as web_server_logic
 from . import _logic as logic
+import util.const
 import web_server
 
 SERVER_MODE_TYPE = web_server_logic.server_mode
@@ -13,7 +14,7 @@ SERVER_MODE_TYPE = web_server_logic.server_mode
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
 class obj_type(logic.gameconfig_entry, logic.loggable_entry):
-    web_port: int
+    web_port: int = util.const.RFD_DEFAULT_PORT
     is_ipv6: bool
     is_ssl: bool
 
@@ -21,6 +22,7 @@ class obj_type(logic.gameconfig_entry, logic.loggable_entry):
     httpd: web_server_logic.web_server | None = None
 
     def __post_init__(self) -> None:
+        super().__post_init__()
         self.threads: list[threading.Thread] = []
 
     @override

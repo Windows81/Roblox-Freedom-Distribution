@@ -1,5 +1,6 @@
 # Standard library imports
 import argparse
+import itertools
 import logger
 
 # Local application imports
@@ -18,36 +19,36 @@ def _(
     subparser.add_argument(
         '--rcc_host', '--host', '-rh', '-h',
         type=str,
-        nargs='?',
-        default=None,
+        nargs='*',
+        default=[],
         help='Hostname or IP address to connect this program to the RCC server.',
     )
     subparser.add_argument(
         '--rcc_port', '--port', '-rp', '-p',
         type=int,
-        nargs='?',
-        default=None,
+        nargs='*',
+        default=[],
         help='Port number to connect this program to the RCC server.',
     )
     subparser.add_argument(
         '--web_host', '--webserver_host', '-wh',
         type=str,
-        nargs='?',
-        default=None,
+        nargs='*',
+        default=[],
         help='Hostname or IP address to connect this program to the web server.',
     )
     subparser.add_argument(
         '--web_port', '--webserver_port', '-wp',
         type=int,
-        nargs='?',
-        default=None,
+        nargs='*',
+        default=[],
         help='Port number to connect this program to the web server.',
     )
     subparser.add_argument(
         '--user_code', '-u',
         type=str,
-        nargs='?',
-        default=None,
+        nargs='*',
+        default=[],
         help='Determines the user code for the player which joins the server.\nUser codes derive a user name, user iden number, and other characteristics of any particular player.',
     )
     subparser.add_argument(
@@ -58,7 +59,7 @@ def _(
     subparser.add_argument(
         '--loud',
         action='store_true',
-        help='Makes the client\'s output file log very verbosely.',
+        help='Makes the client\'s output log file very verbose.',
     )
 
 
@@ -82,20 +83,6 @@ def _(
     args_ns: argparse.Namespace,
 ) -> list[logic.base_entry]:
 
-    web_host: str | None = args_ns.web_host
-    rcc_host: str | None = args_ns.rcc_host
-    if web_host is None:
-        web_host = rcc_host or 'localhost'
-    if rcc_host is None:
-        rcc_host = web_host or 'localhost'
-
-    web_port: int | None = args_ns.web_port
-    rcc_port: int | None = args_ns.rcc_port
-    if web_port is None:
-        web_port = rcc_port or 2005
-    if rcc_port is None:
-        rcc_port = web_port or 2005
-
     log_filter = gen_log_filter(
         parser, args_ns,
     )
@@ -106,7 +93,12 @@ def _(
             rcc_port=rcc_port,
             web_host=web_host,
             web_port=web_port,
-            user_code=args_ns.user_code,
+            user_code=user_code,
             logger=log_filter,
-        ),
+        )
+        for (
+            web_host, rcc_host, web_port, rcc_port, user_code,
+        ) in itertools.zip_longest(
+            args_ns.web_host, args_ns.rcc_host, args_ns.web_port, args_ns.rcc_port, args_ns.user_code,
+        )
     ]

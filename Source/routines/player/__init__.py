@@ -12,6 +12,7 @@ from typing import ClassVar, override
 from .. import _logic as logic
 import util.resource
 import util.versions
+import util.const
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
@@ -19,19 +20,31 @@ class obj_type(logic.bin_entry):
     BIN_SUBTYPE: ClassVar = util.resource.bin_subtype.PLAYER
     DIRS_TO_ADD: ClassVar = ['logs', 'LocalStorage']
 
-    rcc_host: str
-    rcc_port: int
+    web_host: str = 'localhost'
+    web_port: int = util.const.RFD_DEFAULT_PORT
+    rcc_host: str | None
+    rcc_port: int | None
     app_host: str = dataclasses.field(init=False)
 
-    user_code: str | None = None
+    user_code: str | None
     launch_delay: float = 0
 
     @override
     def __post_init__(self) -> None:
         super().__post_init__()
         (
+            self.web_host, self.rcc_host,
+        ) = self.maybe_differenciate_web_and_rcc_stuff(
+            self.web_host, self.rcc_host,
+        )
+        (
+            self.web_port, self.rcc_port,
+        ) = self.maybe_differenciate_web_and_rcc_stuff(
+            self.web_port, self.rcc_port,
+        )
+        (
             self.rcc_host, self.rcc_port,
-        ) = self.resolve_host_port(
+        ) = self.maybe_separate_host_and_port(
             self.rcc_host, self.rcc_port,
         )
 
@@ -59,7 +72,7 @@ class obj_type(logic.bin_entry):
         it needs to be executed after `launch_delay` seconds.
         The `__post_init__` method gets executed before that delay.
         '''
-        if self.user_code is not None:
+        if self.user_code != '':
             return
         res = self.send_request('/rfd/default-user-code')
         self.user_code = str(res.read(), encoding='utf-8')
@@ -95,9 +108,9 @@ class obj_type(logic.bin_entry):
                 '-a', f'{base_url}/login/negotiate.ashx',
                 '-j', f'{base_url}/game/PlaceLauncher.ashx?' +
                 urllib.parse.urlencode({k: v for k, v in {
-                    'rcc-host-addr': self.rcc_host,
-                    'rcc-port': self.rcc_port,
-                    'user-code': self.user_code,
+                    'MachineAddress': self.rcc_host,
+                    'ServerPort': self.rcc_port,
+                    'UserCode': self.user_code,
                 }.items() if v}),
                 '-t', '1',
             ))
