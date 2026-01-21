@@ -103,16 +103,114 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 [**Please review each option in the config file before starting your server up.**](#gameconfigtoml-structure)
 
-As of RFD 0.58.2, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
+
+```usage: _main.py server [--config_path [CONFIG_PATH ...] |
+                       --place_path [PLACE_PATH ...]] [--ipv4-only |
+                       --ipv6-only] [--rcc_port [RCC_PORT ...]]
+                       [--web_port [WEB_PORT ...]] [--run_client]
+                       [--user_code [USER_CODE]] [--quiet | --loud]
+                       [--no_colour] [--rcc_log_options [FLog ...]]
+                       [--skip_rcc | --skip_web] [--clear_temp_cache]
+                       [--skip_download] [--debug | --debug_all] [--help]
+
+options:
+  --config_path, --config, -cp [CONFIG_PATH ...]
+                        Game-specific options; defaults to ./GameConfig.toml.
+                        Please review each option before starting a new server
+                        up.
+  --place_path, --place, -pl [PLACE_PATH ...]
+                        Path to the place file to be loaded. Argument
+                        `config_path` can't be passed in when using this
+                        option.
+  --ipv4-only           Run server using IPv4 only.
+  --ipv6-only           Run server using IPv6 only.
+  --rcc_port, --port, -rp, -p [RCC_PORT ...]
+                        Port number for the RCC server to run from.
+  --web_port, --webserver_port, -wp [WEB_PORT ...]
+                        Port number for the web server to run from.
+  --run_client, -rc, --run_player
+                        Runs an instance of the player immediately after
+                        starting the server.
+  --user_code, -u [USER_CODE]
+                        If --run_client is passed in, determines the user code
+                        for the player which joins the server. User codes
+                        derive a user name, user iden number, and other
+                        characteristics of any particular player
+  --quiet, -q           Suppresses console output.
+  --loud                Makes RCC console output very verbose.
+  --no_colour, --no_color
+                        Suppresses ANSI colour codes.
+  --rcc_log_options, --rcc_log, -log [FLog ...]
+                        Filter list for which FLog types to print in RCC.
+  --skip_rcc            Only runs the webserver, skipping the RCC binary
+                        completely.
+  --skip_web            Only runs the Studio binary, skipping hosting the
+                        webserver.
+  --clear_temp_cache    Deletes cached content specific to the host you are
+                        connecting to. Searches in the
+                        %LocalAppData%\Temp\Roblox\http directory.
+  --skip_download       Disables auto-download of RFD binaries from the
+                        internet.
+  --debug               Opens an instance of x96dbg and attaches it to the
+                        running "server" binary.
+  --debug_all           Opens instances of x96dbg and attaches them to all
+                        running binaries.
+  --help, -?            show this help message and exit
+```
+
+### `player`
+
+As of RFD 0.65.1, the available options are as follows:
 
 ```
-usage: _main.py server [--config_path [CONFIG_PATH] |
-                       --place_path [PLACE_PATH]] [--ipv4-only | --ipv6-only]
-                       [--rcc_port [RCC_PORT]] [--web_port [WEB_PORT]]
-                       [--run_client] [--user_code [USER_CODE]] [--quiet]
-                       [--no_colour] [--rcc_log_options [FLog ...]]
-                       [--skip_rcc | --skip_rcc_popen | --skip_web]
-                       [--clear_cache] [--skip_download] [--debug |
+usage: _main.py player [--rcc_host [RCC_HOST ...]] [--rcc_port [RCC_PORT ...]]
+                       [--web_host [WEB_HOST ...]] [--web_port [WEB_PORT ...]]
+                       [--user_code [USER_CODE ...]] [--quiet] [--loud]
+                       [--clear_temp_cache] [--skip_download] [--debug |
+                       --debug_all] [--help]
+
+options:
+  --rcc_host, --host, -rh [RCC_HOST ...]
+                        Hostname or IP address to connect this program to the
+                        RCC server.
+  --rcc_port, --port, -rp [RCC_PORT ...]
+                        Port number to connect this program to the RCC server.
+  --web_host, --webserver_host, -wh, -h [WEB_HOST ...]
+                        Hostname or IP address to connect this program to the
+                        web server.
+  --web_port, --webserver_port, -wp, -p [WEB_PORT ...]
+                        Port number to connect this program to the web server.
+  --user_code, -u [USER_CODE ...]
+                        Determines the user code for the player which joins
+                        the server. User codes derive a user name, user iden
+                        number, and other characteristics of any particular
+                        player.
+  --quiet, -q           Suppresses console output.
+  --loud                Makes the client's output log file very verbose.
+  --clear_temp_cache    Deletes cached content specific to the host you are
+                        connecting to. Searches in the
+                        %LocalAppData%\Temp\Roblox\http directory.
+  --skip_download       Disables auto-download of RFD binaries from the
+                        internet.
+  --debug               Opens an instance of x96dbg and attaches it to the
+                        running "player" binary.
+  --debug_all           Opens instances of x96dbg and attaches them to all
+                        running binaries.
+  --help, -?            show this help message and exit
+```
+
+### `studio`
+
+The `studio` command allows developers to modify existing place files whilst connected to RFD's webserver.
+
+As of RFD 0.65.1, the available options are as follows:
+
+```
+usage: _main.py studio [--config_path [CONFIG_PATH] |
+                       --place_path [PLACE_PATH]] [--web_port [WEB_PORT]]
+                       [--quiet] [--skip_web] [--skip_studio]
+                       [--clear_temp_cache] [--skip_download] [--debug |
                        --debug_all] [--help]
 
 options:
@@ -124,101 +222,21 @@ options:
                         Path to the place file to be loaded. Argument
                         `config_path` can't be passed in when using this
                         option.
-  --ipv4-only           Run server using IPv4 only.
-  --ipv6-only           Run server using IPv6 only.
-  --rcc_port, --port, -rp, -p [RCC_PORT]
-                        Port number for the RCC server to run from.
-  --web_port, -wp [WEB_PORT]
-                        Port number for the web server to run from.
-  --run_client, -rc, --run_player
-                        Runs an instance of the player immediately after
-                        starting the server.
-  --user_code, -u [USER_CODE]
-                        If -run_client is passed in, .
-  --quiet, -q           Suppresses console output.
-  --no_colour, --no_color
-                        Suppresses ANSI colour codes.
-  --rcc_log_options, --rcc_log, -log [FLog ...]
-                        Filter list for which FLog types to print in RCC.
-  --skip_rcc            Only runs the webserver, skipping the RCC binary
-                        completely.
-  --skip_rcc_popen      Runs the webserver and initialises RCC configuration,
-                        but doesn't execute `RCCService.exe`.
-  --skip_web            Only runs the Studio binary, skipping hosting the
-                        webserver.
-  --clear_cache         Deletes cached content specific to the host you are
-                        connecting to. Searches in the
-                        %LocalAppData%\Temp\Roblox\http directory.
-  --skip_download       Disables auto-download of RFD binaries from the
-                        internet.
-  --debug               Opens an instance of x96dbg and attaches it to the
-                        running "server" binary.
-  --debug_all           Opens instances of x96dbg and attaches them to all
-                        running binaries.
-  --help, -?            show this help message and exit
-
-```
-
-### `player`
-
-As of RFD 0.58.2, the available options are as follows:
-
-```
-usage: _main.py player [--rcc_host [RCC_HOST]] [--rcc_port [RCC_PORT]]
-                       [--web_host [WEB_HOST]] [--web_port [WEB_PORT]]
-                       [--user_code [USER_CODE]] [--quiet] [--clear_cache]
-                       [--skip_download] [--debug | --debug_all] [--help]
-
-options:
-  --rcc_host, --host, -rh, -h [RCC_HOST]
-                        Hostname or IP address to connect this program to the
-                        RCC server.
-  --rcc_port, --port, -rp, -p [RCC_PORT]
-                        Port number to connect this program to the RCC server.
-  --web_host, -wh [WEB_HOST]
-                        Hostname or IP address to connect this program to the
-                        web server.
-  --web_port, -wp [WEB_PORT]
-                        Port number to connect this program to the web server.
-  --user_code, -u [USER_CODE]
-  --quiet, -q           Suppresses console output.
-  --clear_cache         Deletes cached content specific to the host you are
-                        connecting to. Searches in the
-                        %LocalAppData%\Temp\Roblox\http directory.
-  --skip_download       Disables auto-download of RFD binaries from the
-                        internet.
-  --debug               Opens an instance of x96dbg and attaches it to the
-                        running "player" binary.
-  --debug_all           Opens instances of x96dbg and attaches them to all
-                        running binaries.
-  --help, -?            show this help message and exit
-
-```
-
-### `studio`
-
-The `studio` command allows developers to modify existing place files whilst connected to RFD's webserver.
-
-As of RFD 0.62.2, the available options are as follows:
-
-```
-usage: _main.py studio [--config_path [CONFIG_PATH] | --place_path [PLACE_PATH]] [--web_port [WEB_PORT]] [--quiet] [--skip_web] [--skip_studio]
-                       [--clear_cache] [--skip_download] [--debug | --debug_all] [--help]
-
-options:
-  --config_path, --config, -cp [CONFIG_PATH]
-                        Game-specific options; defaults to ./GameConfig.toml. Please review each option before starting a new server up.
-  --place_path, --place, -pl [PLACE_PATH]
-                        Path to the place file to be loaded. Argument `config_path` can't be passed in when using this option.
   --web_port, -wp, -p [WEB_PORT]
-                        Port number for the locally-hosted web server to run from.
+                        Port number for the locally-hosted web server to run
+                        from.
   --quiet, -q           Suppresses console output.
   --skip_web            Skips hosting the webserver.
   --skip_studio         Skips opening Studio.
-  --clear_cache         Deletes cached content specific to the host you are connecting to. Searches in the %LocalAppData%\Temp\Roblox\http directory.
-  --skip_download       Disables auto-download of RFD binaries from the internet.
-  --debug               Opens an instance of x96dbg and attaches it to the running "studio" binary.
-  --debug_all           Opens instances of x96dbg and attaches them to all running binaries.
+  --clear_temp_cache    Deletes cached content specific to the host you are
+                        connecting to. Searches in the
+                        %LocalAppData%\Temp\Roblox\http directory.
+  --skip_download       Disables auto-download of RFD binaries from the
+                        internet.
+  --debug               Opens an instance of x96dbg and attaches it to the
+                        running "studio" binary.
+  --debug_all           Opens instances of x96dbg and attaches them to all
+                        running binaries.
   --help, -?            show this help message and exit
 ```
 
@@ -226,11 +244,11 @@ options:
 
 The `serialise` command allows developers to modify files to be compatible with RFD's asset-loading systems.
 
-As of RFD 0.58.2, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
 usage: _main.py serialise [--load LOAD [LOAD ...]] [--save SAVE [SAVE ...]]
-                          [--method {method.csg,method.rbxl,method.video,method.mesh} [{method.csg,method.rbxl,method.video,method.mesh} ...]]
+                          [--method {rbxlx,video,csg,mesh,rbxl} [{rbxlx,video,csg,mesh,rbxl} ...]]
                           [--help]
 
 options:
@@ -238,7 +256,7 @@ options:
                         Path to the file(s) to be loaded.
   --save, --write, -w SAVE [SAVE ...]
                         Path to the file(s) to be saved.
-  --method {method.csg,method.rbxl,method.video,method.mesh} [{method.csg,method.rbxl,method.video,method.mesh} ...]
+  --method {rbxlx,video,csg,mesh,rbxl} [{rbxlx,video,csg,mesh,rbxl} ...]
                         Serialisers to use on the file(s) provided.
   --help, -?            show this help message and exit
 ```
@@ -247,7 +265,7 @@ options:
 
 The `download` command allows you to download specific versions of Rōblox components.
 
-As of RFD 0.58.2, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
 usage: _main.py download [--rbx_version RBX_VERSION]
@@ -266,7 +284,7 @@ options:
 
 The `test` command performs a pre-determined series of unit tests. Useful for debugging RFD's compatibility with modern Rōblox systems over time.
 
-As of RFD 0.61.0, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
 usage: _main.py test [--help] [tests_to_run ...]
@@ -282,7 +300,7 @@ options:
 
 Extracts the `ROBLOSECURITY` cookie which a running instance of RFD would use to extract assets from Roblox.com.
 
-As of RFD 0.61.0, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
 usage: _main.py cookie [--verbose] [--help]
@@ -321,15 +339,10 @@ Port is specified by the `--web_port` or `-wp` option.
 
 To load assets directly from Roblox.com, our software needs to provide a valid `ROBLOSECURITY` token. RFD can extract this token through two methods:
 
-1. _If you are on a Windows and play Roblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat` and there are no further actions needed to start loading assets.
+1. _If you are on a Windows and play Roblox.com_, RFD will find and decrypt the contents of your `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat` file - and there are no further actions needed to start loading assets.
 2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
 
-**Freedom Distribution will NOT save/upload your token anywhere and will not use It outside roblox assetdelivery services.** The cookie handling can be found in the Source "extractor.py" file.
-
-### PlaceID Spoofing
-
-There are some uncopylocks that somehow when you enter them the audio works fine but when you enter from outside the official uncopylock **the audios are privated** this is very rare for it to happen, but in case it happens setup an enviroment value called "rfdplaceid" with the PlaceID you want to spoof.
-Tof you are the owner of the place you are loading assets and the account is logged in/set ROBLOSECURITY in enviroment, your privated audios **should** load fine without spoofing.
+**Freedom Distribution will NOT save/upload your token anywhere and will not use it outside roblox assetdelivery services.** The cookie handling can be found in the Source "extractor.py" file.
 
 ### Setting Up Enviroment Variables
 
@@ -342,7 +355,17 @@ To set your `.ROBLOSECURITY` token up, with `'YOURTOKEN'` being replaced by that
 $env:ROBLOSECURITY = 'YOURTOKEN'
 ```
 
-To set place-iden spoofing up, with the `12345` being replaced by your desired place iden:
+### PlaceID Spoofing
+
+"Private" audio assets fail to fetch unless you supply the place iden as a request header.
+
+In addition to your `ROBLOSECURITY` cookie, you may also need to set an `rfdplaceid` environment variable.
+
+However, if you own an audio clip, even if it's private, just supplying the `ROBLOSECURITY` is enough.
+
+---
+
+To configure place-iden spoofing, with the `12345` being replaced by your desired place iden:
 
 ```ps1
 $env:rfdplaceid = '12345'
