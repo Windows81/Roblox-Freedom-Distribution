@@ -927,7 +927,7 @@ raw_data = '\0'
 This script (in [Python mode](#python-mode)) should work. It redirects asset iden strings starting wtih `time_music_` to static files on the internet.
 
 ```toml
-remote_data.asset_redirects = "python"
+remote_data.asset_redirects_call_mode = "python"
 remote_data.asset_redirects = '''
 def f(asset_iden):
     PREFIX = "time_music_"
@@ -960,3 +960,4 @@ price = 1
 ---
 
 <p align="center"><img src="/Assets/Logo.png" height="60px"/></p>
+
