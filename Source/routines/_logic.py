@@ -88,10 +88,15 @@ class popen_entry(base_entry):
     is_terminated: bool = dataclasses.field(init=False, default=False)
     is_running: bool = dataclasses.field(init=False, default=False)
 
-    def make_popen(self, exe_path: str, cmd_args: tuple[str, ...], *args, **kwargs) -> None:
+    def init_popen(self, exe_path: str, cmd_args: tuple[str, ...], *args, **kwargs) -> None:
         '''
-        Creates new thread(s) for the Popen to operate under.
+        Creates new Popen thread(s) and stores them in `popen_mains` and `popen_daemons`.
         '''
+        if self.is_terminated:
+            raise Exception(
+                'Attempted to open a new EXE on a terminated routine.'
+            )
+
         # Checks if Wine is installed.  Redundant if using Windows.
         if shutil.which('wine') is not None:
             params = ('wine', exe_path, *cmd_args)
@@ -99,11 +104,6 @@ class popen_entry(base_entry):
             params = (exe_path, *cmd_args)
 
         self.is_running = True
-        if self.is_terminated:
-            self.popen_mains.clear()
-            self.popen_daemons.clear()
-            self.is_terminated = False
-
         principal = subprocess.Popen(
             params, *args, **kwargs, cwd=os.path.dirname(exe_path),
         )
@@ -157,6 +157,10 @@ class popen_entry(base_entry):
             p.terminate()
         for p in self.popen_daemons:
             p.terminate()
+
+        self.popen_mains.clear()
+        self.popen_daemons.clear()
+        self.threads.clear()
 
         self.is_running = True
         self.bootstrap()

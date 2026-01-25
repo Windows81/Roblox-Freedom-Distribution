@@ -153,7 +153,7 @@ def _(self: web_server_handler) -> bool:
     '''
     self.send_json({
         "gameAvatarType": "PlayerChoice",
-        "allowCustomAnimations": "True",
+        "allowCustomAnimations": True,
         "universeAvatarCollisionType": "OuterBox",
         "universeAvatarBodyType": "Standard",
         "jointPositioningType": "ArtistIntent",

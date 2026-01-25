@@ -274,7 +274,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         stdout.flush()
 
     def make_popen_threads(self) -> None:
-        self.make_popen(
+        self.init_popen(
             exe_path=self.get_versioned_path('RCCService.exe'),
             cmd_args=self.gen_cmd_args(),
             stdin=subprocess.PIPE,

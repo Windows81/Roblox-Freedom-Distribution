@@ -10,7 +10,7 @@ def replace(root: Element) -> Element | None:
         if e is None:
             continue
         e.text = re.sub(
-            r'https?://(?:assetgame\.|assetdelivery\.|www\.)?roblox\.com/(?:v1/)?asset/?\?id=([\d]{1,17})',
+            r'https?://(?:assetgame\.|assetdelivery\.|www\.)?roblox\.com/+(?:v1/)?asset/?\?id=([\d]{1,17})',
             lambda m: 'rbxassetid://%s' % m.group(1),
             e.text or '',
         )

@@ -55,14 +55,14 @@ def subparse(
         help='Run server using IPv6 only.',
     )
     subparser.add_argument(
-        '--rcc_port', '--port', '-rp', '-p',
+        '--rcc_port', '--port', '-rp',
         type=int,
         nargs='*',
         default=[],
         help='Port number for the RCC server to run from.',
     )
     subparser.add_argument(
-        '--web_port', '--webserver_port', '-wp',
+        '--web_port', '--webserver_port', '-wp', '-p',
         type=int,
         nargs='*',
         default=[],

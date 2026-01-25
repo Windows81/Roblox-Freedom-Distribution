@@ -102,7 +102,7 @@ class obj_type(logic.bin_entry):
 
     def make_client_popen(self) -> None:
         base_url = self.get_base_url()
-        self.make_popen(
+        self.init_popen(
             self.get_versioned_path('RobloxPlayerBeta.exe'),
             (
                 '-a', f'{base_url}/login/negotiate.ashx',

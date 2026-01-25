@@ -14,7 +14,7 @@ def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _
 
     chunk_data.prop_values = _logic.join_prop_strings([
         re.sub(
-            br'https?://(?:assetgame\.|assetdelivery\.|www\.)?roblox\.com/(?:v1/)?asset/?\?id=([\d]{1,17})',
+            br'https?://(?:assetgame\.|assetdelivery\.|www\.)?roblox\.com/+(?:v1/)?asset/?\?id=([\d]{1,17})',
             lambda m: b'rbxassetid://%s' % m.group(1),
             v
         )

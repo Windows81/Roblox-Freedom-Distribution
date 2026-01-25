@@ -86,7 +86,7 @@ class obj_type(logic.bin_entry, logic.loggable_entry, logic.gameconfig_entry):
         self.make_aux_directories()
         self.save_starter_scripts()
         time.sleep(self.launch_delay)
-        self.make_popen(
+        self.init_popen(
             self.get_versioned_path('RobloxStudioBeta.exe'),
             (
                 '-localPlaceFile',
