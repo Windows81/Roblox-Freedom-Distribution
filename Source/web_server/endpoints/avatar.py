@@ -78,12 +78,7 @@ def _(self: web_server_handler) -> bool:
             }
             for item in avatar.items
         ],
-        "animationAssetIds": {
-            "run": 2510238627,
-            "jump": 2510236649,
-            "fall": 2510233257,
-            "climb": 2510230574
-        },
+        "animationAssetIds": {},
         "bodyColors": {
             "headColorId": avatar.colors.head,
             "leftArmColorId": avatar.colors.left_arm,
@@ -177,3 +172,4 @@ def _(self: web_server_handler) -> bool:
         "moderationStatus": None,
     })
     return True
+
