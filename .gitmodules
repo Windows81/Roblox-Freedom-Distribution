@@ -4,3 +4,6 @@
 [submodule "Guides"]
 	path = Guides
 	url = https://github.com/Windows81/Roblox-Freedom-Distribution-Guides
+[submodule "ServerList"]
+	path = ServerList
+	url = https://github.com/frostyyyy1/Roblox-Freedom-Distribution-Servers
