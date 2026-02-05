@@ -1,9 +1,12 @@
 [submodule "Examples"]
 	path = Examples
 	url = https://github.com/Windows81/Roblox-Freedom-Distribution-Examples
+	branch = main
 [submodule "Guides"]
 	path = Guides
 	url = https://github.com/Windows81/Roblox-Freedom-Distribution-Guides
+	branch = main
 [submodule "ServerList"]
 	path = ServerList
 	url = https://github.com/frostyyyy1/Roblox-Freedom-Distribution-Servers
+	branch = main
