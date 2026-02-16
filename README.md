@@ -940,6 +940,24 @@ def f(asset_iden):
 '''
 ```
 
+This script (also in [Python mode](#python-mode)) loads Rōblox asset data from a third-party fetcher. The data is then serialised by RFD's built-in [serialiser suite](./Source/assets/serialisers/) to improve compatibility with RFD's systems.
+
+```toml
+remote_data.asset_redirects_call_mode = "python"
+remote_data.asset_redirects = '''
+import assets.serialisers
+import requests
+
+def f(asset_iden):
+    headers = {'User-Agent': 'Roblox/WinInet'}
+    data = requests.get("https://pekora.zip/asset?id=%s" % str(asset_iden), headers=headers).content
+    data, _changed = assets.serialisers.parse(data)
+    return {
+        "raw_data": data,
+    }
+'''
+```
+
 #### `remote_data.badges`
 
 Resolves to a data dictionary.
@@ -960,4 +978,3 @@ price = 1
 ---
 
 <p align="center"><img src="/Assets/Logo.png" height="60px"/></p>
-

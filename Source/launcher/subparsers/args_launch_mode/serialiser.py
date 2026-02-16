@@ -32,12 +32,14 @@ def _(
         default=[],
         help='Path to the file(s) to be saved.',
     )
+    method_choices = [m.name for m in assets.serialisers.ALL_METHODS]
     subparser.add_argument(
         '--method',
-        choices=[m.name for m in assets.serialisers.ALL_METHODS],
+        '-m',
+        choices=method_choices,
         help='Serialisers to use on the file(s) provided.',
         nargs='+',
-        default=[],
+        default=method_choices,
     )
 
 

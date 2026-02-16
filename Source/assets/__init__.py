@@ -172,20 +172,16 @@ class asseter:
         else:
             return returns.construct()
 
-    def _load_asset(self, asset_id: int | str) -> returns.base_type:
+    def _fetch_asset(self, asset_id: int | str) -> returns.base_type:
         redirect_info = self.redirect_func(asset_id)
         if redirect_info is not None:
-            return self._load_redir_asset(asset_id, redirect_info)
-
-        asset_path = self.get_asset_path(asset_id)
-        local_data = self._load_file(asset_path)
-        if local_data is not None:
-            return returns.construct(data=local_data)
+            return self._load_redir_asset(asset_id=asset_id, redirect=redirect_info)
 
         if isinstance(asset_id, str):
-            return returns.construct(data=self._load_asset_str(asset_id))
+            remote_data = self._load_asset_str(asset_id)
         else:
-            return returns.construct(data=self._load_asset_num(asset_id))
+            remote_data = self._load_asset_num(asset_id)
+        return returns.construct(data=remote_data)
 
     def get_asset(
         self,
@@ -196,8 +192,12 @@ class asseter:
             returns.construct(error='Asset is blocklisted.')
 
         asset_path = self.get_asset_path(asset_id)
-        result_data = self._load_asset(asset_id)
+        local_data = self._load_file(asset_path)
+        if local_data is not None:
+            return returns.construct(data=local_data)
 
+        result_data = self._fetch_asset(asset_id)
         if isinstance(result_data, returns.ret_data):
             self._save_file(asset_path, result_data.data)
+
         return result_data
