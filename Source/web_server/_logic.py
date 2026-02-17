@@ -313,7 +313,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         log_filter = self.server.logger
         log_filter.log(
             (
-                f"{log_filter.bcolors.BOLD}{{%+5s}}{log_filter.bcolors.ENDC} %s"
+                f"{log_filter.bcolors.BOLD}{{%s}}{log_filter.bcolors.ENDC} %s"
             ) % (
                 self.command, self.url.rstrip('\r\n'),
             ),

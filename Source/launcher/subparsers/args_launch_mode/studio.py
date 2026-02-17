@@ -77,16 +77,6 @@ def _(
     )
 
     routine_args: list[logic.base_entry] = []
-    if not args_ns.skip_studio:
-        routine_args.extend([
-            studio.obj_type(
-                game_config=game_config,
-                web_host='localhost',
-                web_port=web_port,
-                logger=log_filter,
-            ),
-        ])
-
     if not args_ns.skip_web:
         routine_args.extend([
             web.obj_type(
@@ -96,6 +86,16 @@ def _(
                 logger=log_filter,
                 game_config=game_config,
                 server_mode=web.SERVER_MODE_TYPE.STUDIO,
+            ),
+        ])
+
+    if not args_ns.skip_studio:
+        routine_args.extend([
+            studio.obj_type(
+                game_config=game_config,
+                web_host='localhost',
+                web_port=web_port,
+                logger=log_filter,
             ),
         ])
 

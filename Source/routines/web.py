@@ -49,4 +49,6 @@ class obj_type(logic.gameconfig_entry, logic.loggable_entry):
         if self.httpd is None:
             return
         self.httpd.shutdown()
+        self.httpd.server_close()
+        self.httpd = None
         super().stop()
