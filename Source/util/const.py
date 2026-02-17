@@ -2,7 +2,7 @@
 
 GIT_RELEASE_VERSION = '''0.65.3'''
 
-ZIPPED_RELEASE_VERSION = '''0.65.3-binaries'''
+ZIPPED_RELEASE_VERSION = '''0.65.2-binaries'''
 ZIPPED_RELEASE_LINK_FORMAT = 'https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/%s/%s.%s.7z'
 
 PLACE_IDEN_CONST = 1818
