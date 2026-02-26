@@ -6,7 +6,8 @@
     Supported meshes up to version 7.
     Mesh Format documentation by MaximumADHD: https://devforum.roblox.com/t/roblox-mesh-format/326114
 
-    v6/v7 chunked meshes are read and converted to v2.00 format.
+    v6/v7 chunked meshes are read and converted to v2.00 format, or v4.00 if bone data exists.
+    v4.01 meshes are converted to v4.00.
     Draco-compressed COREMESH chunks (version 2) require the DracoPy package:
         pip install DracoPy
 """
@@ -521,7 +522,7 @@ class MeshSubset:
         self.vertsLength = int.from_bytes(data[12:16], "little")
         self.numBoneIndicies = int.from_bytes(data[16:20], "little")
         for i in range(0, 26):
-            self.boneIndicies.append(int.from_bytes(data[20+i:21+i], "little"))
+            self.boneIndicies.append(int.from_bytes(data[20 + i*2 : 22 + i*2], "little"))
 
     def export_data(self) -> bytes:
         subsetData: bytes = bytes(b''.join([
@@ -532,7 +533,7 @@ class MeshSubset:
             self.numBoneIndicies.to_bytes(4, "little"),
         ]))
         for i in range(0, 26):
-            subsetData += self.boneIndicies[i].to_bytes(1, "little")
+            subsetData += self.boneIndicies[i].to_bytes(2, "little")
 
         return subsetData
 
@@ -890,6 +891,7 @@ def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
 
     boneNames: str = read_data(
         data, offset, meshHeader.sizeof_boneNamesBuffer).decode("utf-8")
+    meshData.boneNames = boneNames
     offset += meshHeader.sizeof_boneNamesBuffer
     debug_print(f"read_mesh_v4: boneNames={boneNames}")
 
@@ -901,7 +903,10 @@ def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
         debug_print(f"read_mesh_v4: meshSubsets[{i}]={meshSubsets[i]}")
     meshData.meshSubsets = meshSubsets
     offset += meshHeader.numSubsets * 72
-    offset += meshHeader.unused
+	
+	# offset += meshHeader.unused
+    # Note: v4 has no trailing padding block — 'unused' is a 1-byte pad in the
+    # header struct itself, not a variable-length data region after the subsets.
 
     if offset != len(data):
         raise Exception(
@@ -938,8 +943,9 @@ def read_mesh_v5(data: bytes, offset: int) -> FileMeshData:
 
     if meshHeader.numBones > 0:
         for i in range(0, meshHeader.numVerts):
-            temp = Envelope([], [])
-            temp.read_data(read_data(data, offset + i * 8, 8))
+            env = Envelope([], [])
+            env.read_data(read_data(data, offset + i * 8, 8))
+            meshData.envelopes.append(env)
         offset += meshHeader.numVerts * 8
 
     for i in range(0, meshHeader.numFaces):
@@ -977,6 +983,7 @@ def read_mesh_v5(data: bytes, offset: int) -> FileMeshData:
 
     boneNames: str = read_data(
         data, offset, meshHeader.sizeof_boneNamesBuffer).decode("utf-8")
+    meshData.boneNames = boneNames
     offset += meshHeader.sizeof_boneNamesBuffer
     debug_print(f"read_mesh_v5: boneNames={boneNames}")
 
@@ -1067,6 +1074,169 @@ def export_mesh_v3(meshData: FileMeshData | None) -> bytes:
     else:
         finalmesh += (0).to_bytes(4, "little")
         finalmesh += (len(meshData.faces)).to_bytes(4, "little")
+
+    return finalmesh
+
+def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
+    """
+    Export a FileMeshData as a version 4.00 binary mesh.
+
+    Per the spec (FileMeshHeaderV4):
+      ushort sizeof_FileMeshHeaderV4  = 24
+      ushort lodType                  = 0 (None)
+      uint   numVerts
+      uint   numFaces                 (all faces, including every LOD level)
+      ushort numLodOffsets
+      ushort numBones
+      uint   sizeof_boneNames
+      ushort numSubsets
+      byte   numHighQualityLODs       = 1
+      byte   unused                   = 0
+
+    Layout after header:
+      FileMeshVertex[numVerts]
+      FileMeshSkinning[numVerts]   -- only if numBones > 0
+      FileMeshFace[numFaces]
+      uint lodOffsets[numLodOffsets]
+      FileMeshBone[numBones]
+      byte boneNames[sizeof_boneNames]
+      FileMeshSubset[numSubsets]
+    """
+    if meshData is None:
+        raise Exception("export_mesh_v4: meshData is None")
+    if len(meshData.vnts) == 0 or len(meshData.faces) == 0:
+        raise Exception("export_mesh_v4: meshData is empty")
+
+    has_bones   = len(meshData.bones) > 0
+    has_lods    = len(meshData.LODs) >= 2
+    has_subsets = len(meshData.meshSubsets) > 0
+
+    # Build the bone names buffer.
+    # Each name is a null-terminated UTF-8 string; boneNameIndex on each Bone
+    # is the byte offset into this buffer where that bone's name starts.
+    # We rebuild it from scratch: assign offsets in bone order.
+    bone_name_list: list[str] = []
+    if has_bones:
+        # Try to recover names from the existing boneNames string buffer.
+        # boneNames is stored as a single null-delimited string blob.
+        raw_names = meshData.boneNames.split("\x00") if meshData.boneNames else []
+        # If we have the right count use them, otherwise generate placeholders.
+        if len(raw_names) >= len(meshData.bones):
+            bone_name_list = raw_names[:len(meshData.bones)]
+        else:
+            bone_name_list = [f"Bone{i}" for i in range(len(meshData.bones))]
+
+    # Rebuild name buffer and fix boneNameIndex offsets so they're consistent.
+    bone_names_buf: bytes = b""
+    bone_name_offsets: list[int] = []
+    for name in bone_name_list:
+        bone_name_offsets.append(len(bone_names_buf))
+        bone_names_buf += name.encode("utf-8") + b"\x00"
+
+    # Determine all-faces list (include every LOD level as the spec requires).
+    all_faces = meshData.full_faces if (
+        has_lods and len(meshData.full_faces) > len(meshData.faces)
+    ) else meshData.faces
+
+    # LOD offsets array — must have at least [0, numFaces] per convention.
+    if has_lods and len(meshData.LODs) >= 2:
+        lod_offsets = meshData.LODs
+    else:
+        lod_offsets = [0, len(meshData.faces)]
+
+    num_verts   = len(meshData.vnts)
+    num_faces   = len(all_faces)
+    num_lods    = len(lod_offsets)
+    num_bones   = len(meshData.bones)
+    num_subsets = len(meshData.meshSubsets)
+
+    finalmesh: bytes = b""
+    finalmesh += b"version 4.00\n"
+
+    # --- Header (24 bytes) ---
+    finalmesh += FileMeshHeaderV4(
+        sizeof_MeshHeader   = 24,
+        lodType             = 0,
+        numVerts            = num_verts,
+        numFaces            = num_faces,
+        numLODs             = num_lods,
+        numBones            = num_bones,
+        sizeof_boneNamesBuffer = len(bone_names_buf),
+        numSubsets          = num_subsets,
+        numHighQualityLODs  = 1,
+        unused              = 0,
+    ).export_data()
+
+    # --- Vertices ---
+    for vnt in meshData.vnts:
+        finalmesh += vnt.export_data()
+
+    # --- Skinning (only when bones are present) ---
+    if has_bones:
+        if len(meshData.envelopes) == num_verts:
+            for env in meshData.envelopes:
+                finalmesh += env.export_data()
+        else:
+            # No envelope data available — write identity skinning (bone 0, full weight).
+            identity_env = Envelope([0, 0, 0, 0], [255, 0, 0, 0])
+            for _ in range(num_verts):
+                finalmesh += identity_env.export_data()
+
+    # --- Faces ---
+    for face in all_faces:
+        finalmesh += face.export_data()
+
+    # --- LOD offsets ---
+    for lod in lod_offsets:
+        finalmesh += lod.to_bytes(4, "little")
+
+    # --- Bones (with corrected name offsets) ---
+    for i, bone in enumerate(meshData.bones):
+        # Patch boneNameIndex to match the buffer we just built.
+        patched = Bone(
+            boneNameIndex  = bone_name_offsets[i] if i < len(bone_name_offsets) else 0,
+            parentIndex    = bone.parentIndex,
+            lodParentIndex = bone.lodParentIndex,
+            culling        = bone.culling,
+            r00 = bone.r00, r01 = bone.r01, r02 = bone.r02,
+            r10 = bone.r10, r11 = bone.r11, r12 = bone.r12,
+            r20 = bone.r20, r21 = bone.r21, r22 = bone.r22,
+            x = bone.x, y = bone.y, z = bone.z,
+        )
+        finalmesh += patched.export_data()
+
+    # --- Bone names buffer ---
+    finalmesh += bone_names_buf
+
+    # --- Subsets ---
+    if has_subsets:
+        for subset in meshData.meshSubsets:
+            # Ensure boneIndicies always has exactly 26 entries (pad with 0xFFFF).
+            indices = list(subset.boneIndicies)
+            while len(indices) < 26:
+                indices.append(0xFFFF)
+            padded_subset = MeshSubset(
+                facesBegin       = subset.facesBegin,
+                facesLength      = subset.facesLength,
+                vertsBegin       = subset.vertsBegin,
+                vertsLength      = subset.vertsLength,
+                numBoneIndicies  = subset.numBoneIndicies,
+                boneIndicies     = indices,
+            )
+            finalmesh += padded_subset.export_data()
+    elif has_bones:
+        # No subset data but we have bones — write a single catch-all subset
+        # that covers all verts/faces, referencing only bone 0.
+        catchall_indices = [0] + [0xFFFF] * 25
+        catchall = MeshSubset(
+            facesBegin      = 0,
+            facesLength     = num_faces,
+            vertsBegin      = 0,
+            vertsLength     = num_verts,
+            numBoneIndicies = 1,
+            boneIndicies    = catchall_indices,
+        )
+        finalmesh += catchall.export_data()
 
     return finalmesh
 
@@ -1412,27 +1582,96 @@ def _obj_text_to_mesh_data(obj_text: str) -> FileMeshData:
     return meshData
 
 
+def _parse_skinning_chunk_v1(chunk: _ByteReader):
+    """
+    Parse a v1 SKINNING chunk per the spec:
+
+        struct FileMesh_SKINNING_v1
+        {
+            uint numSkinnings;
+            FileMeshSkinning skinning[numSkinnings];   // 8 bytes each
+            uint numBones;
+            FileMeshBone bones[numBones];              // 60 bytes each
+            uint nameTableSize;
+            byte nameTable[nameTableSize];
+            uint numSubsets;
+            FileMeshSubset subsets[numSubsets];        // 72 bytes each
+        }
+
+    Returns (envelopes, bones, bone_names_raw_bytes, subsets).
+    bone_names_raw_bytes is the raw name-table buffer so boneNameIndex offsets
+    remain valid when we pass it straight through to export_mesh_v4.
+    """
+    # --- Envelopes (FileMeshSkinning) ---
+    num_skinnings = chunk.uint32le()
+    envelopes: list[Envelope] = []
+    for _ in range(num_skinnings):
+        env = Envelope([], [])
+        env.read_data(chunk.array(8))
+        envelopes.append(env)
+
+    # --- Bones ---
+    num_bones = chunk.uint32le()
+    bones: list[Bone] = []
+    for _ in range(num_bones):
+        bone = Bone(0, 0, 0, 0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        bone.read_data(chunk.array(60))
+        bones.append(bone)
+
+    # --- Name table ---
+    name_table_size = chunk.uint32le()
+    name_table_bytes: bytes = chunk.array(name_table_size)
+
+    # Reconstruct a null-terminated string blob whose byte offsets match
+    # boneNameIndex values already embedded in each Bone (no patching needed).
+    # We decode for the boneNames string field but keep raw bytes for export.
+    try:
+        bone_names_str = name_table_bytes.decode("utf-8", errors="replace")
+    except Exception:
+        bone_names_str = ""
+
+    # --- Subsets ---
+    num_subsets = chunk.uint32le()
+    subsets: list[MeshSubset] = []
+    for _ in range(num_subsets):
+        subset = MeshSubset(0, 0, 0, 0, 0, [])
+        subset.read_data(chunk.array(72))
+        subsets.append(subset)
+
+    return envelopes, bones, bone_names_str, name_table_bytes, subsets
+
+
 def read_mesh_v6_v7(data: bytes, offset: int, version: str) -> FileMeshData:
     """
-    Parse a v6.00, v6.01, v7.00, or v7.01 chunked Roblox mesh and return
-    a FileMeshData (equivalent to v2.00).
+    Parse a v6.00, v6.01, v7.00, or v7.01 chunked Roblox mesh.
 
-    Strategy (mirrors MeshParser.js parseChunked):
-      1. Walk chunks, handle COREMESH (v1 plain, v2 Draco) and LODS.
-      2. Build an OBJ string (mirrors extracted_common.js doNamedDownload obj branch).
-      3. Convert OBJ string -> FileMeshData (mirrors obj_to_roblox_mesh.py).
+    Chunks handled:
+      COREMESH  — vertices, normals, UVs, tangents, faces (v1 plain or v2 Draco)
+      LODS      — LOD face-range offsets
+      SKINNING  — bone envelopes, bones, name table, subsets
+    
+    If a SKINNING chunk with bones is present the FileMeshData will have
+    bones/envelopes/subsets populated, making it ready for export_mesh_v4.
+    Otherwise it is ready for export_mesh_v2.
+
 
     A temporary .obj file is written to disk for traceability/debugging, then
     deleted once the conversion is done (as requested).
     """
     reader = _ByteReader(data[offset:])
 
-    vertices: list[float] = []
-    normals:  list[float] = []
-    uvs:      list[float] = []
-    faces:    list[int]   = []
-    tangents: list[int]   = []
-    lods:     list[int]   = []
+    vertices:         list[float]     = []
+    normals:          list[float]     = []
+    uvs:              list[float]     = []
+    faces:            list[int]       = []
+    tangents:         list[int]       = []
+    lods:             list[int]       = []
+    envelopes:        list[Envelope]  = []
+    bones:            list[Bone]      = []
+    bone_names_str:   str             = ""
+    name_table_bytes: bytes           = b""
+    subsets:          list[MeshSubset] = []
+
 
     while reader.get_remaining() >= 16:
         chunk_type    = reader.string(8)
@@ -1463,8 +1702,20 @@ def read_mesh_v6_v7(data: bytes, offset: int, version: str) -> FileMeshData:
                     for _ in range(num_lods):
                         lods.append(chunk_reader.uint32le())
                 # else: keep the [0, faceCount] default set by COREMESH handler
-
-        # All other chunks (SKINNING, FACS, HSRAVIS, …) are intentionally skipped.
+		
+        elif chunk_type == "SKINNING":
+            chunk_reader = _ByteReader(chunk_data)
+            if chunk_version == 1:
+                envelopes, bones, bone_names_str, name_table_bytes, subsets = \
+                    _parse_skinning_chunk_v1(chunk_reader)
+                debug_print(
+                    f"read_mesh_v6_v7: SKINNING — "
+                    f"{len(bones)} bones, {len(envelopes)} envelopes, {len(subsets)} subsets"
+                )
+            else:
+                debug_print(f"read_mesh_v6_v7: unknown SKINNING version {chunk_version}, skipping")
+				
+        # All other chunks (FACS, HSRAVIS, …) are intentionally skipped.
 
     if not vertices or not faces:
         raise Exception(f"read_mesh_v6_v7: no geometry found in {version} mesh")
@@ -1472,8 +1723,9 @@ def read_mesh_v6_v7(data: bytes, offset: int, version: str) -> FileMeshData:
     if not lods:
         lods = [0, len(faces) // 3]
 
-    # --- Step 2: write temp .obj (for traceability), then delete --------------
-    # The OBJ file uses only the first LOD, mirroring extracted_common.js.
+    has_bones = len(bones) > 0
+	
+	# --- Temp .obj for traceability (written and immediately deleted) ----------
     tmp_obj_path = None
     try:
         obj_text = _build_obj_text(vertices, normals, uvs, faces, lods)
@@ -1489,18 +1741,23 @@ def read_mesh_v6_v7(data: bytes, offset: int, version: str) -> FileMeshData:
             os.remove(tmp_obj_path)
             debug_print(f"read_mesh_v6_v7: deleted temp OBJ {tmp_obj_path}")
 
-    # --- Step 3: build FileMeshData directly from flat arrays -----------------
-    # We do NOT go through the OBJ text for the actual mesh data — that would
-    # deduplicate vertices by (pos+uv+normal) index and could silently drop or
-    # corrupt per-vertex normals, causing flat/unlit shading in Roblox.
-    # _mesh_data_from_flat maps the arrays 1:1, preserving every normal exactly.
-    #
-    # Only the first LOD range of faces is kept, matching Roblox's behaviour.
+    # --- Build FileMeshData from flat arrays (1:1, no deduplication) ----------
+    # Only the first LOD range of faces is used.
+
     lod_face_start = lods[0] if len(lods) >= 1 else 0
     lod_face_end   = lods[1] if len(lods) >= 2 else len(faces) // 3
     lod_faces = faces[lod_face_start * 3 : lod_face_end * 3]
 
     meshData = _mesh_data_from_flat(vertices, normals, uvs, lod_faces, tangents)
+
+	# Attach bone/skinning data when present so the caller can choose v4 export.
+    if has_bones:
+        meshData.bones       = bones
+        meshData.boneNames   = bone_names_str
+        meshData.envelopes   = envelopes
+        meshData.meshSubsets = subsets
+
+    target = "v4.00" if has_bones else "v2.00"
 
     debug_print(
         "read_mesh_v6_v7: converted %s -> %d vertices, %d faces (v2.00)" %
@@ -1543,8 +1800,9 @@ def read_mesh_data(data: bytes) -> FileMeshData:
 if __name__ == "__main__":
     arguments = sys.argv[1:]
     if len(arguments) < 1:
-        debug_print("Usage: RBXMesh.py <mesh file location> [2.0|3.0]")
-        debug_print("  v6/v7 meshes are automatically converted to v2.00 format.")
+        debug_print("Usage: RBXMesh.py <mesh file location> [2.0|3.0|4.0]")
+        debug_print("  v4.01 / v5.00 / v5.01 meshes are automatically converted to v4.00.")
+        debug_print("  v6/v7 meshes are automatically converted to v2.00 (or v4.00 if bones).")
         debug_print("  Draco-compressed v6/v7 meshes require the DracoPy package.")
         exit(1)
 
@@ -1565,13 +1823,33 @@ if __name__ == "__main__":
             with open(out_path, "wb") as f:
                 f.write(export_mesh_v3(meshData))
             debug_print(f"Exported v3.00 mesh to {out_path}")
+        elif arguments[1] == "4.0":
+            out_path = f"{arguments[0]}.v4"
+            with open(out_path, "wb") as f:
+                f.write(export_mesh_v4(meshData))
+            debug_print(f"Exported v4.00 mesh to {out_path}")
     else:
-        # Default: if the source was v6/v7, always export as v2.00 automatically
+        # Default for v6/v7: auto-select v4.00 (bones present) or v2.00 (no bones)
         version = get_mesh_version(meshData_bytes)
         if version in ("6.00", "6.01", "7.00", "7.01"):
-            out_path = f"{arguments[0]}.v2"
+            if len(meshData.bones) > 0:
+                out_path = f"{arguments[0]}.v4"
+                with open(out_path, "wb") as f:
+                    f.write(export_mesh_v4(meshData))
+                debug_print(
+                    f"v6/v7 mesh (bones present) auto-converted to v4.00 -> {out_path}"
+                )
+            else:
+                out_path = f"{arguments[0]}.v2"
+                with open(out_path, "wb") as f:
+                    f.write(export_mesh_v2(meshData))
+                debug_print(
+                    f"v6/v7 mesh (no bones) auto-converted to v2.00 -> {out_path}"
+                )
+        elif version in ("4.01", "5.00", "5.01"):
+            out_path = f"{arguments[0]}.v4"
             with open(out_path, "wb") as f:
-                f.write(export_mesh_v2(meshData))
+                f.write(export_mesh_v4(meshData))
             debug_print(
-                f"v6/v7 mesh auto-converted and exported as v2.00 to {out_path}"
+                f"{version} mesh auto-converted and exported as v4.00 to {out_path}"
             )
