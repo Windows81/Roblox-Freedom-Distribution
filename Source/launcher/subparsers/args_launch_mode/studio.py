@@ -98,5 +98,4 @@ def _(
                 server_mode=web.SERVER_MODE_TYPE.STUDIO,
             ),
         ])
-
     return routine_args

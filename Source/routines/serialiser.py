@@ -24,6 +24,6 @@ class obj_type(logic.base_entry):
                     self.methods,
                 )
             if changed:
-                print(w)
+                print(w, changed.name)
             with open(w, 'wb') as fw:
                 fw.write(data)

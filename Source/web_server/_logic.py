@@ -309,6 +309,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     @override
     def log_message(self, format, *args) -> None:
         if not self.is_valid_request:
+
             return
         log_filter = self.server.logger
         log_filter.log(

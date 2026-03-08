@@ -92,7 +92,7 @@ def replace_header_version(data: bytes, versioned_header: bytes, from_version: i
     ])
 
 
-def splice(data: bytes, fr: int, ln: int) -> bytes:
+def splice_without(data: bytes, fr: int, ln: int) -> bytes:
     return b''.join([
         data[:fr],
         data[fr+ln:],
@@ -112,6 +112,10 @@ def parse(data: bytes) -> bytes | None:
         return replace_header_version(data, HEADER_CSG4, 4, 2)
 
     if data.startswith(HEADER_CSGPHYS5):
+        '''
+        CSGPHYS5 is identical in data format to CSGPHYS3.
+        https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L71
+        '''
         return replace_header_version(data, HEADER_CSGPHYS5, 5, 3)
 
     if data.startswith(HEADER_CSGPHYS6):
@@ -131,21 +135,19 @@ def parse(data: bytes) -> bytes | None:
         CSGPHYS6 and CSGPHYS7 both contain `PhysicsInfo` structs, which as above indicate a length of 40 bytes.
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L8-L16
         '''
-        return splice(
+        return splice_without(
             replace_header_version(data, HEADER_CSGPHYS6, 6, 3),
             len(HEADER_CSGPHYS6), 40,
         )
 
     if data.startswith(HEADER_CSGPHYS7):
         '''
-        Why 41 bytes?
+        Why 41 bytes in CSGPHYS7?
         +40: `PhysicsInfo`, as per above.
         + 1: the mysterious magic number `03` (one byte) that takes place after the versioned header.
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L54
         '''
-        return splice(
+        return splice_without(
             replace_header_version(data, HEADER_CSGPHYS7, 7, 3),
             len(HEADER_CSGPHYS7), 41,
         )
-
-    return data
