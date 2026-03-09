@@ -92,7 +92,6 @@ def _(
             web.obj_type(
                 web_port=web_port,
                 is_ipv6=False,
-                is_ssl=True,
                 logger=log_filter,
                 game_config=game_config,
                 server_mode=web.SERVER_MODE_TYPE.STUDIO,

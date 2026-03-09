@@ -196,7 +196,6 @@ def _(
                 # IPv6 goes first since `localhost` also resolves first to [::1] on the client.
                 web_routine_args.add(web.obj_type(
                     web_port=web_port,
-                    is_ssl=True,
                     is_ipv6=True,
                     server_mode=web.SERVER_MODE_TYPE.RCC,
                     logger=log_filter,
@@ -205,7 +204,6 @@ def _(
             if has_ipv4:
                 web_routine_args.add(web.obj_type(
                     web_port=web_port,
-                    is_ssl=True,
                     is_ipv6=False,
                     server_mode=web.SERVER_MODE_TYPE.RCC,
                     logger=log_filter,

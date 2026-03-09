@@ -79,11 +79,11 @@ class obj_type(logic.bin_entry):
 
     @override
     def get_base_url(self) -> str:
-        return f'https://{self.web_host}:{self.web_port}'
+        return f'http://{self.web_host}:{self.web_port}'
 
     @override
     def get_app_base_url(self) -> str:
-        return f'https://{self.app_host}:{self.web_port}'
+        return f'http://{self.app_host}:{self.web_port}'
 
     @override
     @functools.cache

@@ -44,7 +44,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
     @override
     def get_base_url(self) -> str:
-        return f'https://{self.web_host}:{self.web_port}'
+        return f'http://{self.web_host}:{self.web_port}'
 
     @override
     def get_app_base_url(self) -> str:

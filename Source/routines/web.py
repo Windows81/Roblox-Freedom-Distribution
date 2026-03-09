@@ -16,7 +16,6 @@ SERVER_MODE_TYPE = web_server_logic.server_mode
 class obj_type(logic.gameconfig_entry, logic.loggable_entry):
     web_port: int = util.const.RFD_DEFAULT_PORT
     is_ipv6: bool
-    is_ssl: bool
 
     server_mode: SERVER_MODE_TYPE
     httpd: web_server_logic.web_server | None = None
@@ -30,7 +29,6 @@ class obj_type(logic.gameconfig_entry, logic.loggable_entry):
         super().process()
         self.httpd = web_server.make_server(
             self.web_port,
-            self.is_ssl,
             self.is_ipv6,
             self.game_config,
             self.server_mode,

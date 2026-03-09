@@ -45,7 +45,6 @@ class TestServer(unittest.TestCase):
                 game_config=cls.game_config,
                 server_mode=web.SERVER_MODE_TYPE.RCC,
                 is_ipv6=False,
-                is_ssl=True,
             ),
             rcc.obj_type(
                 rcc_port=cls.random_port,
