@@ -72,7 +72,7 @@ class obj_type(logic.bin_entry):
         it needs to be executed after `launch_delay` seconds.
         The `__post_init__` method gets executed before that delay.
         '''
-        if self.user_code != '':
+        if self.user_code is not None:
             return
         res = self.send_request('/rfd/default-user-code')
         self.user_code = str(res.read(), encoding='utf-8')
