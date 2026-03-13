@@ -1,19 +1,15 @@
 # Standard library imports
 import re
-import time
 
 # Local application imports
 import assets.returns as returns
 import util.const
-import util.resource
 from web_server._logic import web_server_handler, server_path, web_server_ssl
 
 
 @server_path('/rfd/default-user-code')
 def _(self: web_server_handler) -> bool:
-    result = self.game_config.server_core.retrieve_default_user_code(
-        time.time(),
-    )
+    result = self.game_config.server_core.retrieve_default_user_code()
     self.send_data(bytes(result, encoding='utf-8'))
     return True
 
@@ -37,7 +33,7 @@ def _(self: web_server_handler) -> bool:
     # It's called a second time here (potentially) for additional protection.
     if self.game_config.server_core.check_user_allowed.cached_call(
         7, user_code,
-        id_num, user_code,
+        user_code,
     ):
         self.send_data(b'true')
         return True

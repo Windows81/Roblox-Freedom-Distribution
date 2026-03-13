@@ -11,7 +11,7 @@ import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
 
-def gen_player(config: game_config.obj_type, usercode: str) -> tuple[int, str, bool] | None:
+def gen_player(config: game_config.obj_type, user_code: str) -> tuple[int, str, bool] | None:
     '''
     Returns a tuple with the following:
     `int`: corresponds with the iden number of a user whose `index` field matches `value`.
@@ -19,23 +19,24 @@ def gen_player(config: game_config.obj_type, usercode: str) -> tuple[int, str, b
     `bool`: returns `True` if the player is being created for the first time.
     '''
     database = config.storage.players
-    existing = database.check(usercode)
+    existing = database.check(user_code)
     if existing is not None:
         return (*existing, False)
 
+    if not config.server_core.check_user_allowed.cached_call(
+        7, user_code,
+        user_code,
+    ):
+        return None
+
     # Keeps generating an iden number until it finds one that is not yet in the database.
     while True:
-        iden_num = config.server_core.retrieve_user_id(usercode)
-        if not config.server_core.check_user_allowed.cached_call(
-            7, usercode,
-            iden_num, usercode,
-        ):
-            return None
+        iden_num = config.server_core.retrieve_user_id(user_code)
 
-        username = config.server_core.retrieve_username(iden_num, usercode)
+        username = config.server_core.retrieve_username(iden_num, user_code)
 
         result = database.add_player(
-            usercode, iden_num, username,
+            user_code, iden_num, username,
         )
 
         if result is not None:

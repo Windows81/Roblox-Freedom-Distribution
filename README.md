@@ -451,7 +451,7 @@ The [config data](#gameconfigtoml-structure) can also be piped from `stdin`.
 
 ## `GameConfig.toml` Structure
 
-This specification is current as of 0.58.2. Some options might be different in future versions.
+This specification is current as of 0.66.0. Some options might be different in future versions.
 
 Optionally, `toml` files can be expressed in `json`. The following basic configurations work the same way:
 
@@ -674,33 +674,37 @@ Resolves to type `path_str`. Relative paths are traced from the directory where 
 
 Corresponds to Rōblox [`Enum.ChatStyle`](https://create.roblox.com/docs/reference/engine/enums/ChatStyle). Can either be `"Classic"`, `"Bubble"`, or `"ClassicAndBubble"`.
 
-#### `server_core.retrieve_default_user_code`
-
-Resolves to [function](#functions) type `(float) -> str`.
-
-If the client doesn't include a [`-u` user code](#player) whilst connecting to the server, this function is called. Should be a randomly-generated value.
-
-```toml
-retrieve_default_user_code_call_mode = "lua"
-retrieve_default_user_code = '''
-function(tick) -- float -> str
-    return string.format('Player%d', tick)
-end
-```
-
 #### `server_core.check_user_allowed`
 
 Resolves to [function](#functions) type `(int, str) -> bool`.
 
-Expect this function to be called multiple times for a single user.
+**This function is responsible for authorising users.**
+
+Expect this function to be called multiple times when a user joins.
 
 ```toml
 check_user_allowed_call_mode = "lua"
 check_user_allowed = '''
-function(user_id_num, user_code) -- string -> bool
+function(user_code) -- string -> bool
     return true
 end
 '''
+```
+
+#### `server_core.retrieve_default_user_code`
+
+Resolves to [function](#functions) type `() -> str`.
+
+If the client doesn't include a [`-u` user code](#player) whilst connecting to the server, this function is called. Should be a generated value.
+
+Be careful if [`check_user_allowed`](#server_corecheck_user_allowed) is not fully permissive.
+
+```toml
+retrieve_default_user_code_call_mode = "lua"
+retrieve_default_user_code = '''
+function() -- float -> str
+    return string.format('Player%d', tick())
+end
 ```
 
 #### `server_core.check_user_has_admin`

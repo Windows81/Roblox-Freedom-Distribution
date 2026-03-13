@@ -1,5 +1,6 @@
 # pyright: reportAssignmentType=false
 # pyright: reportUnknownLambdaType=false
+import time
 
 # Local application imports
 from config_type.types import structs, wrappers
@@ -52,11 +53,11 @@ class config_type(allocateable.obj_type):
 
         chat_style: structs.chat_style = structs.chat_style.CLASSIC_CHAT
 
-        retrieve_default_user_code: callable[[float], str] = (
-            lambda tick: 'Player%d' % tick
+        retrieve_default_user_code: callable[[], str] = (
+            lambda tick: 'Player%d' % time.time()
         )
 
-        check_user_allowed: callable[[int, str], bool] = (
+        check_user_allowed: callable[[str], bool] = (
             lambda *a: True
         )
 

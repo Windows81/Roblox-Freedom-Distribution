@@ -57,8 +57,9 @@ function CreateZippedDirs() {
 		7z a $zip "$($dir.FullName)/*" @(
 			"-xr!RFDStarterScript.lua";
 
-			# Temporary EXE files (it's customary to prefix them with an underscore)
+			# Temporary files (it's customary for RFD to prefix them with an underscore)
 			"-x!_*.exe";
+			"-x!_*.json";
 
 			# Reshade
 			"-xr!dxgi.dll";
