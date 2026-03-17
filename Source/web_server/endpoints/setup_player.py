@@ -1,10 +1,12 @@
 # Standard library imports
 import re
+import json
 
 # Local application imports
 import assets.returns as returns
 import util.const
 from web_server._logic import web_server_handler, server_path, web_server_ssl
+import util.versions as versions
 
 
 @server_path('/rfd/default-user-code')
@@ -94,19 +96,28 @@ def _(self: web_server_handler) -> bool:
     })
     return True
 
-
-@server_path('/Thumbs/GameIcon.ashx')
-def _(self: web_server_handler) -> bool:
-    asset_cache = self.game_config.asset_cache
-    thumbnail_data = asset_cache.get_asset(util.const.THUMBNAIL_ID_CONST)
-    if isinstance(thumbnail_data, returns.ret_data):
-        self.send_data(thumbnail_data.data)
-    return True
-
-
 @server_path('/v1/settings/application')
 def _(self: web_server_handler) -> bool:
-    self.send_json({'applicationSettings': {}})
+    if self.query.get('applicationName') == 'AndroidApp':
+        fflags_path = util.resource.retr_full_path(
+            util.resource.dir_type.MISC,
+            'android_fflags.json',
+        )
+        with open(fflags_path, 'r', encoding='utf-8') as f:
+            self.send_json(json.load(f))
+    else:
+        self.send_json({'applicationSettings': {}})
+
+    return True
+
+@server_path('/v2/settings/application/PCStudioApp', versions={versions.rōblox.v574})
+def _(self: web_server_handler) -> bool:
+    fflags_path = util.resource.retr_full_path(
+        util.resource.dir_type.WORKING_DIR,
+        'windows_2023_fflags.json',
+    )
+    with open(fflags_path, 'r', encoding='utf-8') as f:
+        self.send_json(json.load(f))
     return True
 
 

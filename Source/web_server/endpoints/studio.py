@@ -3,7 +3,6 @@ import json
 import time
 
 # Local application imports
-import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
 
@@ -51,32 +50,33 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/users/account-info')
 def _(self: web_server_handler) -> bool:
-    try:
-        user_id_num = json.loads(self.headers['Roblox-Session-Id'])['UserId']
-    except TypeError:
-        return True
+    session_raw = self.headers.get('Roblox-Session-Id')
+    if session_raw:
+        try:
+            session = json.loads(session_raw)
+            user_id = session.get("UserId", 1)
+        except Exception:
+            user_id = 1
+    else:
+        user_id = 1
 
-    funds = self.server.storage.funds.check(user_id_num)
-    self.send_json({
-        "UserId": user_id_num,
+    funds = self.server.storage.funds.check(user_id)
+    body = json.dumps({
+        "UserId": user_id,
         "RobuxBalance": funds or 0,
+        "HasPasswordSet": True,
+        "AgeBracket": 0,
+        "Roles": [],
+        "EmailNotificationEnabled": False,
+        "PasswordNotifcationEnabled": False
     })
-    return True
 
-
-@server_path('/device/initialize')
-def _(self: web_server_handler) -> bool:
-    self.send_json({"browserTrackerId": 0, "appDeviceIdentifier": None})
-    return True
-
-
-@server_path('/v1/users/authenticated')
-def _(self: web_server_handler) -> bool:
-    self.send_json({
-        "id": 1,
-        "name": "ROBLOX",
-        "displayName": "ROBLOX"
-    })
+    self.send_response(200)
+    self.send_header("Content-Type", "application/json")
+    self.send_header("Content-Length", str(len(body.encode())))
+    self.end_headers()
+    self.wfile.write(body.encode())
+    self.wfile.flush()
     return True
 
 

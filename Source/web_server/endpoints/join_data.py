@@ -1,5 +1,9 @@
 # Standard library imports
+from datetime import datetime
 import json
+import random
+import uuid
+import base64
 
 # Typing imports
 from typing import Any
@@ -8,6 +12,7 @@ from typing import Any
 import util.const
 import game_config
 import util.versions as versions
+from util.signscript import signUTF8
 from web_server._logic import web_server_handler, server_path
 
 
@@ -61,9 +66,48 @@ def init_player(config: game_config.obj_type, usercode: str) -> tuple[int, str] 
     return (iden_num, username)
 
 
+def generate_client_ticket(self: web_server_handler, user_id: int, username: str, job_id: str, character_url: str = None, custom_timestamp: str = "", ticket_version: int = 1, place_id: int = 1) -> str:
+    """
+        Generates a client ticket so that RCC can verify the user is authenticated
+        If character_url is not None, it will be used as the character URL instead of the default
+        If custom_timestamp is not 0, it will be used as the timestamp instead of the current time
+    """
+    config = self.game_config
+    server_core = config.server_core
+
+    if custom_timestamp == "":
+        custom_timestamp = datetime.utcnow().strftime("%m/%d/%Y %I:%M:%S %p")
+    if character_url is None:
+        if ticket_version == 2:
+            character_url = str(user_id)
+        elif ticket_version == 1:
+            character_url = f"{self.hostname}/Asset/CharacterFetch.ashx?userId={user_id}"
+        elif ticket_version == 4:
+            character_url = f"{self.hostname}/v1.1/avatar-fetch?userId={str(user_id)}&placeId={str(place_id)}"
+
+    first_ticket_unsigned = f"{str(user_id)}\n{username}\n{character_url}\n{job_id}\n{str(custom_timestamp)}"
+    signed_first_ticket_raw: bytes = signUTF8(first_ticket_unsigned, formatAutomatically=False, addNewLine=False,
+                                              useNewKey=(ticket_version > 1))
+    signed_first_ticket = base64.b64encode(signed_first_ticket_raw).decode("utf-8")
+
+    account_age = server_core.retrieve_account_age(user_id, username)
+    user_membership_type = "None"
+
+    if ticket_version <= 3:
+        second_ticket_unsigned = f"{str(user_id)}\n{str(job_id)}\n{str(custom_timestamp)}"
+    elif ticket_version == 4:
+        second_ticket_unsigned = f"{custom_timestamp}\n{job_id}\n{user_id}\n{user_id}\n0\n{account_age}\nf\n{len(username)}\n{username}\n{len(user_membership_type)}\n{user_membership_type}\n0\n\n0\n\n{len(username)}\n{username}"
+
+    signed_second_ticket_raw: bytes = signUTF8(second_ticket_unsigned, formatAutomatically=False, addNewLine=False,
+                                               useNewKey=(ticket_version > 1))
+    signed_second_ticket = base64.b64encode(signed_second_ticket_raw).decode("utf-8")
+
+    return f"{str(custom_timestamp)};{signed_first_ticket};{signed_second_ticket}{f';{ticket_version}' if ticket_version > 1 else ''}"
+
+
 def perform_and_send_join(self: web_server_handler, additional_return_data: dict[str, Any], prefix: bytes) -> None:
     '''
-    The query arguments in `Roblox-Session-Id` were previously serialised.
+    The query arguments in `Roblox-Session-Id` were previously serialized.
     For example, when `join.ashx` was called the first time a player joined.
 
     Some methods (such as retrieving a user fund balance, or rejoining in 2021E) need data from `Roblox-Session-Id`.
@@ -126,10 +170,11 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
     join_data |= {
         'SessionId': json.dumps(join_data | {'RFDJoinQuery': query_args})
     }
+    self.send_response(200)
     self.send_json(join_data | additional_return_data, prefix=prefix)
 
 
-@server_path('/game/join.ashx', versions={versions.rōblox.v347})
+@server_path('/game/join.ashx', versions={versions.rōblox.v347, versions.rōblox.v271})
 def _(self: web_server_handler) -> bool:
     perform_and_send_join(self, {
         'ClientPort': 0,
@@ -203,7 +248,108 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
+# FIXME: Adapt this path to mobile client (it's stuck on loading screen).
+@server_path('/v1/join-game', commands={'POST'})
+def _(self: web_server_handler) -> bool:
+    config = self.game_config
+    server_core = config.server_core
+
+    query_args: dict[str, str] = json.loads(
+        self.headers.get('Roblox-Session-Id', '{}'),
+    ) | self.query
+
+    rcc_port = int(query_args.get('ServerPort', self.port_num))
+    user_code = "MobilePlayer"  # Test value
+
+    result = init_player(self.game_config, user_code)
+    if result is None:
+        self.send_json({"error": "403: disallowed user"}, 403)
+        return True
+
+    (id_num, username) = result
+
+    jobId = str(uuid.uuid4())
+    status = 2  # Assuming ready
+    joinScript = {
+        "ClientPort": 0,
+        "MachineAddress": self.domain,
+        "ServerConnections": [{"Port": rcc_port, "Address": self.domain}],
+        "ServerPort": rcc_port,
+        "PingUrl": "",
+        "PingInterval": 120,
+        "UserName": username,
+        "DisplayName": username,
+        "SeleniumTestMode": False,
+        "UserId": id_num,
+        "ClientTicket": generate_client_ticket(
+            self,
+            id_num,
+            username,
+            jobId,
+            f'{self.hostname}/v1.1/avatar-fetch?userId={id_num}',
+            ticket_version=4,
+            place_id=1818
+        ),
+        "SuperSafeChat": False,
+        "PlaceId": 1818,
+        "MeasurementUrl": "",
+        "WaitingForCharacterGuid": str(uuid.uuid4()),
+        "BaseUrl": self.hostname,
+        "ChatStyle": server_core.chat_style.value,
+        "VendorId": 0,
+        "ScreenShotInfo": "",
+        "VideoInfo": "",
+        "CreatorId": 0,
+        "CreatorTypeEnum": "User",
+        "MembershipType": "None",
+        "AccountAge": server_core.retrieve_account_age(id_num, user_code),
+        "CookieStoreFirstTimePlayKey": "rbx_evt_ftp",
+        "CookieStoreFiveMinutePlayKey": "rbx_evt_fmp",
+        "CookieStoreEnabled": True,
+        "IsRobloxPlace": False,
+        "UniverseId": 994732206,
+        "GenerateTeleportJoin": False,
+        "IsUnknownOrUnder13": False,
+        "SessionId": f"{str(uuid.uuid4())}|{str(jobId)}|0|{str(self.domain)}|8|{datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.000Z')}|0|null|AAAAA",
+        "DataCenterId": 0,
+        "FollowUserId": 0,
+        "BrowserTrackerId": 0,
+        "UsePortraitMode": False,
+        "CharacterAppearance": f'{self.hostname}/v1.1/avatar-fetch?userId={id_num}',
+        "GameId": jobId,
+        "RobloxLocale": "en_us",
+        "GameLocale": "en_us",
+        "characterAppearanceId": id_num,
+        "CharacterAppearanceId": id_num,
+    }
+    response = json.dumps({
+        "jobId": jobId,
+        "status": status,
+        "authenticationUrl": f"{self.hostname}/Login/Negotiate.ashx",
+        "authenticationTicket": "",
+        "message": None,
+        "rand": random.randint(0, 100000000000),
+        "joinScript": joinScript
+    }).encode('utf-8')
+
+    self.send_response(200)
+    self.send_header("Content-Type", "application/json")
+    self.send_header("Content-Length", str(len(response)))
+    self.end_headers()
+    self.wfile.write(response)
+    self.wfile.flush()
+    return True
+
+@server_path('/Game/JoinRate.ashx', commands={'GET'})
+def _(self: web_server_handler) -> bool:
+    self.send_response(200)
+    self.send_header("Content-Type", "application/json")
+    self.end_headers()
+    self.send_json({})
+    return True
+
 @server_path('/login/negotiate.ashx')
+@server_path('/Login/Negotiate.ashx')
 @server_path('/universes/validate-place-join')
 def _(self: web_server_handler) -> bool:
     self.send_json(True)
@@ -213,7 +359,6 @@ def _(self: web_server_handler) -> bool:
 @server_path('/game/PlaceLauncher.ashx')
 @server_path('/game/placelauncher.ashx')
 def _(self: web_server_handler) -> bool:
-
     query_args = json.loads(
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query

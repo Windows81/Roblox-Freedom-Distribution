@@ -8,6 +8,7 @@ from . import (
     funds,
     gamepasses,
     devproducts,
+    placeicon,
 )
 
 
@@ -32,3 +33,4 @@ class storager:
         self.funds = funds.database(*arg_list)
         self.gamepasses = gamepasses.database(*arg_list)
         self.devproducts = devproducts.database(*arg_list)
+        self.placeicon = placeicon.database(*arg_list)

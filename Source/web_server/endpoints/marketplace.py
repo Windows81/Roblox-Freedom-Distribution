@@ -3,6 +3,8 @@ import urllib.parse
 import json
 import re
 
+from urllib3 import request
+
 # Local application imports
 from web_server._logic import web_server_handler, server_path
 import util.const
@@ -415,4 +417,17 @@ def _(self: web_server_handler) -> bool:
         "Sales": None,
         "MinimumMembershipLevel": 0,
     })
+    return True
+
+
+@server_path('/v1/catalog/items/details')
+def _(self: web_server_handler) -> bool:
+    result = request(
+        "POST",
+        "https://catalog.roblox.com/v1/catalog/items/details",
+        fields=self.query['items']
+    )
+    self.send_response(200)
+    self.send_header("Content-type", "application/json")
+    self.send_json(result.json())
     return True

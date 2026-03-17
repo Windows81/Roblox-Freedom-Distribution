@@ -80,6 +80,12 @@ def subparse(
         default=None,
         help='If --run_client is passed in, determines the user code for the player which joins the server.\nUser codes derive a user name, user iden number, and other characteristics of any particular player',
     )
+    subparser.add_argument(
+        '--frontend_proxy',
+        type=str,
+        default=None,
+        help='Forward unmatched web paths to a frontend server such as http://127.0.0.1:3000.',
+    )
 
     log_group = subparser.add_mutually_exclusive_group()
     log_group.add_argument(
@@ -198,6 +204,7 @@ def _(
                     web_port=web_port,
                     is_ssl=True,
                     is_ipv6=True,
+                    frontend_proxy=args_ns.frontend_proxy,
                     server_mode=web.SERVER_MODE_TYPE.RCC,
                     logger=log_filter,
                     game_config=game_config,
@@ -207,6 +214,7 @@ def _(
                     web_port=web_port,
                     is_ssl=True,
                     is_ipv6=False,
+                    frontend_proxy=args_ns.frontend_proxy,
                     server_mode=web.SERVER_MODE_TYPE.RCC,
                     logger=log_filter,
                     game_config=game_config,

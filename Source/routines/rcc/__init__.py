@@ -224,7 +224,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             suffix_args.append('-verbose')
 
         match self.retr_version():
-            case util.versions.rōblox.v347:
+            case util.versions.rōblox.v347, util.versions.rōblox.v271:
                 return (
                     f'-PlaceId:{self.place_iden}',
                     '-LocalTest', self.get_versioned_path(
