@@ -1,6 +1,14 @@
-import json
+from datetime import datetime
+
 from web_server._logic import web_server_handler, server_path
 import util.versions as versions
+
+
+def _format_api_datetime(value: str) -> str:
+    try:
+        return datetime.fromisoformat(value).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    except ValueError:
+        return value
 
 @server_path(r'/alerts/alert-info', commands={'GET'})
 def _(self: web_server_handler) -> bool:
@@ -11,26 +19,77 @@ def _(self: web_server_handler) -> bool:
 
 @server_path(r'/v1/games/list', commands={'GET'})
 def _(self: web_server_handler) -> bool:
+    sort_token = self.query.get("sort_token") or "MostPopular"
+    try:
+        start_rows = int(self.query.get("startRows") or 0)
+        max_rows = int(self.query.get("maxRows") or 40)
+    except ValueError:
+        self.send_response(400)
+        self.send_header("Content-Type", "application/json")
+        self.send_json({"errors": [{"code": 0, "message": "Invalid pagination arguments."}]})
+        return False
+
+    if sort_token not in ["MostPopular", "Featured", "RecentlyUpdated"]:
+        self.send_response(400)
+        self.send_header("Content-Type", "application/json")
+        self.send_json({"errors": [{"code": 0, "message": "Invalid sort token."}]})
+        return False
+    if start_rows < 0:
+        self.send_response(400)
+        self.send_header("Content-Type", "application/json")
+        self.send_json({"errors": [{"code": 0, "message": "Invalid start rows."}]})
+        return False
+    if max_rows > 100 or max_rows < 0:
+        self.send_response(400)
+        self.send_header("Content-Type", "application/json")
+        self.send_json({"errors": [{"code": 0, "message": "Max rows must be between 0-40"}]})
+        return False
+
+    universe_page = self.server.storage.universe.list_for_games_api(
+        sort_token=sort_token,
+        start_rows=start_rows,
+        max_rows=max_rows,
+    )
+
     game_list = []
-    for i in range(3):
+    storage = self.server.storage
+    for universe_obj in universe_page.items:
+        place_obj = storage.place.check_object(universe_obj.root_place_id)
+        if place_obj is None or place_obj.assetObj is None:
+            continue
+
+        asset_obj = place_obj.assetObj
+        creator_type = "User" if universe_obj.creator_type == 0 else "Group"
+        creator_name = str(universe_obj.creator_id)
+        # upvotes, downvotes = GetAssetLikesAndDislikes(PlaceObj.placeid)
+
+        if creator_type == "User":
+            username = storage.players.get_player_field_from_index(
+                index=storage.players.player_field.IDEN_NUM,
+                value=universe_obj.creator_id,
+                field=storage.players.player_field.USERNAME,
+            )
+            if isinstance(username, str):
+                creator_name = username
+
         game_list.append({
-            "creatorId": 1,
-            "creatorName": "67",
-            "creatorType": "User",
+            "creatorId": universe_obj.creator_id,
+            "creatorName": creator_name,
+            "creatorType": creator_type,
             "creatorHasVerifiedBadge": False,
-            "totalUpVotes": 67,
-            "totalDownVotes": 67,
-            "universeId": 67,
-            "name": "67",
-            "placeId": 1818,
-            "playerCount": 67,
+            "totalUpVotes": 0,#Upvotes,
+            "totalDownVotes": 0,#Downvotes,
+            "universeId": universe_obj.universe_id,
+            "name": asset_obj.name,
+            "placeId": place_obj.placeid,
+            "playerCount": 0, #placeinfo.GetUniversePlayingCount(UniverseObj),
             "imageToken": "",
             "isSponsored": False,
             "nativeAdData": "",
             "isShowSponsoredLabel": False,
             "price": 0,
             "analyticsIdentifier": "",
-            "gameDescription": "description",
+            "gameDescription": asset_obj.description,
             "genre": "All",
             "minimumAge": 0
         })
@@ -42,8 +101,12 @@ def _(self: web_server_handler) -> bool:
         "suggestedKeyword": "",
         "correctedKeyword": "",
         "filteredKeyword": "",
-        "hasMoreRows": True, # UniverseObjsList.has_next
-        "nextPageExclusiveStartId": 0,
+        "hasMoreRows": universe_page.has_next,
+        "nextPageExclusiveStartId": (
+            start_rows + max_rows
+            if universe_page.has_next else
+            0
+        ),
         "featuredSearchUniverseId": 0,
         "emphasis": False,
         "cutOffIndex": 0,

@@ -1,0 +1,7 @@
+# Databases & cache
+_.sqlite
+AssetCache
+
+# Certificates
+server.pem
+server-key.pem

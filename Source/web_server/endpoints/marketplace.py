@@ -2,12 +2,14 @@
 import urllib.parse
 import json
 import re
+from datetime import datetime
 
 from urllib3 import request
 
 # Local application imports
 from web_server._logic import web_server_handler, server_path
 import util.const
+from enums.AssetType import AssetType
 
 
 def purchase_gamepass(self: web_server_handler, user_id_num: int, gamepass_id: int):
@@ -49,6 +51,57 @@ def purchase_devproduct(self: web_server_handler, user_id_num: int, devproduct_i
     storage.devproducts.update(user_id_num, devproduct_id)
     storage.funds.add(user_id_num, -1 * devproduct.price)
     return f"{devproduct_id}-{user_id_num}"
+
+
+def _format_api_datetime(value: str | None) -> str | None:
+    if value is None:
+        return None
+    try:
+        return datetime.fromisoformat(value).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+    except ValueError:
+        return value
+
+
+def _get_creator_name(self: web_server_handler, creator_type: int, creator_id: int) -> str:
+    if creator_type == 0:
+        username = self.server.storage.players.get_player_field_from_index(
+            index=self.server.storage.players.player_field.IDEN_NUM,
+            value=creator_id,
+            field=self.server.storage.players.player_field.USERNAME,
+        )
+        if isinstance(username, str):
+            return username
+    return str(creator_id)
+
+
+def _parse_catalog_items_request(self: web_server_handler) -> list[dict]:
+    if 'items' in self.query:
+        parsed = json.loads(self.query['items'])
+        if isinstance(parsed, dict):
+            return list(parsed.get('items', []))
+        if isinstance(parsed, list):
+            return parsed
+
+    if 'itemIds' in self.query:
+        return [
+            {
+                "id": int(item_id),
+                "itemType": "Asset",
+            }
+            for item_id in self.query['itemIds'].split(',')
+            if item_id.strip()
+        ]
+
+    content_length = int(self.headers.get('content-length', 0))
+    if content_length <= 0:
+        return []
+
+    parsed = json.loads(self.read_content())
+    if isinstance(parsed, dict):
+        return list(parsed.get('items', []))
+    if isinstance(parsed, list):
+        return parsed
+    return []
 
 
 @server_path('/Game/GamePass/GamePassHandler.ashx', commands={'GET'})
@@ -422,12 +475,113 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/v1/catalog/items/details')
 def _(self: web_server_handler) -> bool:
-    result = request(
-        "POST",
-        "https://catalog.roblox.com/v1/catalog/items/details",
-        fields=self.query['items']
-    )
+    try:
+        request_items = _parse_catalog_items_request(self)
+    except (ValueError, json.JSONDecodeError):
+        self.send_response(400)
+        self.send_header("Content-type", "application/json")
+        self.send_json({
+            "errors": [
+                {
+                    "code": 0,
+                    "message": "Invalid catalog items request.",
+                }
+            ]
+        })
+        return False
+
+    data = []
+    for request_item in request_items:
+        if isinstance(request_item, int):
+            item_id = request_item
+            item_type = "Asset"
+        elif isinstance(request_item, dict):
+            item_id = request_item.get("id")
+            item_type = request_item.get("itemType", "Asset")
+        else:
+            continue
+
+        if item_id is None:
+            continue
+
+        try:
+            item_id = int(item_id)
+        except (TypeError, ValueError):
+            continue
+
+        if item_type not in ("Asset", "asset", 0, None):
+            continue
+
+        asset_obj = self.server.storage.asset.resolve_object(item_id)
+        if asset_obj is None:
+            continue
+
+        supports_head_shapes = asset_obj.asset_type in {
+            AssetType.Head,
+            AssetType.Face,
+        }
+        creator_name = _get_creator_name(
+            self,
+            asset_obj.creator_type,
+            asset_obj.creator_id,
+        )
+        price_status = (
+            "Off Sale"
+            if not asset_obj.is_for_sale else
+            ("Free" if asset_obj.price_robux <= 0 else "On Sale")
+        )
+
+        data.append({
+            "bundledItems": [],
+            "taxonomy": [],
+            "itemCreatedUtc": _format_api_datetime(asset_obj.created_at),
+            "id": asset_obj.id,
+            "itemType": 0,
+            "assetType": asset_obj.asset_type.value,
+            "bundleType": 0,
+            "isRecolorable": False,
+            "name": asset_obj.name,
+            "description": asset_obj.description,
+            "productId": asset_obj.id,
+            "itemStatus": (
+                []
+                if asset_obj.moderation_status == 0 else
+                [asset_obj.moderation_status]
+            ),
+            "itemRestrictions": [],
+            "creatorHasVerifiedBadge": False,
+            "creatorType": asset_obj.creator_type,
+            "creatorTargetId": asset_obj.creator_id,
+            "creatorName": creator_name,
+            "price": asset_obj.price_robux,
+            "lowestPrice": asset_obj.price_robux,
+            "lowestResalePrice": (
+                asset_obj.price_robux
+                if asset_obj.is_limited or asset_obj.is_limited_unique else
+                0
+            ),
+            "priceStatus": price_status,
+            "unitsAvailableForConsumption": max(
+                0,
+                asset_obj.serial_count - asset_obj.sale_count,
+            ),
+            "favoriteCount": 0,
+            "offSaleDeadline": _format_api_datetime(asset_obj.offsale_at),
+            "collectibleItemId": (
+                str(asset_obj.id)
+                if asset_obj.is_limited_unique else
+                None
+            ),
+            "totalQuantity": asset_obj.serial_count,
+            "saleLocationType": 0,
+            "hasResellers": asset_obj.is_limited or asset_obj.is_limited_unique,
+            "isOffSale": not asset_obj.is_for_sale,
+            "quantityLimitPerUser": 0,
+            "supportsHeadShapes": supports_head_shapes,
+            "timedOptions": [],
+        })
+
     self.send_response(200)
     self.send_header("Content-type", "application/json")
-    self.send_json(result.json())
+    self.send_json({"data": data})
     return True

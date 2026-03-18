@@ -2,13 +2,16 @@ import sqlite_worker
 import os.path
 
 from . import (
+    asset,
     players,
     persistence,
     badges,
     funds,
     gamepasses,
     devproducts,
+    place,
     placeicon,
+    universe,
 )
 
 
@@ -27,10 +30,14 @@ class storager:
             self.is_first_time,
         )
 
+        self.asset = asset.database(*arg_list)
         self.players = players.database(*arg_list)
         self.persistence = persistence.database(*arg_list)
         self.badges = badges.database(*arg_list)
         self.funds = funds.database(*arg_list)
         self.gamepasses = gamepasses.database(*arg_list)
         self.devproducts = devproducts.database(*arg_list)
+        self.place = place.database(*arg_list)
+        self.place.asset_db = self.asset
         self.placeicon = placeicon.database(*arg_list)
+        self.universe = universe.database(*arg_list)
