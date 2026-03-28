@@ -113,6 +113,31 @@ def handle_image_resize(
     # ImageResponse.headers['Cache-Control'] = CacheControl
     # return ImageResponse
 
+
+def send_thumbnail_content(
+        self: web_server_handler,
+        content_hash: str | None,
+) -> bool:
+    if content_hash is None:
+        self.send_error(404)
+        return True
+
+    asset = self.game_config.asset_cache.get_asset(
+        content_hash,
+        bypass_blocklist=self.is_privileged,
+    )
+    if isinstance(asset, returns.ret_data):
+        self.send_data(asset.data)
+        return True
+    if isinstance(asset, returns.ret_none):
+        self.send_error(404)
+        return True
+    if isinstance(asset, returns.ret_relocate):
+        self.send_redirect(asset.url)
+        return True
+    return False
+
+
 @server_path(r'/Thumbs/GameIcon.ashx')
 @server_path(r'/Thumbs/PlaceIcon.ashx')
 def _(self: web_server_handler) -> bool:
@@ -204,7 +229,7 @@ def _(self: web_server_handler) -> bool:
     if len(json_data) == 0:
         self.send_response(200)
         self.send_header("Content-Type", "application/json")
-        self.send_json({"data":[]})
+        self.send_json({"data": []})
         return True
 
     processed_requests = []
@@ -286,4 +311,95 @@ def _(self: web_server_handler) -> bool:
     self.send_response(200)
     self.send_header("Content-Type", "application/json")
     self.send_json({"data": processed_requests})
+    return True
+
+@server_path(r'/Thumbs/Head.ashx', commands={'GET'})
+@server_path(r'/headshot-thumbnail/image', commands={'GET'})
+def _(self: web_server_handler) -> bool:
+    user_id = self.query.get('userId')
+    if user_id is None:
+        self.send_error(400)
+        return True
+
+    try:
+        user_id_num = int(user_id)
+    except ValueError:
+        self.send_error(400)
+        return True
+
+    thumbnail_obj = self.server.storage.userthumbnail.check(user_id_num)
+    if thumbnail_obj is None:
+        self.send_error(404)
+        return True
+
+    return send_thumbnail_content(self, thumbnail_obj[1])
+
+
+@server_path(r'/v1/users/avatar-headshot', commands={'GET'})
+def _(self: web_server_handler) -> bool:
+    user_ids_csv = self.query.get('userIds')
+    if user_ids_csv is None:
+        self.send_json({"errors": [{"code": 4, "message": "The requested Ids are invalid, of an invalid type or missing."}]}, 400)
+        return False
+
+    user_ids = user_ids_csv.split(',')
+    if len(user_ids) > 100:
+        self.send_json({"errors": [{"code": 1, "message": "There are too many requested Ids."}]}, 400)
+        return False
+
+    requested_size = self.query.get('size') or "48x48"
+
+    if "x" not in requested_size:
+        self.send_json({"errors": [{"code": 3, "message": "The requested size is invalid. Please see documentation for valid thumbnail size parameter name and format."}]},400)
+        return False
+
+    splitted_size = requested_size.split("x")
+    if len(splitted_size) != 2:
+        self.send_json({"errors": [{"code": 3,"message": "The requested size is invalid. Please see documentation for valid thumbnail size parameter name and format."}]},400)
+        return False
+
+    try:
+        thumbnail_width = int(splitted_size[0])
+        thumbnail_height = int(splitted_size[1])
+
+        allowed_sizes = [48,180,420,60,100,150,352,396,480,512,576,700,768,640,36,1280,720]
+        thumbnail_width = min(allowed_sizes, key=lambda x: abs(x - thumbnail_width))
+        thumbnail_height = min(allowed_sizes, key=lambda x: abs(x - thumbnail_height))
+    except:
+        self.send_json({"errors": [{ "code": 3, "message": "The requested size is invalid. Please see documentation for valid thumbnail size parameter name and format."}]}, 400)
+        return False
+
+    processed_requests = []
+    storage = self.server.storage
+    for user_id in user_ids:
+        try:
+            user_id = int(user_id)
+        except:
+            continue
+
+        thumbnail_obj = storage.userthumbnail.check(user_id)
+        if thumbnail_obj is None:
+            continue
+        headshot_contenthash = thumbnail_obj[1]
+        if headshot_contenthash is None:
+            continue
+        # if not s3helper.DoesKeyExist(cropped_hash):
+        #     if not s3helper.DoesKeyExist(content_hash):
+        #         continue
+        #     image_content = BytesIO(s3helper.GetFileFromS3(content_hash))
+        #     image_obj = Image.open(image_content)
+        #     image_obj = image_obj.resize((int(thumbnail_width), int(thumbnail_height))).convert('RGBA')
+        #
+        #     virtual_file = BytesIO()
+        #     image_obj.save(virtual_file, "PNG")
+        #     virtual_file.seek(0)
+        #     s3helper.UploadBytesToS3(virtual_file.getvalue(), cropped_hash, contentType="image/png")
+        processed_requests.append({
+            "targetId": user_id,
+            "state": "Completed",
+            "imageUrl": f"{self.hostname}/headshot-thumbnail/image?userId={user_id}&x={thumbnail_width}&y={thumbnail_height}",
+            "version": "1"
+        })
+
+    self.send_json({"data": processed_requests}, 200)
     return True

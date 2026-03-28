@@ -3,6 +3,8 @@ import json
 import time
 
 # Local application imports
+import util.auth
+import util.resource
 from web_server._logic import web_server_handler, server_path
 
 
@@ -20,51 +22,41 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/v2/login')
 def _(self: web_server_handler) -> bool:
-    try:
-        # Password must not contain '1'.  This for debugging purposes only.
-        assert (
-            '1' not in json.loads(self.read_content())['password']
-        )
-        self.send_response(200)
-        self.send_header('set-cookie', '.ROBLOSECURITY=_ROBLOSECURITY_')
-        self.send_json({
-            'user': {
-                'id': 1630228,
-                'name': 'qwer',
-                'displayName': 'qwer',
-            },
-            'isBanned': False,
-        }, status=None)
-    except Exception:
-        self.send_response(401)
-    return True
+    return util.auth.HandleLogin(self)
 
 
 @server_path('/Users/1630228')
 @server_path('/game/GetCurrentUser.ashx')
 def _(self: web_server_handler) -> bool:
     time.sleep(2)  # HACK: Studio 2021E won't work without it.
-    self.send_json(1630228)
+    user = util.auth.GetCurrentUser(self)
+    self.send_json(0 if user is None else user.id)
     return True
 
 
 @server_path('/users/account-info')
 def _(self: web_server_handler) -> bool:
-    session_raw = self.headers.get('Roblox-Session-Id')
-    if session_raw:
-        try:
-            session = json.loads(session_raw)
-            user_id = session.get("UserId", 1)
-        except Exception:
-            user_id = 1
+    user = util.auth.GetCurrentUser(self)
+    if user is not None:
+        user_id = user.id
+        has_password_set = bool(user.password)
     else:
-        user_id = 1
+        session_raw = self.headers.get('Roblox-Session-Id')
+        if session_raw:
+            try:
+                session = json.loads(session_raw)
+                user_id = session.get("UserId", 1)
+            except Exception:
+                user_id = 1
+        else:
+            user_id = 1
+        has_password_set = False
 
     funds = self.server.storage.funds.check(user_id)
     body = json.dumps({
         "UserId": user_id,
         "RobuxBalance": funds or 0,
-        "HasPasswordSet": True,
+        "HasPasswordSet": has_password_set,
         "AgeBracket": 0,
         "Roles": [],
         "EmailNotificationEnabled": False,
@@ -83,4 +75,14 @@ def _(self: web_server_handler) -> bool:
 @server_path('/my/settings/json', commands={'GET'})
 def _(self: web_server_handler) -> bool:
     self.send_json({})
+    return True
+
+@server_path('/universal-app-configuration/v1/behaviors/studio/content')
+def _(self: web_server_handler) -> bool:
+    config_path = util.resource.retr_full_path(
+        util.resource.dir_type.WORKING_DIR,
+        'app_config_studio.json',
+    )
+    with open(config_path, 'r', encoding='utf-8') as f:
+        self.send_json(json.load(f))
     return True

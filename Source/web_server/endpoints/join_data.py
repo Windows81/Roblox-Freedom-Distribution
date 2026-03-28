@@ -9,6 +9,7 @@ import base64
 from typing import Any
 
 # Local application imports
+import util.auth
 import util.const
 import game_config
 import util.versions as versions
@@ -311,7 +312,7 @@ def _(self: web_server_handler) -> bool:
         "GenerateTeleportJoin": False,
         "IsUnknownOrUnder13": False,
         "SessionId": f"{str(uuid.uuid4())}|{str(jobId)}|0|{str(self.domain)}|8|{datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.000Z')}|0|null|AAAAA",
-        "DataCenterId": 0,
+        "DataCenterId": 69420,
         "FollowUserId": 0,
         "BrowserTrackerId": 0,
         "UsePortraitMode": False,
@@ -352,6 +353,8 @@ def _(self: web_server_handler) -> bool:
 @server_path('/Login/Negotiate.ashx')
 @server_path('/universes/validate-place-join')
 def _(self: web_server_handler) -> bool:
+    if self.query.get('suggest'):
+        return util.auth.HandleLoginNegotiate(self)
     self.send_json(True)
     return True
 

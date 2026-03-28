@@ -11,10 +11,5 @@ def _(self: web_server_handler) -> bool:
 @server_path('/mobileapi/check-app-version')
 def _(self: web_server_handler) -> bool:
     self.send_response(200)
-    self.send_json({
-        "activeVersion": "SomeRandomVersion",
-        "upgradeSource": "https://github.com/Windows81/Roblox-Freedom-Distribution/releases",
-        "MD5Sum": "1ec0bbc0d9d9255cb0e62119e9197a12",
-        "data": {"UpgradeAction": "None"}
-    })
+    self.send_json({"data":{"UpgradeAction":"None"}})
     return True

@@ -100,7 +100,7 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     if self.query.get('applicationName') == 'AndroidApp':
         fflags_path = util.resource.retr_full_path(
-            util.resource.dir_type.MISC,
+            util.resource.dir_type.WORKING_DIR,
             'android_fflags.json',
         )
         with open(fflags_path, 'r', encoding='utf-8') as f:

@@ -3,7 +3,11 @@ import os.path
 
 from . import (
     asset,
+    auth_ticket,
+    auth_session,
     players,
+    user,
+    userthumbnail,
     persistence,
     badges,
     funds,
@@ -31,7 +35,11 @@ class storager:
         )
 
         self.asset = asset.database(*arg_list)
+        self.auth_ticket = auth_ticket.database(*arg_list)
+        self.auth_session = auth_session.database(*arg_list)
         self.players = players.database(*arg_list)
+        self.user = user.database(*arg_list)
+        self.userthumbnail = userthumbnail.database(*arg_list)
         self.persistence = persistence.database(*arg_list)
         self.badges = badges.database(*arg_list)
         self.funds = funds.database(*arg_list)

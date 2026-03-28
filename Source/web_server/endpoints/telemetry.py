@@ -3,6 +3,7 @@ from web_server._logic import web_server_handler, server_path
 
 @server_path(r'/client/pbe')
 @server_path(r'/mobile/pbe')
+@server_path(r'/studio/pbe')
 def _(self: web_server_handler) -> bool:
     self.send_response(200)
     self.send_header('Content-type', 'application/json')
