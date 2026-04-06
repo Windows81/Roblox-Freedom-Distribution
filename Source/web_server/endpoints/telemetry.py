@@ -1,16 +1,16 @@
 from web_server._logic import web_server_handler, server_path
 
 
-@server_path(r'/client/pbe')
-@server_path(r'/mobile/pbe')
-@server_path(r'/studio/pbe')
+@server_path('/client/pbe')
+@server_path('/mobile/pbe')
+@server_path('/studio/pbe')
 def _(self: web_server_handler) -> bool:
     self.send_response(200)
     self.send_header('Content-type', 'application/json')
     self.send_json({})
     return True
 
-@server_path(r'/v1/enrollments')
+@server_path('/v1/enrollments')
 def _(self: web_server_handler) -> bool:
     self.send_response(200)
     self.send_header('Content-type', 'application/json')
@@ -23,9 +23,14 @@ def _(self: web_server_handler) -> bool:
     })
     return True
 
-@server_path(r'/v1/get-enrollments')
+@server_path('/v1/get-enrollments')
 def _(self: web_server_handler) -> bool:
     self.send_response(200)
     self.send_header('Content-type', 'application/json')
     self.send_json({})
+    return True
+
+@server_path('/pe')
+def _(self: web_server_handler) -> bool:
+    self.send_json({}, 200)
     return True

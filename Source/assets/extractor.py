@@ -1,52 +1,16 @@
 import subprocess
 import functools
 import urllib3
-import base64
-import json
 import gzip
 import os
-import re
+
+import util.player_cookie_store
 
 
 def _get_cookie_from_system() -> str | None:
-    '''
-    Only works on Windows systems.
-    Do not count on a valid cookie being returned when you run this on a remote server.
-    https://github.com/Ramona-Flower/Roblox-Client-Cookie-Stealer/blob/main/main.py
-    '''
-    roblox_cookies_path = os.path.join(
-        os.getenv("USERPROFILE", ""),
-        "AppData",
-        "Local",
-        "Roblox",
-        "LocalStorage",
-        "RobloxCookies.dat",
+    return util.player_cookie_store.get_cookie_value(
+        preferred_hosts={".roblox.com", "roblox.com"},
     )
-
-    if not os.path.exists(roblox_cookies_path):
-        return
-
-    with open(roblox_cookies_path, 'r', encoding='utf-8') as file:
-        file_content = json.load(file)
-
-    encoded_cookies = file_content.get("CookiesData")
-    if encoded_cookies is None:
-        return
-
-    try:
-        import win32crypt
-    except ImportError:
-        return
-
-    decoded_cookies = base64.b64decode(encoded_cookies)
-    decrypted_cookies: bytes = win32crypt.CryptUnprotectData(
-        decoded_cookies, None, None, None, 0,
-    )[1]
-
-    match = re.search(br'\.ROBLOSECURITY\t([^;]+)', decrypted_cookies)
-    if match == None:
-        return
-    return match[1].decode('utf-8', errors='ignore')
 
 
 def test_cookie(cookie: str | None) -> bool:

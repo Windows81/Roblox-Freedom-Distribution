@@ -1,7 +1,7 @@
 # Standard library imports
 import argparse
 import dataclasses
-import itertools
+import socket
 
 # Local application imports
 import game_config as config
@@ -15,6 +15,50 @@ from routines import player, rcc, web
 from routines import _logic as logic
 
 import launcher.subparsers._logic as sub_logic
+
+
+def resolve_port_pairs(
+    web_ports: list[int | None],
+    rcc_ports: list[int | None],
+    count: int,
+) -> list[tuple[int, int]]:
+    result: list[tuple[int, int]] = []
+    used_web_ports: set[int] = set()
+    used_rcc_ports: set[int] = set()
+    next_web_port = util.const.RFD_DEFAULT_PORT
+
+    for index in range(count):
+        web_port = web_ports[index] if index < len(web_ports) else None
+        rcc_port = rcc_ports[index] if index < len(rcc_ports) else None
+
+        if web_port is None:
+            web_port = next_web_port
+            while web_port in used_web_ports:
+                web_port += 1
+
+        if rcc_port is None:
+            rcc_port = web_port
+            while (
+                rcc_port in used_rcc_ports or
+                not is_udp_port_available(rcc_port)
+            ):
+                rcc_port += 1
+
+        used_web_ports.add(web_port)
+        used_rcc_ports.add(rcc_port)
+        next_web_port = max(next_web_port, web_port) + 1
+        result.append((web_port, rcc_port))
+
+    return result
+
+
+def is_udp_port_available(port: int) -> bool:
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            sock.bind(('', port))
+    except OSError:
+        return False
+    return True
 
 
 @sub_logic.add_args(sub_logic.launch_mode.SERVER)
@@ -180,22 +224,17 @@ def _(
         parser, args_ns,
     )
 
-    def gen_next_seq_port(ports: list[int | None]):
-        last_used = util.const.RFD_DEFAULT_PORT - 1
-        for p in ports:
-            if p is not None:
-                last_used = p
-            else:
-                last_used += 1
-            yield last_used
-
-    web_port_gen = gen_next_seq_port(args_ns.web_port)
-    rcc_port_gen = gen_next_seq_port(args_ns.rcc_port)
+    port_pairs = resolve_port_pairs(
+        list(args_ns.web_port),
+        list(args_ns.rcc_port),
+        len(game_configs),
+    )
 
     for (
-        web_port, rcc_port, game_config,
-    ) in itertools.zip_longest(
-        web_port_gen, rcc_port_gen, game_configs,
+        (web_port, rcc_port), game_config,
+    ) in zip(
+        port_pairs,
+        game_configs,
     ):
         if not args_ns.skip_web:
             if has_ipv6:

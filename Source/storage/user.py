@@ -1,5 +1,5 @@
 import dataclasses
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import override
 import enum
 
@@ -52,7 +52,7 @@ class database(_logic.sqlite_connector_base):
     @staticmethod
     def _normalise_timestamp(value: datetime | str | None) -> str:
         if value is None:
-            return datetime.utcnow().isoformat()
+            return datetime.now(UTC).isoformat()
         if isinstance(value, datetime):
             return value.isoformat()
         return value

@@ -14,6 +14,7 @@ from argon2 import PasswordHasher
 from argon2.exceptions import Argon2Error
 
 import util.const
+import util.player_cookie_store
 from storage.auth_ticket import auth_ticket_item
 from storage.auth_session import auth_session_item
 from storage.user import user_item
@@ -82,6 +83,7 @@ def SetAuthCookie(
             max_age=expireIn,
         ),
     )
+    _sync_player_cookie_store(self, token)
 
 
 def ClearAuthCookie(self: web_server_handler) -> None:
@@ -94,12 +96,53 @@ def ClearAuthCookie(self: web_server_handler) -> None:
             expires="Thu, 01 Jan 1970 00:00:00 GMT",
         ),
     )
+    _sync_player_cookie_store(self, None)
+
+
+def _get_player_cookie_hosts(self: web_server_handler) -> set[str]:
+    hosts: set[str] = set()
+
+    raw_host = self.headers.get("Host")
+    if raw_host:
+        host = raw_host.rsplit(":", 1)[0]
+        hosts.add(host.strip("[]"))
+
+    domain = getattr(self, "domain", None)
+    if isinstance(domain, str) and domain:
+        hosts.add(domain)
+
+    if "localhost" in hosts:
+        hosts.add("127.0.0.1")
+    if "127.0.0.1" in hosts:
+        hosts.add("localhost")
+    return hosts
+
+
+def _sync_player_cookie_store(
+    self: web_server_handler,
+    token: str | None,
+) -> None:
+    try:
+        util.player_cookie_store.sync_auth_cookie(
+            _get_player_cookie_hosts(self),
+            token,
+        )
+    except Exception:
+        logging.exception("Failed to sync Roblox player cookie store")
 
 
 def _get_request_token(self: web_server_handler) -> str | None:
     token = _get_cookie_value(self, AUTH_COOKIE_NAME)
     if token:
         return token
+
+    header_token = (
+        self.headers.get("X-Roblosecurity") or
+        self.headers.get("X-Robloxsecurity") or
+        self.headers.get("Roblosecurity")
+    )
+    if header_token:
+        return header_token.strip()
 
     syntax_session = (
         _get_cookie_value(self, "Syntax-Session-Id") or
@@ -113,6 +156,10 @@ def _get_request_token(self: web_server_handler) -> str | None:
         return None
     token = data_sections[8].strip()
     return token or None
+
+
+def GetRequestToken(self: web_server_handler) -> str | None:
+    return _get_request_token(self)
 
 
 def _get_remote_address(self: web_server_handler) -> str:
@@ -346,6 +393,8 @@ def GetCurrentUser(self: web_server_handler) -> user_item | None:
     user = None
     if token is not None:
         user = GetAuthenticatedUser(self.server.storage, token)
+        if user is not None:
+            _sync_player_cookie_store(self, token)
 
     setattr(self, cache_attr, user)
     return user

@@ -1,12 +1,11 @@
 import gzip
 import json
-import hashlib
+import re
 from typing import Any
 
 import util
 import assets.returns as returns
 from web_server._logic import web_server_handler, server_path
-import util.versions as versions
 
 
 def handle_resolution_check(
@@ -402,4 +401,20 @@ def _(self: web_server_handler) -> bool:
         })
 
     self.send_json({"data": processed_requests}, 200)
+    return True
+
+# Placeholder data
+# TODO: Implement API logic
+@server_path(r'/v1/users/avatar-3d', regex=True, commands={'GET'})
+@util.auth.authenticated_required_api
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    self.send_json({"targetId":1,"state":"Completed","imageUrl":"https://t3.rbxcdn.com/30DAY-Avatar-310966282D3529E36976BF6B07B1DC90-Obj","version":"TN3"}, 200)
+    return True
+
+# Placeholder data
+# TODO: Implement API logic
+@server_path(r'/v1/users/avatar', regex=True, commands={'GET'})
+@util.auth.authenticated_required_api
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    self.send_json({"data":[{"targetId":1,"state":"Completed","imageUrl":"https://tr.rbxcdn.com/30DAY-Avatar-310966282D3529E36976BF6B07B1DC90-Png/420/420/Avatar/Png/noFilter","version":"TN3"}]}, 200)
     return True

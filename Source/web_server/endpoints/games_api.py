@@ -1,8 +1,8 @@
 from datetime import datetime
+import re
 
+import util.auth
 from web_server._logic import web_server_handler, server_path
-import util.versions as versions
-
 
 def _format_api_datetime(value: str) -> str:
     try:
@@ -292,3 +292,32 @@ def _(self: web_server_handler) -> bool:
         "gameSortStyle": None
     })
     return True
+
+
+def send_game_recommendations_v1(
+    self: web_server_handler,
+    universe_id: int,
+) -> bool:
+    universe = self.server.storage.universe.check(universe_id)
+    if universe is None:
+        self.send_json({
+            "errors": [
+                {
+                    "code": 2,
+                    "message": "The requested universe does not exist.",
+                }
+            ]
+        }, 404)
+        return True
+
+    self.send_json({
+        "games": [],
+        "nextPaginationKey": None,
+    }, 200)
+    return True
+
+
+@server_path(r'/v1/games/recommendations/game/(\d+)/?', regex=True)
+@util.auth.authenticated_required_api
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    return send_game_recommendations_v1(self, int(match.group(1)))
