@@ -522,7 +522,8 @@ class MeshSubset:
         self.vertsLength = int.from_bytes(data[12:16], "little")
         self.numBoneIndicies = int.from_bytes(data[16:20], "little")
         for i in range(0, 26):
-            self.boneIndicies.append(int.from_bytes(data[20 + i*2 : 22 + i*2], "little"))
+            self.boneIndicies.append(int.from_bytes(
+                data[20 + i*2: 22 + i*2], "little"))
 
     def export_data(self) -> bytes:
         subsetData: bytes = bytes(b''.join([
@@ -642,16 +643,18 @@ def read_data(data: bytes, offset: int, size: int) -> bytes:
     return data[offset:offset+size]
 
 
-def get_mesh_version(data: bytes) -> str:
+def get_mesh_version(data: bytes) -> str | None:
     """Gets the version of the mesh file. Throws an exception if the version is not supported."""
 
     if len(data) < 12:
-        raise Exception(
+        debug_print(
             f"get_mesh_version: data is too short ({len(data)} bytes)")
+        return None
 
     if not data[0:8] == b"version ":
         raise Exception(
             f"get_mesh_version: invalid mesh header ({data[0:8]})")
+        return None
 
     return data[8:12].decode('ASCII')
 
@@ -903,8 +906,8 @@ def read_mesh_v4(data: bytes, offset: int) -> FileMeshData:
         debug_print(f"read_mesh_v4: meshSubsets[{i}]={meshSubsets[i]}")
     meshData.meshSubsets = meshSubsets
     offset += meshHeader.numSubsets * 72
-	
-	# offset += meshHeader.unused
+
+    # offset += meshHeader.unused
     # Note: v4 has no trailing padding block — 'unused' is a 1-byte pad in the
     # header struct itself, not a variable-length data region after the subsets.
 
@@ -1077,6 +1080,7 @@ def export_mesh_v3(meshData: FileMeshData | None) -> bytes:
 
     return finalmesh
 
+
 def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
     """
     Export a FileMeshData as a version 4.00 binary mesh.
@@ -1107,8 +1111,8 @@ def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
     if len(meshData.vnts) == 0 or len(meshData.faces) == 0:
         raise Exception("export_mesh_v4: meshData is empty")
 
-    has_bones   = len(meshData.bones) > 0
-    has_lods    = len(meshData.LODs) >= 2
+    has_bones = len(meshData.bones) > 0
+    has_lods = len(meshData.LODs) >= 2
     has_subsets = len(meshData.meshSubsets) > 0
 
     # Build the bone names buffer.
@@ -1119,7 +1123,8 @@ def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
     if has_bones:
         # Try to recover names from the existing boneNames string buffer.
         # boneNames is stored as a single null-delimited string blob.
-        raw_names = meshData.boneNames.split("\x00") if meshData.boneNames else []
+        raw_names = meshData.boneNames.split(
+            "\x00") if meshData.boneNames else []
         # If we have the right count use them, otherwise generate placeholders.
         if len(raw_names) >= len(meshData.bones):
             bone_name_list = raw_names[:len(meshData.bones)]
@@ -1144,10 +1149,10 @@ def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
     else:
         lod_offsets = [0, len(meshData.faces)]
 
-    num_verts   = len(meshData.vnts)
-    num_faces   = len(all_faces)
-    num_lods    = len(lod_offsets)
-    num_bones   = len(meshData.bones)
+    num_verts = len(meshData.vnts)
+    num_faces = len(all_faces)
+    num_lods = len(lod_offsets)
+    num_bones = len(meshData.bones)
     num_subsets = len(meshData.meshSubsets)
 
     finalmesh: bytes = b""
@@ -1155,16 +1160,16 @@ def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
 
     # --- Header (24 bytes) ---
     finalmesh += FileMeshHeaderV4(
-        sizeof_MeshHeader   = 24,
-        lodType             = 0,
-        numVerts            = num_verts,
-        numFaces            = num_faces,
-        numLODs             = num_lods,
-        numBones            = num_bones,
-        sizeof_boneNamesBuffer = len(bone_names_buf),
-        numSubsets          = num_subsets,
-        numHighQualityLODs  = 1,
-        unused              = 0,
+        sizeof_MeshHeader=24,
+        lodType=0,
+        numVerts=num_verts,
+        numFaces=num_faces,
+        numLODs=num_lods,
+        numBones=num_bones,
+        sizeof_boneNamesBuffer=len(bone_names_buf),
+        numSubsets=num_subsets,
+        numHighQualityLODs=1,
+        unused=0,
     ).export_data()
 
     # --- Vertices ---
@@ -1194,14 +1199,15 @@ def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
     for i, bone in enumerate(meshData.bones):
         # Patch boneNameIndex to match the buffer we just built.
         patched = Bone(
-            boneNameIndex  = bone_name_offsets[i] if i < len(bone_name_offsets) else 0,
-            parentIndex    = bone.parentIndex,
-            lodParentIndex = bone.lodParentIndex,
-            culling        = bone.culling,
-            r00 = bone.r00, r01 = bone.r01, r02 = bone.r02,
-            r10 = bone.r10, r11 = bone.r11, r12 = bone.r12,
-            r20 = bone.r20, r21 = bone.r21, r22 = bone.r22,
-            x = bone.x, y = bone.y, z = bone.z,
+            boneNameIndex=bone_name_offsets[i] if i < len(
+                bone_name_offsets) else 0,
+            parentIndex=bone.parentIndex,
+            lodParentIndex=bone.lodParentIndex,
+            culling=bone.culling,
+            r00=bone.r00, r01=bone.r01, r02=bone.r02,
+            r10=bone.r10, r11=bone.r11, r12=bone.r12,
+            r20=bone.r20, r21=bone.r21, r22=bone.r22,
+            x=bone.x, y=bone.y, z=bone.z,
         )
         finalmesh += patched.export_data()
 
@@ -1216,12 +1222,12 @@ def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
             while len(indices) < 26:
                 indices.append(0xFFFF)
             padded_subset = MeshSubset(
-                facesBegin       = subset.facesBegin,
-                facesLength      = subset.facesLength,
-                vertsBegin       = subset.vertsBegin,
-                vertsLength      = subset.vertsLength,
-                numBoneIndicies  = subset.numBoneIndicies,
-                boneIndicies     = indices,
+                facesBegin=subset.facesBegin,
+                facesLength=subset.facesLength,
+                vertsBegin=subset.vertsBegin,
+                vertsLength=subset.vertsLength,
+                numBoneIndicies=subset.numBoneIndicies,
+                boneIndicies=indices,
             )
             finalmesh += padded_subset.export_data()
     elif has_bones:
@@ -1229,12 +1235,12 @@ def export_mesh_v4(meshData: FileMeshData | None) -> bytes:
         # that covers all verts/faces, referencing only bone 0.
         catchall_indices = [0] + [0xFFFF] * 25
         catchall = MeshSubset(
-            facesBegin      = 0,
-            facesLength     = num_faces,
-            vertsBegin      = 0,
-            vertsLength     = num_verts,
-            numBoneIndicies = 1,
-            boneIndicies    = catchall_indices,
+            facesBegin=0,
+            facesLength=num_faces,
+            vertsBegin=0,
+            vertsLength=num_verts,
+            numBoneIndicies=1,
+            boneIndicies=catchall_indices,
         )
         finalmesh += catchall.export_data()
 
@@ -1270,7 +1276,8 @@ class _ByteReader:
     def read(self, n: int) -> bytes:
         chunk = self._data[self._pos:self._pos + n]
         if len(chunk) < n:
-            raise Exception(f"_ByteReader.read: not enough data (need {n}, have {len(chunk)})")
+            raise Exception(
+                f"_ByteReader.read: not enough data (need {n}, have {len(chunk)})")
         self._pos += n
         return chunk
 
@@ -1312,7 +1319,7 @@ def _decode_draco_coremesh(bitstream: bytes):
     except ImportError:
         raise ImportError(
             "DracoPy is required to decode Draco-compressed v6/v7 meshes.\n"
-            "Install it with:  pip install DracoPy"
+            "Install it with: `pip install DracoPy`"
         )
 
     mesh_object = DracoPy.decode(bitstream)
@@ -1320,12 +1327,13 @@ def _decode_draco_coremesh(bitstream: bytes):
     # Index attributes by unique_id for easy lookup
     attr_by_id = {a['unique_id']: a['data'] for a in mesh_object.attributes}
 
-    vertices = list(attr_by_id[0].flatten()) if 0 in attr_by_id else list(mesh_object.points.flatten())
-    faces    = list(mesh_object.faces.flatten())
+    vertices = list(attr_by_id[0].flatten()) if 0 in attr_by_id else list(
+        mesh_object.points.flatten())
+    faces = list(mesh_object.faces.flatten())
 
     normals:  list[float] = []
     uvs:      list[float] = []
-    tangents: list[int]   = []
+    tangents: list[int] = []
 
     if 1 in attr_by_id:
         normals = list(attr_by_id[1].flatten())
@@ -1355,7 +1363,7 @@ def _parse_coremesh_v1(chunk: _ByteReader):
     vertices: list[float] = []
     normals:  list[float] = []
     uvs:      list[float] = []
-    tangents: list[int]   = []  # raw unsigned bytes: tx, ty, tz, ts per vertex
+    tangents: list[int] = []  # raw unsigned bytes: tx, ty, tz, ts per vertex
 
     for _ in range(num_verts):
         vertices.append(chunk.float_le())
@@ -1408,18 +1416,19 @@ def _mesh_data_from_flat(vertices: list[float], normals: list[float],
     num_verts = len(vertices) // 3
     num_faces = len(faces) // 3
 
-    meshData = FileMeshData([], [], FileMeshHeader(0, 0, 0, 0, 0), [], [], "", [], [], [])
+    meshData = FileMeshData([], [], FileMeshHeader(
+        0, 0, 0, 0, 0), [], [], "", [], [], [])
 
     for i in range(num_verts):
         vx = float(vertices[i * 3])
         vy = float(vertices[i * 3 + 1])
         vz = float(vertices[i * 3 + 2])
 
-        nx = float(normals[i * 3])     if i * 3 + 2 < len(normals) else 0.0
+        nx = float(normals[i * 3]) if i * 3 + 2 < len(normals) else 0.0
         ny = float(normals[i * 3 + 1]) if i * 3 + 2 < len(normals) else 1.0
         nz = float(normals[i * 3 + 2]) if i * 3 + 2 < len(normals) else 0.0
 
-        tu = float(uvs[i * 2])     if i * 2 + 1 < len(uvs) else 0.0
+        tu = float(uvs[i * 2]) if i * 2 + 1 < len(uvs) else 0.0
         tv = float(uvs[i * 2 + 1]) if i * 2 + 1 < len(uvs) else 0.0
 
         if tangents and i * 4 + 3 < len(tangents):
@@ -1432,7 +1441,7 @@ def _mesh_data_from_flat(vertices: list[float], normals: list[float],
 
         meshData.vnts.append(
             FileMeshVertexNormalTexture3d(vx, vy, vz, nx, ny, nz, tu, tv,
-                                         tx, ty, tz, ts, 255, 255, 255, 255)
+                                          tx, ty, tz, ts, 255, 255, 255, 255)
         )
 
     for i in range(num_faces):
@@ -1478,11 +1487,11 @@ def _build_obj_text(vertices: list[float], normals: list[float],
 
     # Only use first LOD (lods[0]..lods[1])
     lod_start = lods[0] * 3 if len(lods) >= 1 else 0
-    lod_end   = lods[1] * 3 if len(lods) >= 2 else len(faces)
+    lod_end = lods[1] * 3 if len(lods) >= 2 else len(faces)
     lod_faces = faces[lod_start:lod_end]
 
     for i in range(0, len(lod_faces), 3):
-        a = lod_faces[i]     + 1
+        a = lod_faces[i] + 1
         b = lod_faces[i + 1] + 1
         c = lod_faces[i + 2] + 1
         lines.append(f"f {a}/{a}/{a} {b}/{b}/{b} {c}/{c}/{c}")
@@ -1517,8 +1526,10 @@ def _parse_obj_text(obj_text: str):
             for token in parts[1:]:
                 indices = token.split('/')
                 vi = int(indices[0]) - 1
-                ti = int(indices[1]) - 1 if len(indices) > 1 and indices[1] else None
-                ni = int(indices[2]) - 1 if len(indices) > 2 and indices[2] else None
+                ti = int(indices[1]) - \
+                    1 if len(indices) > 1 and indices[1] else None
+                ni = int(indices[2]) - \
+                    1 if len(indices) > 2 and indices[2] else None
                 face_triplets.append((vi, ti, ni))
 
     triangles = [face_triplets[i:i+3]
@@ -1536,11 +1547,14 @@ def _build_unique_vertices(positions, normals_list, uvs_list, triangles):
     for tri in triangles:
         face_indices = []
         for (pi, ti, ni) in tri:
-            key = (pi, ti if ti is not None else -1, ni if ni is not None else -1)
+            key = (pi, ti if ti is not None else -
+                   1, ni if ni is not None else -1)
             if key not in vertex_map:
-                pos  = positions[pi]    if pi < len(positions)    else (0.0, 0.0, 0.0)
-                norm = normals_list[ni] if ni is not None and ni < len(normals_list) else (1.0, 0.0, 0.0)
-                uv   = uvs_list[ti]     if ti is not None and ti < len(uvs_list)     else (0.0, 0.0)
+                pos = positions[pi] if pi < len(positions) else (0.0, 0.0, 0.0)
+                norm = normals_list[ni] if ni is not None and ni < len(
+                    normals_list) else (1.0, 0.0, 0.0)
+                uv = uvs_list[ti] if ti is not None and ti < len(
+                    uvs_list) else (0.0, 0.0)
                 uv = (uv[0], 1.0 - uv[1])   # flip V for Roblox
                 vertex_map[key] = len(vertices)
                 vertices.append((pos, norm, uv))
@@ -1557,11 +1571,14 @@ def _obj_text_to_mesh_data(obj_text: str) -> FileMeshData:
     """
     positions, normals_list, uvs_list, triangles = _parse_obj_text(obj_text)
     if not triangles:
-        raise Exception("_obj_text_to_mesh_data: no triangles found in OBJ data")
+        raise Exception(
+            "_obj_text_to_mesh_data: no triangles found in OBJ data")
 
-    vertices, faces_out = _build_unique_vertices(positions, normals_list, uvs_list, triangles)
+    vertices, faces_out = _build_unique_vertices(
+        positions, normals_list, uvs_list, triangles)
 
-    meshData = FileMeshData([], [], FileMeshHeader(0, 0, 0, 0, 0), [], [], "", [], [], [])
+    meshData = FileMeshData([], [], FileMeshHeader(
+        0, 0, 0, 0, 0), [], [], "", [], [], [])
 
     TANGENT_DEFAULT = 0  # (0,0,-1,1) packed – fine as placeholder
     for (pos, norm, uv) in vertices:
@@ -1570,7 +1587,7 @@ def _obj_text_to_mesh_data(obj_text: str) -> FileMeshData:
             norm[0], norm[1], norm[2],
             uv[0],   uv[1],
             0, 0, 255, 127,   # tangent bytes (tx, ty, tz, ts)
-            255, 255, 255, 255 # RGBA
+            255, 255, 255, 255  # RGBA
         )
         meshData.vnts.append(vnt)
 
@@ -1641,6 +1658,72 @@ def _parse_skinning_chunk_v1(chunk: _ByteReader):
     return envelopes, bones, bone_names_str, name_table_bytes, subsets
 
 
+def _read_mesh_v6_v7_chunks(data):
+    vertices:         list[float] = []
+    normals:          list[float] = []
+    uvs:              list[float] = []
+    faces:            list[int] = []
+    tangents:         list[int] = []
+    lods:             list[int] = []
+    envelopes:        list[Envelope] = []
+    bones:            list[Bone] = []
+    bone_names_str:   str = ""
+    name_table_bytes: bytes = b""
+    subsets:          list[MeshSubset] = []
+
+    reader = _ByteReader(data)
+    while reader.get_remaining() >= 16:
+        chunk_type = reader.array(8)
+        chunk_version = reader.uint32le()
+        chunk_size = reader.uint32le()
+        chunk_data = reader.array(chunk_size)
+
+        # All other chunks (FACS, HSRAVIS, …) are intentionally skipped.
+        match (chunk_version, chunk_type):
+            case (1, b"COREMESH") | (2, b"COREMESH"):
+                chunk_reader = _ByteReader(chunk_data)
+
+                if chunk_version == 1:
+                    parse_coremesh_function = _parse_coremesh_v1
+                elif chunk_version == 2:
+                    parse_coremesh_function = _parse_coremesh_v2
+                else:
+                    raise Exception(
+                        f"read_mesh_v6_v7: unknown COREMESH version {chunk_version}")
+
+                vertices, normals, uvs, faces, tangents = parse_coremesh_function(
+                    chunk_reader)
+
+                if len(lods) == 0:
+                    lods = [0, len(faces) // 3]
+
+            case (1, b"LODS\0\0\0\0"):
+                chunk_reader = _ByteReader(chunk_data)
+                _lod_type = chunk_reader.uint16le()
+                _num_high_quality = chunk_reader.uint8()
+                num_lods = chunk_reader.uint32le()
+                if num_lods > 2:
+                    lods = []
+                    for _ in range(num_lods):
+                        lods.append(chunk_reader.uint32le())
+                # else: keep the [0, faceCount] default set by COREMESH handler
+
+            case (1, b"SKINNING"):
+                chunk_reader = _ByteReader(chunk_data)
+
+                envelopes, bones, bone_names_str, name_table_bytes, subsets = (
+                    _parse_skinning_chunk_v1(chunk_reader)
+                )
+                debug_print(
+                    f"read_mesh_v6_v7: SKINNING — " +
+                    f"{len(bones)} bones, {len(envelopes)} envelopes, {len(subsets)} subsets"
+                )
+
+            case _:
+                pass
+    return (vertices, normals, uvs, faces, tangents, lods, envelopes, bones, subsets)
+
+
 def read_mesh_v6_v7(data: bytes, offset: int, version: str) -> FileMeshData:
     """
     Parse a v6.00, v6.01, v7.00, or v7.01 chunked Roblox mesh.
@@ -1649,7 +1732,7 @@ def read_mesh_v6_v7(data: bytes, offset: int, version: str) -> FileMeshData:
       COREMESH  — vertices, normals, UVs, tangents, faces (v1 plain or v2 Draco)
       LODS      — LOD face-range offsets
       SKINNING  — bone envelopes, bones, name table, subsets
-    
+
     If a SKINNING chunk with bones is present the FileMeshData will have
     bones/envelopes/subsets populated, making it ready for export_mesh_v4.
     Otherwise it is ready for export_mesh_v2.
@@ -1658,74 +1741,19 @@ def read_mesh_v6_v7(data: bytes, offset: int, version: str) -> FileMeshData:
     A temporary .obj file is written to disk for traceability/debugging, then
     deleted once the conversion is done (as requested).
     """
-    reader = _ByteReader(data[offset:])
-
-    vertices:         list[float]     = []
-    normals:          list[float]     = []
-    uvs:              list[float]     = []
-    faces:            list[int]       = []
-    tangents:         list[int]       = []
-    lods:             list[int]       = []
-    envelopes:        list[Envelope]  = []
-    bones:            list[Bone]      = []
-    bone_names_str:   str             = ""
-    name_table_bytes: bytes           = b""
-    subsets:          list[MeshSubset] = []
-
-
-    while reader.get_remaining() >= 16:
-        chunk_type    = reader.string(8)
-        chunk_version = reader.uint32le()
-        chunk_size    = reader.uint32le()
-        chunk_data    = reader.array(chunk_size)
-
-        if chunk_type == "COREMESH":
-            chunk_reader = _ByteReader(chunk_data)
-            if chunk_version == 1:
-                vertices, normals, uvs, faces, tangents = _parse_coremesh_v1(chunk_reader)
-            elif chunk_version == 2:
-                vertices, normals, uvs, faces, tangents = _parse_coremesh_v2(chunk_reader)
-            else:
-                debug_print(f"read_mesh_v6_v7: unknown COREMESH version {chunk_version}, skipping")
-
-            if not lods:
-                lods = [0, len(faces) // 3]
-
-        elif chunk_type == "LODS\0\0\0\0":
-            chunk_reader = _ByteReader(chunk_data)
-            if chunk_version == 1:
-                _lod_type             = chunk_reader.uint16le()
-                _num_high_quality     = chunk_reader.uint8()
-                num_lods              = chunk_reader.uint32le()
-                if num_lods > 2:
-                    lods = []
-                    for _ in range(num_lods):
-                        lods.append(chunk_reader.uint32le())
-                # else: keep the [0, faceCount] default set by COREMESH handler
-		
-        elif chunk_type == "SKINNING":
-            chunk_reader = _ByteReader(chunk_data)
-            if chunk_version == 1:
-                envelopes, bones, bone_names_str, name_table_bytes, subsets = \
-                    _parse_skinning_chunk_v1(chunk_reader)
-                debug_print(
-                    f"read_mesh_v6_v7: SKINNING — "
-                    f"{len(bones)} bones, {len(envelopes)} envelopes, {len(subsets)} subsets"
-                )
-            else:
-                debug_print(f"read_mesh_v6_v7: unknown SKINNING version {chunk_version}, skipping")
-				
-        # All other chunks (FACS, HSRAVIS, …) are intentionally skipped.
+    (vertices, normals, uvs, faces, tangents, lods, envelopes,
+     bones, subsets) = _read_mesh_v6_v7_chunks(data[offset:])
 
     if not vertices or not faces:
-        raise Exception(f"read_mesh_v6_v7: no geometry found in {version} mesh")
+        raise Exception(
+            f"read_mesh_v6_v7: no geometry found in {version} mesh")
 
     if not lods:
         lods = [0, len(faces) // 3]
 
     has_bones = len(bones) > 0
-	
-	# --- Temp .obj for traceability (written and immediately deleted) ----------
+
+    # --- Temp .obj for traceability (written and immediately deleted) ----------
     tmp_obj_path = None
     try:
         obj_text = _build_obj_text(vertices, normals, uvs, faces, lods)
@@ -1745,16 +1773,17 @@ def read_mesh_v6_v7(data: bytes, offset: int, version: str) -> FileMeshData:
     # Only the first LOD range of faces is used.
 
     lod_face_start = lods[0] if len(lods) >= 1 else 0
-    lod_face_end   = lods[1] if len(lods) >= 2 else len(faces) // 3
-    lod_faces = faces[lod_face_start * 3 : lod_face_end * 3]
+    lod_face_end = lods[1] if len(lods) >= 2 else len(faces) // 3
+    lod_faces = faces[lod_face_start * 3: lod_face_end * 3]
 
-    meshData = _mesh_data_from_flat(vertices, normals, uvs, lod_faces, tangents)
+    meshData = _mesh_data_from_flat(
+        vertices, normals, uvs, lod_faces, tangents)
 
-	# Attach bone/skinning data when present so the caller can choose v4 export.
+    # Attach bone/skinning data when present so the caller can choose v4 export.
     if has_bones:
-        meshData.bones       = bones
-        meshData.boneNames   = bone_names_str
-        meshData.envelopes   = envelopes
+        meshData.bones = bones
+        meshData.boneNames = bone_names_str
+        meshData.envelopes = envelopes
         meshData.meshSubsets = subsets
 
     target = "v4.00" if has_bones else "v2.00"
@@ -1801,9 +1830,12 @@ if __name__ == "__main__":
     arguments = sys.argv[1:]
     if len(arguments) < 1:
         debug_print("Usage: RBXMesh.py <mesh file location> [2.0|3.0|4.0]")
-        debug_print("  v4.01 / v5.00 / v5.01 meshes are automatically converted to v4.00.")
-        debug_print("  v6/v7 meshes are automatically converted to v2.00 (or v4.00 if bones).")
-        debug_print("  Draco-compressed v6/v7 meshes require the DracoPy package.")
+        debug_print(
+            "  v4.01 / v5.00 / v5.01 meshes are automatically converted to v4.00.")
+        debug_print(
+            "  v6/v7 meshes are automatically converted to v2.00 (or v4.00 if bones).")
+        debug_print(
+            "  Draco-compressed v6/v7 meshes require the DracoPy package.")
         exit(1)
 
     meshFile = open(arguments[0], "rb")
