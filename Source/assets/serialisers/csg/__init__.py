@@ -1,72 +1,84 @@
+from .util import lcm_rand, xor_encrypt, INT_SIZE
+from . import csgmdl5
+
+from io import BytesIO
 import functools
 import hashlib
-import collections.abc
-from typing import Any, Never
-OBFUSCATION_NOISE_CYCLE_XOR = bytes([
-    86, 46, 110, 88, 49, 32, 48, 4, 52, 105, 12, 119, 12, 1, 94, 0, 26, 96, 55, 105, 29, 82, 43, 7, 79, 36, 89, 101, 83, 4, 122,
-])
-
-INT_SIZE = 4
-
-LCM_A = 0b0000_0011_0100_0011_1111_1101
-LCM_C = 0b0010_0110_1001_1110_1100_0011
+import struct
 
 
-def lcm_rand() -> collections.abc.Generator[int, Any, Never]:
-    s = 0b0000_0000_0000_0101_0011_1001  # 1337
-    while True:
-        s = s * LCM_A + LCM_C
-        yield (s >> 16) & 0x7FFF
+def create_hash(vertices: bytes, indices: bytes, salt_in: bytes = b'') -> bytearray:
+    salt = salt_in.rjust(16)
+
+    byte_buffer = bytearray()
+    byte_buffer.extend(vertices)
+    byte_buffer.extend(indices)
+    byte_buffer.extend(salt)
+
+    rand_gen = lcm_rand()
+    for i in range(len(byte_buffer)):
+        j = next(rand_gen) % len(byte_buffer)
+        byte_buffer[i], byte_buffer[j] = byte_buffer[j], byte_buffer[i]
+
+    hasher = hashlib.md5()
+    hasher.update(byte_buffer)
+    hash_digest = hasher.digest()
+
+    hash_buffer = bytearray()
+    hash_buffer.extend(hash_digest)
+    hash_buffer.extend(salt)
+
+    return hash_buffer
 
 
-saltSize: int = 0x10
-hashSize: int = 0x10
-
-
-def createHash(data: bytes, saltIn: bytes = b'rfd') -> str:
-    '''
-    TODO: decide whether we should `jmp` this function in the EXEs or to actually use `createHash` and have the client validate the hash.
-    '''
-    verticesSize: int = 0  # vertices.size() * sizeof(CSGVertex);
-    indicesSize: int = 0  # indices.size() * sizeof(unsigned int);
-    buffSize: int = verticesSize + indicesSize + saltSize
-
-    salt = saltIn.rjust(16)
-    byteBuffer = list(data+salt)
-
-    # size_t copyOffset = 0;
-    # memcpy(&byteBuffer[copyOffset], &vertices[0], verticesSize);
-
-    # copyOffset += verticesSize;
-    # memcpy(&byteBuffer[copyOffset], &indices[0], indicesSize);
-
-    # copyOffset += indicesSize;
-    # memcpy(&byteBuffer[copyOffset], salt.c_str(), salt.size());
-
-    randGen = lcm_rand()
-    for i in range(buffSize):
-        j = next(randGen) % buffSize
-        byteBuffer[i], byteBuffer[j] = byteBuffer[j], byteBuffer[i]
-
-    hashlib.md5(bytes(byteBuffer))
-    # boost::scoped_ptr<RBX::MD5Hasher> hasher(RBX::MD5Hasher::create());
-    # hasher->addData((const char*)&byteBuffer[0], byteBuffer.size());
-
-    # memcpy(&hash[0], hasher->toString().c_str(), hashSize);
-    # memcpy(&hash[hashSize], salt.c_str(), saltSize);
-
-    # std::string hashStr(&hash[0], hashSize + saltSize);
-
-    return hashStr
-
-
-@functools.cache
-def xor_encrypt(code: bytes, key=OBFUSCATION_NOISE_CYCLE_XOR, offset: int = 0) -> bytes:
-    l = len(key)
-    return bytes(
-        c ^ key[i % l]
-        for i, c in enumerate(code, offset)
+def recalculate_hash(data: bytes) -> bytes:
+    header_tag = b'CSGMDL'
+    version_size = INT_SIZE
+    hash_size = 16
+    salt_size = 16
+    num_vertices_size = INT_SIZE
+    vertex_stride = (
+        + 12
+        + 12
+        + 8
+        + 4
     )
+    num_indices_size = 4
+
+    # Create a BytesIO buffer from the binary string
+    buffer = BytesIO(xor_encrypt(data))
+
+    # Check header tag
+    if buffer.read(len(header_tag)) != header_tag:
+        raise ValueError("Invalid header tag")
+
+    # Read version number
+    version = struct.unpack('<I', buffer.read(version_size))[0]
+
+    # Read hash
+    hash_pos = buffer.tell()
+    old_hash = buffer.read(hash_size)
+
+    # Read salt
+    salt_in = buffer.read(salt_size)
+
+    # Read number of vertices
+    num_vertices = struct.unpack('<I', buffer.read(num_vertices_size))[0]
+
+    # Read vertices
+    vertices = buffer.read(vertex_stride * num_vertices)
+
+    # Read number of indices
+    num_indices = struct.unpack('<I', buffer.read(num_indices_size))[0]
+
+    # Read indices
+    indices = buffer.read(INT_SIZE * num_indices)
+
+    # Overwrite hash
+    buffer.seek(hash_pos)
+    buffer.write(create_hash(vertices, indices, salt_in))
+
+    return xor_encrypt(buffer.getvalue())
 
 
 @functools.cache
@@ -92,7 +104,7 @@ def replace_header_version(data: bytes, versioned_header: bytes, from_version: i
     ])
 
 
-def splice_without(data: bytes, fr: int, ln: int) -> bytes:
+def splice_without_middle_elements(data: bytes, fr: int, ln: int) -> bytes:
     return b''.join([
         data[:fr],
         data[fr+ln:],
@@ -110,6 +122,9 @@ HEADER_CSGPHYS7 = get_header(b'CSGPHS', 7)
 def parse(data: bytes) -> bytes | None:
     if data.startswith(HEADER_CSG4):
         return replace_header_version(data, HEADER_CSG4, 4, 2)
+
+    if data.startswith(HEADER_CSG5):
+        model = csgmdl5.parse(data)
 
     if data.startswith(HEADER_CSGPHYS5):
         '''
@@ -135,7 +150,7 @@ def parse(data: bytes) -> bytes | None:
         CSGPHYS6 and CSGPHYS7 both contain `PhysicsInfo` structs, which as above indicate a length of 40 bytes.
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L8-L16
         '''
-        return splice_without(
+        return splice_without_middle_elements(
             replace_header_version(data, HEADER_CSGPHYS6, 6, 3),
             len(HEADER_CSGPHYS6), 40,
         )
@@ -147,7 +162,7 @@ def parse(data: bytes) -> bytes | None:
         + 1: the mysterious magic number `03` (one byte) that takes place after the versioned header.
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L54
         '''
-        return splice_without(
+        return splice_without_middle_elements(
             replace_header_version(data, HEADER_CSGPHYS7, 7, 3),
             len(HEADER_CSGPHYS7), 41,
         )
