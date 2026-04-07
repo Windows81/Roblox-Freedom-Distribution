@@ -6,25 +6,26 @@ from game_config import obj_type
 
 def get_avatar(id_num: int, game_config: obj_type) -> structs.avatar_data:
     user_code = get_user_code(id_num, game_config)
+    assert user_code is not None
     return game_config.server_core.retrieve_avatar(id_num, user_code)
 
 
 def get_user_code(id_num: int, game_config: obj_type) -> str | None:
     database = game_config.storage.players
     user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         id_num,
-        database.player_field.USER_CODE,
+        database.player_field.USERCODE,
     )
     if user_code is None:
         return None
     return user_code[0]
 
 
-@server_path('/v1.1/avatar-fetch/', versions={versions.rōblox.v348})
+@server_path('/v1.1/avatar-fetch/', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
     '''
-    Character appearance for v348.
+    Character appearance for v347.
     '''
     id_num = int(self.query['userId'])
     avatar = get_avatar(id_num, self.game_config)
@@ -152,7 +153,7 @@ def _(self: web_server_handler) -> bool:
     '''
     self.send_json({
         "gameAvatarType": "PlayerChoice",
-        "allowCustomAnimations": "True",
+        "allowCustomAnimations": True,
         "universeAvatarCollisionType": "OuterBox",
         "universeAvatarBodyType": "Standard",
         "jointPositioningType": "ArtistIntent",

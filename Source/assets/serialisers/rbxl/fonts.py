@@ -83,22 +83,26 @@ def get_new_values(chunk_data: bytes) -> bytes:
     return bytes(new_values)
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
-    old_prop_head = _logic.wrap_string(b'FontFace') + b'\x20'
-    new_prop_head = _logic.wrap_string(b'Font') + b'\x12'
-    if not info.chunk_data.startswith(old_prop_head, _logic.INT_SIZE):
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
+    if not isinstance(chunk_data, _logic.chunk_data_type_prop):
         return None
 
-    class_id = info.chunk_data[0:_logic.INT_SIZE]
-    chunk_data = info.chunk_data[len(class_id + old_prop_head):]
-    new_values = get_new_values(chunk_data)
+    if chunk_data.prop_name != b'FontFace':
+        return None
+
+    if chunk_data.prop_type != 0x20:
+        return None
+
+    chunk_data.prop_name = b'Font'
+    chunk_data.prop_type = 0x12
 
     # Fonts (just like all enums) are stored as an INTERLEAVED array of big-endian `uint32`s.
     # Why the large string of zeroes?  We're taking advantage of the fact that `Enum.Font` never goes above 256.
     # Because integers here are big-endian, we put the least significant bytes at the end.
-    return b''.join([
-        class_id,
-        new_prop_head,
+    new_values = get_new_values(chunk_data.prop_values)
+    chunk_data.prop_values = b''.join([
         b'\x00' * len(new_values) * 3,
         new_values,
     ])
+
+    return chunk_data

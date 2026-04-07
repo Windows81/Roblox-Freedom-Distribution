@@ -20,18 +20,25 @@ A lot of people I speak with tell me that they go to Rōblox for a particular ga
 
 3.
 
-**Courts tend to favour non-commercial ventures** over ones which seek to make money, but they will consider other factors equally well. There are _many_ exceptions on either side.
+**Courts tend to favour non-commercial ventures** over ones which seek to make money, but they will consider other factors equally well.
 
-See the decision from [Google v. Oracle](https://www.supremecourt.gov/opinions/20pdf/18-956_d18f.pdf). Google took a very small portion of Oracle's proprietary source code to make early versions of Android. It was a very small portion and it wasn't at the heart of how Java works. Therefore, what Google did was a fair use -- even though it was commercial.
+Most revivals do not have a profit motive. However, I need to consider any additional legal ramifications of introducing monetisation systems.
+
+I heard that there are _many_ exceptions. For example, see the decision from [Google v. Oracle](https://www.supremecourt.gov/opinions/20pdf/18-956_d18f.pdf). Google took a very small portion of Oracle's proprietary source code to make early versions of Android. It was a very small portion and it wasn't at the heart of how Java works. Therefore, what Google did was a fair use, even though it was commercial.
+
+---
 
 But...
 
-Courts also rule _more_ in your favour **if you're taking a published work**. Why? Because if a work is unpublished, that is because Rōblox chose not to publish it.
+There are also factors for courts _not_ to consider my work as a fair use.
 
-I think as long as they're newer than 2017, _most of the RCC binaries we use require you to know the exact resource locations (URLs) to grab it_. These URLs **weren't publicly known until we brute-forced our way through all the possible URLs** -- I think.
+Courts also rule _more_ in your favour **if you're taking a published work**.
 
-**The importance of the parts which we take from Rōblox for our revivals** also influences courts' decisions. Rōblox pride themselves on their physics engine. We took that for ourselves. If you're using the 2021E client, you're also taking the complete product of Future Is Bright. Lots of things.
+_Most of the Rōblox Compute Cloud (RCC) binaries that revivalists use require you to know the exact resource locations (URLs) to grab it_. However, RCC binaries compiled after circa 2017 were obtained as a result of information obtained from data breach(es).
+
+**The importance of the parts which we take from Rōblox for our revivals** also influences courts' decisions. Rōblox pride themselves on their physics engine and their joint system. We took that for ourselves. If you're using the 2021E client, you're also taking the complete product of Future Is Bright. Lots of things.
 
 **And most importantly:**
 
 _Most of us entered into a legally-binding contract with Rōblox_. If we're reverse-engineering the binaries, we'd be in breach of contract (as per 'terms of service'). Courts don't usually prosecute copyright claims if they rely on a breach of contract _(do they?)_. This is why I think that we'll never have to argue for 'fair use'. I'd probably have other problems first.
+

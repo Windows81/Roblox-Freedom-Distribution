@@ -19,7 +19,7 @@ Clients only need to keep track of which hosts and ports to connect to. That's b
 
 **If you worked with Python 3.12+ before, [_initial_ setup](#download) is supposed to take less than a minute. Why _initial_? Freedom Distribution automatically downloads additional data (at most 90 MiB) for you.**
 
-Initial adaptation from the [Rōblox Filtering Disabled](https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
+Initial adaptation from the [Rōblox Filtering Disabled](https://web.archive.org/web/20241113091646/https://jetray.itch.io/roblox-filtering-disabled) project by Jetray, et al.
 
 All the code is free-as-in-freedom software and is licensed under the GNU GPL v3.
 
@@ -59,9 +59,7 @@ To launch RFD, your command line will look something like this:
 
 Still needs work.
 
-RFD requires `wine` to be installed on your system.
-
-For balance of information, consult [this guide](https://github.com/Windows81/Roblox-Freedom-Distribution/blob/main/Guides/Linux/README.MD).
+RFD requires `wine` to be installed in your terminal.
 
 ```
 mkdir rfd
@@ -105,50 +103,52 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 [**Please review each option in the config file before starting your server up.**](#gameconfigtoml-structure)
 
-As of RFD 0.58.2, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
-usage: _main.py server [--config_path [CONFIG_PATH] |
-                       --place_path [PLACE_PATH]] [--ipv4-only | --ipv6-only]
-                       [--rcc_port [RCC_PORT]] [--web_port [WEB_PORT]]
-                       [--run_client] [--user_code [USER_CODE]] [--quiet]
+usage: _main.py server [--config_path [CONFIG_PATH ...] |
+                       --place_path [PLACE_PATH ...]] [--ipv4-only |
+                       --ipv6-only] [--rcc_port [RCC_PORT ...]]
+                       [--web_port [WEB_PORT ...]] [--run_client]
+                       [--user_code [USER_CODE]] [--quiet | --loud]
                        [--no_colour] [--rcc_log_options [FLog ...]]
-                       [--skip_rcc | --skip_rcc_popen | --skip_web]
-                       [--clear_cache] [--skip_download] [--debug |
-                       --debug_all] [--help]
+                       [--skip_rcc | --skip_web] [--clear_temp_cache]
+                       [--skip_download] [--debug | --debug_all] [--help]
 
 options:
-  --config_path, --config, -cp [CONFIG_PATH]
+  --config_path, --config, -cp [CONFIG_PATH ...]
                         Game-specific options; defaults to ./GameConfig.toml.
                         Please review each option before starting a new server
                         up.
-  --place_path, --place, -pl [PLACE_PATH]
+  --place_path, --place, -pl [PLACE_PATH ...]
                         Path to the place file to be loaded. Argument
                         `config_path` can't be passed in when using this
                         option.
   --ipv4-only           Run server using IPv4 only.
   --ipv6-only           Run server using IPv6 only.
-  --rcc_port, --port, -rp, -p [RCC_PORT]
+  --rcc_port, --port, -rp, -p [RCC_PORT ...]
                         Port number for the RCC server to run from.
-  --web_port, -wp [WEB_PORT]
+  --web_port, --webserver_port, -wp [WEB_PORT ...]
                         Port number for the web server to run from.
   --run_client, -rc, --run_player
                         Runs an instance of the player immediately after
                         starting the server.
   --user_code, -u [USER_CODE]
-                        If -run_client is passed in, .
+                        If --run_client is passed in, determines the user code
+                        for the player which joins the server. User codes
+                        derive a user name, user iden number, and other
+                        characteristics of any particular player
   --quiet, -q           Suppresses console output.
+  --loud                Makes RCC console output very verbose.
   --no_colour, --no_color
                         Suppresses ANSI colour codes.
   --rcc_log_options, --rcc_log, -log [FLog ...]
                         Filter list for which FLog types to print in RCC.
   --skip_rcc            Only runs the webserver, skipping the RCC binary
                         completely.
-  --skip_rcc_popen      Runs the webserver and initialises RCC configuration,
-                        but doesn't execute `RCCService.exe`.
   --skip_web            Only runs the Studio binary, skipping hosting the
                         webserver.
-  --clear_cache         Deletes cached content specific to the host you are
+  --clear_temp_cache    Deletes cached content specific to the host you are
                         connecting to. Searches in the
                         %LocalAppData%\Temp\Roblox\http directory.
   --skip_download       Disables auto-download of RFD binaries from the
@@ -158,33 +158,38 @@ options:
   --debug_all           Opens instances of x96dbg and attaches them to all
                         running binaries.
   --help, -?            show this help message and exit
-
 ```
 
 ### `player`
 
-As of RFD 0.58.2, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
-usage: _main.py player [--rcc_host [RCC_HOST]] [--rcc_port [RCC_PORT]]
-                       [--web_host [WEB_HOST]] [--web_port [WEB_PORT]]
-                       [--user_code [USER_CODE]] [--quiet] [--clear_cache]
-                       [--skip_download] [--debug | --debug_all] [--help]
+usage: _main.py player [--rcc_host [RCC_HOST ...]] [--rcc_port [RCC_PORT ...]]
+                       [--web_host [WEB_HOST ...]] [--web_port [WEB_PORT ...]]
+                       [--user_code [USER_CODE ...]] [--quiet] [--loud]
+                       [--clear_temp_cache] [--skip_download] [--debug |
+                       --debug_all] [--help]
 
 options:
-  --rcc_host, --host, -rh, -h [RCC_HOST]
+  --rcc_host, --host, -rh [RCC_HOST ...]
                         Hostname or IP address to connect this program to the
                         RCC server.
-  --rcc_port, --port, -rp, -p [RCC_PORT]
+  --rcc_port, --port, -rp [RCC_PORT ...]
                         Port number to connect this program to the RCC server.
-  --web_host, -wh [WEB_HOST]
+  --web_host, --webserver_host, -wh, -h [WEB_HOST ...]
                         Hostname or IP address to connect this program to the
                         web server.
-  --web_port, -wp [WEB_PORT]
+  --web_port, --webserver_port, -wp, -p [WEB_PORT ...]
                         Port number to connect this program to the web server.
-  --user_code, -u [USER_CODE]
+  --user_code, -u [USER_CODE ...]
+                        Determines the user code for the player which joins
+                        the server. User codes derive a user name, user iden
+                        number, and other characteristics of any particular
+                        player.
   --quiet, -q           Suppresses console output.
-  --clear_cache         Deletes cached content specific to the host you are
+  --loud                Makes the client's output log file very verbose.
+  --clear_temp_cache    Deletes cached content specific to the host you are
                         connecting to. Searches in the
                         %LocalAppData%\Temp\Roblox\http directory.
   --skip_download       Disables auto-download of RFD binaries from the
@@ -194,24 +199,20 @@ options:
   --debug_all           Opens instances of x96dbg and attaches them to all
                         running binaries.
   --help, -?            show this help message and exit
-
 ```
 
 ### `studio`
 
 The `studio` command allows developers to modify existing place files whilst connected to RFD's webserver.
 
-As of RFD 0.58.2, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
 usage: _main.py studio [--config_path [CONFIG_PATH] |
                        --place_path [PLACE_PATH]] [--web_port [WEB_PORT]]
-                       [--quiet] [--skip_web] [--clear_cache]
-                       [--skip_download] [--debug | --debug_all] [--help]
-
-RFD's bundled Studio binaries are very very very ill-prepared. Unless you're
-creating CSG unions which won't work otherwise, I recommend using modern
-versions of Roblox Studio instead.
+                       [--quiet] [--skip_web] [--skip_studio]
+                       [--clear_temp_cache] [--skip_download] [--debug |
+                       --debug_all] [--help]
 
 options:
   --config_path, --config, -cp [CONFIG_PATH]
@@ -227,7 +228,8 @@ options:
                         from.
   --quiet, -q           Suppresses console output.
   --skip_web            Skips hosting the webserver.
-  --clear_cache         Deletes cached content specific to the host you are
+  --skip_studio         Skips opening Studio.
+  --clear_temp_cache    Deletes cached content specific to the host you are
                         connecting to. Searches in the
                         %LocalAppData%\Temp\Roblox\http directory.
   --skip_download       Disables auto-download of RFD binaries from the
@@ -237,18 +239,17 @@ options:
   --debug_all           Opens instances of x96dbg and attaches them to all
                         running binaries.
   --help, -?            show this help message and exit
-
 ```
 
 ### `serialise`
 
 The `serialise` command allows developers to modify files to be compatible with RFD's asset-loading systems.
 
-As of RFD 0.58.2, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
 usage: _main.py serialise [--load LOAD [LOAD ...]] [--save SAVE [SAVE ...]]
-                          [--method {method.csg,method.rbxl,method.video,method.mesh} [{method.csg,method.rbxl,method.video,method.mesh} ...]]
+                          [--method {rbxlx,video,csg,mesh,rbxl} [{rbxlx,video,csg,mesh,rbxl} ...]]
                           [--help]
 
 options:
@@ -256,7 +257,7 @@ options:
                         Path to the file(s) to be loaded.
   --save, --write, -w SAVE [SAVE ...]
                         Path to the file(s) to be saved.
-  --method {method.csg,method.rbxl,method.video,method.mesh} [{method.csg,method.rbxl,method.video,method.mesh} ...]
+  --method {rbxlx,video,csg,mesh,rbxl} [{rbxlx,video,csg,mesh,rbxl} ...]
                         Serialisers to use on the file(s) provided.
   --help, -?            show this help message and exit
 ```
@@ -265,7 +266,7 @@ options:
 
 The `download` command allows you to download specific versions of Rōblox components.
 
-As of RFD 0.58.2, the available options are as follows:
+As of RFD 0.65.1, the available options are as follows:
 
 ```
 usage: _main.py download [--rbx_version RBX_VERSION]
@@ -278,7 +279,37 @@ options:
   --bin_subtype, -b {Player,Server,Studio} [{Player,Server,Studio} ...]
                         Directories to download.
   --help, -?            show this help message and exit
+```
 
+### `test`
+
+The `test` command performs a pre-determined series of unit tests. Useful for debugging RFD's compatibility with modern Rōblox systems over time.
+
+As of RFD 0.65.1, the available options are as follows:
+
+```
+usage: _main.py test [--help] [tests_to_run ...]
+
+positional arguments:
+  tests_to_run  Unit tests which are run by RFD.
+
+options:
+  --help, -?    show this help message and exit
+```
+
+### `cookie`
+
+Extracts the `ROBLOSECURITY` cookie which a running instance of RFD would use to extract assets from Roblox.com.
+
+As of RFD 0.65.1, the available options are as follows:
+
+```
+usage: _main.py cookie [--verbose] [--help]
+
+options:
+  --verbose, --show, -v
+                        Exposes the entire cookie in plaintext.
+  --help, -?            show this help message and exit
 ```
 
 ## Network Ports in Use
@@ -301,18 +332,49 @@ Port is specified by the `-p` option (also by `--rcc_port` or `-rp`).
 
 The webserver is responsible for facilitating player connections and loading in-game assets.
 
-Host is optionally specified by the `--webserver_host` or `-wh` option, in case RCC is hosted elsewhere.
+Host is optionally specified by the `--web_host` or `-wh` option, in case RCC is hosted elsewhere.
 
-Port is specified by the `--webserver_port` or `-wp` option.
+Port is specified by the `--web_port` or `-wp` option.
 
 ### Loading Assets from Rōblox
 
 To load assets directly from Roblox.com, our software needs to provide a valid `ROBLOSECURITY` token. RFD can extract this token through two methods:
 
-1. _If you are on a Windows and play Rōblox.com_, our RFD will find and decrypt the contents of `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat`.
+1. _If you are on a Windows and play Roblox.com_, RFD will find and decrypt the contents of your `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat` file - and there are no further actions needed to start loading assets.
 2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
 
-## Asset Packs
+**Freedom Distribution will NOT save/upload your token anywhere and will not use it outside roblox assetdelivery services.** The cookie handling can be found in the Source "extractor.py" file.
+
+### Setting Up Enviroment Variables
+
+This short snippet shows you how to setup enviroment variables from the PowerShell for Windows users as those are the most complicated ones to set up, **specifically the `.ROBLOSECURITY` token** however remember "_If you are on a Windows and play Roblox.com_" you can skip setting your ROBLOSECURITY token in the enviroment.
+Using the **PowerShell** is recommended as the **cmd** will not handle such large strings correctly, you can launch it by pressing the **WindowsKey + R** and typing "powershell.exe"
+
+To set your `.ROBLOSECURITY` token up, with `'YOURTOKEN'` being replaced by that token:
+
+```ps1
+$env:ROBLOSECURITY = 'YOURTOKEN'
+```
+
+### PlaceID Spoofing
+
+"Private" audio assets fail to fetch unless you supply the place iden as a request header.
+
+In addition to your `ROBLOSECURITY` cookie, you may also need to set an `rfdplaceid` environment variable.
+
+However, if you own an audio clip, even if it's private, just supplying the `ROBLOSECURITY` is enough.
+
+---
+
+To configure place-iden spoofing, with the `12345` being replaced by your desired place iden:
+
+```ps1
+$env:rfdplaceid = '12345'
+```
+
+**SIDENOTE: The way this commands setup enviroment tables will not persist once you close the PowerShell**
+
+### Local Asset Persistence
 
 Assets are automatically cached server-side in directory `./AssetCache`. To manually add assets, place the raw data in a file named with the iden number or string _without_ any extension.
 
@@ -329,37 +391,34 @@ This behaviour can be changed in [your game configuration file](#game_setupasset
 
 ## How About Studio?
 
-You can modify `rbxl` file in current-day Studio as of September 2024. For compatibility with older clients, _RFD comes with its own [serialiser suite](./Source/assets/serialisers/)_. Objects transformed include:
+RFD [comes bundled with Studio builds](#studio). However, they are not fully usable as of 2025-10-02. These should be used only if modern Studio doesn't mesh well with your places.
 
-1. Fonts which existed in their respective versions,
-1. And meshes encoded with versions 4 or 5 _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
+RFD is designed to accommodate current-day `rbxl` (_not_ `rbxlx`) files. To accommodate breaking changes to the file format, RFD includes a [serialiser suite](./Source/assets/serialisers/) which automatically processes:
+
+1. Assets remotely loaded from Roblox.com into `./AssetCache`, and
+1. `rbxl` place files as used by RFD servers.
+
+Objects transformed include:
+
+1. Fonts which existed in their respective versions, and
+1. Meshes encoded with versions 4 or 5 _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
 
 Some modern programs do weird things to client-sided scripts. They use `Script` classs objects, but with a [`RunContext`](https://robloxapi.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://robloxapi.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
 
 And, **union operations done in current-day Studio (CSG v3) are not supported**. This is because CSG v2 support was completely removed in late 2022.
 
-In that case...
-
-RFD [comes bundled with Studio builds](#studio). These should be used if modern Studio doesn't mesh well with your old places.
-
-[Sodikm](https://archive.org/details/full-sodikm_202308) has a functional Studio build from 2018.
-
-[Rōblox Filtering Disabled](https://beepboopbap.itch.io/filtering-disabled) has a working Studio build from 2022.
-
-You can also use [this 2018M build](https://github.com/Windows81/Roblox-Freedom-Distribution/releases/download/2023-08-31T09%EA%9E%8910Z/v348.Studio.7z) whilst running the Rōblox Filtering Disabled webserver.
-
 If you need any help, please shoot me an issue on GitHub or a message to an account with some form of 'VisualPlugin' elsewhere.
 
 ## Directories Affected
 
-The program is mostly portable; RFD does not store any persistent settings to your machine.
+RFD is mostly portable, with _player settings_ being stored in the program's directory; more work needs to be done.
 
-However, the Rōblox executables that we hook to will write to the following directories:
+However, as of RFD 0.64.1, temporary cache files are currently being written to the following directories:
 
 - `%LocalAppData%\Temp\Roblox\http\`
 - `%LocalAppData%\Temp\Roblox\`
 
-You'll also probably find some registry keys written to:
+If you also use Studio, you'll find registry keys written to:
 
 - `Computer\HKEY_CURRENT_USER\Software\Roblox`
 
@@ -393,7 +452,7 @@ The [config data](#gameconfigtoml-structure) can also be piped from `stdin`.
 
 ## `GameConfig.toml` Structure
 
-This specification is current as of 0.58.2. Some options might be different in future versions.
+This specification is current as of 0.66.0. Some options might be different in future versions.
 
 Optionally, `toml` files can be expressed in `json`. The following basic configurations work the same way:
 
@@ -577,7 +636,7 @@ When the file at `rbxl_uri` is modified, RCC is restarted such that RFD always r
 
 The following are valid version strings.
 
-| `"v348"`  | `"v463"`  |
+| `"v347"`  | `"v463"`  |
 | --------- | --------- |
 | `"2018M"` | `"2021E"` |
 | `"2018"`  | `"2021"`  |
@@ -616,33 +675,37 @@ Resolves to type `path_str`. Relative paths are traced from the directory where 
 
 Corresponds to Rōblox [`Enum.ChatStyle`](https://create.roblox.com/docs/reference/engine/enums/ChatStyle). Can either be `"Classic"`, `"Bubble"`, or `"ClassicAndBubble"`.
 
-#### `server_core.retrieve_default_user_code`
-
-Resolves to [function](#functions) type `(float) -> str`.
-
-If the client doesn't include a [`-u` user code](#player) whilst connecting to the server, this function is called. Should be a randomly-generated value.
-
-```toml
-retrieve_default_user_code_call_mode = "lua"
-retrieve_default_user_code = '''
-function(tick) -- float -> str
-    return string.format('Player%d', tick)
-end
-```
-
 #### `server_core.check_user_allowed`
 
-Resolves to [function](#functions) type `(int, str) -> bool`.
+Resolves to [function](#functions) type `(str) -> bool`.
 
-Expect this function to be called multiple times for a single user.
+**This function is responsible for authorising users.**
+
+Expect this function to be called multiple times when a user joins.
 
 ```toml
 check_user_allowed_call_mode = "lua"
 check_user_allowed = '''
-function(user_id_num, user_code) -- string -> bool
+function(user_code) -- string -> bool
     return true
 end
 '''
+```
+
+#### `server_core.retrieve_default_user_code`
+
+Resolves to [function](#functions) type `() -> str`.
+
+If the client doesn't include a [`-u` user code](#player) whilst connecting to the server, this function is called. Should be a generated value.
+
+Be careful if [`check_user_allowed`](#server_corecheck_user_allowed) is not fully permissive.
+
+```toml
+retrieve_default_user_code_call_mode = "lua"
+retrieve_default_user_code = '''
+function() -- float -> str
+    return string.format('Player%d', tick())
+end
 ```
 
 #### `server_core.check_user_has_admin`
@@ -869,7 +932,7 @@ raw_data = '\0'
 This script (in [Python mode](#python-mode)) should work. It redirects asset iden strings starting wtih `time_music_` to static files on the internet.
 
 ```toml
-remote_data.asset_redirects = "python"
+remote_data.asset_redirects_call_mode = "python"
 remote_data.asset_redirects = '''
 def f(asset_iden):
     PREFIX = "time_music_"
@@ -879,6 +942,24 @@ def f(asset_iden):
             "forward_url": "https://github.com/Windows81/Time-Is-Musical/blob/main/hour_%02d.wav" % (h % 24)
         }
     return None
+'''
+```
+
+This script (also in [Python mode](#python-mode)) loads Rōblox asset data from a third-party fetcher. The data is then serialised by RFD's built-in [serialiser suite](./Source/assets/serialisers/) to improve compatibility with RFD's systems.
+
+```toml
+remote_data.asset_redirects_call_mode = "python"
+remote_data.asset_redirects = '''
+import assets.serialisers
+import requests
+
+def f(asset_iden):
+    headers = {'User-Agent': 'Roblox/WinInet'}
+    data = requests.get("https://pekora.zip/asset?id=%s" % str(asset_iden), headers=headers).content
+    data, _changed = assets.serialisers.parse(data)
+    return {
+        "raw_data": data,
+    }
 '''
 ```
 

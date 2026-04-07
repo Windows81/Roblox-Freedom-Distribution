@@ -9,7 +9,6 @@ import util.resource
 from routines import player, rcc, studio, web
 from routines import _logic as logic
 import launcher.subparsers._logic as sub_logic
-from web_server._logic import server_mode
 
 
 @sub_logic.add_args(sub_logic.launch_mode.STUDIO)
@@ -17,12 +16,6 @@ def subparse(
     parser: argparse.ArgumentParser,
     subparser: argparse.ArgumentParser,
 ) -> None:
-    subparser.description = (
-        "RFD's bundled Studio binaries are very very very ill-prepared.  " +
-        "Unless you're creating CSG unions which won't work otherwise, " +
-        "I recommend using modern versions of Roblox Studio instead."
-    )
-
     place_thing = subparser.add_mutually_exclusive_group(required=False)
     place_thing.add_argument(
         '--config_path',
@@ -60,13 +53,18 @@ def subparse(
         action="store_true",
         help="Skips hosting the webserver.",
     )
+    subparser.add_argument(
+        "--skip_studio",
+        action="store_true",
+        help="Skips opening Studio.",
+    )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO, {web.arg_type, rcc.arg_type, player.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.arg_type]:
+) -> list[logic.base_entry]:
     if args_ns.place_path is not None:
         game_config = config.generate_config(args_ns.place_path)
     else:
@@ -74,30 +72,30 @@ def _(
 
     web_port: int = args_ns.web_port or 20059
     log_filter = dataclasses.replace(
-        logger.filter.FILTER_REASONABLE,
+        logger.PRINT_REASONABLE,
         other_logs=not args_ns.quiet,
     )
 
-    routine_args: list[logic.arg_type] = []
-    if not args_ns.skip_web:
+    routine_args: list[logic.base_entry] = []
+    if not args_ns.skip_studio:
         routine_args.extend([
-            web.arg_type(
-                web_port=web_port,
-                is_ipv6=False,
-                is_ssl=True,
-                log_filter=log_filter,
+            studio.obj_type(
                 game_config=game_config,
-                server_mode=server_mode.STUDIO,
+                web_host='localhost',
+                web_port=web_port,
+                logger=log_filter,
             ),
         ])
 
-    routine_args.extend([
-        studio.arg_type(
-            game_config=game_config,
-            web_host='localhost',
-            web_port=web_port,
-            log_filter=log_filter,
-        ),
-    ])
-
+    if not args_ns.skip_web:
+        routine_args.extend([
+            web.obj_type(
+                web_port=web_port,
+                is_ipv6=False,
+                is_ssl=True,
+                logger=log_filter,
+                game_config=game_config,
+                server_mode=web.SERVER_MODE_TYPE.STUDIO,
+            ),
+        ])
     return routine_args

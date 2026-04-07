@@ -2,29 +2,30 @@ from . import _logic
 from .. import csg
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
-    if info.chunk_name == b'SSTR':
-        # TODO: fix CSGv3 SharedString objects.
-        return
+def bulk_convert(splits: list[bytes]) -> list[bytes]:
+    results = []
+    for data in splits:
+        result = csg.parse(data)
+        if not result:
+            result = data
+        results.append(result)
+    return results
 
-    prop_name = _logic.get_first_chunk_str(info)
-    if prop_name is None or not prop_name.startswith(b'MeshData'):
-        return
 
-    if _logic.get_type_iden(info) == 0x1C:
-        return
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
+    if isinstance(chunk_data, _logic.chunk_data_type_sstr):
+        chunk_data.strings = bulk_convert(chunk_data.strings)
+        return chunk_data
 
-    prop_data = _logic.get_prop_values_bytes(info)
-    if prop_data is None:
-        return
+    elif isinstance(chunk_data, _logic.chunk_data_type_prop):
+        if not chunk_data.prop_name.startswith(b'MeshData'):
+            return
 
-    prop_values = _logic.split_prop_strings(prop_data)
-    results = [
-        csg.parse(data) or data
-        for data in prop_values
-    ]
+        if chunk_data.prop_type == 0x1c:
+            return
 
-    return (
-        _logic.get_pre_prop_values_bytes(info) +
-        _logic.join_prop_strings(results)
-    )
+        splits = _logic.split_prop_strings(chunk_data.prop_values)
+        processed_splits = bulk_convert(splits)
+        chunk_data.prop_values = _logic.join_prop_strings(processed_splits)
+
+        return chunk_data

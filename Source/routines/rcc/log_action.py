@@ -10,4 +10,6 @@ class LogAction(enum.Enum):
 def check(line: bytes) -> LogAction:
     if b'Info: WatcherThread Detected hang' in line:
         return LogAction.RESTART
+    elif line.endswith(b'crashes to Backtrace'):
+        return LogAction.RESTART
     return LogAction.PROCEED

@@ -1,159 +1,52 @@
 # Standard library imports
+import urllib.request
+import urllib.error
 import http.client
-import ipaddress
-import re
-import shutil
-import ssl
+import dataclasses
 import subprocess
 import threading
-import urllib.error
-import urllib.request
+import functools
+import textwrap
+import shutil
+import json
+import ssl
+import re
+import os
 
 # Typing imports
-from typing import Self, override
+from typing import ClassVar, Self, override
 
 # Local application imports
 import game_config as game_config_module
-import downloader
-import logger
 import util.resource
 import util.versions
+import util.const
+import logger
+from pretasks import (
+    download,
+    clear_cache,
+)
 
 
-class _entry:
-    def process(self) -> None:
-        raise NotImplementedError()
-
-
-class arg_type:
-    obj_type: type['entry']
-
-    def sanitise(self) -> None:
-        pass
-
-    def __post_init__(self) -> None:
-        self.sanitise()
-
-
-class popen_arg_type(arg_type):
-    debug_x96: bool
-
-
-class server_arg_type(arg_type):
-    game_config: game_config_module.obj_type
-
-
-class loggable_arg_type(arg_type):
-    log_filter: logger.filter.filter_type
-
-
-class bin_arg_type(popen_arg_type, loggable_arg_type):
-    auto_download: bool
-
-    def get_base_url(self) -> str:
-        raise NotImplementedError()
-
-    def get_app_base_url(self) -> str:
-        raise NotImplementedError()
-
-
-class bin_web_arg_type(bin_arg_type):
-    web_host: str
-    web_port: int
-
-    @staticmethod
-    def resolve_host_port(host: str, port: int) -> tuple[str, int]:
-        if not host.startswith('[') and re.search(r':.*:', host) is not None:
-            host = '[%s]' % host
-            return (host, port)
-
-        port_in_host = re.search(r':(\d{1,5})$', host)
-        if port_in_host is not None:
-            port = int(port_in_host.group(1))
-            host = host[:port_in_host.start()]
-        return (host, port)
-
-    @override
-    def sanitise(self) -> None:
-        super().sanitise()
-        (
-            self.web_host, self.web_port,
-        ) = self.resolve_host_port(
-            self.web_host, self.web_port,
-        )
-
-    def send_request(
-        self,
-        path: str,
-        timeout: float = 7,
-    ) -> http.client.HTTPResponse:
-        assert self.web_port is not None
-        try:
-            return urllib.request.urlopen(
-                f'{self.get_base_url()}{path}',
-                context=bin_web_entry.get_none_ssl(),
-                timeout=timeout,
-            )
-        except urllib.error.URLError as _:
-            raise Exception(
-                'No server is currently running on %s (%s).' %
-                (self.get_base_url(), path),
-            )
-
-
-class host_arg_type(bin_web_arg_type):
-    rcc_host: str
-    rcc_port: int
-
-    web_host: str
-    web_port: int
-    user_code: str | None = None
-    launch_delay: float = 0
-
-    @override
-    def sanitise(self) -> None:
-        super().sanitise()
-        (
-            self.rcc_host, self.rcc_port,
-        ) = self.resolve_host_port(
-            self.rcc_host, self.rcc_port,
-        )
-
-        if self.rcc_host == 'localhost':
-            self.rcc_host = '127.0.0.1'
-
-        self.app_host = self.web_host
-        if self.web_host == 'localhost':
-            self.web_host = self.app_host = '127.0.0.1'
-
-        elif self.app_host.startswith('['):
-            # Converts
-            # - "[2607:fb91:1b74:d4d8:3dfb:5a51:55c3:d516]" into
-            # - "[2607:fb91:1b74:d4d8:3dfb:5a51:85.195.213.22]"
-            # This is because Rōblox's CoreScripts do not like working with `BaseUrl` settings which don't have dots.
-            prefix_len = 30
-            ipv6_obj = ipaddress.IPv6Address(self.web_host[1:-1])
-            ipv4_mapped = ipaddress.IPv4Address(int(ipv6_obj) & 0xFFFFFFFF)
-            exploded_str = ipv6_obj.exploded
-            self.app_host = f"[{exploded_str[:prefix_len]}{ipv4_mapped!s}]"
-
-
-class entry(_entry):
-    local_args: arg_type
-
-    def __init__(self, local_args: arg_type) -> None:
-        super().__init__()
-        self.local_args = local_args
-        self.threads: list[threading.Thread] = []
-        self.routine: 'routine | None' = None
+@dataclasses.dataclass(unsafe_hash=True)
+class base_entry:
+    threads: list[threading.Thread] = (
+        dataclasses.field(default_factory=list, init=False, hash=False)
+    )
+    routine: 'routine | None' = (
+        dataclasses.field(default=None, init=False)
+    )
+    _completed: bool = (
+        dataclasses.field(default=False, init=False)
+    )
 
     def wait(self) -> None:
         for t in self.threads:
             while t.is_alive():
-                t.join(1)
+                t.join(timeout=1)
 
     def stop(self) -> None:
-        entry.wait(self)
+        self.wait()
 
     def kill(self) -> None:
         if self.routine is not None:
@@ -164,49 +57,64 @@ class entry(_entry):
     def __del__(self) -> None:
         return self.stop()
 
+    def process(self) -> None:
+        assert not self._completed
+        self._completed = True
 
-class popen_entry(entry):
+    def __post_init__(self) -> None:
+        '''
+        https://stackoverflow.com/a/69944614/6879778
+        '''
+        for field in dataclasses.fields(self):
+            if isinstance(field.default, dataclasses._MISSING_TYPE):
+                continue
+            if getattr(self, field.name) is not None:
+                continue
+            setattr(self, field.name, field.default)
+
+
+@dataclasses.dataclass(kw_only=True, unsafe_hash=True)
+class popen_entry(base_entry):
     '''
     Routine entry class that corresponds to a Popen subprocess object.
     '''
-    local_args: popen_arg_type
+    debug_x96: bool = False
+    popen_mains: list[subprocess.Popen[str]] = (
+        dataclasses.field(init=False, default_factory=list, hash=False)
+    )
+    popen_daemons: list[subprocess.Popen[str]] = (
+        dataclasses.field(init=False, default_factory=list, hash=False)
+    )
+    is_terminated: bool = dataclasses.field(init=False, default=False)
+    is_running: bool = dataclasses.field(init=False, default=False)
 
-    def __init__(self, local_args: arg_type) -> None:
-        super().__init__(local_args)
-        # Arrays are initialised in case `make_popen` raises an exception.
-        self.debug_popen: subprocess.Popen[str]
-        self.popen_mains: list[subprocess.Popen[str]] = []
-        self.popen_daemons: list[subprocess.Popen[str]] = []
-        self.is_terminated: bool = False
-        self.is_running: bool = False
-
-    def make_popen(self, cmd_args: list[str], *args, **kwargs) -> None:
+    def init_popen(self, exe_path: str, cmd_args: tuple[str, ...], *args, **kwargs) -> None:
         '''
-        Creates new thread(s) for the Popen to operate under.
+        Creates new Popen thread(s) and stores them in `popen_mains` and `popen_daemons`.
         '''
+        if self.is_terminated:
+            raise Exception(
+                'Attempted to open a new EXE on a terminated routine.'
+            )
 
         # Checks if Wine is installed.  Redundant if using Windows.
         if shutil.which('wine') is not None:
-            cmd_args[:0] = ['wine']
+            params = ('wine', exe_path, *cmd_args)
+        else:
+            params = (exe_path, *cmd_args)
 
         self.is_running = True
-        self.is_terminated = False
-        self.principal = subprocess.Popen(cmd_args, *args, **kwargs)
-        self.popen_mains = [
-            self.principal,
-        ]
-        self.popen_daemons = [
-            *(
-                [
-                    subprocess.Popen[str]([
-                        'x96dbg',
-                        '-p', str(self.principal.pid),
-                    ])
-                ]
-                if self.local_args.debug_x96
-                else []
-            ),
-        ]
+        principal = subprocess.Popen(
+            params, *args, **kwargs, cwd=os.path.dirname(exe_path),
+        )
+        self.popen_mains.append(principal)
+
+        if self.debug_x96:
+            popen_dbg = subprocess.Popen[str]([
+                'x96dbg',
+                '-p', str(principal.pid),
+            ])
+            self.popen_daemons.append(popen_dbg)
 
     @override
     def stop(self) -> None:
@@ -250,77 +158,43 @@ class popen_entry(entry):
         for p in self.popen_daemons:
             p.terminate()
 
+        self.popen_mains.clear()
+        self.popen_daemons.clear()
+        self.threads.clear()
+
         self.is_running = True
-        self.process()
+        self.bootstrap()
 
+    @override
+    def process(self) -> None:
+        super().process()
+        self.bootstrap()
 
-class ver_entry(entry):
-    '''
-    Routine entry abstract class that corresponds to a versioned directory of Rōblox.
-    '''
-    rōblox_version: util.versions.rōblox
-
-    def retr_version(self) -> util.versions.rōblox:
-        '''
-        Gets called once on `bin_entry.__init__` to initialise `self.rōblox_version`
-        '''
+    def bootstrap(self) -> None:
         raise NotImplementedError()
 
-    def get_versioned_path(
-            self,
-            bin_type: util.resource.bin_subtype,
-            *paths: str) -> str:
-        return util.resource.retr_rōblox_full_path(
-            self.rōblox_version, bin_type, *paths)
 
-
-class loggable_entry(entry):
-    local_args: loggable_arg_type
+@dataclasses.dataclass(kw_only=True, unsafe_hash=True)
+class loggable_entry(base_entry):
+    logger: logger.obj_type
 
     def log(self, message: bytes | str) -> None:
-        logger.log(
+        self.logger.log(
             message,
             context=logger.log_context.PYTHON_SETUP,
-            filter=self.local_args.log_filter,
         )
 
 
-class bin_entry(ver_entry, popen_entry, loggable_entry):
+@dataclasses.dataclass(kw_only=True, unsafe_hash=True)
+class bin_entry(popen_entry, loggable_entry):
     '''
     Routine entry abstract class that corresponds to a versioned binary of Rōblox.
     '''
-    local_args: bin_arg_type
-    BIN_SUBTYPE: util.resource.bin_subtype
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.rōblox_version = self.retr_version()
-        self.maybe_download_binary()
-
-    @override
-    def get_versioned_path(self, *paths: str) -> str:
-        return super().get_versioned_path(
-            self.BIN_SUBTYPE, *paths,
-        )
-
-    def maybe_download_binary(self) -> None:
-        '''
-        Check if Rōblox is not downloaded; else skip.
-        '''
-        if not self.local_args.auto_download:
-            return
-        downloader.bootstrap_binary(
-            rōblox_version=self.rōblox_version,
-            bin_type=self.BIN_SUBTYPE,
-            log_filter=self.local_args.log_filter,
-        )
-
-
-class bin_web_entry(bin_entry):
-    '''
-    Routine entry abstract class that corresponds to a binary with a special `./SSL` directory.
-    '''
-    local_args: bin_web_arg_type
+    auto_download: bool = False
+    clear_temp_cache: bool = False
+    web_host: str = 'localhost'
+    web_port: int = util.const.RFD_DEFAULT_PORT
 
     @staticmethod
     def get_none_ssl() -> ssl.SSLContext:
@@ -329,17 +203,134 @@ class bin_web_entry(bin_entry):
         ctx.verify_mode = ssl.CERT_NONE
         return ctx
 
+    @staticmethod
+    def maybe_differenciate_web_and_rcc_stuff[T](web: T, rcc: T | None) -> tuple[T, T]:
+        has_rcc = rcc is not None
+        if has_rcc:
+            return (web, rcc)
+        return (web, web)
 
-class server_entry(entry):
+    @staticmethod
+    def maybe_separate_host_and_port(host: str, port: int) -> tuple[str, int]:
+        if not host.startswith('[') and re.search(r':.*:', host) is not None:
+            host = '[%s]' % host
+            return (host, port)
+
+        port_in_host = re.search(r':(\d{1,5})$', host)
+        if port_in_host is not None:
+            port = int(port_in_host.group(1))
+            host = host[:port_in_host.start()]
+        return (host, port)
+
+    def send_request(
+        self,
+        path: str,
+        timeout: float = 7,
+    ) -> http.client.HTTPResponse:
+        assert self.web_port is not None
+        try:
+            return urllib.request.urlopen(
+                f'{self.get_base_url()}{path}',
+                context=self.get_none_ssl(),
+                timeout=timeout,
+            )
+        except urllib.error.URLError as _:
+            raise Exception(
+                'No server is currently running on %s (%s).' %
+                (self.get_base_url(), path),
+            )
+
+    def get_base_url(self) -> str:
+        raise NotImplementedError()
+
+    def get_app_base_url(self) -> str:
+        raise NotImplementedError()
+
+    BIN_SUBTYPE: ClassVar[util.resource.bin_subtype]
+    DIRS_TO_ADD: ClassVar[list[str]]
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        (
+            self.web_host, self.web_port,
+        ) = self.maybe_separate_host_and_port(
+            self.web_host, self.web_port,
+        )
+
+    def get_versioned_path(self, *paths: str) -> str:
+        return util.resource.retr_rōblox_full_path(
+            self.retr_version(), self.BIN_SUBTYPE, *paths,
+        )
+
+    @functools.cache
+    def retr_version(self) -> util.versions.rōblox:
+        raise NotImplementedError()
+
+    def save_app_settings(self) -> str:
+        '''
+        Simply modifies `AppSettings.xml` to point to correct host name.
+        '''
+        path = self.get_versioned_path('AppSettings.xml')
+        app_base_url = self.get_app_base_url()
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(textwrap.dedent(f'''\
+                <?xml version="1.0" encoding="UTF-8"?>
+                <Settings>
+                    <ContentFolder>Content</ContentFolder>
+                    <BaseUrl>{app_base_url}</BaseUrl>
+                </Settings>
+            '''))
+        return path
+
+    def make_aux_directories(self):
+        paths = [
+            util.resource.retr_full_path(util.resource.dir_type.MISC, d)
+            for d in self.DIRS_TO_ADD
+        ]
+        for p in paths:
+            os.makedirs(p, exist_ok=True)
+
+    def update_fvars(self) -> None:
+        '''
+        Updates the FFlags in the game configuration.
+        '''
+        # TODO: move FFlag loading to an API endpoint.
+        new_flags = {
+            **self.logger.rcc_logs.get_level_table(),
+        }
+
+        path = self.get_versioned_path(
+            'ClientSettings',
+            'ClientAppSettings.json',
+        )
+        with open(path, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+
+        json_data |= new_flags
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, indent='\t')
+
+    @override
+    def bootstrap(self) -> None:
+        if self.auto_download:
+            download.bootstrap_binary(
+                rōblox_version=self.retr_version(),
+                bin_type=self.BIN_SUBTYPE,
+                log_filter=self.logger,
+            )
+        if self.clear_temp_cache:
+            clear_cache.process(self.web_host)
+        self.save_app_settings()
+        self.make_aux_directories()
+        self.update_fvars()
+
+
+@dataclasses.dataclass(kw_only=True, unsafe_hash=True)
+class gameconfig_entry(base_entry):
     '''
-    Routine entry class that corresponds to a server-sided component.
+    Routine entry class that maps to a GameConfig structure.
     '''
     game_config: game_config_module.obj_type
-    local_args: server_arg_type
-
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self.game_config = self.local_args.game_config
 
 
 class routine:
@@ -355,18 +346,17 @@ class routine:
     For entries in the `self.entries` list field:
     - Entries evaluate stage (1) synchronously in forwards order.
     - Entries evaluate stage (2) asynchronously.
-        - If an entry calls `kill` whilst in stage (2), forcibly terminate all entries in the `self.entries` list field.
+        - If an entry calls `kill` whilst in stage (2), forcibly terminate *all* the entries in the `self.entries` list field.
     '''
-    entries: list[entry]
+    entries: list[base_entry]
 
-    def __init__(self, *args_list: arg_type) -> None:
+    def __init__(self, *args_list: base_entry) -> None:
         super().__init__()
         self.entries = []
-        for args in args_list:
-            e = args.obj_type(args)
-            self.entries.append(e)
-            e.routine = self
-            e.process()
+        for arg in args_list:
+            self.entries.append(arg)
+            arg.routine = self
+            arg.process()
 
     def __enter__(self) -> Self:
         return self
@@ -381,3 +371,7 @@ class routine:
     def stop(self) -> None:
         for e in self.entries:
             e.stop()
+
+    def kill(self) -> None:
+        for e in self.entries:
+            e.kill()

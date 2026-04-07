@@ -1,4 +1,4 @@
-from . import filter, flog_table
+from . import bc, filter, flog_table
 import re
 
 patterns = [
@@ -133,8 +133,8 @@ def get_log_name(i: int) -> str:
         return '%3d (unknown log level)' % i
 
 
-def get_message(text: bytes, log_filter: filter.filter_type) -> str | None:
-    if log_filter.rcc_logs.is_empty():
+def get_message(log_filter: filter.filter_type_bin, bcolors: bc.bcolors, text: bytes) -> str | None:
+    if log_filter.is_empty():
         return
 
     match = next(
@@ -149,7 +149,7 @@ def get_message(text: bytes, log_filter: filter.filter_type) -> str | None:
         return None
 
     rcc_log_num = int(match['rcc_log_num'])
-    if rcc_log_num not in log_filter.rcc_logs:
+    if rcc_log_num not in log_filter:
         return
 
     rcc_log_type = get_log_name(rcc_log_num)
@@ -163,7 +163,7 @@ def get_message(text: bytes, log_filter: filter.filter_type) -> str | None:
         decoded_line = decoded_line[len(rcc_log_type) + 2:]
 
     return (
-        f'{log_filter.bcolors.OKGREEN}[RCC %s]{log_filter.bcolors.ENDC} %s'
+        f'{bcolors.OKGREEN}[RCC %s]{bcolors.ENDC} %s'
     ) % (
         rcc_log_type,
         decoded_line,

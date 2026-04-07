@@ -1,5 +1,5 @@
 # Checks if the appropriate software is installed.
-foreach ($e in @("gh", "7z")) {
+foreach ($e in @("gh", "7z", "git")) {
 	if ($null -eq (Get-Command "$e.exe" -ErrorAction SilentlyContinue)) {
 		Write-Output "You need to install ``$e``!"
 		return
@@ -24,9 +24,8 @@ function RetrieveInput($suffix = '') {
 
 # Adds changes to git repository and push.
 function UpdateAndPush() {
-	git add .
-	git commit -m $script:commit_name
-	git push
+	git submodule foreach "git add . && git commit -m $script:commit_name && git push"
+	git add . && git commit -m $script:commit_name && git push
 }
 
 # Updates version number in const.py file.
@@ -58,8 +57,9 @@ function CreateZippedDirs() {
 		7z a $zip "$($dir.FullName)/*" @(
 			"-xr!RFDStarterScript.lua";
 
-			# Temporary EXE files (it's customary to prefix them with an underscore)
+			# Temporary files (it's customary for RFD to prefix them with an underscore)
 			"-x!_*.exe";
+			"-x!_*.json";
 
 			# Reshade
 			"-xr!dxgi.dll";
@@ -82,6 +82,9 @@ function CreateZippedDirs() {
 			# x96dbg debug files
 			"-xr!*.dd32"; "-xr!*.dd64";
 			"-xr!*.1337";
+
+			# Miscellaneous backup files
+			"-x!*.bak";
 		)
 
 		$files.Add($zip)

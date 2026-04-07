@@ -3,6 +3,7 @@ import enum
 
 from . import (
     rbxl,
+    rbxlx,
     mesh,
     video,
     csg,
@@ -13,6 +14,7 @@ class method(enum.Enum):
     # Why `partial`?
     # https://stackoverflow.com/a/58714331/6879778
     rbxl = enum.member(partial(rbxl.parse))
+    rbxlx = enum.member(partial(rbxlx.parse))
     mesh = enum.member(partial(mesh.parse))
     csg = enum.member(partial(csg.parse))
     video = enum.member(partial(video.parse))
@@ -21,9 +23,9 @@ class method(enum.Enum):
 ALL_METHODS = set(method)
 
 
-def parse(data: bytes, items: set[method] = ALL_METHODS) -> bytes:
-    for m in items:
+def parse(data: bytes, methods: set[method] = ALL_METHODS) -> tuple[bytes, method | None]:
+    for m in methods:
         result = m.value(data)
         if result is not None:
-            return result
-    return data
+            return (result, m)
+    return (data, None)

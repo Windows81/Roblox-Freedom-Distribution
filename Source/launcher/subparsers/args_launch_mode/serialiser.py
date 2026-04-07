@@ -32,24 +32,25 @@ def _(
         default=[],
         help='Path to the file(s) to be saved.',
     )
+    method_choices = [m.name for m in assets.serialisers.ALL_METHODS]
     subparser.add_argument(
         '--method',
-        type=assets.serialisers.method.__getitem__,
-        choices=assets.serialisers.ALL_METHODS,
+        '-m',
+        choices=method_choices,
         help='Serialisers to use on the file(s) provided.',
         nargs='+',
-        default=[],
+        default=method_choices,
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.SERIALISE_FILE, {serialiser.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.SERIALISE_FILE)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.arg_type]:
+) -> list[logic.base_entry]:
     return [
-        serialiser.arg_type(
+        serialiser.obj_type(
             files=list(zip(args_ns.load, args_ns.save)),
-            methods=set(args_ns.method),
+            methods=set(assets.serialisers.method[m] for m in args_ns.method),
         ),
     ]

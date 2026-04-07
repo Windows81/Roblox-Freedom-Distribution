@@ -3,14 +3,12 @@ import dataclasses
 import re
 
 # Local application imports
-from . import bcolors as bc
 from . import flog_table
-
 
 
 @dataclasses.dataclass(frozen=True)
 class filter_type_bin:
-    flogs: set[int]
+    flogs: frozenset[int]
 
     @staticmethod
     def serialise_key(flog: str) -> str:
@@ -18,7 +16,7 @@ class filter_type_bin:
 
     @staticmethod
     def parse(*flogs: str) -> "filter_type_bin":
-        return filter_type_bin(flogs=set(
+        return filter_type_bin(flogs=frozenset(
             flog_table.LOG_LEVEL_DICT[filter_type_bin.serialise_key(flog)]
             for flog in flogs
         ))
@@ -36,70 +34,23 @@ class filter_type_bin:
         }
 
 
-FILTER_BIN_QUIET = filter_type_bin(set())
+@dataclasses.dataclass(frozen=True, unsafe_hash=True)
+class filter_type_web:
+    urls: bool
+    errors: bool
+
+
+def default_message_print(message: str) -> None:
+    print(f'{message}\n', end='')
+
+
+FILTER_WEB_QUIET = filter_type_web(False, False)
+FILTER_WEB_LOUD = filter_type_web(True, True)
+
+FILTER_BIN_QUIET = filter_type_bin(frozenset())
 FILTER_BIN_LOUD = filter_type_bin(
-    flogs=set(range(
+    flogs=frozenset(range(
         flog_table.INDEX_OFFSET,
         len(flog_table.LOG_LEVEL_LIST) + flog_table.INDEX_OFFSET
     ))
-)
-
-
-@dataclasses.dataclass(frozen=True)
-class filter_type_web:
-    urls: bool = False
-    errors: bool = False
-
-
-@dataclasses.dataclass(frozen=True)
-class filter_type:
-    rcc_logs: filter_type_bin
-    player_logs: filter_type_bin
-    web_logs: filter_type_web
-    other_logs: bool
-    bcolors: bc.bcolors = bc.BCOLORS_VISIBLE
-
-
-FILTER_QUIET = filter_type(
-    rcc_logs=FILTER_BIN_QUIET,
-    player_logs=FILTER_BIN_QUIET,
-    web_logs=filter_type_web(
-        urls=False,
-        errors=False,
-    ),
-    other_logs=False,
-)
-
-FILTER_REASONABLE = filter_type(
-    rcc_logs=filter_type_bin.parse(
-        "Output",
-        "Error",
-        "LocalStorage",
-        "RCCServiceInit",
-        "RCCServiceJobs",
-        "RCCExecuteInfo",
-        "NetworkAudit",
-    ),
-    player_logs=filter_type_bin.parse(
-        "Output",
-        "Error",
-        "LocalStorage",
-        "GameJoinLoadTime",
-    ),
-    web_logs=filter_type_web(
-        urls=True,
-        errors=True,
-    ),
-    other_logs=True,
-)
-
-
-FILTER_LOUD = filter_type(
-    rcc_logs=FILTER_BIN_LOUD,
-    player_logs=FILTER_BIN_LOUD,
-    web_logs=filter_type_web(
-        urls=True,
-        errors=True,
-    ),
-    other_logs=True,
 )

@@ -1,8 +1,18 @@
+from typing import ClassVar
 import sqlite_worker
 
 
 class sqlite_connector_base:
-    TABLE_NAME: str
+    TABLE_NAME: ClassVar[str]
+
+    @staticmethod
+    def unwrap_result(result, only_first_field: bool = False):
+        assert result is not None
+        if len(result) == 0:
+            return
+        if only_first_field:
+            return result[0][0]
+        return result[0]
 
     def __init__(self, sqlite: sqlite_worker.SqliteWorker, is_first_time: bool) -> None:
         super().__init__()

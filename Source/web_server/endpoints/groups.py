@@ -7,13 +7,12 @@ import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
 
-
 def get_rank_dict(user_id_num: int, game_config: obj_type) -> dict[str, int]:
     database = game_config.storage.players
     user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         user_id_num,
-        database.player_field.USER_CODE,
+        database.player_field.USERCODE,
     )
     assert user_code is not None
 
@@ -22,9 +21,9 @@ def get_rank_dict(user_id_num: int, game_config: obj_type) -> dict[str, int]:
     )
 
 
-@server_path('/Game/LuaWebService/HandleSocialRequest.ashx', versions={versions.rōblox.v348})
+@server_path('/Game/LuaWebService/HandleSocialRequest.ashx', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
-    match self.query['method']:
+    match self.query.get('method'):
         case 'GetGroupRank':
             group_id_str = self.query['groupid']
             user_id_num = int(self.query['playerid'])
@@ -36,13 +35,12 @@ def _(self: web_server_handler) -> bool:
                 (rank),
             )
             return True
+        case _:
+            self.send_json({})
+            return True
 
-    self.send_json({})
-    return True
 
-
-@server_path(r'/v2/users/(\d+)/groups/roles',
-             regex=True, versions={versions.rōblox.v463})
+@server_path(r'/v2/users/(\d+)/groups/roles', regex=True, versions={versions.rōblox.v463})
 def _(self: web_server_handler, match: re.Match[str]) -> bool:
     user_id_num = int(match.group(1))
     groups = get_rank_dict(user_id_num, self.game_config)

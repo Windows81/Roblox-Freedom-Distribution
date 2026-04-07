@@ -9,12 +9,16 @@ import re
 
 
 def get_cookie_from_system() -> str | None:
-    """
+    '''
     Attempts to retrieve and decrypt the Roblox security cookie from the local system on Windows.
+    
+    Only works on Windows systems.
+    Do not count on a valid cookie being returned when you run this on a remote server.
+    https://github.com/Ramona-Flower/Roblox-Client-Cookie-Stealer/blob/main/main.py
     
     Returns:
         The `.ROBLOSECURITY` cookie string if found and successfully decrypted; otherwise, `None`.
-    """
+    '''
     roblox_cookies_path = os.path.join(
         os.getenv("USERPROFILE", ""),
         "AppData",
@@ -50,15 +54,26 @@ def get_cookie_from_system() -> str | None:
     return match[1].decode('utf-8', errors='ignore')
 
 
+def test_cookie(cookie: str | None) -> bool:
+    return (
+        cookie is not None and
+        cookie.startswith(
+            "_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_"
+        )
+    )
+
+
 @functools.cache
 def get_rōblox_cookie() -> str | None:
     return next(
-        v for v in
         (
-            get_cookie_from_system(),
-            os.environ.get('ROBLOSECURITY', None),
-        )
-        if v is not None
+            v for v in
+            (
+                _get_cookie_from_system(),
+                os.environ.get('ROBLOSECURITY', None),
+            )
+            if test_cookie(v)
+        ), None,
     )
 
 
@@ -82,6 +97,12 @@ def download_item(url: str, cookie: str | None = None) -> bytes | None:
             }.items()
         ),
     }
+
+    place_id = os.environ.get("rfdplaceid")
+    if place_id:
+        headers["Roblox-Place-Id"] = place_id
+        headers["Roblox-Browser-Asset-Request"] = "false"
+
     try:
         http = urllib3.PoolManager()
         response = http.request('GET', url, headers=headers)
@@ -89,7 +110,7 @@ def download_item(url: str, cookie: str | None = None) -> bytes | None:
             return None
         return response.data
 
-    except urllib3.exceptions.HTTPError as e:
+    except urllib3.exceptions.HTTPError as _:
         return None
 
 

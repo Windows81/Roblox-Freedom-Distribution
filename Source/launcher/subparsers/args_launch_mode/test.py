@@ -24,13 +24,13 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.TEST, {test.arg_type})
+@sub_logic.serialise_args(sub_logic.launch_mode.TEST)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
-) -> list[logic.arg_type]:
+) -> list[logic.base_entry]:
     return [
-        test.arg_type(
+        test.obj_type(
             tests=set(args_ns.tests_to_run),
         )
     ]

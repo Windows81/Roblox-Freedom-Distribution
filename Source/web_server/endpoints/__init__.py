@@ -8,7 +8,7 @@ from . import (
     data_transfer,
     funds,
     groups,
-    joinscript,
+    join_data,
     marketplace,
     persistence,
     player_info,

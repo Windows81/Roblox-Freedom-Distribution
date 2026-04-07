@@ -16,14 +16,14 @@ class gamepasses(wrappers.dicter[int, gamepass]):
 
 
 @dataclasses.dataclass
-class dev_product:
+class devproduct:
     id_num: int
     name: str
     price: int
     icon: wrappers.uri_obj | None = None
 
 
-class dev_products(wrappers.dicter[int, dev_product]):
+class devproducts(wrappers.dicter[int, devproduct]):
     key_name = 'id_num'
 
 

@@ -1,17 +1,21 @@
 from . import _logic
 
 
-def replace(parser: _logic.rbxl_parser, info: _logic.chunk_info) -> bytes | None:
+def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
     '''
     This function removes bytecode from any `rbxm` files.
     '''
-    prop_head = _logic.wrap_string(b'Source') + b'\x1D'
-    if not info.chunk_data.startswith(prop_head, _logic.INT_SIZE):
+    if not isinstance(chunk_data, _logic.chunk_data_type_prop):
         return None
 
-    prop_values_bytes = _logic.get_prop_values_bytes(info)
-    assert prop_values_bytes is not None
-    return b''.join([
-        prop_head,
-        _logic.join_prop_strings([b''] * len(prop_values_bytes)),
-    ])
+    if chunk_data.prop_name != b'Source':
+        return None
+
+    if chunk_data.prop_type != 0x1D:
+        return None
+
+    chunk_data.prop_values = _logic.join_prop_strings(
+        [b''] * len(chunk_data.prop_values)
+    )
+
+    return chunk_data

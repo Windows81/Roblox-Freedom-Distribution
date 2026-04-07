@@ -64,7 +64,7 @@ class obj_type(structure.config_type, _logic.base_type):
 STDIN_NAME = '-'
 
 
-def get_dir_path(path: str) -> str:
+def get_config_dir_path(path: str = STDIN_NAME) -> str:
     if path == STDIN_NAME:
         return util.resource.retr_full_path(util.resource.dir_type.WORKING_DIR)
     return os.path.dirname(util.resource.retr_config_full_path(path))
@@ -83,7 +83,7 @@ def read_file_data(path: str) -> bytes:
 
 @functools.cache
 def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
-    base_dir = get_dir_path(path)
+    base_dir = get_config_dir_path(path)
     file_data = read_file_data(path)
     for parse in PARSERS.values():
         try:

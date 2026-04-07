@@ -1,22 +1,20 @@
-from . import filter
-
-URL_PREFIX = b'http'
+from . import bc, filter
 
 
-def get_message(text: bytes, log_filter: filter.filter_type) -> str | None:
-    if text.startswith(URL_PREFIX):
-        if not log_filter.web_logs.urls:
+def get_message(log_filter: filter.filter_type_web, bcolors: bc.bcolors, text: bytes, is_error: bool) -> str | None:
+    if not is_error:
+        if not log_filter.urls:
             return
         return (
-            f'{log_filter.bcolors.OKCYAN}[Webserver]{log_filter.bcolors.ENDC} %s'
+            f'{bcolors.OKCYAN}[Webserver]{bcolors.ENDC} %s'
         ) % (
             text.decode('utf-8'),
         )
 
-    if not log_filter.web_logs.errors:
+    if not log_filter.errors:
         return
     return (
-        f'{log_filter.bcolors.FAIL}[Webserver Error]\n%s{log_filter.bcolors.ENDC}'
+        f'{bcolors.FAIL}[Webserver Error]\n%s{bcolors.ENDC}'
     ) % (
         text.decode('utf-8'),
     )

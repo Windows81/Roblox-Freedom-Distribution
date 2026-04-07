@@ -23,9 +23,9 @@ def _(self: web_server_handler) -> bool:
     id_num = int(self.query['userId'])
 
     user_code = database.get_player_field_from_index(
-        database.player_field.ID_NUMBER,
+        database.player_field.IDEN_NUM,
         id_num,
-        database.player_field.USER_CODE,
+        database.player_field.USERCODE,
     )
     assert user_code is not None
 
