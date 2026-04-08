@@ -980,6 +980,29 @@ name = 'Awardable Badge'
 price = 1
 ```
 
+#### `retrieve_membership_type`
+
+```python
+remote_data.asset_redirects_call_mode = "python"
+remote_data.asset_redirects = '''
+def f(user_id_num, user_code):
+    premium_users = {"user1", "user2"}
+    bc_users = {"user3"}
+    tbc_users = {"user4"}
+    obc_users = {"user5"}
+
+    if user_code in obc_users:
+        return 'OutrageousBuildersClub'
+    if user_code in tbc_users:
+        return 'TurboBuildersClub'
+    if user_code in bc_users:
+        return 'BuildersClub'
+    if user_code in premium_users:
+        return 'Premium'
+    return 'None'
+'''
+```
+
 ---
 
 <p align="center"><img src="/Assets/Logo.png" height="60px"/></p>
