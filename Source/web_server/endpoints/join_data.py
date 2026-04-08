@@ -119,6 +119,11 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
             id_num,
         'CharacterAppearance':
             f'{self.hostname}/v1.1/avatar-fetch?userId={id_num}',
+        'MembershipType':
+            _MEMBERSHIP_INT_TO_STR.get(
+                config.storage.players.get_membership_type(user_code),
+                'None',
+            ),
     }
 
     # NOTE: the `SessionId` is saved as an HTTPS header `Roblox-Session-Id` for later requests.
@@ -144,7 +149,6 @@ def _(self: web_server_handler) -> bool:
         'VideoInfo': '',
         'CreatorId': 0,
         'CreatorTypeEnum': 'User',
-        'MembershipType': 'None',
         'CookieStoreFirstTimePlayKey': 'rbx_evt_ftp',
         'CookieStoreFiveMinutePlayKey': 'rbx_evt_fmp',
         'CookieStoreEnabled': False,
@@ -173,7 +177,6 @@ def _(self: web_server_handler) -> bool:
         'GameId': util.const.PLACE_IDEN_CONST,
         'CreatorId': 0,
         'CreatorTypeEnum': 'User',
-        'MembershipType': 'None',
         'CookieStoreFirstTimePlayKey': 'rbx_evt_ftp',
         'CookieStoreFiveMinutePlayKey': 'rbx_evt_fmp',
         'CookieStoreEnabled': True,
