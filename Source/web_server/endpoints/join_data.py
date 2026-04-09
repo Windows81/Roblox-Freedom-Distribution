@@ -126,6 +126,15 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
             ),
     }
 
+_MEMBERSHIP_INT_TO_STR: dict[int, str] = {
+    0: 'None',
+    1: 'Premium',
+    2: 'BuildersClub',
+    3: 'TurboBuildersClub',
+    4: 'OutrageousBuildersClub',
+}
+
+    
     # NOTE: the `SessionId` is saved as an HTTPS header `Roblox-Session-Id` for later requests.
     # I'm placing the information which was passed into `join.ashx` here for simplicity.
     join_data |= {
