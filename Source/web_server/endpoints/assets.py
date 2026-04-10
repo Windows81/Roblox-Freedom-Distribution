@@ -5,6 +5,8 @@ import util.const
 
 @server_path("/asset")
 @server_path("/asset/")
+@server_path("/Asset")
+@server_path("/Asset/")
 @server_path("/v1/asset")
 @server_path("/v1/asset/")
 @server_path("/.127.0.0.1/asset/")

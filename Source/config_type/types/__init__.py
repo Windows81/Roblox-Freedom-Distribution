@@ -161,5 +161,3 @@ type_calls = {
     type(None):
         _type_call_none_type,
 }
-
-type_call_data = type_call_data

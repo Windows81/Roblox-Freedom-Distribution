@@ -105,7 +105,8 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 As of RFD 0.65.1, the available options are as follows:
 
-```usage: _main.py server [--config_path [CONFIG_PATH ...] |
+```
+usage: _main.py server [--config_path [CONFIG_PATH ...] |
                        --place_path [PLACE_PATH ...]] [--ipv4-only |
                        --ipv6-only] [--rcc_port [RCC_PORT ...]]
                        [--web_port [WEB_PORT ...]] [--run_client]
@@ -676,7 +677,7 @@ Corresponds to Rōblox [`Enum.ChatStyle`](https://create.roblox.com/docs/referen
 
 #### `server_core.check_user_allowed`
 
-Resolves to [function](#functions) type `(int, str) -> bool`.
+Resolves to [function](#functions) type `(str) -> bool`.
 
 **This function is responsible for authorising users.**
 

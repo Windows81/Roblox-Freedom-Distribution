@@ -204,6 +204,7 @@ def _(self: web_server_handler) -> bool:
 
 
 @server_path('/login/negotiate.ashx')
+@server_path('/Login/Negotiate.ashx')
 @server_path('/universes/validate-place-join')
 def _(self: web_server_handler) -> bool:
     self.send_json(True)
