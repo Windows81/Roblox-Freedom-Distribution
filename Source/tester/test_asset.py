@@ -1,5 +1,6 @@
 # Standard library imports
 from typing import override
+import urllib.request
 import unittest
 
 # Local application imports
@@ -121,3 +122,13 @@ class TestAssets(unittest.TestCase):
         serialisers.rbxl.parse(
             data, methods={serialisers.rbxl.method.convert_csg},
         )
+
+    def test_csgmdl5_load(self) -> None:
+        '''
+        Tests that CSG v3 unions can be parsed.
+        '''
+        url = 'https://github.com/krakow10/rbx_mesh/raw/refs/heads/master/meshes/13626979828.meshdata5'
+        with urllib.request.urlopen(url) as data:
+            serialisers.rbxl.parse(
+                data, methods={serialisers.rbxl.method.convert_csg},
+            )

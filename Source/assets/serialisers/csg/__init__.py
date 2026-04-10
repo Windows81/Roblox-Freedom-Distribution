@@ -1,34 +1,8 @@
-from .util import lcm_rand, xor_encrypt, INT_SIZE
+from .util import xor_encrypt, INT_SIZE, create_hash, CSG_HEADER
 from . import csgmdl5
 
 from io import BytesIO
-import functools
-import hashlib
 import struct
-
-
-def create_hash(vertices: bytes, indices: bytes, salt_in: bytes = b'') -> bytearray:
-    salt = salt_in.rjust(16)
-
-    byte_buffer = bytearray()
-    byte_buffer.extend(vertices)
-    byte_buffer.extend(indices)
-    byte_buffer.extend(salt)
-
-    rand_gen = lcm_rand()
-    for i in range(len(byte_buffer)):
-        j = next(rand_gen) % len(byte_buffer)
-        byte_buffer[i], byte_buffer[j] = byte_buffer[j], byte_buffer[i]
-
-    hasher = hashlib.md5()
-    hasher.update(byte_buffer)
-    hash_digest = hasher.digest()
-
-    hash_buffer = bytearray()
-    hash_buffer.extend(hash_digest)
-    hash_buffer.extend(salt)
-
-    return hash_buffer
 
 
 def recalculate_hash(data: bytes) -> bytes:
@@ -81,11 +55,6 @@ def recalculate_hash(data: bytes) -> bytes:
     return xor_encrypt(buffer.getvalue())
 
 
-@functools.cache
-def get_header(prefix: bytes, version: int) -> bytes:
-    return prefix + version.to_bytes(length=INT_SIZE, byteorder='little')
-
-
 def replace_header_version(data: bytes, versioned_header: bytes, from_version: int, to_version: int) -> bytes:
     '''
     The redundant `from_version` argument is used here to account for the possibility of the data being XOR-encrypted.
@@ -111,29 +80,21 @@ def splice_without_middle_elements(data: bytes, fr: int, ln: int) -> bytes:
     ])
 
 
-HEADER_CSG2 = xor_encrypt(get_header(b'CSGMDL', 2))
-HEADER_CSG4 = xor_encrypt(get_header(b'CSGMDL', 4))
-HEADER_CSG5 = xor_encrypt(get_header(b'CSGMDL', 5))
-HEADER_CSGPHYS5 = get_header(b'CSGPHS', 5)
-HEADER_CSGPHYS6 = get_header(b'CSGPHS', 6)
-HEADER_CSGPHYS7 = get_header(b'CSGPHS', 7)
-
-
 def parse(data: bytes) -> bytes | None:
-    if data.startswith(HEADER_CSG4):
-        return replace_header_version(data, HEADER_CSG4, 4, 2)
+    if data.startswith(CSG_HEADER.MDL4.value):
+        return replace_header_version(data, CSG_HEADER.MDL4.value, 4, 2)
 
-    if data.startswith(HEADER_CSG5):
-        model = csgmdl5.parse(data)
+    if data.startswith(CSG_HEADER.MDL5.value):
+        return csgmdl5.convert_to_csgmdl2(data)
 
-    if data.startswith(HEADER_CSGPHYS5):
+    if data.startswith(CSG_HEADER.PHYS5.value):
         '''
         CSGPHYS5 is identical in data format to CSGPHYS3.
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L71
         '''
-        return replace_header_version(data, HEADER_CSGPHYS5, 5, 3)
+        return replace_header_version(data, CSG_HEADER.PHYS5.value, 5, 3)
 
-    if data.startswith(HEADER_CSGPHYS6):
+    if data.startswith(CSG_HEADER.PHYS6.value):
         '''
         Why 40 bytes?
         ```rs
@@ -151,11 +112,11 @@ def parse(data: bytes) -> bytes | None:
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L8-L16
         '''
         return splice_without_middle_elements(
-            replace_header_version(data, HEADER_CSGPHYS6, 6, 3),
-            len(HEADER_CSGPHYS6), 40,
+            replace_header_version(data, CSG_HEADER.PHYS6.value, 6, 3),
+            len(CSG_HEADER.PHYS6.value), 40,
         )
 
-    if data.startswith(HEADER_CSGPHYS7):
+    if data.startswith(CSG_HEADER.PHYS7.value):
         '''
         Why 41 bytes in CSGPHYS7?
         +40: `PhysicsInfo`, as per above.
@@ -163,6 +124,6 @@ def parse(data: bytes) -> bytes | None:
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L54
         '''
         return splice_without_middle_elements(
-            replace_header_version(data, HEADER_CSGPHYS7, 7, 3),
-            len(HEADER_CSGPHYS7), 41,
+            replace_header_version(data, CSG_HEADER.PHYS7.value, 7, 3),
+            len(CSG_HEADER.PHYS7.value), 41,
         )

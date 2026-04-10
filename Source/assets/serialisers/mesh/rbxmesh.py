@@ -643,18 +643,16 @@ def read_data(data: bytes, offset: int, size: int) -> bytes:
     return data[offset:offset+size]
 
 
-def get_mesh_version(data: bytes) -> str | None:
+def get_mesh_version(data: bytes) -> str:
     """Gets the version of the mesh file. Throws an exception if the version is not supported."""
 
     if len(data) < 12:
-        debug_print(
+        raise Exception(
             f"get_mesh_version: data is too short ({len(data)} bytes)")
-        return None
 
     if not data[0:8] == b"version ":
         raise Exception(
             f"get_mesh_version: invalid mesh header ({data[0:8]})")
-        return None
 
     return data[8:12].decode('ASCII')
 

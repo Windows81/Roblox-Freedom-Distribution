@@ -1,108 +1,14 @@
-from .util import OBFUSCATION_NOISE_CYCLE_XOR, xor_encrypt
-from dataclasses import dataclass
-from typing import Any
+'''
+This module could not have existed without help from the following codebases:
+https://github.com/krakow10/rbx_mesh/blob/master/src/mesh_data.rs#L454
+https://github.com/Artifaqt/ROBLOX2016/blob/e0cfac59fea3a5b986843e65b0fda286e439f9fc/App/include/v8datamodel/CSGMesh.h#L92
+https://github.com/krakow10/rbx_mesh/blob/master/src/mesh_data.rs#L242
+'''
+
+from .util import xor_encrypt, create_hash, CSG_HEADER
+import itertools
 import struct
 import io
-
-
-@dataclass
-class Faces5:
-    indices: list[int]
-    unknown: Any
-
-
-def read_u32(data):
-    return struct.unpack('<I', data[:4])[0]
-
-
-def read_faces5(reader) -> Faces5:
-    faces_inner_data = reader.read(16)
-    vertex_count, vertex_data_len, range_marker_count = struct.unpack(
-        '<III', faces_inner_data)
-
-    if vertex_data_len % 4 != 0:
-        raise ValueError("Invalid vertex data length")
-
-    vertex_data = reader.read(vertex_data_len)
-    range_markers = [
-        read_u32(reader.read(4))
-        for _ in range(range_marker_count)
-    ]
-
-    indices = read_state_machine(vertex_data, vertex_count)
-
-    if indices[-1] > len(indices):
-        raise ValueError(
-            f"Marker {len(range_markers)} (value {indices[-1]}) out of range")
-
-    for i, marker in enumerate(range_markers[1:], start=1):
-        if marker < range_markers[i - 1]:
-            raise ValueError(
-                f"Marker {i} (value {marker}) is less than marker {i-1} (value {range_markers[i-1]})")
-        if indices[-1] > marker:
-            raise ValueError(f"Marker {i} (value {marker}) out of range")
-
-    unknown = []
-
-    for marker in [read_u32(reader.read(4)) for _ in range(len(range_markers) - 1)]:
-        if marker != 0:
-            indices = indices[marker:]
-        if len(indices) > 0:
-            unknown.append(indices)
-        if reader.tell() < len(faces_inner_data):
-            raise ValueError("Not enough range markers")
-
-    return Faces5(indices, unknown)
-
-
-class BufferStream:
-    def __init__(self, buffer: bytes):
-        super().__init__()
-        self.buffer = buffer
-        self.pos = 0
-
-    def read_string(self, length: int) -> str:
-        data = self.buffer[self.pos:self.pos + length]
-        self.pos += length
-        return data.decode('utf-8')
-
-    def read_u16(self) -> int:
-        value, = struct.unpack('<H', self.buffer[self.pos:self.pos + 2])
-        self.pos += 2
-        return value
-
-    def read_u32(self) -> int:
-        value, = struct.unpack('<I', self.buffer[self.pos:self.pos + 4])
-        self.pos += 4
-        return value
-
-    def read_f32(self) -> float:
-        value, = struct.unpack('<f', self.buffer[self.pos:self.pos + 4])
-        self.pos += 4
-        return value
-
-    def read_i16(self) -> int:
-        value, = struct.unpack('<h', self.buffer[self.pos:self.pos + 2])
-        self.pos += 2
-        return value
-
-    def read_u8(self) -> int:
-        value, = struct.unpack('B', self.buffer[self.pos:self.pos + 1])
-        self.pos += 1
-        return value
-
-
-@dataclass
-class Vector3:
-    x: float
-    y: float
-    z: float
-
-
-@dataclass
-class Vector2:
-    u: float
-    v: float
 
 
 def wrap_number(x: float, min_val: float, max_val: float) -> float:
@@ -147,126 +53,243 @@ def read_state_machine(data: list[int], count: int) -> list[int]:
     return indices
 
 
-@dataclass
-class ParsedCSGMDLV5:
-    positions: bytearray
-    normals: bytearray
-    colors: bytearray
-    normal_ids: list[int]
-    uvs: list[Vector2]
-    tangents: list[Vector3]
-    faces: list[int]
+def trim_indices(indices: list[int], range_markers: list[int]) -> list[int]:
+    '''
+    Return subrange(s) of indices return based on the range markers.
+    '''
+    marker0 = range_markers[0]
+    if marker0 != 0:
+        # Drops indices at the start of the list.
+        indices = indices[marker0:]
+    marker1 = range_markers[1]
+    if len(range_markers) < 3:
+        return indices
+
+    # Splits indices according to marker points.
+    difference = marker1 - marker0
+    indices = indices[:difference]
+
+    '''
+    _unknown = []
+    remaining_indices = indices[difference:]
+    for i in range(2, len(range_markers)):
+        difference = range_markers[i] - range_markers[i-1]
+        next_remaining_indices = remaining_indices[difference:]
+        _unknown.append(remaining_indices[:difference])
+        remaining_indices = next_remaining_indices
+
+    # Inserts the final range.
+    if difference < len(remaining_indices):
+        # Drops indices at the end of the list.
+        remaining_indices = remaining_indices[:difference]
+    _unknown.append(remaining_indices)
+    '''
+
+    return indices
 
 
-def parse(csgmdl_buffer: bytes) -> ParsedCSGMDLV5:
-    # Create a buffer stream for reading the data
-    stream = io.BytesIO(xor_encrypt(csgmdl_buffer, 0))
+def read_chunks_vector3(stream: io.BytesIO) -> list[bytes]:
+    # Reads an unsigned short (2 bytes).
+    count = struct.unpack('<H', stream.read(2))[0]
 
-    # Define the header and check if it matches the expected value
-    HEADER = b'\x15\x7d\x29\x15\x75\x6c\x35\x04\x34\x69'
-    assert stream.read(10) == HEADER, "Buffer is not CSGMDLV5"
+    # Reads an unsigned int (4 bytes).
+    data_len = struct.unpack('<I', stream.read(4))[0]
 
-    # Read the positions data and store it in a bytearray
-    positions = bytearray()
-    n_positions = struct.unpack('<H', stream.read(2))[
-        0]  # Read an unsigned short (2 bytes)
-    for _ in range(n_positions):
-        positions.extend(stream.read(3*4))  # Read three floats (12 bytes)
+    result = list[bytes]()
+    for _ in range(count):
+        result.append(struct.pack(
+            # Packs three floats into a 12 byte string.
+            'fff',
 
-    # Read the normals data and store it in a bytearray
-    normals = bytearray()
-    # Read an unsigned short (2 bytes)
-    n_normals = struct.unpack('<H', stream.read(2))[0]
-    for _ in range(n_normals):
-        normals.extend(struct.pack(
-            '<f<f<f',  # Pack three floats into a 12 byte string
-            # Quantize to 4 bits and pack as float
+            # Quantises to 4 bits and pack as float.
             quantize(struct.unpack('<h', stream.read(2))[0], max_val=15),
             quantize(struct.unpack('<h', stream.read(2))[0], max_val=15),
             quantize(struct.unpack('<h', stream.read(2))[0], max_val=15),
         ))
 
-    # Read the colors data and store it in a bytearray
-    colors = bytearray()
-    # Read an unsigned short (2 bytes)
-    n_colors = struct.unpack('<H', stream.read(2))[0]
-    for _ in range(n_colors):
-        r = struct.unpack('<B', stream.read(1))[
-            0]  # Read a single byte (1 byte)
-        g = struct.unpack('<B', stream.read(1))[0]
-        b = struct.unpack('<B', stream.read(1))[0]
-        a = struct.unpack('<B', stream.read(1))[0]
-        colors.append((r, g, b, a))
+    return result
 
-    # Read the normal IDs data and store it in a list
-    normal_ids: list[int] = []
-    n_normal_ids = struct.unpack('<H', stream.read(2))[
-        0]  # Read an unsigned short (2 bytes)
-    for _ in range(n_normal_ids):
-        normal_ids.append(struct.unpack('<B', stream.read(1))
-                          [0])  # Read a single byte (1 byte)
 
-    # Read the UVs data and store it in a list of Vector2 objects
-    uvs: list[Vector2] = []
-    # Read an unsigned short (2 bytes)
-    n_uvs = struct.unpack('<H', stream.read(2))[0]
-    for _ in range(n_uvs):
-        # Read two floats (4 bytes each)
-        u = struct.unpack('<f', stream.read(4))[0]
-        v = struct.unpack('<f', stream.read(4))[0]
-        uvs.append(Vector2(u, v))
+def read_chunks(stream: io.BytesIO, individual_size: int) -> list[bytes]:
+    # Reads an unsigned short (2 bytes).
+    count = struct.unpack('<H', stream.read(2))[0]
 
-    # Read the tangents data and store it in a list of Vector3 objects
-    tangents: list[Vector3] = []
-    n_tangents = struct.unpack('<H', stream.read(2))[
-        0]  # Read an unsigned short (2 bytes)
-    stream.read(4)  # Number of bytes containing the components
-    for _ in range(n_tangents):
-        # Quantize to 4 bits and pack as float
-        x = quantize(struct.unpack('<h', stream.read(2))[0], max_val=15)
-        y = quantize(struct.unpack('<h', stream.read(2))[0], max_val=15)
-        z = quantize(struct.unpack('<h', stream.read(2))[0], max_val=15)
-        tangents.append(Vector3(x, y, z))
+    result = list[bytes]()
+    for _ in range(count):
+        result.append(stream.read(individual_size))
 
-    # Read the number of vertices and store it in a variable
-    n_vertices = struct.unpack('<I', stream.read(4))[
-        0]  # Read an unsigned int (4 bytes)
+    return result
 
-    # Read the vertex data and store it in a list
-    vertex_data: list[int] = []
-    for _ in range(n_vertices):
-        vertex_data.append(struct.unpack('<B', stream.read(1))[
-                           0])  # Read a single byte (1 byte)
 
-    # Read the number of range markers and store it in a variable
-    n_range_markers = struct.unpack('<B', stream.read(1))[
-        0]  # Read an unsigned char (1 byte)
+def read_positions(stream: io.BytesIO) -> list[bytes]:
+    # Reads an unsigned short (2 bytes).
+    count = struct.unpack('<H', stream.read(2))[0]
 
-    # Read the range markers data and store it in a list
-    range_markers: list[int] = []
+    result = list[bytes]()
+    for _ in range(count):
+        result.append(
+            # Reads three floats (12 bytes).
+            stream.read(3*4),
+        )
+
+    return result
+
+
+def read_normal_idens(stream: io.BytesIO) -> list[bytes]:
+    # Reads an unsigned short (2 bytes).
+    count = struct.unpack('<H', stream.read(2))[0]
+
+    result = list[bytes]()
+    for _ in range(count):
+        result.append(
+            # Converts u8 to u32 to ensure compatibility with CSGv2.
+            stream.read(1)+b'\0\0\0',
+        )
+
+    return result
+
+
+def read_vertices(stream: io.BytesIO) -> tuple[list[int], int]:
+    # Reads an unsigned int (4 bytes).
+    vertex_count = struct.unpack('<I', stream.read(4))[0]
+
+    # Reads an unsigned int (4 bytes).
+    vertex_data_len = struct.unpack('<I', stream.read(4))[0]
+
+    vertex_data = list[int]()
+    for _ in range(vertex_data_len):
+        vertex_data.append(
+            # Reads a single byte (1 byte).
+            struct.unpack('<B', stream.read(1))[0],
+        )
+
+    return (vertex_data, vertex_count)
+
+
+def read_range_markers(stream: io.BytesIO) -> list[int]:
+    # Reads an unsigned char (1 byte).
+    n_range_markers = struct.unpack('<B', stream.read(1))[0]
+
+    range_markers = list[int]()
     for _ in range(n_range_markers):
-        range_markers.append(struct.unpack('<I', stream.read(4))[
-                             0])  # Read an unsigned int (4 bytes)
+        range_markers.append(
+            # Reads an unsigned int (4 bytes).
+            struct.unpack('<I', stream.read(4))[0],
+        )
+
+    return range_markers
+
+
+def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
+    # Create a buffer stream for reading the data
+    stream = io.BytesIO(csgmdl_buffer)
+
+    # Define the header and check if it matches the expected value
+    HEADER = b'\x15\x7d\x29\x15\x75\x6c\x35\x04\x34\x69'
+    assert stream.read(10) == HEADER, "Buffer is not CSGMDLV5"
+
+    # Reads three floats (12 bytes).
+    positions = read_chunks(stream, 3*4)
+
+    normals = read_chunks_vector3(stream)
+
+    # Reads a `G3D::Color4uint8`.
+    colours = read_chunks(stream, 4)
+
+    normal_idens = read_normal_idens(stream)
+
+    # Reads a `G3D::Vector2`, which contains two floats.
+    uvs = read_chunks(stream, 2*4)
+
+    tangents = read_chunks_vector3(stream)
+
+    (vertex_data, vertex_count) = read_vertices(stream)
+    range_markers = read_range_markers(stream)
 
     # Read the state machine indices and store them in a list
-    indices = read_state_machine(vertex_data, n_vertices)
+    indices = read_state_machine(vertex_data, vertex_count)
+    indices = trim_indices(indices, range_markers)
 
-    # Adjust the indices based on the range markers
-    marker0 = range_markers[0]
-    marker1 = range_markers[1]
-    if marker0 != 0:
-        indices = indices[marker0:]
+    '''
+    Packs chunks in the following manner:
 
-    if len(range_markers) < 3:
-        indices = indices[:marker1 - marker0]
-
-    # Return a ParsedCSGMDLV5 object containing all the data
-    return ParsedCSGMDLV5(
-        positions=positions,
-        normals=normals,
-        colors=colors,
-        normal_ids=normal_ids,
-        uvs=uvs,
-        tangents=tangents,
-        faces=indices
+    pub struct Vertex{
+        pub pos:[f32;3],
+        pub norm:[f32;3],
+        pub color:[u8;4],
+        pub normal_id:NormalId2,
+        pub tex:[f32;2],
+        #[brw(magic=0u128)]
+        pub tangent:[f32;3],
+        #[brw(magic=0u128)]
+        // This field does not exist in the final struct and
+        // exists purely to de/serialize the magic number.
+        #[br(temp)]
+        #[bw(ignore)]
+        #[brw(magic=0u128)]
+        _magic:(),
+    }
+    '''
+    vertices_packed = b''.join(
+        b''.join(v) for v in zip(
+            positions,
+            normals,
+            colours,
+            normal_idens,
+            uvs,
+            itertools.repeat(b'\0'*16),
+            tangents,
+            itertools.repeat(b'\0'*16),
+        )
     )
+
+    # Packs unsigned ints (4 bytes).
+    indices_packed = struct.pack('<%dI' % len(indices), *indices)
+
+    '''
+    #[brw(little)]
+    pub struct Mesh2{
+        pub vertex_count:u32,
+        // vertex data length
+        #[brw(magic=84u32)]
+        #[br(count=vertex_count)]
+        pub vertices:Vec<Vertex>,
+        pub face_count:u32,
+        #[br(count=face_count/3)]
+        pub faces:Vec<[VertexId;3]>,
+    }
+
+    #[brw(little)]
+    #[brw(magic=b"CSGMDL")]
+    pub struct CSGMDL2{
+        #[brw(magic=2u32)]
+        pub hash:Hash,
+        pub mesh:Mesh2,
+    }
+    '''
+    return b''.join([
+
+        # Skip re-encrypting header since the header is already encrypted.
+        CSG_HEADER.MDL2.value,
+
+        xor_encrypt(b''.join([
+            # Hash
+            create_hash(vertices=vertices_packed, indices=indices_packed),
+
+            # Vertex count
+            len(positions).to_bytes(4, byteorder='little'),
+
+            # Size (in bytes) of each individual vertex datum
+            (84).to_bytes(4, byteorder='little'),
+
+            # Vertex data
+            vertices_packed,
+
+            # Index count
+            len(indices).to_bytes(4, byteorder='little'),
+
+            # Index data
+            indices_packed,
+
+        ]), offset=len(CSG_HEADER.MDL2.value))
+    ])
