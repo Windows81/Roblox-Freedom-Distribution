@@ -983,23 +983,23 @@ price = 1
 #### `retrieve_membership_type`
 
 ```python
-remote_data.asset_redirects_call_mode = "python"
-remote_data.asset_redirects = '''
-def f(user_id_num, user_code):
+retrieve_membership_type_call_mode = "python"
+retrieve_membership_type = '''
+def retrieve_membership_type(user_id_num, user_code):
     premium_users = {"user1", "user2"}
     bc_users = {"user3"}
     tbc_users = {"user4"}
     obc_users = {"user5"}
 
     if user_code in obc_users:
-        return 'OutrageousBuildersClub'
+        return 4
     if user_code in tbc_users:
-        return 'TurboBuildersClub'
+        return 3
     if user_code in bc_users:
-        return 'BuildersClub'
+        return 2
     if user_code in premium_users:
-        return 'Premium'
-    return 'None'
+        return 1
+    return 0
 '''
 ```
 
