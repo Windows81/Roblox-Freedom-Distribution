@@ -60,9 +60,10 @@ def _(self: web_server_handler) -> bool:
     return True
 
 @server_path('/Game/Tools/ThumbnailAsset.ashx')
+@server_path('/Thumbs/Asset.ashx') # we can pass this too since we're calling rbx api regardless
 def _(self: web_server_handler) -> bool:
     asset_cache = self.game_config.asset_cache
-    asset_id = self.query["aid"]
+    asset_id = asset_cache.resolve_asset_query(self.query)
     if asset_id is None:
         self.send_error(404)
         return True
