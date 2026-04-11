@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/483c4263-db43-4ec2-9243-b0b885e625f6
 
 Rōblox Freedom Distribution is one such solution. It's a revival launcher built on existing research for self-hosting Rōblox servers.
 
-Using RFD, users can host their own server instances from compiled Rōblox binaries from 2018-07-25 or 2021-01-25.
+Using RFD, users can host their own server instances from compiled Rōblox binaries from 2018-07-31 (v347) or 2021-01-25 (v463). 
 
 Players can join existing servers.
 
