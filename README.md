@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/483c4263-db43-4ec2-9243-b0b885e625f6
 
 Rōblox Freedom Distribution is one such solution. It's a revival launcher built on existing research for self-hosting Rōblox servers.
 
-Using RFD, users can host their own server instances from compiled Rōblox binaries from 2018-07-31 (v347) or 2021-01-25 (v463). 
+Using RFD, users can host their own server instances from compiled Rōblox binaries from 2018-07-31 (v347) or 2021-01-25 (v463).
 
 Players can join existing servers.
 
@@ -992,14 +992,14 @@ def retrieve_membership_type(user_id_num, user_code):
     obc_users = {"user5"}
 
     if user_code in obc_users:
-        return 4
+        return "OutrageousBuildersClub"
     if user_code in tbc_users:
-        return 3
+        return "TurboBuildersClub"
     if user_code in bc_users:
-        return 2
+        return "BuildersClub"
     if user_code in premium_users:
-        return 1
-    return 0
+        return "Premium"
+    return "None"
 '''
 ```
 
