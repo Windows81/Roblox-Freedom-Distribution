@@ -1,6 +1,7 @@
 from web_server._logic import web_server_handler, server_path
 import assets.returns as returns
 import util.const
+import assets.const
 
 
 @server_path("/asset")
@@ -57,3 +58,27 @@ def _(self: web_server_handler) -> bool:
     '''
     self.send_json('true')
     return True
+
+@server_path('/Game/Tools/ThumbnailAsset.ashx')
+def _(self: web_server_handler) -> bool:
+    asset_cache = self.game_config.asset_cache
+    asset_id = self.query["aid"]
+    if asset_id is None:
+        self.send_error(404)
+        return True
+    
+    asset = asset_cache.get_asset(
+        f"{assets.const.THUMB_PREFIX}{asset_id}.png",
+        bypass_blocklist=self.is_privileged,
+    )
+
+    if isinstance(asset, returns.ret_data):
+        self.send_data(asset.data)
+        return True
+    elif isinstance(asset, returns.ret_none):
+        self.send_error(404)
+        return True
+    elif isinstance(asset, returns.ret_relocate):
+        self.send_redirect(asset.url)
+        return True
+    return False
