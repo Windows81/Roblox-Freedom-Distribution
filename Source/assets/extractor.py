@@ -69,7 +69,7 @@ def get_rōblox_cookie() -> str | None:
         (
             v for v in
             (
-                _get_cookie_from_system(),
+                get_cookie_from_system(),
                 os.environ.get('ROBLOSECURITY', None),
             )
             if test_cookie(v)
