@@ -19,7 +19,7 @@ def _(self: web_server_handler) -> bool:
 
     scope = self.query.get('scope', 'global')
     data_type = self.query['type']
-    target = self.query['target']
+    target = self.query.get('target', 'null')
     key = self.query['key']
 
     value_str = form_data.get('value', 'null')
