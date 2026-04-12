@@ -61,6 +61,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/Game/Tools/ThumbnailAsset.ashx')
 @server_path('/Thumbs/Asset.ashx') # we can pass this too since we're calling rbx api regardless
+@server_path('/thumbs/asset.ashx')
 def _(self: web_server_handler) -> bool:
     asset_cache = self.game_config.asset_cache
     asset_id = asset_cache.resolve_asset_query(self.query)

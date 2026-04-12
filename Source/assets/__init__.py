@@ -112,6 +112,8 @@ class asseter:
             (query.get('id'), self.resolve_asset_id),
             (query.get('aid'), self.resolve_asset_id),
             (query.get('AssetID'), self.resolve_asset_id),
+            (query.get('assetid'), self.resolve_asset_id),
+            (query.get('assetId'), self.resolve_asset_id),
             (query.get('assetversionid'), self.resolve_asset_version_id),
         ]
 
