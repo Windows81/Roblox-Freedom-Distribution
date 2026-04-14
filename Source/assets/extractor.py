@@ -8,16 +8,11 @@ import os
 import re
 
 
-def get_cookie_from_system() -> str | None:
+def _get_cookie_from_system() -> str | None:
     '''
-    Attempts to retrieve and decrypt the Roblox security cookie from the local system on Windows.
-    
     Only works on Windows systems.
     Do not count on a valid cookie being returned when you run this on a remote server.
     https://github.com/Ramona-Flower/Roblox-Client-Cookie-Stealer/blob/main/main.py
-    
-    Returns:
-        The `.ROBLOSECURITY` cookie string if found and successfully decrypted; otherwise, `None`.
     '''
     roblox_cookies_path = os.path.join(
         os.getenv("USERPROFILE", ""),
