@@ -31,6 +31,6 @@ def _(
 ) -> list[logic.base_entry]:
     return [
         test.obj_type(
-            tests=set(args_ns.tests_to_run),
+            tests=args_ns.tests_to_run,
         )
     ]

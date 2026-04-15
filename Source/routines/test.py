@@ -7,7 +7,7 @@ import tester
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
 class obj_type(logic.base_entry):
-    tests: set[str]
+    tests: list[str]
 
     @override
     def process(self) -> None:
