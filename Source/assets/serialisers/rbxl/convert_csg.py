@@ -6,7 +6,7 @@ def bulk_convert(splits: list[bytes]) -> list[bytes]:
     results = []
     for data in splits:
         result = csg.parse(data)
-        if not result:
+        if result is None:
             result = data
         results.append(result)
     return results

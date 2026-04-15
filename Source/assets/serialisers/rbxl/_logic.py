@@ -121,9 +121,9 @@ class chunk_data_type_sstr(chunk_data_type):
         # @regg.ie: Excluding, it's a sum of the payload itself. The hash is ignored by the engine and not actually ever emitted by Studio, though
         # @regg.ie: As per rbx-dom's spec
         for string_value in self.strings:
-            wrapped = wrap_string(string_value)
             md5_hash = hashlib.md5(string_value).digest()
             writer.write(md5_hash)
+            wrapped = wrap_string(string_value)
             writer.write(wrapped)
         return writer.getvalue()
 

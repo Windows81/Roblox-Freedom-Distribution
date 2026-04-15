@@ -1,10 +1,11 @@
 # Standard library imports
 from typing import override
+import urllib.request
 import unittest
 
 # Local application imports
-import assets.serialisers as serialisers
-import assets.extractor as extractor
+from assets import serialisers, extractor
+from assets.serialisers.csg.util import create_hash, recalculate_hash, xor_encrypt
 
 
 class TestAssets(unittest.TestCase):
