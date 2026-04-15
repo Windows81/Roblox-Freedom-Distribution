@@ -203,6 +203,14 @@ def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
 
     tangents = read_chunks_vector3(stream)
 
+    assert (
+        len(positions) ==
+        len(normals) ==
+        len(colours) ==
+        len(normal_idens) ==
+        len(uvs)
+    )
+
     (vertex_data, vertex_count) = read_vertices(stream)
     range_markers = read_range_markers(stream)
 
@@ -242,6 +250,8 @@ def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
             itertools.repeat(b'\0'*16),
         )
     )
+
+    assert len(vertices_packed) / len(positions) == 84
 
     # Packs unsigned ints (4 bytes).
     indices_packed = struct.pack('<%dI' % len(indices), *indices)

@@ -1,8 +1,8 @@
-import enum
 from typing import Any, Never
 import collections.abc
 import functools
 import hashlib
+import enum
 
 
 OBFUSCATION_NOISE_CYCLE_XOR = bytes([
@@ -16,13 +16,14 @@ INT_SIZE = 4
 
 
 def lcm_rand() -> collections.abc.Generator[int, Any, Never]:
-    s = 0b0000_0000_0000_0101_0011_1001  # 1337
+    s = 0b0000_0000_0000_0101_0011_1001  # 1337.
     while True:
-        s *= 0b00000000_00000011_01000011_11111101  # 0214013
-        s += 0b00000000_00100110_10011110_11000011  # 2531011
 
         # Doing a bitmask cast to u32 speeds things up.
         s &= 0b11111111_11111111_11111111_11111111
+
+        s *= 0b00000000_00000011_01000011_11111101  # 0214013.
+        s += 0b00000000_00100110_10011110_11000011  # 2531011.
 
         yield (s >> 16) & 0b0111_1111_1111_1111
 
@@ -41,8 +42,8 @@ def get_header(prefix: bytes, version: int) -> bytes:
     return prefix + version.to_bytes(length=INT_SIZE, byteorder='little')
 
 
-def create_hash(vertices: bytes, indices: bytes, salt_in: bytes = b'\0'*16) -> bytes:
-    salt = salt_in.rjust(16)
+def create_hash(vertices: bytes, indices: bytes, salt: bytes = b'\0'*16) -> bytes:
+    assert len(salt) == 16
 
     byte_buffer = bytearray(b''.join([
         vertices,
@@ -74,6 +75,7 @@ class CSG_HEADER(enum.Enum):
     MDL2 = xor_encrypt(get_header(b'CSGMDL', 2))
     MDL4 = xor_encrypt(get_header(b'CSGMDL', 4))
     MDL5 = xor_encrypt(get_header(b'CSGMDL', 5))
-    PHYS5 = get_header(b'CSGPHS', 5)
-    PHYS6 = get_header(b'CSGPHS', 6)
-    PHYS7 = get_header(b'CSGPHS', 7)
+    PHS5 = get_header(b'CSGPHS', 5)
+    PHS6 = get_header(b'CSGPHS', 6)
+    PHS7 = get_header(b'CSGPHS', 7)
+    PHS8 = get_header(b'CSGPHS', 8)

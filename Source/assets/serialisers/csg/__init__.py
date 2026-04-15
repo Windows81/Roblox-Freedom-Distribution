@@ -1,58 +1,5 @@
-from .util import xor_encrypt, INT_SIZE, create_hash, CSG_HEADER
+from .util import INT_SIZE, CSG_HEADER
 from . import csgmdl5
-
-from io import BytesIO
-import struct
-
-
-def recalculate_hash(data: bytes) -> bytes:
-    header_tag = b'CSGMDL'
-    version_size = INT_SIZE
-    hash_size = 16
-    salt_size = 16
-    num_vertices_size = INT_SIZE
-    vertex_stride = (
-        + 12
-        + 12
-        + 8
-        + 4
-    )
-    num_indices_size = 4
-
-    # Create a BytesIO buffer from the binary string
-    buffer = BytesIO(xor_encrypt(data))
-
-    # Check header tag
-    if buffer.read(len(header_tag)) != header_tag:
-        raise ValueError("Invalid header tag")
-
-    # Read version number
-    version = struct.unpack('<I', buffer.read(version_size))[0]
-
-    # Read hash
-    hash_pos = buffer.tell()
-    old_hash = buffer.read(hash_size)
-
-    # Read salt
-    salt_in = buffer.read(salt_size)
-
-    # Read number of vertices
-    num_vertices = struct.unpack('<I', buffer.read(num_vertices_size))[0]
-
-    # Read vertices
-    vertices = buffer.read(vertex_stride * num_vertices)
-
-    # Read number of indices
-    num_indices = struct.unpack('<I', buffer.read(num_indices_size))[0]
-
-    # Read indices
-    indices = buffer.read(INT_SIZE * num_indices)
-
-    # Overwrite hash
-    buffer.seek(hash_pos)
-    buffer.write(create_hash(vertices, indices, salt_in))
-
-    return xor_encrypt(buffer.getvalue())
 
 
 def replace_header_version(data: bytes, versioned_header: bytes, from_version: int, to_version: int) -> bytes:
@@ -84,17 +31,17 @@ def parse(data: bytes) -> bytes | None:
     if data.startswith(CSG_HEADER.MDL4.value):
         return replace_header_version(data, CSG_HEADER.MDL4.value, 4, 2)
 
-    if data.startswith(CSG_HEADER.MDL5.value):
+    elif data.startswith(CSG_HEADER.MDL5.value):
         return csgmdl5.convert_to_csgmdl2(data)
 
-    if data.startswith(CSG_HEADER.PHYS5.value):
+    elif data.startswith(CSG_HEADER.PHS5.value):
         '''
         CSGPHYS5 is identical in data format to CSGPHYS3.
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L71
         '''
-        return replace_header_version(data, CSG_HEADER.PHYS5.value, 5, 3)
+        return replace_header_version(data, CSG_HEADER.PHS5.value, 5, 3)
 
-    if data.startswith(CSG_HEADER.PHYS6.value):
+    elif data.startswith(CSG_HEADER.PHS6.value):
         '''
         Why 40 bytes?
         ```rs
@@ -112,11 +59,11 @@ def parse(data: bytes) -> bytes | None:
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L8-L16
         '''
         return splice_without_middle_elements(
-            replace_header_version(data, CSG_HEADER.PHYS6.value, 6, 3),
-            len(CSG_HEADER.PHYS6.value), 40,
+            replace_header_version(data, CSG_HEADER.PHS6.value, 6, 3),
+            len(CSG_HEADER.PHS6.value), 40,
         )
 
-    if data.startswith(CSG_HEADER.PHYS7.value):
+    elif data.startswith(CSG_HEADER.PHS7.value):
         '''
         Why 41 bytes in CSGPHYS7?
         +40: `PhysicsInfo`, as per above.
@@ -124,6 +71,16 @@ def parse(data: bytes) -> bytes | None:
         https://github.com/krakow10/rbx_mesh/blob/d10bcdf727dd9c2504560189a5cb106aa9107ec5/src/physics_data.rs#L54
         '''
         return splice_without_middle_elements(
-            replace_header_version(data, CSG_HEADER.PHYS7.value, 7, 3),
-            len(CSG_HEADER.PHYS7.value), 41,
+            replace_header_version(data, CSG_HEADER.PHS7.value, 7, 3),
+            len(CSG_HEADER.PHS7.value), 41,
+        )
+
+    elif data.startswith(CSG_HEADER.PHS8.value):
+        # TODO: implement CSGPHS8; returns an empty CSPHS object for now.
+        return (
+            b'CSGPHS\x03\x00\x00\x00' +
+            b'\x10\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x10\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x80\x3F' +
+            b'\x00\x00\x00\x00' +
+            b'\x04\x00\x00\x00' +
+            b'\x00\x00\x00\x00'
         )
