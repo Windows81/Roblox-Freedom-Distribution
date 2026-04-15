@@ -10,7 +10,7 @@ import shutil
 
 # Internal or local application imports
 import util.const
-from . import material, queue, returns, serialisers, extractor
+from . import material, queue, returns, serialisers, extractor, thumbnail
 
 
 @dataclasses.dataclass
@@ -110,6 +110,10 @@ class asseter:
     def resolve_asset_query(self, query: dict[str, str]) -> int | str | None:
         candidate_funcs = [
             (query.get('id'), self.resolve_asset_id),
+            (query.get('aid'), self.resolve_asset_id),
+            (query.get('AssetID'), self.resolve_asset_id),
+            (query.get('assetid'), self.resolve_asset_id),
+            (query.get('assetId'), self.resolve_asset_id),
             (query.get('assetversionid'), self.resolve_asset_version_id),
         ]
 
@@ -144,6 +148,8 @@ class asseter:
     def _load_asset_str(self, asset_id: str) -> bytes | None:
         if material.check(asset_id):
             return material.load_asset(asset_id)
+        if thumbnail.check(asset_id):
+            return thumbnail.load_asset(asset_id)
         return None
 
     def _load_redir_asset(self, asset_id: int | str, redirect: asset_redirect) -> returns.base_type:

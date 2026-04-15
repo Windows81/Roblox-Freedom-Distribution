@@ -1,4 +1,5 @@
 ID_PREFIX = 'rbxmtl-'
+THUMB_PREFIX = 'rbxthmb-'
 
 MATERIAL_DICT_2014 = {
     'aluminum-diffuse.dds': 153465459,

@@ -31,7 +31,7 @@ class database(_logic.sqlite_connector_base):
             SET {self.field.FUNDS.value} = {self.field.FUNDS.value} + {delta}
             WHERE {self.field.USER_ID_NUM.value} = ?
             """,
-            (user_id_num),
+            (user_id_num,),
         )
 
     def first_init(self, user_id_num: int, value: int) -> None:

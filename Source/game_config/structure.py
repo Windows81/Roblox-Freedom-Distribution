@@ -110,6 +110,10 @@ class config_type(allocateable.obj_type):
             lambda t, *a: t
         )
 
+        retrieve_membership_type: callable[[int, str], str] = (
+            lambda *a: "None"
+        )
+
     class remote_data(allocateable.obj_type):
         gamepasses: structs.gamepasses = []
         devproducts: structs.devproducts = []
