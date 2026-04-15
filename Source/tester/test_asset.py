@@ -5,7 +5,7 @@ import unittest
 
 # Local application imports
 from assets import serialisers, extractor
-from assets.serialisers.csg.util import create_hash, xor_encrypt
+from assets.serialisers.csg.util import create_hash, recalculate_hash, xor_encrypt
 
 
 class TestAssets(unittest.TestCase):
@@ -122,29 +122,3 @@ class TestAssets(unittest.TestCase):
         serialisers.rbxl.parse(
             data, methods={serialisers.rbxl.method.convert_csg},
         )
-
-    def test_csgmdl2_hash(self) -> None:
-        '''
-        Tests that CSG v2 unions have a correct hashing algorithm
-        '''
-        url = 'https://github.com/krakow10/rbx_mesh/raw/refs/heads/master/meshes/5692112940_2.meshdata'
-        with urllib.request.urlopen(url) as data:
-            data_xor = xor_encrypt(data)
-            self.assertEqual(
-                first=create_hash(
-                    data_xor[0x32:0x32+0x3a*0x54],
-                    data_xor[0x0000133E:0x0000133E + 4*0x6c],
-                    data_xor[0x1a:0x2a]
-                ),
-                second=data_xor[0xa:0x2a],
-            )
-
-    def test_csgmdl5_load(self) -> None:
-        '''
-        Tests that CSG v3 unions can be parsed.
-        '''
-        url = 'https://github.com/krakow10/rbx_mesh/raw/refs/heads/master/meshes/13626979828.meshdata5'
-        with urllib.request.urlopen(url) as data:
-            serialisers.rbxl.parse(
-                data, methods={serialisers.rbxl.method.convert_csg},
-            )

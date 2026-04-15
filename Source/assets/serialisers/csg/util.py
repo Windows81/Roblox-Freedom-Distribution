@@ -29,7 +29,7 @@ def lcm_rand() -> collections.abc.Generator[int, Any, Never]:
 
 
 @functools.cache
-def xor_encrypt(code: bytes, offset: int = 0, key=OBFUSCATION_NOISE_CYCLE_XOR) -> bytes:
+def xor_encrypt(code: bytes, offset: int = 0, key: bytes = OBFUSCATION_NOISE_CYCLE_XOR) -> bytes:
     l = len(key)
     return bytes(
         c ^ key[i % l]
@@ -69,6 +69,78 @@ def create_hash(vertices: bytes, indices: bytes, salt: bytes = b'\0'*16) -> byte
     ])
 
     return hash_buffer
+
+
+def recalculate_hash(data: bytes) -> bytes:
+    data_xor = xor_encrypt(data)
+
+    hash_base = 0x0a
+    hash_size = 0x20
+
+    hash_salt_base = hash_base+0x10
+    hash_salt_size = 0x10
+    hash_salt = data_xor[
+        hash_salt_base:
+        hash_salt_base+hash_salt_size
+    ]
+
+    vertex_count_base = hash_base + hash_size
+    vertex_count_size = INT_SIZE
+    vertex_count = int.from_bytes(
+        bytes=data_xor[
+            vertex_count_base:
+            vertex_count_base + vertex_count_size
+        ],
+        byteorder='little',
+    )
+
+    vertex_stride_size_base = vertex_count_base + vertex_count_size
+    vertex_stride_size_size = INT_SIZE
+    vertex_stride_size = int.from_bytes(
+        bytes=data_xor[
+            vertex_stride_size_base:
+            vertex_stride_size_base + vertex_stride_size_size
+        ],
+        byteorder='little',
+    )
+    assert vertex_stride_size == 84
+
+    vertex_data_base = vertex_stride_size_base + vertex_stride_size_size
+    vertex_data_size = vertex_count * vertex_stride_size
+    vertex_data = data_xor[
+        vertex_data_base:
+        vertex_data_base + vertex_data_size
+    ]
+
+    index_count_base = vertex_data_base + vertex_data_size
+    index_count_size = INT_SIZE
+    index_count = int.from_bytes(
+        bytes=data_xor[
+            index_count_base:
+            index_count_base + index_count_size
+        ],
+        byteorder='little',
+    )
+
+    index_data_base = index_count_base + index_count_size
+    index_data_size = index_count * INT_SIZE
+    index_data = data_xor[
+        index_data_base:
+        index_data_base + index_data_size
+    ]
+
+    new_hash = create_hash(
+        vertices=vertex_data,
+        indices=index_data,
+        salt=hash_salt,
+    )
+
+    result = b''.join([
+        data[:hash_base],
+        xor_encrypt(new_hash, offset=hash_base),
+        data[hash_base+hash_size:],
+    ])
+    return result
 
 
 class CSG_HEADER(enum.Enum):

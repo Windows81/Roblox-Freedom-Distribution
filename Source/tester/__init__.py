@@ -4,9 +4,11 @@ from . import (
     test_asset,
     test_logger,
     test_server,
+    test_serialise,
 )
 
 NAMED_MODULES = {
+    'serialise': test_serialise,
     'asset': test_asset,
     'logger': test_logger,
     'server': test_server,  # This goes last.

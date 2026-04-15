@@ -284,7 +284,11 @@ def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
 
         xor_encrypt(b''.join([
             # Hash
-            create_hash(vertices=vertices_packed, indices=indices_packed),
+            create_hash(
+                vertices=vertices_packed,
+                indices=indices_packed,
+                salt=b'67'*8,
+            ),
 
             # Vertex count
             len(positions).to_bytes(4, byteorder='little'),
