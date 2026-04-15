@@ -892,13 +892,15 @@ price = 100
 
 #### `remote_data.asset_redirects`
 
-Resolves to [function](#functions) type `(int | str) -> asset_redirect`.
+Resolves to [function](#functions) type `(int | str) -> asset_redirect | None`.
 
-When an RFD server receives a request to load an asset by id, it does so from Roblox.com by default.
+When an RFD needs to load assets, it does so from _Roblox.com_ by default.
 
 However, entries in [`asset_redirects`](#remote_dataasset_redirects) override that default.
 
 The following examples notate the structure into the [dict mode](#dict-mode) syntax:
+
+---
 
 Through the `forward_url` field, clients are automatically redirected to a new URL to load any assets.
 
@@ -929,7 +931,33 @@ raw_data = '\0'
 
 ---
 
-This script (in [Python mode](#python-mode)) should work. It redirects asset iden strings starting wtih `time_music_` to static files on the internet.
+Asset redirects can also be defined as a function.
+
+The function should return the table with the appropriate fields, but also choose to return `None`.
+
+If `None` is returned, RFD will fall back to its default mechanism of loading assets.
+
+This script (in [Python mode](#python-mode)) loads Rōblox asset data from a third-party fetcher. The data is then serialised by RFD's built-in [serialiser suite](./Source/assets/serialisers/) to improve compatibility with RFD's systems.
+
+```toml
+remote_data.asset_redirects_call_mode = "python"
+remote_data.asset_redirects = '''
+import assets.serialisers
+import requests
+
+def f(asset_iden):
+    if not isinstance(asset_iden, int):
+        return
+    headers = {'User-Agent': 'Roblox/WinInet'}
+    data = requests.get("https://pekora.zip/asset?id=%s" % str(asset_iden), headers=headers).content
+    data, _changed = assets.serialisers.parse(data)
+    return {
+        "raw_data": data,
+    }
+'''
+```
+
+This script (also in [Python mode](#python-mode)) should work. It redirects asset iden strings starting wtih `time_music_` to static files on the internet.
 
 ```toml
 remote_data.asset_redirects_call_mode = "python"
@@ -942,24 +970,6 @@ def f(asset_iden):
             "forward_url": "https://github.com/Windows81/Time-Is-Musical/blob/main/hour_%02d.wav" % (h % 24)
         }
     return None
-'''
-```
-
-This script (also in [Python mode](#python-mode)) loads Rōblox asset data from a third-party fetcher. The data is then serialised by RFD's built-in [serialiser suite](./Source/assets/serialisers/) to improve compatibility with RFD's systems.
-
-```toml
-remote_data.asset_redirects_call_mode = "python"
-remote_data.asset_redirects = '''
-import assets.serialisers
-import requests
-
-def f(asset_iden):
-    headers = {'User-Agent': 'Roblox/WinInet'}
-    data = requests.get("https://pekora.zip/asset?id=%s" % str(asset_iden), headers=headers).content
-    data, _changed = assets.serialisers.parse(data)
-    return {
-        "raw_data": data,
-    }
 '''
 ```
 

@@ -209,9 +209,18 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         }
         return True
 
-    def handle_request(self) -> None:
-        should_print_exception = True
+    def handle_error(self) -> None:
+        self.server.logger.log(
+            '\n\n'.join([
+                self.url,
+                self.headers.as_string(),
+                traceback.format_exc(),
+            ]),
+            context=logger.log_context.WEB_SERVER,
+            is_error=True,
+        )
 
+    def handle_request(self) -> None:
         try:
             if self.__open_from_static():
                 return
@@ -221,18 +230,13 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
             return
 
         except ssl.SSLEOFError:
-            should_print_exception = False
+            pass
         except ConnectionResetError:
-            should_print_exception = False
+            pass
         except ConnectionAbortedError:
-            should_print_exception = False
-
-        if should_print_exception:
-            self.server.logger.log(
-                traceback.format_exc().encode('utf-8'),
-                context=logger.log_context.WEB_SERVER,
-                is_error=True,
-            )
+            pass
+        except Exception:
+            self.handle_error()
 
     def do_GET(self) -> None: return self.handle_request()
     def do_POST(self) -> None: return self.handle_request()
@@ -309,8 +313,8 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     @override
     def log_message(self, format, *args) -> None:
         if not self.is_valid_request:
-
             return
+
         log_filter = self.server.logger
         log_filter.log(
             (

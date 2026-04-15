@@ -311,7 +311,7 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/marketplace/productinfo')
 def _(self: web_server_handler) -> bool:
-    asset_id = int(self.query['assetId'])
+    asset_id = int(self.query.get('assetId', self.query.get('assetid', 0)))
 
     gamepasses = self.game_config.remote_data.gamepasses
     metadata = self.game_config.server_core.metadata

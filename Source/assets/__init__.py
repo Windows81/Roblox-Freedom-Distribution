@@ -152,7 +152,7 @@ class asseter:
             return thumbnail.load_asset(asset_id)
         return None
 
-    def _load_redir_asset(self, asset_id: int | str, redirect: asset_redirect) -> returns.base_type:
+    def _load_redir_asset(self, asset_id: int | str, redirect: asset_redirect) -> returns.base_type | None:
         asset_path = self.get_asset_path(asset_id)
         local_data = self._load_file(asset_path)
         if local_data is not None:
@@ -181,7 +181,11 @@ class asseter:
     def _fetch_asset(self, asset_id: int | str) -> returns.base_type:
         redirect_info = self.redirect_func(asset_id)
         if redirect_info is not None:
-            return self._load_redir_asset(asset_id=asset_id, redirect=redirect_info)
+            redir = self._load_redir_asset(
+                asset_id=asset_id, redirect=redirect_info,
+            )
+            if redir is not None:
+                return redir
 
         if isinstance(asset_id, str):
             remote_data = self._load_asset_str(asset_id)
