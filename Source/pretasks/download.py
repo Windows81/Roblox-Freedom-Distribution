@@ -4,6 +4,7 @@ import urllib.request
 import shutil
 import io
 import os
+import ssl
 
 # Third-party imports
 import tqdm_vendored as tqdm
@@ -28,7 +29,8 @@ def get_remote_link(
 
 
 def download(remote_link: str, quiet: bool = False) -> io.BytesIO:
-    with urllib.request.urlopen(remote_link) as response:
+    ctx = ssl._create_unverified_context()
+    with urllib.request.urlopen(remote_link, context=ctx) as response:
         if response.status != 200:
             raise Exception(
                 "Failed to download: HTTP Status %d" %
