@@ -7,10 +7,13 @@ import dataclasses
 import functools
 import os
 import shutil
+import ssl
 
 # Internal or local application imports
 import util.const
 from . import material, queue, returns, serialisers, extractor, thumbnail
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 
 @dataclasses.dataclass
