@@ -47,3 +47,17 @@ class TestSerialiser(unittest.TestCase):
         )
 
         self.assertTrue(result.startswith(CSG_HEADER.MDL2.value))
+
+    def test_csgphs8_load(self) -> None:
+        '''
+        Tests that CSG v3 unions can be parsed.
+        '''
+        url = 'https://github.com/krakow10/rbx_mesh/raw/refs/heads/master/meshes/13626979828.meshdata5'
+        with urllib.request.urlopen(url) as response:
+            data = response.read()
+
+        (result, _changed) = serialisers.parse(
+            data, methods={serialisers.method.csg},
+        )
+
+        self.assertTrue(result.startswith(CSG_HEADER.MDL2.value))

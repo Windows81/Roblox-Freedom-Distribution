@@ -58,6 +58,7 @@ def _(self: web_server_handler) -> bool:
 
     funds = self.server.storage.funds.check(user_id_num)
     self.send_json({
+        "Roles": ["Soothsayer", "BetaTester"],
         "UserId": user_id_num,
         "RobuxBalance": funds or 0,
     })

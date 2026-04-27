@@ -13,19 +13,17 @@ def bulk_convert(splits: list[bytes]) -> list[bytes]:
 
 
 def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _logic.chunk_data_type | None:
-    if isinstance(chunk_data, _logic.chunk_data_type_sstr):
-        chunk_data.strings = bulk_convert(chunk_data.strings)
-        return chunk_data
+    if not isinstance(chunk_data, _logic.chunk_data_type_prop):
+        return
 
-    elif isinstance(chunk_data, _logic.chunk_data_type_prop):
-        if not chunk_data.prop_name.startswith(b'MeshData'):
-            return
+    if not chunk_data.prop_name.startswith(b'MeshData'):
+        return
 
-        if chunk_data.prop_type == 0x1c:
-            return
+    if chunk_data.prop_type == 0x1c:
+        return
 
-        splits = _logic.split_prop_strings(chunk_data.prop_values)
-        processed_splits = bulk_convert(splits)
-        chunk_data.prop_values = _logic.join_prop_strings(processed_splits)
+    splits = _logic.split_prop_strings(chunk_data.prop_values)
+    processed_splits = bulk_convert(splits)
+    chunk_data.prop_values = _logic.join_prop_strings(processed_splits)
 
-        return chunk_data
+    return chunk_data

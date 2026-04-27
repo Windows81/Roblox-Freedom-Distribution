@@ -37,11 +37,6 @@ def xor_encrypt(code: bytes, offset: int = 0, key: bytes = OBFUSCATION_NOISE_CYC
     )
 
 
-@functools.cache
-def get_header(prefix: bytes, version: int) -> bytes:
-    return prefix + version.to_bytes(length=INT_SIZE, byteorder='little')
-
-
 def create_hash(vertices: bytes, indices: bytes, salt: bytes = b'\0'*16) -> bytes:
     assert len(salt) == 16
 
@@ -144,10 +139,11 @@ def recalculate_hash(data: bytes) -> bytes:
 
 
 class CSG_HEADER(enum.Enum):
-    MDL2 = xor_encrypt(get_header(b'CSGMDL', 2))
-    MDL4 = xor_encrypt(get_header(b'CSGMDL', 4))
-    MDL5 = xor_encrypt(get_header(b'CSGMDL', 5))
-    PHS5 = get_header(b'CSGPHS', 5)
-    PHS6 = get_header(b'CSGPHS', 6)
-    PHS7 = get_header(b'CSGPHS', 7)
-    PHS8 = get_header(b'CSGPHS', 8)
+    MDL2 = xor_encrypt(b'CSGMDL\x02\x00\x00\x00')
+    MDL4 = xor_encrypt(b'CSGMDL\x04\x00\x00\x00')
+    MDL5 = xor_encrypt(b'CSGMDL\x05\x00\x00\x00')
+    PHS3 = b'CSGPHS\x03\x00\x00\x00'
+    PHS5 = b'CSGPHS\x05\x00\x00\x00'
+    PHS6 = b'CSGPHS\x06\x00\x00\x00'
+    PHS7 = b'CSGPHS\x07\x00\x00\x00'
+    PHS8 = b'CSGPHS\x08\x00\x00\x00'

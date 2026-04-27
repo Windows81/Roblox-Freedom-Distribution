@@ -10,6 +10,8 @@ import itertools
 import struct
 import io
 
+from assets.serialisers.csg import util
+
 
 def wrap_number(x: float, min_val: float, max_val: float) -> float:
     range_val = max_val - min_val
@@ -185,8 +187,8 @@ def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
     stream = io.BytesIO(csgmdl_buffer)
 
     # Define the header and check if it matches the expected value
-    HEADER = b'\x15\x7d\x29\x15\x75\x6c\x35\x04\x34\x69'
-    assert stream.read(10) == HEADER, "Buffer is not CSGMDLV5"
+    header = stream.read(10)
+    assert header == util.CSG_HEADER.MDL5.value, "Buffer is not CSGMDLV5"
 
     # Reads three floats (12 bytes).
     positions = read_chunks(stream, 3*4)
