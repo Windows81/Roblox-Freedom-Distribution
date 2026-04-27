@@ -3,7 +3,6 @@ import hashlib
 from typing import Callable, override
 import dataclasses
 import lz4.block
-import pyzstd
 import io
 
 HEADER_SIGNATURE = b'<roblox!\x89\xff\r\n\x1a\n'
@@ -272,6 +271,7 @@ class rbxl_parser:
         if compressed_size == 0:
             chunk_data_bytes = self.read_stream.read(uncompressed_size)
         else:
+            import pyzstd
             compressed_chunk_data = self.read_stream.read(compressed_size)
             if compressed_chunk_data.startswith(b'\x28\xB5\x2F\xFD'):
                 chunk_data_bytes = pyzstd.decompress(compressed_chunk_data)
