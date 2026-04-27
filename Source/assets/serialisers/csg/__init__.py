@@ -13,7 +13,7 @@ def replace_header(data: bytes, fr_header: bytes, to_header: bytes) -> bytes:
 
     new_version_header = bytes(
         v ^ fr ^ to
-        for v, fr, to in zip[tuple[int, int, int]](
+        for v, fr, to in zip(
             data[:data_start],
             fr_header,
             to_header,

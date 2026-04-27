@@ -15,19 +15,10 @@ def process(base_url: str) -> int:
             l = len(base_url_bytes)
             with open(full_path, 'rb') as f:
 
-                # The start of the URL is at address 0xC.  Seeks 0x4 more bytes ahead to skip `http` string.
-                f.seek(0xC + 0x4)
+                # The start of the URL is at address 0xC.
+                f.seek(0xC)
 
-                # Quickly seeks to the hostname, accounting for whether the URL begins with `http://` or `https://`.
-                match f.read(0x2):
-                    case b's:':
-                        f.seek(2, os.SEEK_CUR)
-                    case b':/':
-                        f.seek(3, os.SEEK_CUR)
-                    case _:
-                        return False
-                b = f.read(l)
-            return b == base_url_bytes
+                return f.read(l) == base_url_bytes
 
         # This error rarely happens when being called by `remove_hosts`.
         except FileNotFoundError:

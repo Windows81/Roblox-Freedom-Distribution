@@ -19,7 +19,8 @@ def replace(parser: _logic.rbxl_parser, chunk_data: _logic.chunk_data_type) -> _
     if not chunk_data.prop_name.startswith(b'MeshData'):
         return
 
-    if chunk_data.prop_type == 0x1c:
+    if chunk_data.prop_type == 0x1C:
+        # Skips `SharedString` types because they don't fit the format for `split_prop_strings`.
         return
 
     splits = _logic.split_prop_strings(chunk_data.prop_values)

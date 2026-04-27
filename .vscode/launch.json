@@ -82,6 +82,7 @@
 				"studio",
 				"--config",
 				"${file}",
+				"--clear_temp_cache",
 			],
 			"console": "integratedTerminal",
 			"justMyCode": true
