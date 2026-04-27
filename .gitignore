@@ -15,6 +15,7 @@ RFD
 **/*.exe
 
 GlobalBasicSettings_13.xml
+GlobalSettings_13.xml
 AnalysticsSettings.xml
 frm.cfg
 

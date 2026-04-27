@@ -13,7 +13,7 @@ def transform_to_id_num(asset_id: str) -> int:
 def split_asset_str(asset_id: str) -> None | tuple[str, ...]:
     asset_sub = asset_id[len(const.ID_PREFIX):]
 
-    # Example: `rbxmtl-wood-diffuse.dds`, `rbxmtl-studs.ds`
+    # Example: `rbxmtl-wood-diffuse.dds`, `rbxmtl-studs.dds`
     sub_pieces = asset_sub.lower().split('-')
     if len(sub_pieces) > 2:
         return None
