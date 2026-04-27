@@ -7,5 +7,5 @@ lz4~=4.4.4
 tqdm_vendored @ git+https://github.com/Windows81/Vendored-Tqdm
 sqlite-worker @ git+https://github.com/Windows81/SQLite-Worker
 pywin32==310 ; sys_platform == 'win32'
-zstandard=0.25.0
-dracopy=2.0.0
+zstandard~=0.25.0
+dracopy~=2.0.0
