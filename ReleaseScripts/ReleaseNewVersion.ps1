@@ -116,7 +116,6 @@ switch ($mode) {
 	'1' {
 		RetrieveInput
 		UpdateConstReleaseVersion @("GIT_RELEASE_VERSION") $false
-		MarkLatestVersion
 	}
 	'2' {
 		RetrieveInput
