@@ -28,7 +28,7 @@ def _(self: web_server_handler) -> bool:
         self.send_error(
             403,
             "Server hosters don't tend to like exposing their place files.  " +
-            "Ask them if they'd be willing to lend this one to you.",
+            "Ask yours if willing to lend this one to you.",
         )
         return True
 
@@ -59,8 +59,10 @@ def _(self: web_server_handler) -> bool:
     self.send_json('true')
     return True
 
+
 @server_path('/Game/Tools/ThumbnailAsset.ashx')
-@server_path('/Thumbs/Asset.ashx') # we can pass this too since we're calling rbx api regardless
+# we can pass this too since we're calling rbx api regardless
+@server_path('/Thumbs/Asset.ashx')
 @server_path('/thumbs/asset.ashx')
 def _(self: web_server_handler) -> bool:
     asset_cache = self.game_config.asset_cache
@@ -68,7 +70,7 @@ def _(self: web_server_handler) -> bool:
     if asset_id is None:
         self.send_error(404)
         return True
-    
+
     asset = asset_cache.get_asset(
         f"{assets.const.THUMB_PREFIX}{asset_id}.png",
         bypass_blocklist=self.is_privileged,

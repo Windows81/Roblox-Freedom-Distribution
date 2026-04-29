@@ -5,12 +5,10 @@ https://github.com/Artifaqt/ROBLOX2016/blob/e0cfac59fea3a5b986843e65b0fda286e439
 https://github.com/krakow10/rbx_mesh/blob/master/src/mesh_data.rs#L242
 '''
 
-from .util import xor_encrypt, create_hash, CSG_HEADER
+from . import util
 import itertools
 import struct
 import io
-
-from assets.serialisers.csg import util
 
 
 def wrap_number(x: float, min_val: float, max_val: float) -> float:
@@ -21,7 +19,7 @@ def wrap_number(x: float, min_val: float, max_val: float) -> float:
     return wrapped + min_val
 
 
-def quantize(x: float, max_val=0x7f) -> float:
+def quantize(x: float, max_val=0x7F) -> float:
     return wrap_number(
         x - max_val,
         -max_val - 1,
@@ -91,11 +89,8 @@ def trim_indices(indices: list[int], range_markers: list[int]) -> list[int]:
 
 
 def read_chunks_vector3(stream: io.BytesIO) -> list[bytes]:
-    # Reads an unsigned short (2 bytes).
-    count = struct.unpack('<H', stream.read(2))[0]
-
-    # Reads an unsigned int (4 bytes).
-    data_len = struct.unpack('<I', stream.read(4))[0]
+    count = util.read_u16(stream)
+    data_len = util.read_u32(stream)
 
     result = list[bytes]()
     for _ in range(count):
@@ -104,17 +99,16 @@ def read_chunks_vector3(stream: io.BytesIO) -> list[bytes]:
             'fff',
 
             # Quantises to 4 bits and pack as float.
-            quantize(struct.unpack('<h', stream.read(2))[0], max_val=15),
-            quantize(struct.unpack('<h', stream.read(2))[0], max_val=15),
-            quantize(struct.unpack('<h', stream.read(2))[0], max_val=15),
+            quantize(struct.unpack('<h', stream.read(2))[0], max_val=0xF),
+            quantize(struct.unpack('<h', stream.read(2))[0], max_val=0xF),
+            quantize(struct.unpack('<h', stream.read(2))[0], max_val=0xF),
         ))
 
     return result
 
 
 def read_chunks(stream: io.BytesIO, individual_size: int) -> list[bytes]:
-    # Reads an unsigned short (2 bytes).
-    count = struct.unpack('<H', stream.read(2))[0]
+    count = util.read_u16(stream)
 
     result = list[bytes]()
     for _ in range(count):
@@ -124,8 +118,7 @@ def read_chunks(stream: io.BytesIO, individual_size: int) -> list[bytes]:
 
 
 def read_positions(stream: io.BytesIO) -> list[bytes]:
-    # Reads an unsigned short (2 bytes).
-    count = struct.unpack('<H', stream.read(2))[0]
+    count = util.read_u16(stream)
 
     result = list[bytes]()
     for _ in range(count):
@@ -138,8 +131,7 @@ def read_positions(stream: io.BytesIO) -> list[bytes]:
 
 
 def read_normal_idens(stream: io.BytesIO) -> list[bytes]:
-    # Reads an unsigned short (2 bytes).
-    count = struct.unpack('<H', stream.read(2))[0]
+    count = util.read_u16(stream)
 
     result = list[bytes]()
     for _ in range(count):
@@ -152,46 +144,37 @@ def read_normal_idens(stream: io.BytesIO) -> list[bytes]:
 
 
 def read_vertices(stream: io.BytesIO) -> tuple[list[int], int]:
-    # Reads an unsigned int (4 bytes).
-    vertex_count = struct.unpack('<I', stream.read(4))[0]
-
-    # Reads an unsigned int (4 bytes).
-    vertex_data_len = struct.unpack('<I', stream.read(4))[0]
+    vertex_count = util.read_u32(stream)
+    vertex_data_len = util.read_u32(stream)
 
     vertex_data = list[int]()
     for _ in range(vertex_data_len):
-        vertex_data.append(
-            # Reads a single byte (1 byte).
-            struct.unpack('<B', stream.read(1))[0],
-        )
+        vertex_data.append(util.read_u8(stream))
 
     return (vertex_data, vertex_count)
 
 
 def read_range_markers(stream: io.BytesIO) -> list[int]:
     # Reads an unsigned char (1 byte).
-    n_range_markers = struct.unpack('<B', stream.read(1))[0]
+    n_range_markers = util.read_u8(stream)
 
     range_markers = list[int]()
     for _ in range(n_range_markers):
-        range_markers.append(
-            # Reads an unsigned int (4 bytes).
-            struct.unpack('<I', stream.read(4))[0],
-        )
+        range_markers.append(util.read_u32(stream))
 
     return range_markers
 
 
 def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
-    # Create a buffer stream for reading the data
+    # Creates a buffer stream for reading the data.
     stream = io.BytesIO(csgmdl_buffer)
 
-    # Define the header and check if it matches the expected value
+    # Defines the header and check if it matches the expected value.
     header = stream.read(10)
     assert header == util.CSG_HEADER.MDL5.value, "Buffer is not CSGMDLV5"
 
     # Reads three floats (12 bytes).
-    positions = read_chunks(stream, 3*4)
+    positions = read_chunks(stream, individual_size=3*4)
 
     normals = read_chunks_vector3(stream)
 
@@ -281,12 +264,12 @@ def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
     '''
     return b''.join([
 
-        # Skip re-encrypting header since the header is already encrypted.
-        CSG_HEADER.MDL2.value,
+        # Skips re-encrypting header since the header is already encrypted.
+        util.CSG_HEADER.MDL2.value,
 
-        xor_encrypt(b''.join([
+        util.xor_encrypt(b''.join([
             # Hash
-            create_hash(
+            util.create_hash(
                 vertices=vertices_packed,
                 indices=indices_packed,
                 salt=b'67'*8,
@@ -307,5 +290,5 @@ def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
             # Index data
             indices_packed,
 
-        ]), offset=len(CSG_HEADER.MDL2.value))
+        ]), offset=len(util.CSG_HEADER.MDL2.value))
     ])

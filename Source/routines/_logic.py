@@ -319,7 +319,7 @@ class bin_entry(popen_entry, loggable_entry):
                 log_filter=self.logger,
             )
         if self.clear_temp_cache:
-            clear_cache.process(self.web_host)
+            clear_cache.process(base_url=self.web_host)
         self.save_app_settings()
         self.make_aux_directories()
         self.update_fvars()

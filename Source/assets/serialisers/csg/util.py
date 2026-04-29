@@ -1,3 +1,4 @@
+import struct
 from typing import Any, Never
 import collections.abc
 import functools
@@ -147,3 +148,15 @@ class CSG_HEADER(enum.Enum):
     PHS6 = b'CSGPHS\x06\x00\x00\x00'
     PHS7 = b'CSGPHS\x07\x00\x00\x00'
     PHS8 = b'CSGPHS\x08\x00\x00\x00'
+
+
+def read_u8(stream) -> int:
+    return struct.unpack('<B', stream.read(1))[0]
+
+
+def read_u16(stream) -> int:
+    return struct.unpack('<H', stream.read(2))[0]
+
+
+def read_u32(stream) -> int:
+    return struct.unpack('<I', stream.read(4))[0]

@@ -27,7 +27,7 @@ class obj_type(logic.bin_entry):
     app_host: str = dataclasses.field(init=False)
 
     user_code: str | None
-    launch_delay: float = 0
+    launch_delay: float = 1
 
     @override
     def __post_init__(self) -> None:

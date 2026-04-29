@@ -56,11 +56,11 @@ def _(self: web_server_handler) -> bool:
     except TypeError:
         return True
 
-    funds = self.server.storage.funds.check(user_id_num)
+    funds = self.server.storage.funds.check(user_id_num) or 0
     self.send_json({
         "Roles": ["Soothsayer", "BetaTester"],
         "UserId": user_id_num,
-        "RobuxBalance": funds or 0,
+        "RobuxBalance": funds,
     })
     return True
 

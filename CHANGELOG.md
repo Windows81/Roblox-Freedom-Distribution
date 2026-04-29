@@ -11,7 +11,7 @@
 - feat: add GameConfig option `server_core.retrieve_membership_type(id_num, user_code)`
 - feat: add `/Game/Badge/HasBadge.ashx` and `/assets/award-badge` endpoints
 - feat: support for modern _CSGMDL5_ unions
-- fix: disable SSL certificate verification to work around PyInstaller incompatiblity #160
+- [fix](https://github.com/Windows81/Roblox-Freedom-Distribution/pull/160): disable SSL certificate verification to work around PyInstaller incompatiblity
 - fix: route `/Asset` and `/Asset/` to existing `/v1/asset`
 - fix: persistence `target` not existing on route `/persistence/set`
 - fix: repaired `--clear_temp_cache` command flag
