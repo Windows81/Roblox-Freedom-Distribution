@@ -13,7 +13,6 @@ from config_type.types import structs, wrappers, callable
 from web_server._logic import web_server_handler, server_path
 
 
-
 def decompress_gzip(data, file_handle) -> None:
     """
     Decompress a gzip compressed string into a file handle.
@@ -35,7 +34,7 @@ def decompress_gzip(data, file_handle) -> None:
         crc, length = struct.unpack("<II", do.unused_data[:8])
         if crc != zlib.crc32(decompressed):
             raise gzip.BadGzipFile("CRC check failed")
-        if length != (len(decompressed) & 0xffffffff):
+        if length != (len(decompressed) & 0xFFFFFFFF):
             raise gzip.BadGzipFile("Incorrect length of data produced")
         file_handle.write(decompressed)
         data = do.unused_data[8:].lstrip(b"\x00")

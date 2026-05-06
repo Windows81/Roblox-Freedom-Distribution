@@ -23,11 +23,11 @@ class TestSerialiser(unittest.TestCase):
         data_xor = xor_encrypt(data)
         self.assertEqual(
             first=create_hash(
-                data_xor[0x32:0x32+0x3a*0x54],
-                data_xor[0x0000133E:0x0000133E + 4*0x6c],
-                data_xor[0x1a:0x2a]
+                data_xor[0x32:0x32+0x3A*0x54],
+                data_xor[0x0000133E:0x0000133E + 4*0x6C],
+                data_xor[0x1A:0x2A]
             ),
-            second=data_xor[0xa:0x2a],
+            second=data_xor[0xA:0x2A],
         )
         self.assertEqual(
             first=recalculate_hash(data),

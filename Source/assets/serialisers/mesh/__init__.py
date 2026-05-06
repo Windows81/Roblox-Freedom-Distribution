@@ -27,7 +27,7 @@ def parse(original_data: bytes) -> bytes | None:
     elif mesh_version == "4.01":
         return b''.join([
             b'version 4.00',
-            original_data[0xc:],
+            original_data[0xC:],
         ])
     '''
 

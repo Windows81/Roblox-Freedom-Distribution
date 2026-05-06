@@ -5,7 +5,7 @@ import struct
 import io
 
 
-# 40-byte magic header that prefixes a CSGPHS V6/V7 Mesh struct.
+# 40-byte magic header that prefixes a CSGPHS3, 6, or 7 mesh struct.
 _CSGPHS_MESH_MAGIC = (
     b"\x10\0\0\0" + b"\0" * 16 +
     b"\x10\0\0\0" + b"\0" * 12 +
@@ -24,6 +24,28 @@ class State:
 class Edgebreaker:
     vertices: list[bytes]
     triangles: list[tuple[int, int, int]]
+
+
+def read_bit(clers_bytes: bytes, total_bits: int):
+    for byte_idx in range(total_bits // 8):
+        word = clers_bytes[byte_idx]
+        for bit_idx in range(8):
+
+            shift = 7 - bit_idx
+            yield (word >> shift) & 0b1
+
+
+def get_next_edge(c: int) -> int:
+    if c % 3 == 2:
+        return c - 2
+    return c + 1
+
+
+def get_prev_edge(c: int) -> int:
+    if c % 3 == 0:
+        return c + 2
+    return c - 1
+
 
 # ---------------------------------------------------------------------------
 # Edgebreaker decoder ported from clv2's Mesh Lab plugin (CSGPHS8 module).
@@ -48,38 +70,8 @@ def _edgebreaker_decode(
     here for python; convert at emit time.
     '''
     hulls = []
-    bit_pos = 0
-    total_words = (total_bits + 31) // 32
-
-    def read_bit() -> int:
-        nonlocal bit_pos
-        if bit_pos >= total_bits:
-            raise ValueError("Edgebreaker: read past end")
-        word_idx = bit_pos // 0x20
-        bit_in_word = bit_pos % 0x20
-
-        bits_in_word = 32
-        if word_idx == total_words - 1:
-            bits_in_word = total_bits % 0x20
-            if bits_in_word == 0:
-                bits_in_word = 0x20
-
-        shift = bits_in_word - bit_in_word - 1
-        word = struct.unpack_from("<I", clers_bytes, word_idx * 4)[0]
-        bit_pos += 1
-        return (word >> shift) & 1
-
+    bitreader = read_bit(clers_bytes, total_bits)
     global_vert_offset = 0
-
-    def get_next_edge(c):
-        if c % 3 == 2:
-            return c - 2
-        return c + 1
-
-    def get_prev_edge(c):
-        if c % 3 == 0:
-            return c + 2
-        return c - 1
 
     state = State()
 
@@ -172,7 +164,7 @@ def _edgebreaker_decode(
             idx[tri_base_edge + 2] = idx[get_next_edge(cursor_edge)]
             cursor_edge = tri_base_edge + 1
 
-            b1 = read_bit()
+            b1 = next(bitreader)
             if b1 == 0:  # C
                 state.vertex_counter += 1
                 idx[tri_base_edge] = state.vertex_counter
@@ -180,8 +172,8 @@ def _edgebreaker_decode(
                 adj[next_edge] = -1
                 continue
 
-            b2 = read_bit()
-            b3 = read_bit()
+            b2 = next(bitreader)
+            b3 = next(bitreader)
             op = (
                 (b1 * 4) +
                 (b2 * 2) +
@@ -234,11 +226,11 @@ def _edgebreaker_decode(
         hull_verts = []
         hull_tris = []
         max_local_idx = 0
-        for t in range(state.current_tri_idx + 1):
+        for t in range(state.current_tri_idx):
             base = 3 * t
-            i0 = state.index[base + 1]
-            i1 = state.index[base + 2]
-            i2 = state.index[base + 3]
+            i0 = state.index[base + 0]
+            i1 = state.index[base + 1]
+            i2 = state.index[base + 2]
             if i0 == i1:
                 continue
             if i0 == i2:
