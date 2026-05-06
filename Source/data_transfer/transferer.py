@@ -54,7 +54,15 @@ class obj_type:
             val = dataclasses.asdict(item)
             result[item.guid] = val
         except queue.Empty:
-            pass
+            return result
+
+        while True:
+            try:
+                item = self.input_queue.get_nowait()
+            except queue.Empty:
+                break
+            val = dataclasses.asdict(item)
+            result[item.guid] = val
 
         return result
 

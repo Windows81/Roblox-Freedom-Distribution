@@ -295,13 +295,14 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         return func(self)
 
     def __open_from_regex(self) -> bool:
+        version = self.game_config.game_setup.roblox_version
         for key, func in SERVER_FUNCS.items():
             if key.mode != func_mode.REGEX:
                 continue
+            if key.version != version:
+                continue
             match = re.fullmatch(key.path, self.url_split.path)
             if match is None:
-                continue
-            if key.version != self.game_config.game_setup.roblox_version:
                 continue
 
             try:

@@ -7,6 +7,8 @@ import gzip
 import os
 import re
 
+_HTTP_POOL = urllib3.PoolManager()
+
 
 def _get_cookie_from_system() -> str | None:
     '''
@@ -99,8 +101,7 @@ def download_item(url: str, cookie: str | None = None) -> bytes | None:
         headers["Roblox-Browser-Asset-Request"] = "false"
 
     try:
-        http = urllib3.PoolManager()
-        response = http.request('GET', url, headers=headers)
+        response = _HTTP_POOL.request('GET', url, headers=headers)
         if response.status != 200:
             return None
         return response.data
