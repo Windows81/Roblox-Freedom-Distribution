@@ -104,48 +104,44 @@ def zip_boundary(cursor_edge: int, adjacency_list: list[int], index_list: list[i
 
 
 class CLERS(enum.Enum):
-    C = 0
-    L = 1
-    E = 2
-    R = 3
-    S = 4
+    C = 0b0
+    L = 0b110
+    E = 0b111
+    R = 0b101
+    S = 0b100
 
 
 def decode_clers_symbols(bitreader: Iterator[int]) -> Iterator[CLERS]:
-    try:
-        # Infinitely loops if bad format.
-        while True:
-            b1 = next(bitreader)
-            if b1 == 0:
-                yield CLERS.C
-                continue
+    # Infinitely loops if bad format.
+    while (b1 := next(bitreader, None)) is not None:
 
-            b2 = next(bitreader)
-            b3 = next(bitreader)
-            op = (
-                (b1 * 0b100) +
-                (b2 * 0b010) +
-                (b3 * 0b001)
-            )
+        if b1 == 0:
+            yield CLERS.C
+            continue
 
-            if op == 0b101:
-                yield CLERS.L
-                continue
+        b2 = next(bitreader)
+        b3 = next(bitreader)
+        op = (
+            (b1 * 0b100) +
+            (b2 * 0b010) +
+            (b3 * 0b001)
+        )
 
-            if op == 0b111:
-                yield CLERS.E
-                continue
+        if op == 0b110:
+            yield CLERS.L
+            continue
 
-            if op == 0b110:
-                yield CLERS.R
-                continue
+        if op == 0b111:
+            yield CLERS.E
+            continue
 
-            if op == 0b100:
-                yield CLERS.S
-                continue
+        if op == 0b101:
+            yield CLERS.R
+            continue
 
-    except StopIteration:
-        return
+        if op == 0b100:
+            yield CLERS.S
+            continue
 
 
 def _decode_triangles(
@@ -251,6 +247,17 @@ def _edgebreaker_decode(
     clers_data = list(clers_reader)
     clers_iter = iter(clers_data)
     current_triangle = 0
+    enum_counts = {
+        e: sum(1 for v in clers_data if v == e)
+        for e in CLERS
+    }
+    print([
+        (geom_type, e1, e2)
+        for e1, c1 in enum_counts.items()
+        for e2, c2 in enum_counts.items()
+        if e1 != e2 and (c1 - c2 == hull_count or c1 == c2)
+    ])
+
     vertex_counter = 2
     for _h in range(hull_count):
         # Middle edge (1) left as SENTINEL_UNINIT so the decoder starts walking from it.
