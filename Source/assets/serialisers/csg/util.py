@@ -160,3 +160,7 @@ def read_u16(stream) -> int:
 
 def read_u32(stream) -> int:
     return struct.unpack('<I', stream.read(4))[0]
+
+
+def read_f32(stream) -> float:
+    return struct.unpack('<f', stream.read(4))[0]
