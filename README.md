@@ -343,7 +343,7 @@ To load assets directly from Roblox.com, our software needs to provide a valid `
 1. _If you are on a Windows and play Roblox.com_, RFD will find and decrypt the contents of your `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat` file - and there are no further actions needed to start loading assets.
 2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
 
-**Freedom Distribution will NOT save/upload your token anywhere and will not use it outside roblox assetdelivery services.** The cookie handling can be found in the Source "extractor.py" file.
+**RFD does not save or upload your cookie token anywhere.** That token is used solely for Rōblox's _assetdelivery_ services. The cookie handling can be found in [`extractor.py`](./Source/assets/extractor.py).
 
 ### Setting Up Enviroment Variables
 
@@ -372,7 +372,7 @@ To configure place-iden spoofing, with the `12345` being replaced by your desire
 $env:rfdplaceid = '12345'
 ```
 
-**SIDENOTE: The way this commands setup enviroment tables will not persist once you close the PowerShell**
+Note that in PowerShell, the way this command prepares enviroment variables will not persist once you close the PowerShell.
 
 ### Local Asset Persistence
 
@@ -401,11 +401,12 @@ RFD is designed to accommodate current-day `rbxl` (_not_ `rbxlx`) files. To acco
 Objects transformed include:
 
 1. Fonts which existed in their respective versions, and
-1. Meshes encoded with versions 4 or 5 _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
+1. CSG data build using post-2021 formats (such as CSGv3)
+1. Meshes encoded with versions 4.01+ _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
 
 Some modern programs do weird things to client-sided scripts. They use `Script` classs objects, but with a [`RunContext`](https://robloxapi.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://robloxapi.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
 
-And, **union operations done in current-day Studio (CSG v3) are not supported**. This is because CSG v2 support was completely removed in late 2022.
+Parsing union operations done in current-day Studio still need work. This is because CSG v2 support was completely removed in late 2022.
 
 If you need any help, please shoot me an issue on GitHub or a message to an account with some form of 'VisualPlugin' elsewhere.
 
@@ -454,6 +455,8 @@ The [config data](#gameconfigtoml-structure) can also be piped from `stdin`.
 
 This specification is current as of 0.66.0. Some options might be different in future versions.
 
+I like using the `toml` format because it's easier to [write multi-line code snippets](#functions).
+
 Optionally, `toml` files can be expressed in `json`. The following basic configurations work the same way:
 
 ```json
@@ -477,17 +480,17 @@ Function-type options are very flexible in RFD. _Way_ too flexible if you're ask
 
 Look out for `{OPTION}_call_mode`, where `{OPTION}` is the name of the option you're modifying. If `{OPTION}_call_mode` is not specified, RFD tries to assume on its own.
 
-Following is a hypothetical option called `skibidi_plugin`. The examples all do the same thing.
+Following is a hypothetical option called `bombardiro_crocodilo`. The examples all do the same thing.
 
 ##### Python Mode
 
 ```toml
-skibidi_plugin_call_mode = "python"
-skibidi_plugin = '''
+bombardiro_crocodilo_call_mode = "python"
+bombardiro_crocodilo = '''
 def f(int_val: int, bool_val: bool):
     if int_val == 666:
         return {
-            "evil": 666,
+            "lirilì": 666,
         }
     elif bool_val == True:
         return {
@@ -498,7 +501,7 @@ def f(int_val: int, bool_val: bool):
             "uwu": 3,
         }
     return {
-        "camera_man": 1,
+        "tralalero": 1,
         "ohio": 2,
     }
 '''
@@ -515,18 +518,18 @@ In Python mode, RFD assigns global constants for your convenience.
 ##### Dict Mode
 
 ```toml
-skibidi_plugin_call_mode = "dict"
-skibidi_plugin.666 = {
-    "evil": 666,
+bombardiro_crocodilo_call_mode = "dict"
+bombardiro_crocodilo.666 = {
+    "lirilì": 666,
 }
-skibidi_plugin.True = {
+bombardiro_crocodilo.True = {
     "owo": 7,
 }
-skibidi_plugin.420-False = {
+bombardiro_crocodilo.420-False = {
     "uwu": 3,
 }
-skibidi_plugin.default = {
-    "camera_man": 1,
+bombardiro_crocodilo.default = {
+    "tralalero": 1,
     "ohio": 2,
 }
 ```
@@ -540,12 +543,12 @@ Dict keys are access in the following order of precedence:
 ##### Lua Mode (unstable)
 
 ```toml
-skibidi_plugin_call_mode = "lua"
-skibidi_plugin = '''
+bombardiro_crocodilo_call_mode = "lua"
+bombardiro_crocodilo = '''
 function(int_val, bool_val)
     if int_val == 666 then
         return {
-            evil = 666,
+            lirilì = 666,
         }
     elseif bool_val == true then
         return {
@@ -557,7 +560,7 @@ function(int_val, bool_val)
         }
     end
     return {
-        camera_man = 1,
+        tralalero = 1,
         ohio = 2,
     }
 end
