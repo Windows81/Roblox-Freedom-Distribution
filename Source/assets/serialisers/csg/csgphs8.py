@@ -119,8 +119,14 @@ def decode_clers_symbols(bitreader: Iterator[int]) -> Iterator[CLERS]:
             yield CLERS.C
             continue
 
-        b2 = next(bitreader)
-        b3 = next(bitreader)
+        b2 = next(bitreader, None)
+        if b2 is None:
+            return
+
+        b3 = next(bitreader, None)
+        if b3 is None:
+            return
+
         op = (
             (b1 * 0b100) +
             (b2 * 0b010) +
