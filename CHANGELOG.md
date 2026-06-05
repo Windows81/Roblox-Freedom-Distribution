@@ -1,3 +1,8 @@
+# 0.66.4
+
+- feat: players can be held in loading screen until RCC first calls `/rfd/data-transfer`
+- feat(config): add `game_setup.ready_delay_sec` to delay clients further
+
 # 0.66.2
 
 - feat(beta): support for modern _CSGPHS8_ physics meshes

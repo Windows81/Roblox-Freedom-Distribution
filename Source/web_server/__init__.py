@@ -4,7 +4,7 @@ import web_server._logic as web_server_logic
 from .endpoints import _
 
 
-def make_server(
+def make_httpd(
     port: int,
     is_ssl: bool = True,
     *args,

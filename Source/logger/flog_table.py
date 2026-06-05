@@ -207,6 +207,7 @@ LOG_LEVEL_LIST = [
     "RoundRobinRunThrough",
     "Tasks",
     "Warning",
+    "RenderInstancedCluster2",
 ]
 
 LOG_LEVEL_DICT = {

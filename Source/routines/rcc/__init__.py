@@ -250,11 +250,17 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         This is done in a separate thread to avoid blocking the main process from terminating RCC when necessary.
         '''
         stdout: IO[bytes] = self.popen_mains[0].stdout  # pyright: ignore[reportAssignmentType]
+        os.set_blocking(stdout.fileno(), False)
         assert stdout is not None
+        stream_data = bytearray()
         while True:
-            line = stdout.readline()
-            if not line:
-                break
+            stream_data.extend(stdout.read1())
+            try:
+                line_index = stream_data.index(b'\n') + 1
+            except ValueError:
+                continue
+            line = bytes(stream_data[:line_index])
+            del stream_data[:line_index]
             self.logger.log(
                 line.rstrip(b'\r\n'),
                 context=logger.log_context.RCC_SERVER,
@@ -264,12 +270,18 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
             # The `restart` and `kill` methods must take place in a new thread.
             # It waits for *this* thread to finish running.
-            if action == log_action.LogAction.RESTART:
-                threading.Thread(target=self.restart).start()
-                break
-            elif action == log_action.LogAction.TERMINATE:
-                threading.Thread(target=self.kill).start()
-                break
+            match action:
+                case log_action.LogAction.RESTART:
+                    threading.Thread(target=self.restart).start()
+                    break
+                case log_action.LogAction.TERMINATE:
+                    threading.Thread(target=self.kill).start()
+                    break
+                case log_action.LogAction.READY:
+                    # TODO: make RCC logging more speedy.
+                    pass
+                case log_action.LogAction.PROCEED:
+                    pass
 
         stdout.flush()
 
@@ -277,8 +289,9 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         self.init_popen(
             exe_path=self.get_versioned_path('RCCService.exe'),
             cmd_args=self.gen_cmd_args(),
-            stdin=subprocess.PIPE,
+            stdin=subprocess.DEVNULL,
             stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
         )
 
         pipe_thread = threading.Thread(

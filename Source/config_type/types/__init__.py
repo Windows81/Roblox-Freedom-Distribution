@@ -3,7 +3,7 @@ import dataclasses
 import functools
 
 # Typing imports
-from typing import Any, Callable, Union
+from typing import Any, Callable, Union  # pyright: ignore[reportDeprecated]
 
 # Internal or local application imports
 import util.versions
@@ -103,7 +103,7 @@ def _type_call_dataclass_as_dict(value, call_data: type_call_data) -> Callable[.
     '''
     fields = getattr(
         call_data.typ,
-        dataclasses._FIELDS,  # type: ignore[reportAttributeAccessIssue]
+        dataclasses._FIELDS,  # pyright: ignore[reportAttributeAccessIssue]
     )
     casted_values = {
         field_name: get_type_call(field.type)(

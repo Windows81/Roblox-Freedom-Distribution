@@ -16,11 +16,11 @@ from web_server._logic import web_server_handler, server_path
 def decompress_gzip(data, file_handle) -> None:
     """
     Decompress a gzip compressed string into a file handle.
-    Modified from `gzip.decompress` to write directly to disk.
+    Function body was modified from `gzip.decompress` to write directly to disk.
     """
     while True:
         fp = io.BytesIO(data)
-        if gzip._read_gzip_header(fp) is None:  # type: ignore
+        if gzip._read_gzip_header(fp) is None:
             return
         # Use a zlib raw deflate compressor
         do = zlib.decompressobj(wbits=-zlib.MAX_WBITS)
@@ -28,8 +28,7 @@ def decompress_gzip(data, file_handle) -> None:
         decompressed = do.decompress(data[fp.tell():])
         if not do.eof or len(do.unused_data) < 8:
             raise EOFError(
-                "Compressed file ended before the end-of-stream "
-                "marker was reached"
+                "Compressed file ended before the end-of-stream marker was reached",
             )
         crc, length = struct.unpack("<II", do.unused_data[:8])
         if crc != zlib.crc32(decompressed):

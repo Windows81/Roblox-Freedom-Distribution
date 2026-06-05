@@ -39,8 +39,8 @@ def subparse(
         '--web_port', '-wp', '-p',
         type=int,
         nargs='?',
-        default=None,
-        help='Port number for the locally-hosted web server to run from.',
+        default=20059,
+        help='Port number for which to run the locally-hosted web server.',
     )
 
     subparser.add_argument(
@@ -70,7 +70,7 @@ def _(
     else:
         game_config = config.get_cached_config(args_ns.config_path)
 
-    web_port: int = args_ns.web_port or 20059
+    web_port: int = args_ns.web_port
     log_filter = dataclasses.replace(
         logger.PRINT_REASONABLE,
         other_logs=not args_ns.quiet,

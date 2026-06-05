@@ -343,7 +343,7 @@ To load assets directly from Roblox.com, our software needs to provide a valid `
 1. _If you are on a Windows and play Roblox.com_, RFD will find and decrypt the contents of your `%LocalAppData%\Roblox\LocalStorage\RobloxCookies.dat` file - and there are no further actions needed to start loading assets.
 2. Otherwise, across all OS types, RFD will extract your `ROBLOSECURITY` environment variable.
 
-**RFD does not save or upload your cookie token anywhere.** That token is used solely for Rōblox's _assetdelivery_ services. The cookie handling can be found in [`extractor.py`](./Source/assets/extractor.py).
+**RFD does not save or upload your cookie token anywhere.** That token is used solely for Rōblox's _assetdelivery_ services. The cookie handling can be found in [`./Source/assets/extractor.py`](./Source/assets/extractor.py).
 
 ### Setting Up Enviroment Variables
 
@@ -391,20 +391,20 @@ This behaviour can be changed in [your game configuration file](#game_setupasset
 
 ## How About Studio?
 
-RFD [comes bundled with Studio builds](#studio). However, they are not fully usable as of 2025-10-02. These should be used only if modern Studio doesn't mesh well with your places.
+RFD [comes bundled with Studio builds](#studio).
 
-RFD is designed to accommodate current-day `rbxl` (_not_ `rbxlx`) files. To accommodate breaking changes to the file format, RFD includes a [serialiser suite](./Source/assets/serialisers/) which automatically processes:
+RFD has multiple file-format converters to accommodate current-day `rbxl` (_not_ `rbxlx`) files. To reach this end, RFD includes a [serialiser suite](./Source/assets/serialisers/) which automatically processes:
 
 1. Assets remotely loaded from Roblox.com into `./AssetCache`, and
-1. `rbxl` place files as used by RFD servers.
+2. `rbxl` place files as used by RFD servers.
 
 Objects transformed include:
 
 1. Fonts which existed in their respective versions, and
-1. CSG data build using post-2021 formats (such as CSGv3)
-1. Meshes encoded with versions 4.01+ _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
+2. CSG data built using post-2021 formats (such as CSGMDL5 ~~and CSGPHS8~~)
+3. Meshes encoded with versions 4.01+ _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
 
-Some modern programs do weird things to client-sided scripts. They use `Script` classs objects, but with a [`RunContext`](https://robloxapi.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://robloxapi.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
+Some modern programs do weird things to client-sided scripts. They use `Script` classs objects, but with a [`RunContext`](https://setup-rbxcdn.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://setup-rbxcdn.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
 
 Parsing union operations done in current-day Studio still need work. This is because CSGv2 support was completely removed in late 2022.
 
@@ -537,8 +537,8 @@ bombardiro_crocodilo.default = {
 Dict keys are access in the following order of precedence:
 
 1. Each of the individual stringified arguments in positional order,
-1. The joined string of all arguments with string separators `_`, `,`, then `, `,
-1. Then the static key `default`.
+2. The joined string of all arguments with string separators `_`, `,`, then `, `,
+3. Then the static key `default`.
 
 ##### Lua Mode (unstable)
 
@@ -568,6 +568,8 @@ end
 ```
 
 ### Options
+
+For the complete reference schema, consult [`./Source/game_config/structure.py`](./Source/game_config/structure.py).
 
 #### `metadata.config_version_wildcard`
 
@@ -645,6 +647,10 @@ The following are valid version strings.
 | `"2018"`  | `"2021"`  |
 
 All entries on the same column are aliases for the same version.
+
+#### `game_setup.ready_delay_sec`
+
+Resolves to type `float`. Delays server readiness by a fixed number of seconds.
 
 #### `game_setup.asset_cache.dir_path`
 
@@ -883,14 +889,35 @@ Resolves to a data dictionary.
 ```toml
 [[remote_data.gamepasses]]
 id_num = 163231044
-name = 'EnforcersPowers'
+name = 'Enforcer\'s Powers'
 price = 100
 ```
 
+...or...
+
 ```toml
 [remote_data.gamepasses.163231044]
-name = 'EnforcersPowers'
+name = 'Enforcer\'s Powers'
 price = 100
+```
+
+#### `remote_data.devproducts`
+
+Resolves to a data dictionary.
+
+```toml
+[[remote_data.devproducts]]
+id_num = 1365914116
+name = 'Dev Product 1'
+price = 2
+```
+
+...or...
+
+```toml
+[remote_data.devproducts.1365914116]
+name = 'Dev Product 1'
+price = 2
 ```
 
 #### `remote_data.asset_redirects`

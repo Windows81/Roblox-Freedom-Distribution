@@ -26,12 +26,33 @@ class Hull:
     triangles: list[tuple[int, int, int]]
 
 
+CLUSTER_SIZE = 4
+
+
 def read_bits(clers_bytes: bytes, total_bits: int) -> Iterator[int]:
-    # Most significant bits go first.
-    for bit_idx in range(total_bits):
-        byte_idx = bit_idx // 8
-        bit_shift = 7 - (bit_idx % 8)
-        yield (clers_bytes[byte_idx] >> bit_shift) & 0b0000_0001
+    '''
+    Reading bits goes in a weird order.
+    https://github.com/krakow10/rbx_mesh/blob/master/src/union_physics/v8/roblox_bit_reader.rs
+    '''
+    # Bytes are clustered into groups of 4 (or fewer, if at the end) from first to last.
+    num_clusters = total_bits // CLUSTER_SIZE
+    for cluster_num in range(num_clusters):
+        cluster_base = CLUSTER_SIZE * cluster_num
+
+        # Since clusters are least-significant-bit aligned,
+        # The final cluster is smaller than 4 bytes.
+        if cluster_num == num_clusters - 1:
+            cluster_size = total_bits % CLUSTER_SIZE
+        else:
+            cluster_size = CLUSTER_SIZE
+
+        # Each cluster has its bytes read from last to first.
+        for byte_num in range(cluster_size):
+            byte_idx = cluster_base + cluster_size - 1 - byte_num
+
+            # Each byte has its bits read from last to first.
+            for bit_shift in range(7, -1, -1):
+                yield (clers_bytes[byte_idx] >> bit_shift) & 0b0000_0001
     return
 
 
@@ -45,16 +66,6 @@ def get_prev_edge(c: int) -> int:
     if c % 3 == 0:
         return c + 2
     return c - 1
-
-
-# ---------------------------------------------------------------------------
-# Edgebreaker decoder ported from clv2's Mesh Lab plugin (CSGPHS8 module).
-# Decodes the CLERS bitstream + global vertex array into per-hull
-# (vertices, triangles). This is the EXACT inverse of how Rōblox encodes
-# CSGPHS8 hulls — preserves the original mesh-intrinsic triangulation
-# instead of collapsing to a recomputed convex hull (ConvexHull throws
-# away authored topology, e.g. flat-tile meshes become 2.15-cubes).
-# ---------------------------------------------------------------------------
 
 
 def zip_boundary(cursor_edge: int, adjacency_list: list[int], index_list: list[int]) -> int:

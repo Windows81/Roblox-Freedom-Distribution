@@ -122,7 +122,7 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
         'MembershipType':
             server_core.retrieve_membership_type(id_num, user_code),
     }
-    
+
     # NOTE: the `SessionId` is saved as an HTTPS header `Roblox-Session-Id` for later requests.
     # I'm placing the information which was passed into `join.ashx` here for simplicity.
     join_data |= {
@@ -170,7 +170,7 @@ def _(self: web_server_handler) -> bool:
         'RobloxLocale': 'en_us',
         'GameLocale': 'en_us#RobloxTranslateAbTest2',
         'SuperSafeChat': True,
-        'ClientTicket': '2022-03-26T05:13:05.7649319Z;dj09X5iTmYtOPwh0hbEC8yvSO1t99oB3Yh5qD/sinDFszq3hPPaL6hH16TvtCen6cABIycyDv3tghW7k8W+xuqW0/xWvs0XJeiIWstmChYnORzM1yCAVnAh3puyxgaiIbg41WJSMALRSh1hoRiVFOXw4BKjSKk7DrTTcL9nOG1V5YwVnmAJKY7/m0yZ81xE99QL8UVdKz2ycK8l8JFvfkMvgpqLNBv0APRNykGDauEhAx283vARJFF0D9UuSV69q6htLJ1CN2kXL0Saxtt/kRdoP3p3Nhj2VgycZnGEo2NaG25vwc/KzOYEFUV0QdQPC8Vs2iFuq8oK+fXRc3v6dnQ==;BO8oP7rzmnIky5ethym6yRECd6H14ojfHP3nHxSzfTs=;XsuKZL4TBjh8STukr1AgkmDSo5LGgQKQbvymZYi/80TYPM5/MXNr5HKoF3MOT3Nfm0MrubracyAtg5O3slIKBg==;6',
+        'ClientTicket': ' ',
         'GameId': util.const.PLACE_IDEN_CONST,
         'CreatorId': 0,
         'CreatorTypeEnum': 'User',
@@ -179,14 +179,14 @@ def _(self: web_server_handler) -> bool:
         'CookieStoreEnabled': True,
         'IsUnknownOrUnder13': False,
         'GameChatType': 'AllUsers',
-        'AnalyticsSessionId': 'c89589f1-d1de-46e3-80e0-2703d1159409',
+        'AnalyticsSessionId': ' ',
         'DataCenterId': 302,
         'UniverseId': 994732206,
         'FollowUserId': 0,
         'CountryCode': 'US',
-        'RandomSeed1': '7HOfysTid4XsV/3mBPPPhKHIykE4GXSBBBzd93rplbDQ3bNSgPFcR9auB780LjNYg+4mbNQPOqTmJ2o3hUefmw==',
+        'RandomSeed1': ' ',
         'ClientPublicKeyData': json.dumps({
-            'creationTime': '19:56 11/23/2021',
+            'creationTime': ' ',
             'applications': {
                 'RakNetEarlyPublicKey': {
                     'versions': [{
@@ -214,11 +214,25 @@ def _(self: web_server_handler) -> bool:
 @server_path('/game/PlaceLauncher.ashx')
 @server_path('/game/placelauncher.ashx')
 def _(self: web_server_handler) -> bool:
+    '''
+    https://github.com/Daniel-176/Roblox-Reverse-Engineering-Wiki/blob/main/articles/client/placelauncher-status.md
+    '''
 
     query_args = json.loads(
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
     user_code = query_args['UserCode']
+
+    # Keeps returning 1 ("Server found, loading...") until RCC is marked as ready.
+    if not self.server.data_transferer.was_triggered:
+        self.send_json({
+            'status': 1,
+            'jobId': '67',
+            'joinScriptUrl': f'{self.hostname}/game/join.ashx?{self.url_split.query}',
+            'authenticationUrl': f'{self.hostname}/login/negotiate.ashx',
+            'authenticationTicket': '67',
+            'message': None,
+        })
 
     result = init_player(self.game_config, user_code)
     if result is None:

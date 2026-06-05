@@ -5,5 +5,6 @@ class base_type:
     '''
 
     def __init__(self, data_dict: dict, base_dir: str) -> None:
+        super().__init__()
         self.base_dir = base_dir
         self.data_dict = data_dict

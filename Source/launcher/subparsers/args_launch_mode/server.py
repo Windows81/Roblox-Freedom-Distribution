@@ -59,14 +59,14 @@ def subparse(
         type=int,
         nargs='*',
         default=[],
-        help='Port number for the RCC server to run from.',
+        help='Port number for which to run the the RCC server.',
     )
     subparser.add_argument(
         '--web_port', '--webserver_port', '-wp', '-p',
         type=int,
         nargs='*',
         default=[],
-        help='Port number for the web server to run from.',
+        help='Port number for which to run the the web server.',
     )
     subparser.add_argument(
         '--run_client', '-rc', '--run_player',
