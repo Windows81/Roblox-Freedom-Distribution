@@ -3,6 +3,7 @@ import dataclasses
 import enum
 import functools
 import http.server
+import ipaddress
 import json
 import re
 import socket
@@ -192,8 +193,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.game_config = self.server.game_config
 
         # Some endpoints should only allow the RCC to do stuff.
+        # Trust the peer socket address, not the user-controlled Host header.
         # TODO: use a proper allow-listing system.
-        self.is_privileged = self.domain == 'localhost'
+        self.is_privileged = ipaddress.ip_address(
+            self.client_address[0]).is_loopback
 
         self.url = f'{self.hostname}{self.path}'
         assert isinstance(self.url, str)

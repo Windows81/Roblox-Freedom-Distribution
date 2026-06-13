@@ -2,6 +2,11 @@
 
 - feat: players can be held in loading screen until RCC first calls `/rfd/data-transfer`
 - feat(config): add `game_setup.ready_delay_sec` to delay clients further
+- build: update dependencies to ensure existence with pre-compiled Python 3.14 wheels for Windows
+
+# 0.66.3
+
+- fix: load homepage in v463 Studio
 
 # 0.66.2
 

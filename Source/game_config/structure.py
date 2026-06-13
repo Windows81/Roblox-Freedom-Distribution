@@ -37,6 +37,7 @@ class config_type(allocateable.obj_type):
         # Don't count too much on 2021E.
         # I really recommend that people manually specify which version of Rōblox they want to run.
         roblox_version: util.versions.rōblox = util.versions.rōblox.v463
+
         ready_delay_sec: float = 3
 
     class server_core(allocateable.obj_type):
