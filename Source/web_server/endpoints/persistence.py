@@ -13,6 +13,7 @@ def _(self: web_server_handler) -> bool:
     '''
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/datastoreservice.py#L92
     '''
+    assert self.is_privileged
     form_content = str(self.read_content(), encoding='utf-8')
     form_data = dict(urllib.parse.parse_qsl(form_content))
     database = self.server.storage.persistence
@@ -36,6 +37,7 @@ def _(self: web_server_handler) -> bool:
     '''
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/datastoreservice.py#L162
     '''
+    assert self.is_privileged
     form_content = str(self.read_content(), encoding='utf-8')
     form_data = dict(urllib.parse.parse_qsl(form_content))
     database = self.server.storage.persistence
@@ -85,6 +87,7 @@ def _(self: web_server_handler) -> bool:
     '''
     Handles retrieval of sorted data from the persistence storage with pagination.
     '''
+    assert self.is_privileged
     data_type = self.query['type']
     scope = self.query.get('scope', 'global')
     key = self.query['key']
@@ -159,6 +162,7 @@ def _(self: web_server_handler) -> bool:
     Handles incrementing numeric values in the persistence storage.
     Supports both standard and sorted data types.
     '''
+    assert self.is_privileged
     database = self.server.storage.persistence
 
     scope = self.query.get('scope', 'global')
