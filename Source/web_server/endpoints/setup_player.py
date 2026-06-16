@@ -65,6 +65,14 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
+@server_path('/v2/settings/application/PCStudioApp')
+def _(self: web_server_handler) -> bool:
+    self.send_json({
+        "applicationSettings": {}
+    })
+    return True
+
+
 @server_path('/avatar-thumbnail/json')
 def _(self: web_server_handler) -> bool:
     '''

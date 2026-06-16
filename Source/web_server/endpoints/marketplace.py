@@ -242,6 +242,9 @@ def _(self: web_server_handler) -> bool:
     Something to do with developer products.
     https://github.com/InnitGroup/syntaxsource/blob/71ca82651707ad88fb717f3cc5e106ff62ac3013/syntaxwebsite/app/routes/gametransactions.py#L26
     '''
+    # TODO: check if only the server uses this endpoint.
+    # assert self.is_privileged
+
     receipt_dict = []
     for (user_id_num, devproduct_id, receipt) in self.server.storage.devproducts.receipts():
         receipt_dict.append({

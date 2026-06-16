@@ -35,11 +35,11 @@ def read_bits(clers_bytes: bytes, total_bits: int) -> Iterator[int]:
     https://github.com/krakow10/rbx_mesh/blob/master/src/union_physics/v8/roblox_bit_reader.rs
     '''
     # Bytes are clustered into groups of 4 (or fewer, if at the end) from first to last.
-    num_clusters = total_bits // CLUSTER_SIZE
+    num_clusters = total_bits // CLUSTER_SIZE // 8 + 1
     for cluster_num in range(num_clusters):
         cluster_base = CLUSTER_SIZE * cluster_num
 
-        # Since clusters are least-significant-bit aligned,
+        # Clusters are least-significant-bit aligned.
         # The final cluster is smaller than 4 bytes.
         if cluster_num == num_clusters - 1:
             cluster_size = total_bits % CLUSTER_SIZE
@@ -89,11 +89,11 @@ def zip_boundary(cursor_edge: int, adjacency_list: list[int], index_list: list[i
         adjacency_list[current_edge] = candidate_edge
         adjacency_list[candidate_edge] = current_edge
 
-        prev_edge = current_edge = get_prev_edge(current_edge)
-        prev_cand_edge = get_prev_edge(candidate_edge)
+        prev_edge = current_edge
+        cand_prev_edge = get_prev_edge(candidate_edge)
 
         # Rewrites the merged corner with the surviving (donor) vertex iden.
-        index_list[get_prev_edge(current_edge)] = index_list[prev_cand_edge]
+        index_list[get_prev_edge(current_edge)] = index_list[cand_prev_edge]
 
         # Propagates that vertex iden around the rest of the merged fan.
         connected_edge = adjacency_list[current_edge]
@@ -102,7 +102,7 @@ def zip_boundary(cursor_edge: int, adjacency_list: list[int], index_list: list[i
         while connected_edge >= 0 and candidate_edge != prev_edge:
             prev_edge = get_prev_edge(connected_edge)
             prev_of_prev = get_prev_edge(prev_edge)
-            index_list[prev_of_prev] = index_list[prev_cand_edge]
+            index_list[prev_of_prev] = index_list[cand_prev_edge]
             connected_edge = adjacency_list[prev_edge]
 
         # Hops along the connected fan to the next still-unzipped edge.
@@ -126,7 +126,7 @@ def decode_clers_symbols(bitreader: Iterator[int]) -> Iterator[CLERS]:
     # Infinitely loops if bad format.
     while (b1 := next(bitreader, None)) is not None:
 
-        if b1 == 0:
+        if b1 == CLERS.C.value:
             yield CLERS.C
             continue
 
@@ -144,19 +144,19 @@ def decode_clers_symbols(bitreader: Iterator[int]) -> Iterator[CLERS]:
             (b3 * 0b001)
         )
 
-        if op == 0b110:
+        if op == CLERS.L.value:
             yield CLERS.L
             continue
 
-        if op == 0b111:
+        if op == CLERS.E.value:
             yield CLERS.E
             continue
 
-        if op == 0b101:
+        if op == CLERS.R.value:
             yield CLERS.R
             continue
 
-        if op == 0b100:
+        if op == CLERS.S.value:
             yield CLERS.S
             continue
 
@@ -176,21 +176,13 @@ def _decode_triangles(
 
         # Emits a new triangle and glue its edge 0 to cursor_edge as twins;
         # Edges 1 and 2 inherit the corner vertices from the gate edge.
-        current_triangle += 1
         tri_base_edge = 3 * current_triangle
 
-        # Expands adjacency and index lists to prevent against index overflow errors.
-        if tri_base_edge >= len(adjacency_list):
-            extension_len = tri_base_edge - len(adjacency_list)
-            adjacency_list.extend([SENTINEL_UNINIT] * extension_len)
-            index_list.extend([+0] * extension_len)
-        else:
-            adjacency_list[tri_base_edge + 0] = SENTINEL_UNINIT
-            adjacency_list[tri_base_edge + 1] = SENTINEL_UNINIT
-            adjacency_list[tri_base_edge + 2] = SENTINEL_UNINIT
+        adjacency_list[tri_base_edge + 0] = temp_cursor_edge
+        adjacency_list[tri_base_edge + 1] = SENTINEL_UNINIT
+        adjacency_list[tri_base_edge + 2] = SENTINEL_UNINIT
 
         adjacency_list[temp_cursor_edge] = tri_base_edge
-        adjacency_list[tri_base_edge] = temp_cursor_edge
 
         index_list[tri_base_edge + 1] = (
             index_list[get_prev_edge(temp_cursor_edge)]
@@ -198,17 +190,19 @@ def _decode_triangles(
         index_list[tri_base_edge + 2] = (
             index_list[get_next_edge(temp_cursor_edge)]
         )
-        cursor_stack[-1] = tri_base_edge + 1
+        cursor_stack[-1] = tri_base_edge
+
+        current_triangle += 1
 
         op = next(clers_iter, None)
         if op is None:
             break
 
         if op == CLERS.C:  # C: introduce new vertex
-            vertex_counter += 1
             index_list[tri_base_edge] = vertex_counter
             next_edge = get_next_edge(cursor_stack[-1])
             adjacency_list[next_edge] = SENTINEL_BOUNDARY
+            vertex_counter += 1
             continue
 
         if op == CLERS.L:  # L: turn left
@@ -264,16 +258,6 @@ def _edgebreaker_decode(
     clers_data = list(clers_reader)
     clers_iter = iter(clers_data)
     current_triangle = 0
-    enum_counts = {
-        e: sum(1 for v in clers_data if v == e)
-        for e in CLERS
-    }
-    print([
-        (geom_type, e1, e2)
-        for e1, c1 in enum_counts.items()
-        for e2, c2 in enum_counts.items()
-        if e1 != e2 and (c1 - c2 == hull_count or c1 == c2)
-    ])
 
     vertex_counter = 2
     for _h in range(hull_count):
@@ -411,8 +395,8 @@ def convert_to_csgphs3(csgphs_buffer: bytes) -> bytes:
 
     phs_data = stream.read()
     try:
-        import zstandard
-        phs_data = zstandard.decompress(phs_data)
+        import pyzstd
+        phs_data = pyzstd.decompress(phs_data)
     except Exception as e:
         pass
 
