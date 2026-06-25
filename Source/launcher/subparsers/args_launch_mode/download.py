@@ -27,9 +27,9 @@ def _(
         '--bin_subtype', '-b',
         type=util.resource.bin_subtype,
         choices=[
-            player.obj_type.BIN_SUBTYPE.value,
-            rcc.obj_type.BIN_SUBTYPE.value,
-            studio.obj_type.BIN_SUBTYPE.value,
+            player.obj_type.BIN_SUBTYPE,
+            rcc.obj_type.BIN_SUBTYPE,
+            studio.obj_type.BIN_SUBTYPE,
         ],
         help='Directories to download.',
         nargs='+',
