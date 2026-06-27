@@ -7,7 +7,7 @@ import os
 import ssl
 
 # Third-party imports
-import tqdm_vendored as tqdm
+from vendored import tqdm
 import py7zr
 
 # Local application/library specific imports

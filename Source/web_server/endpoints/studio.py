@@ -19,36 +19,6 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/v2/login')
-def _(self: web_server_handler) -> bool:
-    try:
-        # Password must not contain '1'.  This for debugging purposes only.
-        assert (
-            '1' not in json.loads(self.read_content())['password']
-        )
-        self.send_response(200)
-        self.send_header('set-cookie', '.ROBLOSECURITY=_ROBLOSECURITY_')
-        self.send_json({
-            'user': {
-                'id': 1630228,
-                'name': 'qwer',
-                'displayName': 'qwer',
-            },
-            'isBanned': False,
-        }, status=None)
-    except Exception:
-        self.send_response(401)
-    return True
-
-
-@server_path('/Users/1630228')
-@server_path('/game/GetCurrentUser.ashx')
-def _(self: web_server_handler) -> bool:
-    time.sleep(2)  # HACK: Studio 2021E won't work without it.
-    self.send_json(1630228)
-    return True
-
-
 @server_path('/users/account-info')
 def _(self: web_server_handler) -> bool:
     try:

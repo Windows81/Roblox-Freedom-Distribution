@@ -1,4 +1,4 @@
-import sqlite_worker
+from vendored import sqlite_worker
 import os.path
 
 from . import (

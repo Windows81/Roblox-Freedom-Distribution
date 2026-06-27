@@ -1,5 +1,5 @@
 from typing import ClassVar
-import sqlite_worker
+from vendored import sqlite_worker
 
 
 class sqlite_connector_base:

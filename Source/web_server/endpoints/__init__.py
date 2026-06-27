@@ -17,6 +17,7 @@ from . import (
     setup_rcc,
     text_filter,
     studio,
+    misc,
 )
 
 

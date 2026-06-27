@@ -252,19 +252,27 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         json_data,
         status: int | None = 200,
         prefix: bytes = b'',
+        headers: dict[str, str] | None = None,
     ) -> None:
         byts = prefix + json.dumps(json_data).encode('utf-8')
+
+        if headers is None:
+            headers = {}
+
         self.send_data(
             byts,
-            content_type='application/json',
             status=status,
+            headers={
+                'content_type': 'application/json',
+                **headers,
+            },
         )
 
     def send_data(
         self,
         text: bytes | str,
         status: int | None = 200,
-        content_type: str | None = None,
+        headers: dict[str, str] | None = None,
     ) -> None:
         if isinstance(text, str):
             text = text.encode('utf-8')
@@ -273,15 +281,19 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         # If `status` is None, we can add headers before calling `send_data`.
         if status is not None:
             self.send_response(status)
-        if content_type:
-            self.send_header('content-type', content_type)
+
         self.send_header('content-length', str(len(text)))
+
+        if headers is not None:
+            for k, v in headers.items():
+                self.send_header(k, v)
+
         self.end_headers()
         self.wfile.write(text)
 
     def send_redirect(self, url: str) -> None:
         self.send_response(301)
-        self.send_header("Location", url)
+        self.send_header("location", url)
         self.end_headers()
 
     def __open_from_static(self) -> bool:
