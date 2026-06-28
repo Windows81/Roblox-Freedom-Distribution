@@ -16,7 +16,7 @@ MADE_WITH_PYINSTALLER = hasattr(sys, '_MEIPASS')
 def convert_to_winepath(path: str) -> str:
     if shutil.which('winepath') is None:
         return path
-    return subprocess.check_output(["winepath", path], text=True).strip()
+    return subprocess.check_output(['winepath', '-w', path], text=True).strip()
 
 
 @functools.cache
