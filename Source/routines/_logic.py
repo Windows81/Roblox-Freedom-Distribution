@@ -257,10 +257,13 @@ class bin_entry(popen_entry, loggable_entry):
             self.web_host, self.web_port,
         )
 
-    def get_versioned_path(self, *paths: str) -> str:
-        return util.resource.retr_rōblox_full_path(
+    def get_versioned_path(self, *paths: str, adjust_for_wine: bool = False) -> str:
+        result = util.resource.retr_rōblox_full_path(
             self.retr_version(), self.BIN_SUBTYPE, *paths,
         )
+        if adjust_for_wine:
+            return util.resource.convert_to_winepath(result)
+        return result
 
     @functools.cache
     def retr_version(self) -> util.versions.rōblox:

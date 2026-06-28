@@ -1,6 +1,8 @@
 # Standard library imports
 import enum
 import os
+import shutil
+import subprocess
 import sys
 
 # Local application imports
@@ -9,6 +11,12 @@ import util.versions
 
 
 MADE_WITH_PYINSTALLER = hasattr(sys, '_MEIPASS')
+
+
+def convert_to_winepath(path: str) -> str:
+    if shutil.which('winepath') is None:
+        return path
+    return subprocess.check_output(["winepath", path], text=True).strip()
 
 
 @functools.cache
@@ -49,9 +57,7 @@ DEFAULT_CONFIG_PATH = './GameConfig.toml'
 def get_path_pieces(d: dir_type) -> list[str]:
     match (MADE_WITH_PYINSTALLER, d):
 
-        case (True, dir_type.RŌBLOX):
-            return [get_rfd_top_dir(), 'Roblox']
-        case (False, dir_type.RŌBLOX):
+        case (_, dir_type.RŌBLOX):
             return [get_rfd_top_dir(), 'Roblox']
 
         case (True, dir_type.MISC):
@@ -73,14 +79,18 @@ def retr_full_path(d: dir_type, *paths: str) -> str:
 def retr_rōblox_full_path(
     version: util.versions.rōblox,
     bin_type: bin_subtype,
-    *paths: str
+    *paths: str,
+    adjust_for_wine: bool = False,
 ) -> str:
-    return retr_full_path(
+    result = retr_full_path(
         dir_type.RŌBLOX,
         version.name,
         bin_type.value,
         *paths,
     )
+    if adjust_for_wine:
+        return convert_to_winepath(result)
+    return result
 
 
 def retr_config_full_path(path: str = DEFAULT_CONFIG_PATH) -> str:

@@ -229,6 +229,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                     f'-PlaceId:{self.place_iden}',
                     '-LocalTest', self.get_versioned_path(
                         'GameServer.json',
+                        adjust_for_wine=True,
                     ),
                     *suffix_args,
                 )
@@ -237,9 +238,11 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                     f'-PlaceId:{self.place_iden}',
                     '-LocalTest', self.get_versioned_path(
                         'GameServer.json',
+                        adjust_for_wine=True,
                     ),
                     '-SettingsFile', self.get_versioned_path(
                         'DevSettingsFile.json',
+                        adjust_for_wine=True,
                     ),
                     *suffix_args,
                 )
