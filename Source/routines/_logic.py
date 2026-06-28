@@ -273,7 +273,7 @@ class bin_entry(popen_entry, loggable_entry):
         '''
         path = self.get_versioned_path('AppSettings.xml')
         app_base_url = self.get_app_base_url()
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, 'w', encoding='utf-8', newline='\r\n') as f:
             f.write(textwrap.dedent(f'''\
                 <?xml version="1.0" encoding="UTF-8"?>
                 <Settings>
