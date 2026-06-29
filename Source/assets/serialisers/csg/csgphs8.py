@@ -1,4 +1,13 @@
+# Works Cited:
+
+# krakow10. (2025). rbx_mesh/src/union_physics/v8/edgebreaker.rs at master · krakow10/rbx_mesh. GitHub.
+# https://github.com/krakow10/rbx_mesh/blob/master/src/union_physics/v8/edgebreaker.rs
+
+# Rossignac, J., Safonova, A., & Szymczak, A. (2001). Rossignac, Safonova, Szymczak:3D Compression Made Simple 3D Compression Made Simple: Edgebreaker on a Corner-Table.
+# https://faculty.cc.gatech.edu/~jarek/papers/CornerTableSMI.pdf
+
 import enum
+import math
 from . import util
 
 from collections.abc import Iterator
@@ -35,24 +44,23 @@ def read_bits(clers_bytes: bytes, total_bits: int) -> Iterator[int]:
     https://github.com/krakow10/rbx_mesh/blob/master/src/union_physics/v8/roblox_bit_reader.rs
     '''
     # Bytes are clustered into groups of 4 (or fewer, if at the end) from first to last.
-    num_clusters = total_bits // CLUSTER_SIZE // 8 + 1
+    num_clusters = math.ceil(total_bits / (8 * CLUSTER_SIZE))
     for cluster_num in range(num_clusters):
-        cluster_base = CLUSTER_SIZE * cluster_num
 
         # Clusters are least-significant-bit aligned.
-        # The final cluster is smaller than 4 bytes.
-        if cluster_num == num_clusters - 1:
-            cluster_size = total_bits % CLUSTER_SIZE
-        else:
-            cluster_size = CLUSTER_SIZE
+        # The final cluster can be smaller than 4 bytes.
+        cluster = clers_bytes[
+            CLUSTER_SIZE * (cluster_num + 0):
+            CLUSTER_SIZE * (cluster_num + 1)
+        ]
+        chunk_as_int = int.from_bytes(cluster, 'little')
 
-        # Each cluster has its bytes read from last to first.
-        for byte_num in range(cluster_size):
-            byte_idx = cluster_base + cluster_size - 1 - byte_num
+        # Each chunk has its bits read from most to least significant.
+        cluster_bit_count = min(total_bits, 8 * CLUSTER_SIZE)
+        total_bits -= cluster_bit_count
+        for i in range(cluster_bit_count):
+            yield (chunk_as_int >> (cluster_bit_count - 1 - i)) % 2
 
-            # Each byte has its bits read from last to first.
-            for bit_shift in range(7, -1, -1):
-                yield (clers_bytes[byte_idx] >> bit_shift) & 0b0000_0001
     return
 
 
@@ -68,50 +76,23 @@ def get_prev_edge(c: int) -> int:
     return c - 1
 
 
-def zip_boundary(cursor_edge: int, adjacency_list: list[int], index_list: list[int]) -> int:
-    current_edge = cursor_edge
+def test_lists(
+    adjacency_list: list[int],
+    index_list: list[int],
+) -> bool:
+    if len(index_list) != len(adjacency_list):
+        return False
 
-    # Loops while an edge set to SENTINEL_PROCESSING still needs to be paired.
-    # Infinitely loops if bad format.
-    while adjacency_list[current_edge] == SENTINEL_PROCESSING:
-        candidate_edge = get_next_edge(current_edge)
-
-        # Walks the fan via twin, then next until we reach a boundary edge.
-        # Infinitely loops if bad format.
-        while adjacency_list[candidate_edge] >= 0:
-            opposite_edge = adjacency_list[candidate_edge]
-            candidate_edge = get_next_edge(opposite_edge)
-
-        if adjacency_list[candidate_edge] != SENTINEL_BOUNDARY:
-            break
-
-        # Links the two boundary edges as twins (zips them shut).
-        adjacency_list[current_edge] = candidate_edge
-        adjacency_list[candidate_edge] = current_edge
-
-        prev_edge = current_edge
-        cand_prev_edge = get_prev_edge(candidate_edge)
-
-        # Rewrites the merged corner with the surviving (donor) vertex iden.
-        index_list[get_prev_edge(current_edge)] = index_list[cand_prev_edge]
-
-        # Propagates that vertex iden around the rest of the merged fan.
-        connected_edge = adjacency_list[current_edge]
-
-        # Infinitely loops if bad format.
-        while connected_edge >= 0 and candidate_edge != prev_edge:
-            prev_edge = get_prev_edge(connected_edge)
-            prev_of_prev = get_prev_edge(prev_edge)
-            index_list[prev_of_prev] = index_list[cand_prev_edge]
-            connected_edge = adjacency_list[prev_edge]
-
-        # Hops along the connected fan to the next still-unzipped edge.
-        # Infinitely loops if bad format.
-        while adjacency_list[current_edge] >= 0 and current_edge != candidate_edge:
-            next_link = adjacency_list[current_edge]
-            current_edge = get_prev_edge(next_link)
-
-    return current_edge
+    for i in range(len(index_list)):
+        if adjacency_list[i] == SENTINEL_BOUNDARY:
+            continue
+        if adjacency_list[i] == SENTINEL_PROCESSING:
+            continue
+        if adjacency_list[i] == SENTINEL_UNINIT:
+            continue
+        if i != adjacency_list[adjacency_list[i]]:
+            return False
+    return True
 
 
 class CLERS(enum.Enum):
@@ -130,13 +111,8 @@ def decode_clers_symbols(bitreader: Iterator[int]) -> Iterator[CLERS]:
             yield CLERS.C
             continue
 
-        b2 = next(bitreader, None)
-        if b2 is None:
-            return
-
-        b3 = next(bitreader, None)
-        if b3 is None:
-            return
+        b2 = next(bitreader)
+        b3 = next(bitreader)
 
         op = (
             (b1 * 0b100) +
@@ -161,6 +137,35 @@ def decode_clers_symbols(bitreader: Iterator[int]) -> Iterator[CLERS]:
             continue
 
 
+def zip_boundary(c: int, adjacency_list: list[int], index_list: list[int]):
+    while True:
+        b = get_next_edge(c)
+
+        while adjacency_list[b] >= 0:
+            b = get_next_edge(adjacency_list[b])
+
+        if adjacency_list[b] != SENTINEL_BOUNDARY:
+            return
+
+        adjacency_list[c] = b
+        adjacency_list[b] = c
+
+        a = get_prev_edge(c)
+        index_list[get_prev_edge(a)] = index_list[get_prev_edge(b)]
+
+        while adjacency_list[a] >= 0 and b != a:
+            a = get_prev_edge(adjacency_list[a])
+            index_list[get_prev_edge(
+                a)] = index_list[get_prev_edge(b)]
+
+        c = get_prev_edge(c)
+        while adjacency_list[c] >= 0 and c != b:
+            c = get_prev_edge(adjacency_list[c])
+
+        if adjacency_list[c] != SENTINEL_PROCESSING:
+            return
+
+
 def _decode_triangles(
     clers_iter: Iterator[CLERS],
     adjacency_list: list[int],
@@ -176,38 +181,41 @@ def _decode_triangles(
 
         # Emits a new triangle and glue its edge 0 to cursor_edge as twins;
         # Edges 1 and 2 inherit the corner vertices from the gate edge.
+        current_triangle += 1
         tri_base_edge = 3 * current_triangle
 
-        adjacency_list[tri_base_edge + 0] = temp_cursor_edge
-        adjacency_list[tri_base_edge + 1] = SENTINEL_UNINIT
-        adjacency_list[tri_base_edge + 2] = SENTINEL_UNINIT
-
+        adjacency_list[tri_base_edge] = temp_cursor_edge
         adjacency_list[temp_cursor_edge] = tri_base_edge
 
-        index_list[tri_base_edge + 1] = (
-            index_list[get_prev_edge(temp_cursor_edge)]
+        (
+            index_list[get_next_edge(tri_base_edge)],
+            index_list[get_prev_edge(tri_base_edge)],
+        ) = (
+            index_list[get_prev_edge(temp_cursor_edge)],
+            index_list[get_next_edge(temp_cursor_edge)],
         )
-        index_list[tri_base_edge + 2] = (
-            index_list[get_next_edge(temp_cursor_edge)]
-        )
-        cursor_stack[-1] = tri_base_edge
 
-        current_triangle += 1
+        cursor_stack[-1] = get_next_edge(tri_base_edge)
 
         op = next(clers_iter, None)
         if op is None:
             break
 
         if op == CLERS.C:  # C: introduce new vertex
+            vertex_counter += 1
             index_list[tri_base_edge] = vertex_counter
             next_edge = get_next_edge(cursor_stack[-1])
             adjacency_list[next_edge] = SENTINEL_BOUNDARY
-            vertex_counter += 1
             continue
 
         if op == CLERS.L:  # L: turn left
-            adjacency_list[cursor_stack[-1]] = SENTINEL_PROCESSING
-            cursor_stack[-1] = get_next_edge(cursor_stack[-1])
+            next_edge = get_next_edge(cursor_stack[-1])
+            adjacency_list[next_edge] = SENTINEL_PROCESSING
+            zip_boundary(
+                c=next_edge,
+                adjacency_list=adjacency_list,
+                index_list=index_list,
+            )
             continue
 
         if op == CLERS.E:  # E: end
@@ -215,7 +223,7 @@ def _decode_triangles(
             next_edge = get_next_edge(cursor_stack[-1])
             adjacency_list[next_edge] = SENTINEL_PROCESSING
             zip_boundary(
-                cursor_edge=next_edge,
+                c=next_edge,
                 adjacency_list=adjacency_list,
                 index_list=index_list,
             )
@@ -223,13 +231,8 @@ def _decode_triangles(
             continue
 
         if op == CLERS.R:  # R: turn right
-            next_edge = get_next_edge(cursor_stack[-1])
-            adjacency_list[next_edge] = SENTINEL_PROCESSING
-            zip_boundary(
-                cursor_edge=next_edge,
-                adjacency_list=adjacency_list,
-                index_list=index_list,
-            )
+            cursor_stack[-1] = get_next_edge(cursor_stack[-1])
+            adjacency_list[cursor_stack[-1]] = SENTINEL_PROCESSING
             continue
 
         if op == CLERS.S:  # S: split
@@ -258,8 +261,8 @@ def _edgebreaker_decode(
     clers_data = list(clers_reader)
     clers_iter = iter(clers_data)
     current_triangle = 0
-
     vertex_counter = 2
+
     for _h in range(hull_count):
         # Middle edge (1) left as SENTINEL_UNINIT so the decoder starts walking from it.
         adjacency_list = [
@@ -284,6 +287,8 @@ def _edgebreaker_decode(
             current_triangle=current_triangle,
             vertex_counter=vertex_counter,
         )
+
+        assert (test_lists(adjacency_list, index_list))
 
         hull_verts = []
         hull_tris = []
