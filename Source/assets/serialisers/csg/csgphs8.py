@@ -168,11 +168,27 @@ def zip_boundary(c: int, adjacency_list: list[int], index_list: list[int]):
 
 def _decode_triangles(
     clers_iter: Iterator[CLERS],
-    adjacency_list: list[int],
-    index_list: list[int],
-    current_triangle: int,
-    vertex_counter: int,
-) -> tuple[int, int]:
+    est_capacity: int,
+) -> tuple[int, list[int], list[int]]:
+
+    # Middle edge (1) left as SENTINEL_UNINIT so the decoder starts walking from it.
+    adjacency_list = [
+        SENTINEL_BOUNDARY,  # [0]
+        SENTINEL_UNINIT,  # [1]
+        SENTINEL_BOUNDARY,  # [2]
+        *[SENTINEL_UNINIT] * (est_capacity - 3),  # [3:]
+    ]
+    # Implicit first triangle: indices [0,1,2].
+    # Outer edges marked boundary.
+    index_list = [
+        +0,  # [0]
+        +1,  # [1]
+        +2,  # [2]
+        *[+0] * (est_capacity - 3),  # [3:]
+    ]
+
+    current_triangle = 1
+    vertex_counter = 0
     cursor_stack = [1]
 
     # Infinitely loops if bad format.
@@ -181,8 +197,8 @@ def _decode_triangles(
 
         # Emits a new triangle and glue its edge 0 to cursor_edge as twins;
         # Edges 1 and 2 inherit the corner vertices from the gate edge.
-        current_triangle += 1
         tri_base_edge = 3 * current_triangle
+        current_triangle += 1
 
         adjacency_list[tri_base_edge] = temp_cursor_edge
         adjacency_list[temp_cursor_edge] = tri_base_edge
@@ -241,7 +257,7 @@ def _decode_triangles(
             cursor_stack.append(current)
             continue
 
-    return (current_triangle, vertex_counter)
+    return (current_triangle, adjacency_list, index_list)
 
 
 def _edgebreaker_decode(
@@ -261,43 +277,23 @@ def _edgebreaker_decode(
     clers_data = list(clers_reader)
     clers_iter = iter(clers_data)
     current_triangle = 0
-    vertex_counter = 2
+    vertex_offset = 2
 
     for _h in range(hull_count):
-        # Middle edge (1) left as SENTINEL_UNINIT so the decoder starts walking from it.
-        adjacency_list = [
-            SENTINEL_BOUNDARY,  # [0]
-            SENTINEL_UNINIT,  # [1]
-            SENTINEL_BOUNDARY,  # [2]
-            *[SENTINEL_UNINIT] * (est_capacity - 3),  # [3:]
-        ]
-        # Implicit first triangle: indices [0,1,2].
-        # Outer edges marked boundary.
-        index_list = [
-            +0,  # [0]
-            +1,  # [1]
-            +2,  # [2]
-            *[+0] * (est_capacity - 3),  # [3:]
-        ]
-
-        (current_triangle, vertex_counter) = _decode_triangles(
+        (current_triangle, adjacency_list, index_list) = _decode_triangles(
             clers_iter=clers_iter,
-            adjacency_list=adjacency_list,
-            index_list=index_list,
-            current_triangle=current_triangle,
-            vertex_counter=vertex_counter,
+            est_capacity=est_capacity,
         )
 
         assert (test_lists(adjacency_list, index_list))
 
-        hull_verts = []
         hull_tris = []
         max_local_idx = 0
         for t in range(current_triangle):
             base = 3 * t
-            i0 = index_list[base + 0]
-            i1 = index_list[base + 1]
-            i2 = index_list[base + 2]
+            i0 = index_list[base + 0] + vertex_offset
+            i1 = index_list[base + 1] + vertex_offset
+            i2 = index_list[base + 2] + vertex_offset
             if i0 == i1:
                 continue
             if i0 == i2:
@@ -309,13 +305,18 @@ def _edgebreaker_decode(
             max_local_idx = max(max_local_idx, *vals)
 
         global_vert_end = global_vert_start + max_local_idx + 1
-        hull_verts.extend(all_vertices[
+        hull_verts = all_vertices[
             global_vert_start:
             global_vert_end
-        ])
-
-        hulls.append(Hull(vertices=hull_verts, triangles=hull_tris))
+        ]
         global_vert_start = global_vert_end
+
+        hulls.append(Hull(
+            vertices=hull_verts,
+            triangles=hull_tris,
+        ))
+
+        vertex_offset = max_local_idx
 
     return hulls
 
