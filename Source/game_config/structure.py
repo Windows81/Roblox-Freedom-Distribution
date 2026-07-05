@@ -34,6 +34,8 @@ class config_type(allocateable.obj_type):
             sqlite_path: wrappers.path_str = '_.sqlite'
             clear_on_start: bool = False
 
+        cache_directory: wrappers.path_str | None = None
+
         # Don't count too much on 2021E.
         # I really recommend that people manually specify which version of Rōblox they want to run.
         roblox_version: util.versions.rōblox = util.versions.rōblox.v463

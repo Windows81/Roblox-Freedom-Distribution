@@ -69,6 +69,12 @@ def subparse(
         help='Port number for which to run the the web server.',
     )
     subparser.add_argument(
+        '--cache_directory',
+        type=str,
+        default=None,
+        help='Overrides the asset cache directory for this launch. Defaults to the configured game cache directory, or ./AssetCache if none is set.',
+    )
+    subparser.add_argument(
         '--run_client', '-rc', '--run_player',
         action='store_true',
         help='Runs an instance of the player immediately after starting the server.',
@@ -156,12 +162,18 @@ def _(
 ) -> list[logic.base_entry]:
     if len(args_ns.place_path) > 0:
         game_configs = [
-            config.generate_config(v)
+            config.generate_config(
+                v,
+                cache_directory=args_ns.cache_directory,
+            )
             for v in args_ns.place_path
         ]
     else:
         game_configs = [
-            config.get_cached_config(v)
+            config.get_cached_config(
+                v,
+                cache_directory=args_ns.cache_directory,
+            )
             for v in args_ns.config_path
         ]
 

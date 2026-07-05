@@ -29,18 +29,32 @@ PARSERS: dict[str, Callable[[bytes], dict[Any, Any]]] = {
 
 
 class obj_type(structure.config_type, _logic.base_type):
-    def __init__(self, data_dict: dict[Any, Any], base_dir: str) -> None:
+    def __init__(
+        self,
+        data_dict: dict[Any, Any],
+        base_dir: str,
+        cache_directory: str | None = None,
+    ) -> None:
         '''
         High-level call: reads the game configuration data from a file and serialises it.
         '''
-        _logic.base_type.__init__(self, data_dict, base_dir)
+        effective_data_dict = dict(data_dict)
+        if cache_directory is not None:
+            game_setup = effective_data_dict.get('game_setup')
+            if isinstance(game_setup, dict):
+                effective_data_dict['game_setup'] = dict(game_setup)
+                effective_data_dict['game_setup']['cache_directory'] = cache_directory
+            else:
+                effective_data_dict['game_setup'] = {'cache_directory': cache_directory}
+
+        _logic.base_type.__init__(self, effective_data_dict, base_dir)
 
         structure.config_type.__init__(
             self,
             root=self,
             # `current_typ` must be defined separately since this `__init__` call is a super constructor.
             current_typ=structure.config_type,
-            **self.data_dict,
+            **effective_data_dict,
         )
 
         self.storage = storage.storager(
@@ -50,8 +64,13 @@ class obj_type(structure.config_type, _logic.base_type):
 
         self.data_transferer = data_transfer.transferer.obj_type()
 
+        cache_dir = self.game_setup.cache_directory
+        if cache_dir is None:
+            cache_dir = self.game_setup.asset_cache.dir_path
+        self.game_setup.asset_cache.dir_path = cache_dir
+
         self.asset_cache = asseter(
-            dir_path=self.game_setup.asset_cache.dir_path,
+            dir_path=cache_dir,
             redirect_func=self.remote_data.asset_redirects,
             asset_name_func=self.game_setup.asset_cache.name_template,
             clear_on_start=self.game_setup.asset_cache.clear_on_start,
@@ -82,7 +101,10 @@ def read_file_data(path: str) -> bytes:
 
 
 @functools.cache
-def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
+def get_cached_config(
+    path: str = util.resource.DEFAULT_CONFIG_PATH,
+    cache_directory: str | None = None,
+) -> obj_type:
     base_dir = get_config_dir_path(path)
     file_data = read_file_data(path)
     for parse in PARSERS.values():
@@ -93,12 +115,17 @@ def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type
         return obj_type(
             data_dict=data_dict,
             base_dir=base_dir,
+            cache_directory=cache_directory,
         )
     raise Exception(f'The file at {path} is in an invalid format')
 
 
 @functools.cache
-def generate_config(rbxl_file: str, version: util.versions.rōblox = util.versions.rōblox.v463) -> obj_type:
+def generate_config(
+    rbxl_file: str,
+    version: util.versions.rōblox = util.versions.rōblox.v463,
+    cache_directory: str | None = None,
+) -> obj_type:
     # The dictionary structure should adjust with changes to the `structure.py` file.
     skeleton = {
         'server_core': {'place_file': {'rbxl_uri': rbxl_file}},
@@ -106,5 +133,6 @@ def generate_config(rbxl_file: str, version: util.versions.rōblox = util.versio
     }
     obj_type.server_core.place_file
     base_dir = util.resource.retr_full_path(util.resource.dir_type.MISC)
-    config = obj_type(skeleton, base_dir)
+    config = obj_type(skeleton, base_dir, cache_directory=cache_directory)
     return config
+    
