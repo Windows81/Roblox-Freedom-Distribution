@@ -1,6 +1,10 @@
 <img src="/Assets/Banner.png"/>
 
-<a href="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml"><img src="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml/badge.svg"></a>
+<p align="center">
+  <a href="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml">
+    <img src="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml/badge.svg">
+  </a>
+</p>
 
 ---
 
