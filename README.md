@@ -1,4 +1,4 @@
-<img src="/Assets/Banner.png"/>
+<img src="/Assets/Banner.png">
 
 <p align="center">
   <a href="https://github.com/Windows81/Roblox-Freedom-Distribution/actions/workflows/main.yml">
