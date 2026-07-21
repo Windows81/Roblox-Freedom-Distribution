@@ -65,13 +65,19 @@ def create_zipped_dirs(release_name: str):
     """Creates zipped directories for Roblox files."""
     files: list[str] = []
 
-    roblox_dirs = list(glob.glob("../Roblox/*/*/"))
+    version_data = [
+        (t_path, version, typ)
+        for version in os.listdir('../Roblox')
+        if os.path.isdir(v_path := f'../Roblox/{version}')
+        for typ in os.listdir(v_path)
+        if not typ.startswith('_') and os.path.isdir(t_path := f'{v_path}/{typ}')
+    ]
 
-    for rel_zip_name in roblox_dirs:
-        zip_name = os.path.abspath(rel_zip_name)
+    for (t_path, version, typ) in version_data:
+        zip_name = f'../Roblox/{version}.{typ}.7z'
 
         # Writes to the version-flag file.
-        version_file = zip_name + "/rfd_version"
+        version_file = t_path + "/rfd_version"
         with open(version_file, 'w') as f:
             f.write(release_name)
 
@@ -99,11 +105,11 @@ def create_zipped_dirs(release_name: str):
         # Runs `7z`` command.
         subprocess.run([
             "7z", "a", zip_name,
-            f"{zip_name}/*", *exclude_patterns,
+            f"{t_path}/*", *exclude_patterns,
         ])
 
         # Appends resultant zip file.
-        files.append(zip_name + '.7z')
+        files.append(zip_name)
     return files
 
 
@@ -169,7 +175,7 @@ def main():
                 }
             )
             files = create_zipped_dirs(release_name)
-            update_and_push(commit_name)
+            # update_and_push(commit_name)
             release_to_github(files, release_name_suffixed)
         case _:
             pass

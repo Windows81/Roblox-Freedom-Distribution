@@ -250,5 +250,15 @@
 			"console": "integratedTerminal",
 			"justMyCode": true
 		},
+		{
+			"name": "Python: Run Release Script",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/ReleaseScripts/ReleaseNewVersion.py",
+			"cwd": "${workspaceFolder}",
+			"args": [],
+			"console": "integratedTerminal",
+			"justMyCode": true
+		},
 	]
 }
