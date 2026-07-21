@@ -102,7 +102,8 @@ def create_zipped_dirs(release_name: str):
             f"{zip_name}/*", *exclude_patterns,
         ])
 
-        files.append(zip_name)
+        # Appends resultant zip file.
+        files.append(zip_name + '.7z')
     return files
 
 
