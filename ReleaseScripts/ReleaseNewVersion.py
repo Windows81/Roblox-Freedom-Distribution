@@ -1,10 +1,15 @@
+# pyright: reportUnusedCallResult=false
 # DO NOT USE YET!!!
+# This is AI slop.
 
 from datetime import datetime
-from pathlib import Path
+import glob
+import os
 import subprocess
 import textwrap
 import shutil
+
+os.chdir(os.path.dirname(__file__))
 
 
 def check_software(software_list: list[str]) -> bool:
@@ -16,77 +21,62 @@ def check_software(software_list: list[str]) -> bool:
     return True
 
 
-def retrieve_input(suffix: str = ''):
+def retrieve_input():
     """Retrieves user input for version title and commit message."""
-    global release_name, release_name_suffixed, commit_name
 
-    release_name = input("Version title? ")
-    release_name_suffixed = release_name + suffix
     commit_name = datetime.now().strftime("%Y-%m-%dT%H%MZ")
+    release_name = input("Version title? ")
+
+    return (commit_name, release_name)
 
 
-def update_and_push():
+def update_and_push(commit_name: str):
     # Updates submodules,
-    subprocess.run(
-        [
-            "git", "submodule", "foreach",
-            f"git add . && git commit -m {commit_name} && git push",
-        ],
-        shell=True,
-    )
+    subprocess.run([
+        "git", "submodule", "foreach",
+        f"git add . && git commit -m {commit_name} && git push",
+    ])
     # Updates main repository.
     subprocess.run(["git", "add", "."])
     subprocess.run(["git", "commit", "-m", commit_name])
     subprocess.run(["git", "push"])
 
 
-def update_const_release_version(labels: list[str], add_suffix: bool = False):
-    const_file = Path("../Source/util/const.py")
-    label_value = release_name_suffixed if add_suffix else release_name
+def update_const_release_version(labels: dict[str, str]):
+    const_file = "../Source/util/const.py"
 
     with open(const_file, 'r') as f:
         const_txt = f.readlines()
 
-    # Update each label
-    for label in labels:
-        start = f"{label} = "
-        for i, line in enumerate(const_txt):
-            if not line.startswith(start):
-                continue
-            const_txt[i] = start + f"'''{label_value}'''\n"
-            break
+    # Updates each label.
+    for i, line in enumerate(const_txt):
+        label_name = line.split(' ', 1)[0]
+        label_replacement = labels.get(label_name)
+        if label_replacement is None:
+            continue
+        const_txt[i] = f"{label_name} = '''{label_replacement}'''\n"
 
     with open(const_file, 'w') as f:
         f.writelines(const_txt)
 
 
-def create_zipped_dirs():
+def create_zipped_dirs(release_name: str) -> list[str]:
     """Creates zipped directories for Roblox files."""
-    global files
+    files = []
 
-    root = Path("..")
-    roblox_dirs = list(root.glob("Roblox/*/*"))
+    roblox_dirs = list(glob.glob("../Roblox/*/*/"))
 
-    for dir_path in roblox_dirs:
-        if not dir_path.is_dir():
-            continue
+    for zip_name in roblox_dirs:
 
-        zip_name = f"{root}/Roblox/{dir_path.parent.name}.{dir_path.name}.7z"
-
-        # Always overwrites the file
-        if Path(zip_name).exists():
-            Path(zip_name).unlink()
-
-        # Writes to the version-flag file
-        version_file = dir_path / "rfd_version"
+        # Writes to the version-flag file.
+        version_file = zip_name + "/rfd_version"
         with open(version_file, 'w') as f:
-            f.write(release_name_suffixed)
+            f.write(release_name)
 
-        # Build exclusion patterns
+        # Builds exclusion patterns.
         exclude_patterns = [
             "-xr!RFDStarterScript.lua",
-            "-x!_*.exe",
-            "-x!_*.json",
+            "-x!_*",
             "-xr!dxgi.dll",
             "-xr!_dxgi.dll",
             "-xr!Reshade.ini",
@@ -104,11 +94,14 @@ def create_zipped_dirs():
             "-x!*.bak"
         ]
 
-        # Run 7z command
-        cmd = ["7z", "a", zip_name, f"{dir_path}/*"] + exclude_patterns
-        subprocess.run(cmd)
+        # Runs `7z`` command.
+        subprocess.run([
+            "7z", "a", zip_name,
+            f"{zip_name}/*", *exclude_patterns,
+        ])
 
         files.append(zip_name)
+    return files
 
 
 def mark_latest_version():
@@ -119,26 +112,25 @@ def mark_latest_version():
         capture_output=True, text=True
     )
     latest = result.stdout.strip()
-    subprocess.run(["gh", "release", "edit", latest, "--latest"])
+    subprocess.run([
+        "gh", "release", "edit", latest, "--latest",
+    ])
 
 
-def release_to_github():
+def release_to_github(files: list[str], release_name_suffixed: str):
     """Creates a GitHub release with specified files."""
-    cmd = ["gh", "release", "create", release_name_suffixed] + \
-        files + ["--prerelease", "--generate-notes"]
-    subprocess.run(cmd)
+    subprocess.run([
+        "gh", "release", "create",
+        release_name_suffixed, *files,
+        "--prerelease", "--generate-notes",
+    ])
 
 
 def main():
     # Checks software.
     if not check_software(["gh", "7z", "git"]):
         return
-
-    global files, release_name, release_name_suffixed, commit_name
     files = []
-
-    # Defines root directory.
-    root = Path(__file__).parent.parent
 
     # Prompts user to select build mode.
     mode = input(textwrap.dedent("""
@@ -148,32 +140,36 @@ def main():
 	"""))
 
     # Executes selected build mode.
-    if mode == '1':
-        retrieve_input()
-        update_const_release_version(
-            labels=["GIT_RELEASE_VERSION"],
-            add_suffix=False,
-        )
-    elif mode == '2':
-        retrieve_input()
-        update_const_release_version(
-            labels=["GIT_RELEASE_VERSION"],
-            add_suffix=False,
-        )
-        update_and_push()
-    elif mode == '3':
-        retrieve_input(suffix="-binaries")
-        update_const_release_version(
-            labels=["GIT_RELEASE_VERSION"],
-            add_suffix=False,
-        )
-        update_const_release_version(
-            labels=["ZIPPED_RELEASE_VERSION"],
-            add_suffix=True,
-        )
-        create_zipped_dirs()
-        update_and_push()
-        release_to_github()
+    match mode:
+        case '1':
+            (commit_name, release_name) = retrieve_input()
+            update_const_release_version(
+                labels={
+                    "GIT_RELEASE_VERSION": release_name,
+                }
+            )
+        case '2':
+            (commit_name, release_name) = retrieve_input()
+            update_const_release_version(
+                labels={
+                    "GIT_RELEASE_VERSION": release_name,
+                }
+            )
+            update_and_push(commit_name)
+        case '3':
+            (commit_name, release_name) = retrieve_input()
+            release_name_suffixed = release_name + '-binaries'
+            update_const_release_version(
+                labels={
+                    "GIT_RELEASE_VERSION": release_name,
+                    "ZIPPED_RELEASE_VERSION": release_name_suffixed
+                }
+            )
+            files = create_zipped_dirs(release_name)
+            update_and_push(commit_name)
+            release_to_github(files, release_name_suffixed)
+        case _:
+            pass
 
 
 if __name__ == "__main__":

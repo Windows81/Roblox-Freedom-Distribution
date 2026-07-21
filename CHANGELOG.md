@@ -1,3 +1,9 @@
+# 0.67.0.0
+
+- **feat!: change RakNet offline message signature to bypass Egyptian ISP blocks**
+- fix(studio): fix loading screen incorrectly showing in Studio v347
+- build: update Pillow to 12.3.0
+
 # 0.66.5
 
 - fix: continual improvements to _CSGPHS8_
