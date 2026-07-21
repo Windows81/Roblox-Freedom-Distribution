@@ -265,13 +265,13 @@ def _edgebreaker_decode(
     total_bits: int,
     hull_count: int,
     all_vertices: list[bytes],
-    total_faces: int = 0,
+    total_triangles: int = 0,
     geom_type: int = 0,
 ) -> list[Hull]:
     hulls = []
     global_vert_start = 0
 
-    est_capacity = max(total_faces * 3, 1024)
+    est_capacity = total_triangles * 3
     bitreader = read_bits(clers_bytes, total_bits)
     clers_reader = decode_clers_symbols(bitreader)
     clers_data = list(clers_reader)
@@ -410,9 +410,9 @@ def convert_to_csgphs3(csgphs_buffer: bytes) -> bytes:
 
     hull_count = util.read_u32(zipped_stream)
     total_verts = util.read_u32(zipped_stream)
-    total_faces = util.read_u32(zipped_stream)
+    total_tris = util.read_u32(zipped_stream)
     first_hull_vert_count = util.read_u32(zipped_stream)
-    first_hull_face_count = util.read_u32(zipped_stream)
+    first_hull_tri_count = util.read_u32(zipped_stream)
     raw_hulls_size = util.read_u32(zipped_stream)
     clers_bit_count = util.read_u32(zipped_stream)
     clers_buffer_size = util.read_u32(zipped_stream)
@@ -433,7 +433,7 @@ def convert_to_csgphs3(csgphs_buffer: bytes) -> bytes:
             clers_bit_count,
             hull_count,
             all_vertices,
-            total_faces,
+            total_tris,
             geom_type,
         ),
     ]

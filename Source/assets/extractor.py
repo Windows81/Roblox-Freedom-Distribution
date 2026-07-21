@@ -145,6 +145,8 @@ def get_creator_place_idens(asset_iden: int) -> list[int]:
     Results are cached for the lifetime of the process; creator ownership
     doesn't change mid-session, and the same asset is often requested many
     times by different clients.
+
+    Credit to https://github.com/mytailcaughtonfire for this ingenious idea.
     '''
     _json_headers = {
         'User-Agent': 'Roblox/WinInet',

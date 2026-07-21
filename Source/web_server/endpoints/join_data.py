@@ -213,14 +213,30 @@ def _(self: web_server_handler) -> bool:
 
 @server_path('/game/PlaceLauncher.ashx')
 @server_path('/game/placelauncher.ashx')
+@server_path('/Game/PlaceLauncher.ashx')
 def _(self: web_server_handler) -> bool:
     '''
     https://github.com/Daniel-176/Roblox-Reverse-Engineering-Wiki/blob/main/articles/client/placelauncher-status.md
+    Your status should go from 0 (contacting gameserver for start) to 1 (gameserver started new job, wait for place load) and finally 2 to join.
+     0  "Waiting for an available server"
+     1  "Server found, loading..."
+     2  "Joining server"
+     3  "This game is disabled"
+     4  "Cannot find game server"
+     5  "This game has ended"
+     6  "Requested game is full"
+    10  "Followed user has left the game"
+    11  "This game is restricted"
+    12  "Not authorized to join this game"
+    13  "Server is busy"
+    14  "Hash Expired"
+    15  "Hash Exception"
+    16  "Your party is too large to fit"
+    17  "A http error has occured. Please close the client and try again."
     '''
 
-    query_args = json.loads(
-        self.headers.get('Roblox-Session-Id', '{}'),
-    ) | self.query
+    query_args = json.loads(self.headers.get('Roblox-Session-Id', '{}'))
+    query_args |= self.query
     user_code = query_args['UserCode']
 
     # Keeps returning 1 ("Server found, loading...") until RCC is marked as ready.
