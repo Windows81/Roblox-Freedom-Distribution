@@ -1,6 +1,7 @@
 # pyright: reportUnusedCallResult=false
-# DO NOT USE YET!!!
-# This is AI slop.
+
+# This script was orignally AI slop.
+# Either Deepseek or Qwen did the initial conversion from PowerShell.  I forgot which one.
 
 from datetime import datetime
 import glob
@@ -60,13 +61,14 @@ def update_const_release_version(labels: dict[str, str]):
         f.writelines(const_txt)
 
 
-def create_zipped_dirs(release_name: str) -> list[str]:
+def create_zipped_dirs(release_name: str):
     """Creates zipped directories for Roblox files."""
-    files = []
+    files: list[str] = []
 
     roblox_dirs = list(glob.glob("../Roblox/*/*/"))
 
-    for zip_name in roblox_dirs:
+    for rel_zip_name in roblox_dirs:
+        zip_name = os.path.abspath(rel_zip_name)
 
         # Writes to the version-flag file.
         version_file = zip_name + "/rfd_version"
