@@ -4,11 +4,10 @@
 # Either Deepseek or Qwen did the initial conversion from PowerShell.  I forgot which one.
 
 from datetime import datetime
-import glob
-import os
 import subprocess
 import textwrap
 import shutil
+import os
 
 os.chdir(os.path.dirname(__file__))
 

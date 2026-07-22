@@ -1,4 +1,4 @@
-# 0.67.0.0
+# 0.67.0
 
 - **feat!: change RakNet offline message signature to bypass Egyptian ISP blocks**
 - fix(studio): fix loading screen incorrectly showing in Studio v347
