@@ -58,13 +58,6 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path('/Setting/QuietGet/StudioAppSettings/')
-@server_path('/Setting/QuietGet/ClientAppSettings/')
-def _(self: web_server_handler) -> bool:
-    self.send_json({})
-    return True
-
-
 @server_path('/v2/settings/application/PCStudioApp')
 def _(self: web_server_handler) -> bool:
     self.send_json({
@@ -109,12 +102,6 @@ def _(self: web_server_handler) -> bool:
     thumbnail_data = asset_cache.get_asset(util.const.THUMBNAIL_ID_CONST)
     if isinstance(thumbnail_data, returns.ret_data):
         self.send_data(thumbnail_data.data)
-    return True
-
-
-@server_path('/v1/settings/application')
-def _(self: web_server_handler) -> bool:
-    self.send_json({'applicationSettings': {}})
     return True
 
 

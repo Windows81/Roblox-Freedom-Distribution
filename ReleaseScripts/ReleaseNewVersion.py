@@ -60,7 +60,7 @@ def update_const_release_version(labels: dict[str, str]):
         f.writelines(const_txt)
 
 
-def create_zipped_dirs(release_name: str):
+def create_zipped_dirs(release_name_suffixed: str):
     """Creates zipped directories for Roblox files."""
     files: list[str] = []
 
@@ -78,7 +78,7 @@ def create_zipped_dirs(release_name: str):
         # Writes to the version-flag file.
         version_file = t_path + "/rfd_version"
         with open(version_file, 'w') as f:
-            f.write(release_name)
+            f.write(release_name_suffixed)
 
         # Builds exclusion patterns.
         exclude_patterns = [
@@ -173,7 +173,7 @@ def main():
                     "ZIPPED_RELEASE_VERSION": release_name_suffixed
                 }
             )
-            files = create_zipped_dirs(release_name)
+            files = create_zipped_dirs(release_name_suffixed)
             # update_and_push(commit_name)
             release_to_github(files, release_name_suffixed)
         case _:

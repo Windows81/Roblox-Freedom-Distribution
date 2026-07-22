@@ -18,6 +18,7 @@ from . import (
     text_filter,
     studio,
     misc,
+    fvars,
 )
 
 
