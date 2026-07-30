@@ -174,7 +174,7 @@ def main():
                 }
             )
             files = create_zipped_dirs(release_name_suffixed)
-            # update_and_push(commit_name)
+            update_and_push(commit_name)
             release_to_github(files, release_name_suffixed)
         case _:
             pass
