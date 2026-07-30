@@ -137,24 +137,18 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                     'ClientSettings',
                     'RCCService.json',
                 )
-                with open(path, 'r', encoding='utf-8') as f:
-                    json_data = json.load(f)
-
-                json_data |= new_flags
-                with open(path, 'w', encoding='utf-8') as f:
-                    json.dump(json_data, f, indent='\t')
-
             case util.versions.rōblox.v463:
                 path = self.get_versioned_path(
-                    'DevSettingsFile.json',
+                    'ClientSettings',
+                    'RCCFlagOverride.json',
                 )
-                with open(path, 'r', encoding='utf-8') as f:
-                    json_data = json.load(f)
 
-                # 2021E stores the RCC flags in a JSON sub-dictionary named `applicationSettings`.
-                json_data['applicationSettings'] |= new_flags
-                with open(path, 'w', encoding='utf-8') as f:
-                    json.dump(json_data, f, indent='\t')
+        with open(path, 'r', encoding='utf-8') as f:
+            json_data = json.load(f)
+
+        json_data |= new_flags
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, indent='\t')
 
     def save_gameserver(self) -> str:
         '''
@@ -223,29 +217,14 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         if not self.logger.rcc_logs.is_empty():
             suffix_args.append('-verbose')
 
-        match self.retr_version():
-            case util.versions.rōblox.v347:
-                return (
-                    f'-PlaceId:{self.place_iden}',
-                    '-LocalTest', self.get_versioned_path(
-                        'GameServer.json',
-                        adjust_for_wine=True,
-                    ),
-                    *suffix_args,
-                )
-            case util.versions.rōblox.v463:
-                return (
-                    f'-PlaceId:{self.place_iden}',
-                    '-LocalTest', self.get_versioned_path(
-                        'GameServer.json',
-                        adjust_for_wine=True,
-                    ),
-                    '-SettingsFile', self.get_versioned_path(
-                        'DevSettingsFile.json',
-                        adjust_for_wine=True,
-                    ),
-                    *suffix_args,
-                )
+        return (
+            f'-PlaceId:{self.place_iden}',
+            '-LocalTest', self.get_versioned_path(
+                'GameServer.json',
+                adjust_for_wine=True,
+            ),
+            *suffix_args,
+        )
 
     def read_rcc_output(self) -> None:
         '''
