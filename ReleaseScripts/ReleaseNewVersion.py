@@ -31,7 +31,7 @@ def retrieve_input():
 
 
 def update_and_push(commit_name: str):
-    # Updates submodules,
+    # Updates submodules.
     subprocess.run([
         "git", "submodule", "foreach",
         f"git add . && git commit -m {commit_name} && git push",
