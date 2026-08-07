@@ -52,7 +52,7 @@ def purchase_devproduct(self: web_server_handler, user_id_num: int, devproduct_i
 @server_path('/Game/GamePass/GamePassHandler.ashx', commands={'GET'})
 def _(self: web_server_handler) -> bool:
     '''
-    TODO: handle social requests.
+    TODO: handle social requests, whatever these are.
     '''
     match self.query['Action']:
         case 'HasPass':

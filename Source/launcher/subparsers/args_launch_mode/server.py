@@ -45,11 +45,13 @@ def subparse(
     ip_version = subparser.add_mutually_exclusive_group()
 
     ip_version.add_argument(
+        '--ipv4_only',
         '--ipv4-only',
         action='store_true',
         help='Run server using IPv4 only.',
     )
     ip_version.add_argument(
+        '--ipv6_only',
         '--ipv6-only',
         action='store_true',
         help='Run server using IPv6 only.',

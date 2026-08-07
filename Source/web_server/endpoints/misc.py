@@ -1,7 +1,205 @@
-import time
-import json
+import re
 
+import util.versions as versions
 from web_server._logic import web_server_handler, server_path
+
+
+@server_path('/device/initialize')
+def _(self: web_server_handler) -> bool:
+    self.send_json({"browserTrackerId": 0, "appDeviceIdentifier": None})
+    return True
+
+
+@server_path('/v1/users/authenticated')
+def _(self: web_server_handler) -> bool:
+    self.send_json({
+        "id": 1,
+        "name": "ROBLOX",
+        "displayName": "ROBLOX"
+    })
+    return True
+
+
+@server_path('/my/settings/json', commands={'GET'})
+def _(self: web_server_handler) -> bool:
+    self.send_json({})
+    return True
+
+
+@server_path('/universal-app-configuration/v1/behaviors/studio/content')
+def _(self: web_server_handler) -> bool:
+    self.send_json(
+        {
+            "AssetManager": {
+                "EnableAudioImport": True
+            },
+            "BetaFeaturesDialog": {
+                "ShowDetailsButton": True
+            },
+            "BulkImporter": {
+                "ShowCostInfo": False,
+                "Enabled": True,
+                "FreeAudioDevForumUrl": "https://devforum.roblox.com/t/action-needed-upcoming-changes-to-asset-privacy-for-audio/1701697"
+            },
+            "CaptchaDialog": {
+                "AppNameSpecifier": ""
+            },
+            "ChallengeDialog": {
+                "AppNameSpecifier": ""
+            },
+            "ChatWidget": {
+                "HasEmptyDisabledText": False
+            },
+            "CloudEditModel": {
+                "ChatEnabled": True
+            },
+            "ExternalLoginDialog": {
+                "CookieDomain": "",
+                "LoginUrl": ""
+            },
+            "GameSettings": {
+                "AutoTranslationAllowed": False,
+                "AutoTranslationTargetLanguages": {},
+                "DisablePrivateServersAndPaidAccess": False,
+                "OptInLocationsRequirements": {},
+                "PlayerAppDownloadLink": {},
+                "SocialMediaReferencesAllowed": True,
+                "ShowBadges": True,
+                "ShowOptInLocations": False
+            },
+            "LoginManager": {
+                "ShowExternalLogin": False,
+                "HideStartPageUrlLinks": False,
+                "ShowPrivacyPolicyLinks": True,
+                "ShowExternalLoginLink": False,
+                "UserFacingWebsite": "",
+                "WebView2SetupUrl": "https://create.roblox.com/docs/getting-started/setting-up-roblox-studio",
+                "DistributorType": "Global"
+            },
+            "luaToolboxAction": {
+                "Enabled": True
+            },
+            "MassUpdater": {
+                "VersionConflictErrMsg": "Studio.App.StudioDataModelLoadUtil.ErrorCannotOpenTCPlaceDueToVersionConflictGlobal"
+            },
+            "PlaceVersionHistoryDialog": {
+                "CanOpenHelpPage": True,
+                "CreateFooterBar": True
+            },
+            "PlayerEmulator": {
+                "SocialMediaReferencesAllowed": True
+            },
+            "PublishPlaceAs": {
+                "OptInLocationsRequirements": {},
+                "PlayerAppDownloadLink": {},
+                "ShowOptInLocations": False
+            },
+            "StudioUserPreferences": {
+                "PreferredLocale": "en_US"
+            },
+            "StudioUtilities": {
+                "AppNameSpecifier": "",
+                "PrivacyPolicyUrl": "https://en.help.roblox.com/hc/en-us/articles/115004630823-Roblox-Privacy-and-Cookie-Policy-",
+                "TermsOfUseUrl": "https://en.help.roblox.com/hc/en-us/articles/115004647846-Roblox-Terms-of-Use",
+                "ContactUsUrl": "https://www.roblox.com/support"
+            },
+            "Toolbox": {
+                "DisableMarketplaceAndRecents": False,
+                "ShowRobloxCreatedAssets": False,
+                "MarketplaceDisabledCategories": "",
+                "Enabled": True,
+                "HomeViewEnabledAssetTypes": "Model",
+                "MarketplaceShouldUsePluginCreatorWhitelist": False,
+                "DisableRatings": False,
+                "HideNonRelevanceSorts": True,
+                "HideAssetConfigDistributeLearnMoreLink": False,
+                "CreatorMarketplaceWebUrl": "https://create.roblox.com/store/",
+                "VerificationDocumentationUrl": "https://create.roblox.com/docs/production/publishing/creator-marketplace#verifying-your-account",
+                "AudioPrivacyLearnMoreUrl": "https://devforum.roblox.com/t/action-needed-upcoming-changes-to-asset-privacy-for-audio/1701697",
+                "SafetyLearnMoreUrl": "https://en.help.roblox.com/hc/en-us/articles/203313410",
+                "CreatorDashboardBaseUrl": "https://create.roblox.com/dashboard",
+                "MarketplaceAssetConfigUrl": "https://create.roblox.com/dashboard/creations/store/%s/configure",
+                "CreatorDashboardCatalogConfigUrlExtension": "/creations/catalog/%d/configure",
+                "AnnouncementConfiguration": {
+                    "ButtonKey": "Button_Default",
+                    "Date": "2023-02-28 18:49:42",
+                    "HeaderKey": "Header_02-28-2023",
+                    "DescriptionKey": "Description_02-28-2023",
+                    "Image": None,
+                    "LinkLocation": None,
+                    "LinkKey": "LinkText_Default",
+                    "LatestUserId": "",
+                    "IXPComparisonDefinitionKey": "QueryOptions",
+                    "IXPComparisonVariableKey": "DomainSearchAlgorithmName"
+                },
+                "AssetConfigMessaging": {
+                    "showManageUniversePermissionsLink": True,
+                    "audioPublicationDisabledLink": "https://devforum.roblox.com/t/action-needed-upcoming-changes-to-asset-privacy-for-audio/1701697#can-i-change-the-privacy-settings-on-my-audio-assets-to-make-them-all-public-13"
+                },
+                "AssetConfigDistributionQuotas": {
+                    "Model": {
+                        "link": "https://create.roblox.com/docs/production/publishing/creator-store"
+                    },
+                    "Decal": {
+                        "link": "https://create.roblox.com/docs/production/publishing/creator-store"
+                    },
+                    "Mesh": {
+                        "link": "https://create.roblox.com/docs/production/publishing/creator-store"
+                    },
+                    "MeshPart": {
+                        "link": "https://create.roblox.com/docs/production/publishing/creator-store"
+                    },
+                    "Plugin": {
+                        "link": "https://create.roblox.com/docs/production/publishing/creator-store"
+                    }
+                },
+                "AssetTypesWithAssetConfigFiatPrice": {
+                    "Plugin": True,
+                    "Model": False
+                }
+            },
+            "UpdateArbiter": {
+                "IsChinaBuild": False
+            },
+            "WebView": {
+                "CaptchaHost": "static.rbxcdn.com",
+                "ChallengeHost": "static.rbxcdn.com"
+            },
+            "WhatsNewWindow": {
+                "Enabled": True,
+                "DevForumRootUrl": "https://devforum.roblox.com/",
+                "DevForumUrlSuffix": "tags/c/36/studio"
+            }
+        }
+    )
+    return True
+
+
+@server_path('/incoming-items/counts')
+def _(self: web_server_handler) -> bool:
+    self.send_json({
+        "unreadMessages": 0,
+        "unansweredFriendRequests": 0,
+    })
+    return True
+
+
+@server_path('/mobileapi/check-app-version')
+def _(self: web_server_handler) -> bool:
+    self.send_json({"data": {"UpgradeAction": "None"}})
+    return True
+
+
+@server_path('/ab/v1/enroll')
+def _(self: web_server_handler) -> bool:
+    self.send_json({"baller": "baller"})
+    return True
+
+
+@server_path('/home')
+def _(self: web_server_handler) -> bool:
+    self.send_data("<body>UwU</body>")
+    return True
 
 
 @server_path(r'/Setting/Get/AndroidAppSettings/')
@@ -64,130 +262,223 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-# MOCK DATABASE
-# Replace this dictionary with your actual DB connector later.
-# Structure mirrors the SQL: SELECT * FROM `users` WHERE `name`= :username
-MOCK_DB = {
-    '67': {
-        'id': 1630228,
-        'token': '_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_CAEaAhADIhwKBGR1aWQSFDEzNjcwOTI5Mzc2NTU2MTY1NDcyKAM.tgDCk1jAKYAzEUR9d3h2ckQPulAIFNO7HYpIprVIlCp6zqRg36SbQxV7HeJe_GgjbOsGdxCRVmDvEYfXUZ-d7yv_Dy4pdhgfvxIvMWoG6XVbmMTNbsx2kt2eJCwHyZo7F1QLSt2mJUqvo_QKb5IDma7qJQdsq9nrUGhP7ee4IyjAlXFcUzs3j9SChdsoOLNJOBXl46LgyUG4fymeMpVgc0EujmNH6jScZgI8YGWeilcOrKpjzzqQq_u2JMxCW9lRh2q7mdtTtNq3i9PtFYvCh9RImwe35rzS7vu28lRUnYWhYfVd6i9mRnWat5_q3vUYYOiBgW2pQmJvSZpLHWejOKTvvAVUJggugJsA-RJvbz0bPNw-3EsOC1FlTFd73HTwZdw_npUc3rDn6uqHBMLskVUKjtjyce5XbWcJMIjE1GRTQdIK5f6qaNbLcysXZDgR-rI9p1hf2hxPJ74A1mTYB6583wwL83CNU_nO4nBUzOUsGlVEVQrhCe1W6NaL3lwsYDcg3G_PHIRqc6KsRxLVLppMxRH7VvuIPnZBUZraofZ0VqKKtL-jBfRHFbuQbkWWEKOTN3De_5wgzwH00WCx9jZdSGct9eIJSw7VmLZxKQnOXbE2Z7oSyT-pCCrnUk4_wtjMDPo7aIfXkqlsC-fzmp96_-aYjIQ5sXPfe0ALpiCRx_mreuQpjaY6DvRt-N8EPE_3r_9xRP8__6KCBfRTolvlLZG05nLGa98xprd5R228v6STUo6qKQJ_5FQzC9i10SHY_oXOzu8UTRg50FDEDd-nh-A',
-        'password': '67'  # Plain text for mock simplicity
-    }
-}
-
-# The code below was written by Qwen3.6-35B-A3B.
-
-
-@server_path('/v2/login')
-def _(self: web_server_handler) -> bool:
-    try:
-        # 1. Parse input (JSON body or form-urlencoded)
-        raw_content = self.read_content()
-        # Safe header access depending on your framework's API
-        user_agent = getattr(self, 'headers', {}).get('User-Agent', '')
-
-        username = password = None
-        data = json.loads(raw_content)
-        username = data.get('username', data.get('cvalue', None))
-        password = data.get('password', None)
-
-        # PHP's strip_tags equivalent
-
-        if not username or not password:
-            self.send_json(
-                {'message': 'Username and password are required.'}, status=400)
-            return True
-
-        # 2. Mock Database Query
-        user_data = MOCK_DB.get(username)
-
-        if not user_data:
-            self.send_json({'message': 'Incorrect username.'}, status=403)
-            return True
-
-        # 3. Password Verification
-        # Using plain string comparison since this is a mock database.
-        if user_data.get('password') != password:
-            self.send_json(
-                {'message': 'Incorrect password. Please try again.'}, status=403)
-            return True
-
-        # 4. Extract user data
-        roblosec = user_data['token']
-        uid = user_data['id']
-        display_name = username
-
-        # 5. Set Cookies
-        # PHP uses: time() + (460800 * 30) seconds
-        expiry_time = time.time() + (460800 * 30)
-
-        # 6. Return JSON
-        self.send_json({
-            'membershipType': 4,
-            'username': display_name,
-            'isUnder13': False,
-            'countryCode': "US",
-            'userId': uid,
-            'displayName': display_name
-        }, headers={
-            'Set-Cookie': f'.ROBLOSECURITY={roblosec}',
-        })
-
-    except Exception:
-        self.send_response(401)
-    return True
-
-
-@server_path('/Users/1630228')
-@server_path('/game/GetCurrentUser.ashx')
-def _(self: web_server_handler) -> bool:
-    time.sleep(2)  # HACK: Studio 2021E probably won't work without it.
-    self.send_json(1630228)
-    return True
-
-
-@server_path('/users/account-info')
+@server_path('/game/load-place-info')
+@server_path('/.127.0.0.1/game/load-place-info')
+@server_path('/.127.0.0.1/game/load-place-info/')
 def _(self: web_server_handler) -> bool:
     self.send_json({
-        "UserId": 1630228,
-        "Username": '67',
-        "DisplayName": '67',
-        "HasPasswordSet": True,
-        "Email": {"Value": 'n**@roblox.com', "IsVerified": True},
-        "AgeBracket": 0,
-        "Roles": ['BetaTester', 'Beta17', 'Roblox.Slack.Models.Contractor.Name', 'Soothsayer'],
-        "MembershipType": 0,
-        "RobuxBalance": 98763,
-        "NotificationCount": 223,
-        "EmailNotificationEnabled": False,
-        "PasswordNotificationEnabled": False,
-        "CountryCode": 'RU',
+        'CreatorId': 0,
+        'CreatorType': 'User',
+        'PlaceVersion': 1,
+        'GameId': 123456,
+        'IsRobloxPlace': True,
     })
     return True
 
 
-@server_path('/incoming-items/counts')
+@server_path('/v1.1/Counters/BatchIncrement')
+@server_path('/v1.0/SequenceStatistics/BatchAddToSequencesV2')
+def _(self: web_server_handler) -> bool:
+    self.send_json({})
+    return True
+
+
+@server_path('/universal-app-configuration/v1/behaviors/app-patch/content')
 def _(self: web_server_handler) -> bool:
     self.send_json({
-        "unreadMessages": 0,
-        "unansweredFriendRequests": 0,
+        "SchemaVersion": "1",
+        "CanaryUserIds": [],
+        "CanaryPercentage": 0
     })
     return True
 
 
-@server_path('/mobileapi/check-app-version')
+@server_path('/universal-app-configuration/v1/behaviors/app-policy/content')
 def _(self: web_server_handler) -> bool:
-    self.send_json({"data": {"UpgradeAction": "None"}})
+    self.send_json({
+        "ChatConversationHeaderGroupDetails": True,
+        "ChatHeaderSearch": True,
+        "ChatHeaderCreateChatGroup": True,
+        "ChatHeaderHomeButton": False,
+        "ChatHeaderNotifications": True,
+        "ChatPlayTogether": True,
+        "ChatShareGameToChatFromChat": True,
+        "ChatTapConversationThumbnail": True,
+        "ChatViewProfileOption": True,
+        "GamesDropDownList": True,
+        "UseNewDropDown": False,
+        "GameDetailsMorePage": True,
+        "GameDetailsShowGlobalCounters": True,
+        "GameDetailsPlayWithFriends": True,
+        "GameDetailsSubtitle": True,
+        "GameInfoList": True,
+        "GameInfoListDeveloper": True,
+        "GamePlaysAndRatings": True,
+        "GameInfoShowBadges": True,
+        "GameInfoShowCreated": True,
+        "GameInfoShowGamepasses": True,
+        "GameInfoShowGenre": True,
+        "GameInfoShowMaxPlayers": True,
+        "GameInfoShowServers": True,
+        "GameInfoShowUpdated": True,
+        "GameReportingDisabled": False,
+        "GamePlayerCounts": True,
+        "GiftCardsEnabled": False,
+        "Notifications": True,
+        "OfficialStoreEnabled": False,
+        "RecommendedGames": True,
+        "SearchBar": True,
+        "MorePageType": "More",
+        "AboutPageType": "About",
+        "FriendFinder": True,
+        "SocialLinks": True,
+        "SocialGroupLinks": True,
+        "EnableShareCaptureCTA": True,
+        "SiteMessageBanner": True,
+        "UseWidthBasedFormFactorRule": False,
+        "UseHomePageWithAvatarAndPanel": False,
+        "UseBottomBar": True,
+        "AvatarHeaderIcon": "LuaApp/icons/ic-back",
+        "AvatarEditorShowBuyRobuxOnTopBar": True,
+        "HomeIcon": "LuaApp/icons/ic-roblox-close",
+        "ShowYouTubeAgeAlert": False,
+        "GameDetailsShareButton": True,
+        "CatalogShareButton": True,
+        "AccountProviderName": "",
+        "InviteFromAccountProvider": False,
+        "ShareToAccountProvider": False,
+        "ShareToAccountProviderTimeout": 8,
+        "ShowDisplayName": True,
+        "GamesPageCreationCenterTitle": False,
+        "ShowShareTargetGameCreator": True,
+        "SearchAutoComplete": True,
+        "CatalogShow3dView": True,
+        "CatalogReportingDisabled": False,
+        "CatalogCommunityCreations": True,
+        "CatalogPremiumCategory": True,
+        "CatalogPremiumContent": True,
+        "ItemDetailsFullView": True,
+        "UseAvatarExperienceLandingPage": True,
+        "HomePageFriendSection": True,
+        "HomePageProfileLink": True,
+        "PurchasePromptIncludingWarning": False,
+        "ShowVideoThumbnails": True,
+        "VideoSharingTestContent": [],
+        "SystemBarPlacement": "Bottom",
+        "EnableInGameHomeIcon": False,
+        "UseExternalBrowserForDisclaimerLinks": False,
+        "ShowExitFullscreenToast": True,
+        "ExitFullscreenToastEnabled": False,
+        "UseLuobuAuthentication": False,
+        "CheckUserAgreementsUpdatedOnLogin": True,
+        "AddUserAgreementIdsToSignupRequest": True,
+        "UseOmniRecommendation": True,
+        "ShowAgeVerificationOverlayEnabled": False,
+        "ShouldShowGroupsTile": True,
+        "ShowVoiceUpsell": False,
+        "ProfileShareEnabled": True,
+        "ContactImporterEnabled": True,
+        "FriendCodeQrCodeScannerEnabled": False,
+        "RealNamesInDisplayNamesEnabled": False,
+        "CsatSurveyRestrictTextInput": False,
+        "RobloxCreatedItemsCreatedByLuobu": False,
+        "GameInfoShowChatFeatures": True,
+        "PlatformGroup": "Unknown",
+        "UsePhoneSearchDiscoverEntry": False,
+        "HomeLocalFeedItems": {
+            "UserInfo": 1,
+            "FriendCarousel": 2
+        },
+        "Routes": {
+            "auth": {
+                "connect": "v2/login",
+                "login": "v2/login",
+                "signup": "v2/signup"
+            }
+        },
+        "PromotionalEmailsCheckboxEnabled": True,
+        "PromotionalEmailsOptInByDefault": False,
+        "EnablePremiumUserFeatures": True,
+        "CanShowUnifiedChatUpsell": True,
+        "RequireExplicitVoiceConsent": True,
+        "RequireExplicitAvatarVideoConsent": True,
+        "EnableVoiceReportAbuseMenu": True
+    })
     return True
 
 
-@server_path('/ab/v1/enroll')
+@server_path('/api.GetAllowedMD5Hashes/', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
-    self.send_json({"baller": "baller"})
+    '''
+    TODO: apply and test patches to completely skip over this endpoint.
+    '''
+    self.send_json({
+        "data": [
+            "696224eb7537fbd4f684d05b30e7577b",
+            "852c653bf5524615b0c16d08c7888489",
+            "4f2255d00b498e8728394d44033375f1",
+            "3228e65cf0a1a5efb11c1f50bc7e0e72",
+            "2e3625c467dce071ef0366eb01f360b2",
+            "d32f2f383eb067dbf4cef929e3720d22",
+            "4f2255d00b498e8728394d44033375f1",
+            "c51ce865a76f65834e0f9ed837ed1014",
+            "f82d895f557e45d8ca779bd02729e8e5",
+            "57b38d86235db049d8fbea3ac9ad0368",
+            "a228078a3575428fb9bec8b158a563ca",
+            "382edacdb1ea130cae005cda632490ca",
+            "21560a2399a218dcfe56c7603bd37e20",
+            "b41a1f6db3d35705d76ffad110add0b6",
+            "7ffd87ec48186fd302d70762958792b6",
+            "34394c67cf26408c24c4c68e447b465e",
+            "da6e066c4db1df5561eb5a5eee06615a",
+            "0395956deb4a80d4532e5cd8e24640e0",
+            "cddb32998e61bb8a88d71b235bceb546",
+            "034dad52f899219be7f974184908e7bb",
+            "ba2258bbb24cd7ac772f8bc4bcc0c347",
+            "12c35dfa6e96cf0cdbe45d2632806f54",
+            "f1a5abf74dfc2c882ab95ca7c7d89129",
+            "25cb4fa68e2b70a484a6cb7255a4a9d3",
+            "08832dcb9f771b3436021de228017148",
+            "641c9bee9332eea0bd91aae83ad206c9",
+            "adc4983c75ab1b5b990f3bd30bf03949",
+            "33fbddac973e93485c7e7d884d271724",
+            "972dd1995553445d3bd9c7e4b8e08b26",
+            "bff0c728dd9eb6224311be4628474791",
+            "0904ee91b51adb48ae6d066606b469c2",
+            "20a13e1db27108fb7fd1375366f1c0b5",
+            "471c84516a9eead73c13d5369dc3fa51",
+            "3231d09a8c3525a75e999789aa7d9df4",
+        ]
+    })
     return True
 
 
-@server_path('/home')
+@server_path(r'/v[12]/autolocalization/games/(\d+)/autolocalizationtable', regex=True)
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    self.send_json({
+        "isAutolocalizationEnabled": False,
+        "shouldUseLocalizationTable": False,
+    })
+    return True
+
+
+@server_path('/api.GetAllowedSecurityVersions/', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
-    self.send_data("<body>UwU</body>")
+    self.send_json({
+        'data': [
+            '0.348.0pcplayer',
+            '2.348.0androidapp',
+        ],
+    })
+    return True
+
+
+@server_path('/api.GetAllowedSecurityVersions/', versions={versions.rōblox.v463})
+def _(self: web_server_handler) -> bool:
+    self.send_json({
+        'data': [
+            '0.463.0pcplayer',
+            '2.463.0androidapp',
+        ],
+    })
     return True

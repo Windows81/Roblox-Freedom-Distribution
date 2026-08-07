@@ -108,12 +108,12 @@ Game-specific options are specified in the `--config_path` argument, which defau
 
 [**Please review each option in the config file before starting your server up.**](#gameconfigtoml-structure)
 
-As of RFD 0.65.1, the available options are as follows:
+As of RFD 0.67.2, the available options are as follows:
 
 ```
 usage: _main.py server [--config_path [CONFIG_PATH ...] |
-                       --place_path [PLACE_PATH ...]] [--ipv4-only |
-                       --ipv6-only] [--rcc_port [RCC_PORT ...]]
+                       --place_path [PLACE_PATH ...]] [--ipv4_only |
+                       --ipv6_only] [--rcc_port [RCC_PORT ...]]
                        [--web_port [WEB_PORT ...]] [--run_client]
                        [--user_code [USER_CODE]] [--quiet | --loud]
                        [--no_colour] [--rcc_log_options [FLog ...]]
@@ -129,12 +129,14 @@ options:
                         Path to the place file to be loaded. Argument
                         `config_path` can't be passed in when using this
                         option.
-  --ipv4-only           Run server using IPv4 only.
-  --ipv6-only           Run server using IPv6 only.
-  --rcc_port, --port, -rp, -p [RCC_PORT ...]
-                        Port number for the RCC server to run from.
-  --web_port, --webserver_port, -wp [WEB_PORT ...]
-                        Port number for the web server to run from.
+  --ipv4_only, --ipv4-only
+                        Run server using IPv4 only.
+  --ipv6_only, --ipv6-only
+                        Run server using IPv6 only.
+  --rcc_port, --port, -rp [RCC_PORT ...]
+                        Port number for which to run the the RCC server.
+  --web_port, --webserver_port, -wp, -p [WEB_PORT ...]
+                        Port number for which to run the the web server.
   --run_client, -rc, --run_player
                         Runs an instance of the player immediately after
                         starting the server.

@@ -295,7 +295,6 @@ class bin_entry(popen_entry, loggable_entry):
         '''
         Updates the FFlags in the game configuration.
         '''
-        # TODO: move FFlag loading to an API endpoint.
         new_flags = {
             **self.logger.rcc_logs.get_level_table(),
         }

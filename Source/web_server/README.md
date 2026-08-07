@@ -1,6 +1,6 @@
 # Web Server (`web_server/`)
 
-#### Note: This README file has been generated using Deepseek v4. Certain explanations might be wrong. Will correct over time.
+#### Note: This README file has been generated for RFD 0.66.2 using Deepseek v4. Certain explanations might be wrong. Will correct over time.
 
 The web server module provides an HTTP(S) server that emulates Rōblox web APIs, allowing the RFD client and RCC (Rōblox Cloud Compute) to function without connecting to Rōblox's official servers.
 
@@ -42,36 +42,46 @@ The foundation of the web server. Key components:
 ## Endpoints
 
 ### `__init__.py`
+
 Serves the root `/` path with server version and Rōblox version info: `"Rōblox Freedom Distribution webserver <version> [<rōblox_version>]"`.
 
 ### `assets.py`
+
 - `/asset`, `/Asset`, `/v1/asset`, etc. — Fetches assets and thumbnails from the asset cache. Returns the asset data, a redirect, or a 404. Blocks access to the place file (`PLACE_IDEN_CONST`) unless the request is privileged (from localhost).
 - `/ownership/hasasset` — Always returns `true` (collective ownership — no catalogue API planned).
 - `/Game/Tools/ThumbnailAsset.ashx`, `/Thumbs/Asset.ashx` — Fetches asset thumbnails via cache.
 
 ### `avatar.py`
+
 Returns player character appearance data. Two version-specific implementations:
+
 - **v347**: `/v1.1/avatar-fetch/` — Animations, accessory versions, body colors, scales.
 - **v463**: `/v1/avatar`, `/v1/avatar-fetch` — Asset+type IDs, animation asset IDs, body colors, scales, emotes.
 - `/v1.1/game-start-info` — Returns universe avatar configuration (scales, collision type, body type).
 
 ### `badges.py`
+
 - `/Game/Badge/HasBadge.ashx` (v347) — Checks if a user owns a badge.
 - `/assets/award-badge` — Awards a badge to a player.
 - `/v1/users/{id}/badges/awarded-dates` (v463) — Returns awarded badge dates.
 
 ### `data_transfer.py`
+
 - `/rfd/data-transfer` — Privileged-only (localhost) endpoint. Accepts a JSON dict via POST, inserts it into the data transfer buffer, and returns accumulated output. Used for RCC ↔ server communication.
 
 ### `funds.py`
+
 - `/currency/balance` — Returns the player's robux and ticket balance.
 
 ### `groups.py`
+
 - `/Game/LuaWebService/HandleSocialRequest.ashx` (v347) — Handles `GetGroupRank` method, returning the player's rank in a group.
 - `/v2/users/{id}/groups/roles` (v463) — Returns all groups and roles for a player.
 
 ### `join_data.py`
+
 Handles the player join and registration flow:
+
 - `gen_player()` / `init_player()` — Creates or retrieves a player entry in the database. Initializes default funds on first join.
 - `perform_and_send_join()` — Constructs the join-data JSON (server connection, user info, session ID, etc.) and sends it.
 - `/game/join.ashx` (v347, v463) — Main join endpoint. Returns version-specific join data with appropriate `--rbxsig` prefix.
@@ -80,7 +90,9 @@ Handles the player join and registration flow:
 - `/universes/validate-place-join` — Always returns `true`.
 
 ### `marketplace.py`
+
 Full marketplace implementation:
+
 - `purchase_gamepass()` / `purchase_devproduct()` — Deducts funds and records ownership.
 - `/Game/GamePass/GamePassHandler.ashx` — Checks gamepass ownership.
 - `/v1/purchases/products/{id}` — Purchases a gamepass.
@@ -92,24 +104,30 @@ Full marketplace implementation:
 - `/marketplace/validatepurchase` — Validates purchase receipts.
 
 ### `persistence.py`
+
 DataStore API implementation:
+
 - `/persistence/set` — Stores a key-value pair with scope, target, and type.
 - `/persistence/getv2` — Retrieves multiple key-value pairs in bulk.
 - `/persistence/getSortedValues` — Retrieves sorted paginated data with min/max filtering.
 - `/persistence/increment` — Atomically increments numeric values.
 
 ### `player_info.py`
+
 - `/users/{id}` — Returns username for a given user ID.
 - `/users/get-by-username` — Returns user ID for a given username.
 - `/v1/users/{id}/friends` (v463) — Returns empty friend list (dummy).
 - `/points/get-point-balance` — Returns zero point balance.
 
 ### `save_place.py`
+
 - `/v1/places/{id}/symbolic-links` — Returns empty package list (packages not used in RFD).
 - `/ide/publish/UploadExistingAsset` — Saves the place file from Studio's `game:SavePlace()`. Creates a `.bak` backup before overwriting. Only works for local place files, not online URIs. Privileged-only.
 
 ### `setup_player.py`
+
 Miscellaneous player/client configuration endpoints:
+
 - `/rfd/default-user-code` — Returns the default user code string.
 - `/rfd/is-player-allowed` — Checks if a user is allowed to join.
 - `/rfd/rōblox-version` — Returns the configured Rōblox version name.
@@ -124,7 +142,9 @@ Miscellaneous player/client configuration endpoints:
 - `/v1/user/{id}/is-admin-developer-console-enabled` — Checks admin console access.
 
 ### `setup_rcc.py`
+
 RCC (Rōblox Cloud Compute) configuration endpoints:
+
 - `/api.GetAllowedMD5Hashes/` — Returns a hardcoded list of allowed MD5 hashes.
 - `/api.GetAllowedSecurityVersions/` — Returns allowed security versions (v347: `0.348.0pcplayer`, v463: `0.463.0pcplayer`).
 - `/game/load-place-info` — Returns place metadata (creator, version, game ID).
@@ -134,7 +154,9 @@ RCC (Rōblox Cloud Compute) configuration endpoints:
 - `/v1/autolocalization/games/{id}/autolocalizationtable` — Returns localization disabled.
 
 ### `studio.py`
+
 Rōblox Studio-specific endpoints:
+
 - `/studio/e.png` — Returns empty bytes (tracking pixel).
 - `/login/RequestAuth.ashx` — Redirects to negotiate endpoint.
 - `/v2/login` — Mock login. Accepts any password without `1`; rejects passwords containing `1` (debugging aid).
@@ -145,5 +167,6 @@ Rōblox Studio-specific endpoints:
 - `/my/settings/json` — Returns empty settings.
 
 ### `text_filter.py`
+
 - `/game/players/{id}/`, `/127.0.0.1/game/players/{id}/` — Returns `"ChatFilter": "blacklist"`.
 - `/moderation/v2/filtertext` — Passes text through the server core's text filter and returns filtered output.

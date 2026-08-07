@@ -192,7 +192,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         self.is_valid_request = True
         self.game_config = self.server.game_config
 
-        # Some endpoints should only allow the RCC to do stuff.
+        # Some endpoints should allow only the RCC to do stuff.
         # Trust the peer socket address, not the user-controlled Host header.
         # TODO: use a proper allow-listing system.
         self.is_privileged = ipaddress.ip_address(

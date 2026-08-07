@@ -1,10 +1,8 @@
-# Standard library imports
 import re
 
-# Local application imports
-import assets.returns as returns
 import util.const
-from web_server._logic import web_server_handler, server_path, web_server_ssl
+import assets.returns as returns
+from web_server._logic import web_server_handler, server_path
 
 
 @server_path('/rfd/default-user-code')

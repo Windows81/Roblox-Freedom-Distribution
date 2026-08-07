@@ -1,6 +1,7 @@
 # 0.67.1
 
 - feat(fvars, v463): migrated FFlags from modified-per-run local `.json` files, to being fetched from remote webserver
+- fix: `/asset?ID=${ID}` to accept uppercase `ID` field
 
 # 0.67.0
 
