@@ -54,7 +54,15 @@ def update_const_release_version(labels: dict[str, str]):
         label_replacement = labels.get(label_name)
         if label_replacement is None:
             continue
-        const_txt[i] = f"{label_name} = '''{label_replacement}'''\n"
+
+        label_begin = line.index("'''") + 3
+        label_end = line.rindex("'''") + 0
+
+        const_txt[i] = ''.join([
+            const_txt[i][:label_begin],
+            label_replacement,
+            const_txt[i][label_end:],
+        ])
 
     with open(const_file, 'w') as f:
         f.writelines(const_txt)
@@ -173,8 +181,8 @@ def main():
                     "ZIPPED_RELEASE_VERSION": release_name_suffixed
                 }
             )
-            files = create_zipped_dirs(release_name_suffixed)
             update_and_push(commit_name)
+            files = create_zipped_dirs(release_name_suffixed)
             release_to_github(files, release_name_suffixed)
         case _:
             pass

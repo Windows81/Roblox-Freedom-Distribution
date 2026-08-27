@@ -208,13 +208,11 @@ def download_rōblox_asset(
         # Step 1: no place iden.
         yield None
 
+        # Skip step 2 if no cookie is given, as no benefit is given there.
         if cookie is None:
             return
 
-        # Step 2: place iden 1818.
-        yield 1818
-
-        # Step 3: creator's place idens.
+        # Step 2: creator's place idens.
         for iden in get_creator_place_idens(asset_iden):
             yield iden
 
