@@ -56,6 +56,7 @@ jobs:
             --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
             --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
             --hidden-import requests
+            --hidden-import dracopy
         shell: bash
 
       - name: Compress Executable (Ubuntu)

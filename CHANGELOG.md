@@ -1,3 +1,8 @@
+# 0.67.2
+
+- [fix](https://github.com/Windows81/Roblox-Freedom-Distribution/issues/199): Studio v347 had `./Content` incorrectly title-cased, causing issues on GNU
+- [fix](https://github.com/Windows81/Roblox-Freedom-Distribution/issues/201): settings URL `/Setting/QuietGet/%s` did not always replace `%s` with `RCCService`
+
 # 0.67.1
 
 - feat(fvars, v463): migrated FFlags from modified-per-run local `.json` files, to being fetched from remote webserver
@@ -5,7 +10,7 @@
 
 # 0.67.0
 
-- **feat!: change RakNet offline message signature to bypass Egyptian ISP blocks**
+- **fix!: change RakNet offline message signature to bypass Egyptian ISP blocks**
 - feat(fvars, v347): migrated FFlags from modified-per-run local `.json` files, to being fetched from remote webserver
 - fix(studio): fix loading screen incorrectly showing in Studio v347
 - build: update Pillow to 12.3.0

@@ -31,15 +31,10 @@ def retrieve_input():
 
 
 def update_and_push(commit_name: str):
-    # Updates submodules.
-    subprocess.run([
-        "git", "submodule", "foreach",
-        f"git add . && git commit -m {commit_name} && git push",
-    ])
-    # Updates main repository.
-    subprocess.run(["git", "add", "."])
-    subprocess.run(["git", "commit", "-m", commit_name])
-    subprocess.run(["git", "push"])
+    for cwd in ["./Guides", "./Examples", "."]:
+        subprocess.run(["git", "add", "."], cwd=cwd)
+        subprocess.run(["git", "commit", "-m", commit_name], cwd=cwd)
+        subprocess.run(["git", "push"], cwd=cwd)
 
 
 def update_const_release_version(labels: dict[str, str]):
