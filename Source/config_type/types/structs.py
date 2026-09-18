@@ -75,3 +75,6 @@ class avatar_data:
     items: list[int]
     scales: avatar_scales
     colors: avatar_colors
+
+
+settings_type = dict[str, bool | int | str]

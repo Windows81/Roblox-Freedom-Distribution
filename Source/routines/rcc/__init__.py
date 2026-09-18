@@ -220,7 +220,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             f'-PlaceId:{self.place_iden}',
             '-LocalTest', self.get_versioned_path(
                 'GameServer.json',
-                adjust_for_wine=True,
+                make_into_winepath=True,
             ),
             *suffix_args,
         )
@@ -230,7 +230,13 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         Pipes output from the RCC server to the logger module for processing.
         This is done in a separate thread to avoid blocking the main process from terminating RCC when necessary.
         '''
-        stdout: IO[bytes] = self.popen_mains[0].stdout  # pyright: ignore[reportAssignmentType]
+        stdout: IO[bytes] | None = self.popen_mains[0].stdout
+        if stdout is None:
+            return
+        try:
+            os.set_blocking(stdout.fileno(), False)
+        except (AttributeError, OSError, Exception):
+            pass
         os.set_blocking(stdout.fileno(), False)
         assert stdout is not None
         stream_data = bytearray()

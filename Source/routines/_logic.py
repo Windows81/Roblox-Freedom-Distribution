@@ -99,22 +99,26 @@ class popen_entry(base_entry):
 
         # Checks if Wine is installed.  Redundant if using Windows.
         if shutil.which('wine') is not None:
-            params = ('wine', exe_path, *cmd_args)
+            principal = subprocess.Popen(
+                ('wine', exe_path, *cmd_args),
+                env={'WINEDBG': '-all'},
+                cwd=os.path.dirname(exe_path),
+                *args, **kwargs,
+            )
         else:
-            params = (exe_path, *cmd_args)
+            principal = subprocess.Popen(
+                (exe_path, *cmd_args),
+                cwd=os.path.dirname(exe_path),
+                *args, **kwargs,
+            )
 
         self.is_running = True
-        principal = subprocess.Popen(
-            params, *args, **kwargs, cwd=os.path.dirname(exe_path),
-        )
         self.popen_mains.append(principal)
 
         if self.debug_x96:
-            popen_dbg = subprocess.Popen[str]([
-                'x96dbg',
-                '-p', str(principal.pid),
-            ])
-            self.popen_daemons.append(popen_dbg)
+            self.popen_daemons.append(subprocess.Popen[str]([
+                'x96dbg', '-p', str(principal.pid),
+            ]))
 
     @override
     def stop(self) -> None:
@@ -257,10 +261,10 @@ class bin_entry(popen_entry, loggable_entry):
             self.web_host, self.web_port,
         )
 
-    def get_versioned_path(self, *paths: str, adjust_for_wine: bool = False) -> str:
+    def get_versioned_path(self, *paths: str, make_into_winepath: bool = False) -> str:
         return util.resource.retr_rōblox_full_path(
             self.retr_version(), self.BIN_SUBTYPE, *paths,
-            adjust_for_wine=adjust_for_wine,
+            make_into_winepath=make_into_winepath,
         )
 
     @functools.cache

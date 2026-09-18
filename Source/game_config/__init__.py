@@ -5,7 +5,7 @@ import functools
 import json
 import os.path
 import sys
-import tomllib
+import tomli
 
 # Typing imports
 from typing import Any, Callable
@@ -23,7 +23,7 @@ import util.versions
 
 
 PARSERS: dict[str, Callable[[bytes], dict[Any, Any]]] = {
-    'toml': lambda f: tomllib.loads(f.decode('utf-8')),
+    'toml': lambda f: tomli.loads(f.decode('utf-8')),
     'json': lambda f: json.loads(f),
 }
 

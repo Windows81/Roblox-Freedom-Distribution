@@ -9,7 +9,8 @@ import textwrap
 import shutil
 import os
 
-os.chdir(os.path.dirname(__file__))
+curr_dir = os.path.dirname(os.path.dirname(__file__))
+os.chdir(curr_dir)
 
 
 def check_software(software_list: list[str]) -> bool:
@@ -38,7 +39,7 @@ def update_and_push(commit_name: str):
 
 
 def update_const_release_version(labels: dict[str, str]):
-    const_file = "../Source/util/const.py"
+    const_file = "./Source/util/const.py"
 
     with open(const_file, 'r') as f:
         const_txt = f.readlines()

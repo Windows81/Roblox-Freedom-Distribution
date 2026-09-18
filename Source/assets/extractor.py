@@ -88,7 +88,7 @@ def _download_helper(
     url: str,
     cookie: str | None = None,
     place_id: int | None = None,
-) -> BaseHTTPResponse | None:
+) -> tuple[bytes, BaseHTTPResponse] | tuple[None, None]:
 
     if cookie is None:
         cookie = get_rōblox_cookie()
@@ -106,13 +106,14 @@ def _download_helper(
         headers['Roblox-Browser-Asset-Request'] = 'false'
 
     try:
-        return _http.request(
+        result = _http.request(
             method='GET',
             url=url,
             headers=headers,
         )
+        return (unzip(result.data), result)
     except urllib3.exceptions.HTTPError:
-        return None
+        return (None, None)
 
 
 def download_item(
@@ -120,7 +121,7 @@ def download_item(
     cookie: str | None = None,
     place_id: int | None = None,
 ) -> bytes | None:
-    response = _download_helper(
+    (data, response) = _download_helper(
         url=url,
         cookie=cookie,
         place_id=place_id,
@@ -130,7 +131,7 @@ def download_item(
         return None
     if response.status != 200:
         return None
-    return unzip(response.data)
+    return data
 
 
 @functools.cache
@@ -217,18 +218,18 @@ def download_rōblox_asset(
             yield iden
 
     for place_id in gen_place_idens_candidates():
-        response = _download_helper(
+        (data, response) = _download_helper(
             url=url,
             cookie=cookie,
             place_id=place_id,
         )
         if response is None:
             break
-        if response.status == 403:
+        elif response.status == 403:
             continue
-        if response.status != 200:
+        elif response.status != 200:
             break
-        return response.data
+        return data
 
     # Genuinely inaccessible with any known place iden.
     return None

@@ -80,7 +80,7 @@ def retr_rōblox_full_path(
     version: util.versions.rōblox,
     bin_type: bin_subtype,
     *paths: str,
-    adjust_for_wine: bool = False,
+    make_into_winepath: bool = False,
 ) -> str:
     result = retr_full_path(
         dir_type.RŌBLOX,
@@ -88,7 +88,7 @@ def retr_rōblox_full_path(
         bin_type.value,
         *paths,
     )
-    if adjust_for_wine:
+    if make_into_winepath:
         return convert_to_winepath(result)
     return result
 

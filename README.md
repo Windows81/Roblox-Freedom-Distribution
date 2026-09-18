@@ -594,6 +594,21 @@ Runs at the CoreScript security level whenever a new _server_ is started.
 startup_script = 'game.workspace.FilteringEnabled = false'
 ```
 
+#### `server_core.roblox_setting_overrides`
+
+Resolves to type `dict[str, bool | int | str]`.
+
+Overrides FFlags and other client app settings. These overrides affect both the local `RCCService.exe` and any players which join your server - without needing to modify any `ClientAppSettings.json`.
+
+```toml
+roblox_setting_overrides = {
+    DFFlagCheckCSGSharedStringProp = true,
+    DFFlagAdminServerLogs = true,
+    DFStringAdditionalBlacklistHeaders = "SOAPAction",
+    DFIntCrashUploadHttpResponseDefaultTimeoutMillis = 80000,
+}
+```
+
 #### `server_core.metadata.title`
 
 Resolves to type `str`.

@@ -1,6 +1,11 @@
+# 0.68.0
+
+- build!(deps): add dependency `tomli~=2.4.1` to force TOML 1.1.0 support
+- feat: add `game_setup.roblox_setting_overrides` to override FFlags and other settings
+
 # 0.67.2
 
-- [fix](https://github.com/Windows81/Roblox-Freedom-Distribution/issues/199): Studio v347 had `./Content` incorrectly title-cased, causing issues on GNU
+- [fix](https://github.com/Windows81/Roblox-Freedom-Distribution/issues/199): `./Content` incorrectly title-cased in Studio v347, causing issues on GNU
 - [fix](https://github.com/Windows81/Roblox-Freedom-Distribution/issues/201): settings URL `/Setting/QuietGet/%s` did not always replace `%s` with `RCCService`
 
 # 0.67.1
@@ -25,7 +30,7 @@
 # 0.66.4
 
 - feat: players can be held in loading screen until RCC first calls `/rfd/data-transfer`
-- feat(config): add `game_setup.ready_delay_sec` to delay clients further
+- feat(config): add `game_setup.ready_delay_sec` to control server-init delay before clients can join a game
 - build: update dependencies to ensure existence with pre-compiled Python 3.14 wheels for Windows
 
 # 0.66.3

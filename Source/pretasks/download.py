@@ -1,5 +1,6 @@
 # Standard library imports
 import functools
+import sys
 import urllib.request
 import shutil
 import io
@@ -69,10 +70,13 @@ def should_overwrite(full_dir: str) -> bool:
         with open(rfd_ver_path, 'r') as f:
             version_str = f.read()
 
+    if not sys.stdin or not sys.stdin.isatty():
+        return False
+
     if version_str.startswith(util.const.ZIPPED_RELEASE_VERSION):
         return False
 
-    return input('Should RFD overwrite the `%s`? (y/N) ' % full_dir).lower().startswith('y')
+    return input('Should RFD overwrite `%s`? (y/N) ' % full_dir).lower().startswith('y')
 
 
 def bootstrap_binary(
