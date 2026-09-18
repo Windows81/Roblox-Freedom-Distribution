@@ -55,7 +55,7 @@ jobs:
             --icon $GITHUB_WORKSPACE/Source/Icon.ico \
             --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
             --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
-            --hidden-import requests
+            --hidden-import requests \
             --hidden-import dracopy
         shell: bash
 
