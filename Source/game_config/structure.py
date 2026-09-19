@@ -62,7 +62,8 @@ class config_type(allocateable.obj_type):
             lambda tick: 'Player%d' % time.time()
         )
 
-        check_user_allowed: callable[[str], bool] = (
+        allow_unsafe_users: bool = False
+        check_user_allowed: callable[[str | None], bool] = (
             lambda *a: True
         )
 

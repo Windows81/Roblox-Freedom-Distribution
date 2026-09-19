@@ -514,7 +514,7 @@ def f(int_val: int, bool_val: bool):
 '''
 ```
 
-Nobody cares what name you give the function. RFD should be smart enough to figure out what you're using.
+Nobody cares what _name_ you give the function. RFD should be smart enough to figure it out.
 
 In Python mode, RFD assigns global constants for your convenience.
 
@@ -598,7 +598,7 @@ startup_script = 'game.workspace.FilteringEnabled = false'
 
 Resolves to type `dict[str, bool | int | str]`.
 
-Overrides FFlags and other client app settings. These overrides affect both the local `RCCService.exe` and any players which join your server - without needing to modify any `ClientAppSettings.json`.
+Overrides FFlags and other client app settings. These overrides affect both the local `RCCService.exe` and any players which join your server - without needing you to modify any `ClientAppSettings.json`.
 
 ```toml
 roblox_setting_overrides = {
@@ -706,11 +706,19 @@ Resolves to type `path_str`. Relative paths are traced from the directory where 
 
 Corresponds to Rōblox [`Enum.ChatStyle`](https://create.roblox.com/docs/reference/engine/enums/ChatStyle). Can either be `"Classic"`, `"Bubble"`, or `"ClassicAndBubble"`.
 
+#### `server_core.allow_unsafe_users`
+
+Resolves to `bool`.
+
+If `true`, clients become allowed to join an RFD server _without_ first needing to communicate with RFD's custom database system.
+
+_This option is meant solely for debugging purposes._ Therefore, the default value should be `false`.
+
 #### `server_core.check_user_allowed`
 
 Resolves to [function](#functions) type `(str) -> bool`.
 
-**This function is responsible for authorising users.**
+**This function is responsible for authorising users into an RFD server.**
 
 Expect this function to be called multiple times when a user joins.
 

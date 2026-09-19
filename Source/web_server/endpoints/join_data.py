@@ -11,15 +11,15 @@ import util.versions as versions
 from web_server._logic import web_server_handler, server_path
 
 
-def gen_player(config: game_config.obj_type, user_code: str) -> tuple[int, str, bool] | None:
+def add_player_to_players_database(config: game_config.obj_type, user_code: str) -> tuple[int, str, bool] | None:
     '''
     Returns a tuple with the following:
     `int`: corresponds with the iden number of a user whose `index` field matches `value`.
     `str`: corresponds with the username of a user whose `index` field matches `value`.
     `bool`: returns `True` if the player is being created for the first time.
     '''
-    database = config.storage.players
-    existing = database.check(user_code)
+    players_database = config.storage.players
+    existing = players_database.check(user_code)
     if existing is not None:
         return (*existing, False)
 
@@ -35,7 +35,7 @@ def gen_player(config: game_config.obj_type, user_code: str) -> tuple[int, str, 
 
         username = config.server_core.retrieve_username(iden_num, user_code)
 
-        result = database.add_player(
+        result = players_database.add_player(
             user_code, iden_num, username,
         )
 
@@ -43,22 +43,24 @@ def gen_player(config: game_config.obj_type, user_code: str) -> tuple[int, str, 
             return (*result, True)
 
 
-def init_player(config: game_config.obj_type, usercode: str) -> tuple[int, str] | None:
+def init_player_in_all_databases(config: game_config.obj_type, usercode: str) -> tuple[int, str, bool] | None:
     '''
     Returns a tuple with the following:
-    `int`: corresponds with that user's `id_num`.
+    `int`: corresponds with that user's `iden_num`.
     `str`: corresponds with that user's `username`.
+    `bool`: returns `True` if the player is being created for the first time.
     '''
-    player_data = gen_player(config, usercode)
+    player_data = add_player_to_players_database(config, usercode)
     if player_data is None:
         return None
+
     (iden_num, username, first_time) = player_data
+    if not first_time:
+        return player_data
 
-    if first_time:
-        funds = config.server_core.retrieve_default_funds(iden_num, usercode)
-        config.storage.funds.first_init(iden_num, funds)
-
-    return (iden_num, username)
+    funds = config.server_core.retrieve_default_funds(iden_num, usercode)
+    config.storage.funds.first_init(iden_num, funds)
+    return player_data
 
 
 def perform_and_send_join(self: web_server_handler, additional_return_data: dict[str, Any], prefix: bytes) -> None:
@@ -79,12 +81,12 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
     rcc_port = int(query_args.get('ServerPort', self.port_num))
     user_code = query_args['UserCode']
 
-    result = init_player(self.game_config, user_code)
+    result = init_player_in_all_databases(self.game_config, user_code)
     if result is None:
-        self.send_json({"error": "403: disallowed user"}, 403)
+        self.send_json({"error": "403: disallowed user"}, status=403)
         return
 
-    (id_num, username) = result
+    (id_num, username, _) = result
 
     join_data = {
         'ServerConnections': [
@@ -250,7 +252,7 @@ def _(self: web_server_handler) -> bool:
             'message': None,
         })
 
-    result = init_player(self.game_config, user_code)
+    result = init_player_in_all_databases(self.game_config, user_code)
     if result is None:
         self.send_json({
             'status': 12,

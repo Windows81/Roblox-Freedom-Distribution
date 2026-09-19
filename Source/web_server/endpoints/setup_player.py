@@ -16,6 +16,10 @@ def _(self: web_server_handler) -> bool:
 def _(self: web_server_handler) -> bool:
     database = self.server.storage.players
 
+    if self.game_config.server_core.allow_unsafe_users:
+        self.send_data(b'true')
+        return True
+
     id_num = int(self.query['userId'])
     user_code = database.get_player_field_from_index(
         database.player_field.IDEN_NUM,
