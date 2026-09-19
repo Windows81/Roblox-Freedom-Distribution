@@ -22,16 +22,16 @@ def check_software(software_list: list[str]) -> bool:
     return True
 
 
-def retrieve_input():
-    """Retrieves user input for version title and commit message."""
+def generate_commit_name() -> str:
+    return datetime.now().strftime("%Y-%m-%dT%H%MZ")
 
-    commit_name = datetime.now().strftime("%Y-%m-%dT%H%MZ")
-    release_name = input("Version title? ")
 
-    return (commit_name, release_name)
+def input_version_title():
+    return input("Version title? ")
 
 
 def update_and_push(commit_name: str):
+    """Publishes all submodules, then the main top-level repository to GitHub."""
     for cwd in ["./Guides", "./Examples", "."]:
         subprocess.run(["git", "add", "."], cwd=cwd)
         subprocess.run(["git", "commit", "-m", commit_name], cwd=cwd)
@@ -146,30 +146,36 @@ def main():
 
     # Prompts user to select build mode.
     mode = input(textwrap.dedent("""
-	1. Update version string
-	2. Update version string then create new commit
+	0. Create and publish new commit
+	1. Update version string only
+	2. Update version string, then create and publish new commit
 	3. Zip binaries and add them to a new version in GitHub Releases
 	"""))
 
     # Executes selected build mode.
     match mode:
+        case '0':
+            commit_name = generate_commit_name()
+            update_and_push(commit_name)
+
         case '1':
-            (commit_name, release_name) = retrieve_input()
+            release_name = input_version_title()
             update_const_release_version(
                 labels={
                     "GIT_RELEASE_VERSION": release_name,
                 }
             )
         case '2':
-            (commit_name, release_name) = retrieve_input()
+            release_name = input_version_title()
             update_const_release_version(
                 labels={
                     "GIT_RELEASE_VERSION": release_name,
                 }
             )
+            commit_name = generate_commit_name()
             update_and_push(commit_name)
         case '3':
-            (commit_name, release_name) = retrieve_input()
+            release_name = input_version_title()
             release_name_suffixed = release_name + '-binaries'
             update_const_release_version(
                 labels={
@@ -177,6 +183,7 @@ def main():
                     "ZIPPED_RELEASE_VERSION": release_name_suffixed
                 }
             )
+            commit_name = generate_commit_name()
             update_and_push(commit_name)
             files = create_zipped_dirs(release_name_suffixed)
             release_to_github(files, release_name_suffixed)
