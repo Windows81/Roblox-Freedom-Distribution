@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-latest]
-      fail-fast: false # Allows jobs to fail independently.
+      fail-fast: false
 
     steps:
       - name: Checkout Repository
@@ -36,25 +36,29 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Create Virtual environment
+        run: |
+          python -m venv rfd_venv
+          source rfd_venv/bin/activate
+
       - name: Install Dependencies
         run: |
-          pip install --upgrade pip
           pip install -r Source/requirements.txt
           pip install -r Source/requirements.dev.txt
           pip install requests
 
-      - name: Build PyInstaller
+      - name: Build PyInstaller Package
         run: |
-          echo "Virtual environment activated. Now running pyinstaller."
           pyinstaller \
             --name "RFD" \
-            --onefile $GITHUB_WORKSPACE/Source/_main.py \
-            --paths $GITHUB_WORKSPACE/Source/ \
-            --workpath $GITHUB_WORKSPACE/PyInstallerWork \
-            --distpath $GITHUB_WORKSPACE/dist \
-            --icon $GITHUB_WORKSPACE/Source/Icon.ico \
-            --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
-            --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
+            --onefile Source/_main.py \
+            --paths Source \
+            --paths rfd_venv/lib/python3.7/site-packages \
+            --workpath PyInstallerWork \
+            --distpath dist \
+            --icon Source/Icon.ico \
+            --specpath PyInstallerWork/Spec \
+            --add-data "Source/*:Source" \
             --hidden-import requests \
             --hidden-import dracopy
         shell: bash

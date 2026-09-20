@@ -63,7 +63,8 @@ class config_type(allocateable.obj_type):
         )
 
         allow_unsafe_users: bool = False
-        check_user_allowed: callable[[str | None], bool] = (
+
+        check_user_allowed: callable[[str], bool] = (
             lambda *a: True
         )
 

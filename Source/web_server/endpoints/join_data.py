@@ -239,7 +239,6 @@ def _(self: web_server_handler) -> bool:
 
     query_args = json.loads(self.headers.get('Roblox-Session-Id', '{}'))
     query_args |= self.query
-    user_code = query_args['UserCode']
 
     # Keeps returning 1 ("Server found, loading...") until RCC is marked as ready.
     if not self.server.data_transferer.was_triggered:
@@ -252,7 +251,9 @@ def _(self: web_server_handler) -> bool:
             'message': None,
         })
 
+    user_code = query_args['UserCode']
     result = init_player_in_all_databases(self.game_config, user_code)
+
     if result is None:
         self.send_json({
             'status': 12,
