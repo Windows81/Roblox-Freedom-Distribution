@@ -8,9 +8,6 @@ on:
       - "Source/**"
   workflow_dispatch:
 
-permissions:
-  contents: write   # нужно для создания релиза
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -30,17 +27,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Get Version Number
-        id: version_num
-        shell: bash
-        run: |
-          GIT_COMMIT_ID=$(echo "${GITHUB_SHA}" | cut -c 1-7)
-          GIT_RELEASE_VERSION=$(grep -oP "GIT_RELEASE_VERSION\s*=\s*['\"]+\K[^'\"]+" ./Source/util/const.py || echo "0.0.0")
-          UPDATE_TIME=$(date -u +"%Y%m%d%H%M%S")
-          echo "tag_name=v${GIT_RELEASE_VERSION}-${UPDATE_TIME}" >> "$GITHUB_ENV"
-          echo "release_name=${GIT_RELEASE_VERSION}+${GIT_COMMIT_ID}" >> "$GITHUB_ENV"
-          echo "Version: ${GIT_RELEASE_VERSION}, Tag: v${GIT_RELEASE_VERSION}-${UPDATE_TIME}"
 
       - name: Set Up Python
         uses: actions/setup-python@v5
@@ -69,18 +55,15 @@ jobs:
             --hidden-import requests \
             --hidden-import dracopy
 
-      - name: Package Executable (Linux)
-        if: matrix.os == 'ubuntu-22.04'
+      - name: Rename Executable
         shell: bash
         run: |
-          mv dist/RFD dist/${{ matrix.asset_name }}
-          chmod +x dist/${{ matrix.asset_name }}
-
-      - name: Package Executable (Windows)
-        if: matrix.os == 'windows-latest'
-        shell: bash
-        run: |
-          mv dist/RFD.exe dist/${{ matrix.asset_name }}
+          if [ "${{ matrix.os }}" = "ubuntu-22.04" ]; then
+            mv dist/RFD dist/${{ matrix.asset_name }}
+            chmod +x dist/${{ matrix.asset_name }}
+          else
+            mv dist/RFD.exe dist/${{ matrix.asset_name }}
+          fi
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -88,40 +71,3 @@ jobs:
           name: ${{ matrix.artifact_name }}
           path: dist/${{ matrix.asset_name }}
           if-no-files-found: error
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: dist
-
-      - name: Flatten artifacts
-        shell: bash
-        run: |
-          mkdir -p release
-          find dist -type f -exec cp {} release/ \;
-          ls -la release/
-
-      - name: Generate tag and release name
-        id: meta
-        shell: bash
-        run: |
-          GIT_COMMIT_ID=$(echo "${GITHUB_SHA}" | cut -c 1-7)
-          # Достаём версию из артефакта или пересчитываем
-          UPDATE_TIME=$(date -u +"%Y%m%d%H%M%S")
-          echo "tag_name=v${UPDATE_TIME}-${GIT_COMMIT_ID}" >> "$GITHUB_ENV"
-          echo "release_name=${GIT_COMMIT_ID}" >> "$GITHUB_ENV"
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: release/*
-          name: ${{ env.release_name }}
-          tag_name: ${{ env.tag_name }}
-          generate_release_notes: true
-          prerelease: true
-          # GITHUB_TOKEN подставляется автоматически из permissions
