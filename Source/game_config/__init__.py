@@ -5,12 +5,12 @@ import functools
 import json
 import os.path
 import sys
-import tomli
 
 # Typing imports
 from typing import Any, Callable
 
 # Third-party or external imports
+from vendored import tomli
 import storage
 
 # Local application imports

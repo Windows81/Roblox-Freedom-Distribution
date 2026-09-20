@@ -37,6 +37,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m venv rfd_venv
+          rfd_venv/Scripts/activate
           rfd_venv/Scripts/pip install pyinstaller requests
           rfd_venv/Scripts/pip install -r Source/requirements.txt
           rfd_venv/Scripts/pip install -r Source/requirements.dev.txt
