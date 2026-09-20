@@ -16,8 +16,8 @@ jobs:
       matrix:
         include:
           - os: ubuntu-22.04
-            artifact_name: RFD-linux
-            asset_name: RFD-linux
+            artifact_name: RFD-gnu-linux
+            asset_name: RFD-gnu-linux
             sep: ':'
           - os: windows-latest
             artifact_name: RFD-windows
@@ -35,38 +35,21 @@ jobs:
           python-version: '3.13'
 
       - name: Install Dependencies
+        working-directory: Source
         run: |
-          python -m venv rfd_venv
-          rfd_venv/Scripts/activate
-          rfd_venv/Scripts/pip install pyinstaller requests
-          rfd_venv/Scripts/pip install -r Source/requirements.txt
-          rfd_venv/Scripts/pip install -r Source/requirements.dev.txt
+          pip install pyinstaller==6.20.0
+          pip install pillow==12.3.0
+          pip install requests
+          pip install -r requirements.txt
 
       - name: Build PyInstaller
-        shell: bash
-        run: |
-          rfd_venv/Scripts/pyinstaller \
-            --name "RFD" \
-            --onefile "$GITHUB_WORKSPACE/Source/_main.py" \
-            --paths "$GITHUB_WORKSPACE/Source/" \
-            --paths "$GITHUB_WORKSPACE/lib/*/site-packages" \
-            --workpath "$GITHUB_WORKSPACE/PyInstallerWork" \
-            --distpath "$GITHUB_WORKSPACE/dist" \
-            --specpath "$GITHUB_WORKSPACE/PyInstallerWork/Spec" \
-            ${{ hashFiles('Source/Icon.ico') != '' && format('--icon "{0}/Source/Icon.ico"', github.workspace) || '' }} \
-            --add-data "$GITHUB_WORKSPACE/Source/*${{ matrix.sep }}Source" \
-            --hidden-import requests \
-            --hidden-import dracopy
+        working-directory: Source
+        run: pyinstaller RFD.spec
 
       - name: Rename Executable
+        working-directory: Source
         shell: bash
-        run: |
-          if [ "${{ matrix.os }}" = "ubuntu-22.04" ]; then
-            mv dist/RFD dist/${{ matrix.asset_name }}
-            chmod +x dist/${{ matrix.asset_name }}
-          else
-            mv dist/RFD.exe dist/${{ matrix.asset_name }}
-          fi
+        run: mv Source/dist/* dist/${{ matrix.asset_name }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
