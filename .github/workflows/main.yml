@@ -18,11 +18,11 @@ jobs:
           - os: ubuntu-22.04
             artifact_name: RFD-linux
             asset_name: RFD-linux
-            sep: ":"
+            sep: ':'
           - os: windows-latest
             artifact_name: RFD-windows
             asset_name: RFD-windows.exe
-            sep: ";"
+            sep: ';'
       fail-fast: false
 
     steps:
@@ -32,7 +32,7 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: '3.13'
 
       - name: Install Dependencies
         run: |
