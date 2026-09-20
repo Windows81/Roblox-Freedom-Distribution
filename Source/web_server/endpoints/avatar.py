@@ -17,9 +17,11 @@ def get_user_code(id_num: int, game_config: obj_type) -> str | None:
         id_num,
         database.player_field.USERCODE,
     )
-    if user_code is None:
-        return None
-    return user_code[0]
+    if user_code is not None:
+        return user_code[0]
+    if game_config.server_core.allow_unsafe_users:
+        return f'rfd_unsafe_usercode_{id_num}'
+    return None
 
 
 @server_path('/v1.1/avatar-fetch/', versions={versions.rōblox.v347})
