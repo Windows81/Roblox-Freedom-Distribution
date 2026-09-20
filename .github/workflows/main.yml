@@ -39,7 +39,7 @@ jobs:
       - name: Create Virtual environment
         run: |
           python -m venv rfd_venv
-          source rfd_venv/bin/activate
+          . rfd_venv/bin/activate
 
       - name: Install Dependencies
         run: |
