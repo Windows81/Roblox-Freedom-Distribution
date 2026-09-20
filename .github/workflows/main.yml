@@ -14,26 +14,23 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-latest]
+        include:
+          - os: ubuntu-22.04
+            artifact_name: RFD-linux
+            asset_name: RFD-linux
+            sep: ":"
+          - os: windows-latest
+            artifact_name: RFD-windows
+            asset_name: RFD-windows.exe
+            sep: ";"
       fail-fast: false
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Get Version Number
-        id: version_num
-        shell: bash
-        run: |
-          export LC_ALL=en_US.utf8
-          GIT_COMMIT_ID=$(echo "${{ github.sha }}" |  cut -c 1-7)
-          GIT_RELEASE_VERSION=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")
-          UPDATE_TIME=$(echo ${{ github.event.repository.updated_at }} | sed 's/[:-]//g')
-          echo "tag_name=v${GIT_RELEASE_VERSION}-${UPDATE_TIME}" >> $GITHUB_ENV
-          echo "release_name=${GIT_RELEASE_VERSION}+${GIT_COMMIT_ID}" >> $GITHUB_ENV
+        uses: actions/checkout@v4
 
       - name: Set Up Python
-        uses: actions/setup-python@v5.3.0
+        uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
@@ -44,52 +41,39 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r Source/requirements.txt
           pip install -r Source/requirements.dev.txt
-          pip install requests
+          pip install pyinstaller requests
 
-      - name: Build PyInstaller Package
+      - name: Build PyInstaller
+        shell: bash
         run: |
           pyinstaller \
             --name "RFD" \
-            --onefile Source/_main.py \
-            --paths Source \
-            --paths rfd_venv/lib/python3.7/site-packages \
-            --workpath PyInstallerWork \
-            --distpath dist \
-            --icon Source/Icon.ico \
-            --specpath PyInstallerWork/Spec \
-            --add-data "Source/*:Source" \
+            --onefile "$GITHUB_WORKSPACE/Source/_main.py" \
+            --paths "$GITHUB_WORKSPACE/Source/" \
+            --workpath "$GITHUB_WORKSPACE/PyInstallerWork" \
+            --distpath "$GITHUB_WORKSPACE/dist" \
+            --specpath "$GITHUB_WORKSPACE/PyInstallerWork/Spec" \
+            ${{ hashFiles('Source/Icon.ico') != '' && format('--icon "{0}/Source/Icon.ico"', github.workspace) || '' }} \
+            --add-data "$GITHUB_WORKSPACE/Source/*${{ matrix.sep }}Source" \
             --hidden-import requests \
             --hidden-import dracopy
+
+      - name: Rename Executable
         shell: bash
-
-      - name: Compress Executable (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
         run: |
-          zip -j "dist/RFD-${{ matrix.os }}.zip" "dist/RFD"
-          rm "dist/RFD"
+          if [ "${{ matrix.os }}" = "ubuntu-22.04" ]; then
+            mv dist/RFD dist/${{ matrix.asset_name }}
+            chmod +x dist/${{ matrix.asset_name }}
+          else
+            mv dist/RFD.exe dist/${{ matrix.asset_name }}
+          fi
 
-      - name: Rename Executable (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          mv "dist/RFD.exe" "dist/RFD-${{ matrix.os }}.exe"
-        shell: bash
-
-      - name: Upload Artifact (Windows)
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v4.6.0
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          path: "dist/*"
-          name: "RFD-${{ matrix.os }}"
-
-      - name: Release with Notes
-        uses: softprops/action-gh-release@v1
-        with:
-          files: "dist/*"
-          name: ${{ env.release_name }}
-          tag_name: ${{ env.tag_name }}
-          generate_release_notes: true
-          prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ matrix.artifact_name }}
+          path: dist/${{ matrix.asset_name }}
+          if-no-files-found: error
