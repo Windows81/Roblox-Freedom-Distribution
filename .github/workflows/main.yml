@@ -34,13 +34,6 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: venv setup
-        uses: srvanderplas/action-setup-venv@v1.1.5
-
-      - name: Create Virtual environment
-        run: |
-          rfd_venv/bin/activate
-
       - name: Install Dependencies
         run: |
           python -m venv rfd_venv
