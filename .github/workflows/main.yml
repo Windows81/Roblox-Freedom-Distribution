@@ -34,25 +34,28 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: venv setup
+        uses: srvanderplas/action-setup-venv@v1.1.5
+
       - name: Create Virtual environment
         run: |
-          python -m venv rfd_venv
-          . rfd_venv/bin/activate
+          rfd_venv/bin/activate
 
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r Source/requirements.txt
-          pip install -r Source/requirements.dev.txt
-          pip install pyinstaller requests
+          python -m venv rfd_venv
+          rfd_venv/Scripts/pip install pyinstaller requests
+          rfd_venv/Scripts/pip install -r Source/requirements.txt
+          rfd_venv/Scripts/pip install -r Source/requirements.dev.txt
 
       - name: Build PyInstaller
         shell: bash
         run: |
-          pyinstaller \
+          rfd_venv/Scripts/pyinstaller \
             --name "RFD" \
             --onefile "$GITHUB_WORKSPACE/Source/_main.py" \
             --paths "$GITHUB_WORKSPACE/Source/" \
+            --paths "$GITHUB_WORKSPACE/lib/*/site-packages" \
             --workpath "$GITHUB_WORKSPACE/PyInstallerWork" \
             --distpath "$GITHUB_WORKSPACE/dist" \
             --specpath "$GITHUB_WORKSPACE/PyInstallerWork/Spec" \
