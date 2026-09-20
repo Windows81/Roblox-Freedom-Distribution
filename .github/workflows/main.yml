@@ -8,83 +8,120 @@ on:
       - "Source/**"
   workflow_dispatch:
 
+permissions:
+  contents: write   # нужно для создания релиза
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, windows-latest]
-      fail-fast: false # Allows jobs to fail independently.
+        include:
+          - os: ubuntu-22.04
+            artifact_name: RFD-linux
+            asset_name: RFD-linux
+            sep: ":"
+          - os: windows-latest
+            artifact_name: RFD-windows
+            asset_name: RFD-windows.exe
+            sep: ";"
+      fail-fast: false
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get Version Number
         id: version_num
         shell: bash
         run: |
-          export LC_ALL=en_US.utf8
-          GIT_COMMIT_ID=$(echo "${{ github.sha }}" |  cut -c 1-7)
-          GIT_RELEASE_VERSION=$(grep "(?<=GIT_RELEASE_VERSION = ''').+(?=''')" -Po "./Source/util/const.py")
-          UPDATE_TIME=$(echo ${{ github.event.repository.updated_at }} | sed 's/[:-]//g')
-          echo "tag_name=v${GIT_RELEASE_VERSION}-${UPDATE_TIME}" >> $GITHUB_ENV
-          echo "release_name=${GIT_RELEASE_VERSION}+${GIT_COMMIT_ID}" >> $GITHUB_ENV
+          GIT_COMMIT_ID=$(echo "${GITHUB_SHA}" | cut -c 1-7)
+          GIT_RELEASE_VERSION=$(grep -oP "GIT_RELEASE_VERSION\s*=\s*['\"]+\K[^'\"]+" ./Source/util/const.py || echo "0.0.0")
+          UPDATE_TIME=$(date -u +"%Y%m%d%H%M%S")
+          echo "tag_name=v${GIT_RELEASE_VERSION}-${UPDATE_TIME}" >> "$GITHUB_ENV"
+          echo "release_name=${GIT_RELEASE_VERSION}+${GIT_COMMIT_ID}" >> "$GITHUB_ENV"
+          echo "Version: ${GIT_RELEASE_VERSION}, Tag: v${GIT_RELEASE_VERSION}-${UPDATE_TIME}"
 
       - name: Set Up Python
-        uses: actions/setup-python@v5.3.0
+        uses: actions/setup-python@v5
         with:
           python-version: "3.13"
 
       - name: Install Dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r Source/requirements.txt
           pip install -r Source/requirements.dev.txt
-          pip install requests
+          pip install pyinstaller requests
 
       - name: Build PyInstaller
+        shell: bash
         run: |
-          echo "Virtual environment activated. Now running pyinstaller."
           pyinstaller \
             --name "RFD" \
-            --onefile $GITHUB_WORKSPACE/Source/_main.py \
-            --paths $GITHUB_WORKSPACE/Source/ \
-            --workpath $GITHUB_WORKSPACE/PyInstallerWork \
-            --distpath $GITHUB_WORKSPACE/dist \
-            --icon $GITHUB_WORKSPACE/Source/Icon.ico \
-            --specpath $GITHUB_WORKSPACE/PyInstallerWork/Spec \
-            --add-data "$GITHUB_WORKSPACE/Source/*:Source" \
+            --onefile "$GITHUB_WORKSPACE/Source/_main.py" \
+            --paths "$GITHUB_WORKSPACE/Source/" \
+            --workpath "$GITHUB_WORKSPACE/PyInstallerWork" \
+            --distpath "$GITHUB_WORKSPACE/dist" \
+            --specpath "$GITHUB_WORKSPACE/PyInstallerWork/Spec" \
+            ${{ hashFiles('Source/Icon.ico') != '' && format('--icon "{0}/Source/Icon.ico"', github.workspace) || '' }} \
+            --add-data "$GITHUB_WORKSPACE/Source/*${{ matrix.sep }}Source" \
             --hidden-import requests \
             --hidden-import dracopy
+
+      - name: Package Executable (Linux)
+        if: matrix.os == 'ubuntu-22.04'
         shell: bash
-
-      - name: Compress Executable (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
         run: |
-          zip -j "dist/RFD-${{ matrix.os }}.zip" "dist/RFD"
-          rm "dist/RFD"
+          mv dist/RFD dist/${{ matrix.asset_name }}
+          chmod +x dist/${{ matrix.asset_name }}
 
-      - name: Rename Executable (Windows)
+      - name: Package Executable (Windows)
         if: matrix.os == 'windows-latest'
-        run: |
-          mv "dist/RFD.exe" "dist/RFD-${{ matrix.os }}.exe"
         shell: bash
+        run: |
+          mv dist/RFD.exe dist/${{ matrix.asset_name }}
 
-      - name: Upload Artifact (Windows)
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v4.6.0
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          path: "dist/*"
-          name: "RFD-${{ matrix.os }}"
+          name: ${{ matrix.artifact_name }}
+          path: dist/${{ matrix.asset_name }}
+          if-no-files-found: error
 
-      - name: Release with Notes
-        uses: softprops/action-gh-release@v1
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
         with:
-          files: "dist/*"
+          path: dist
+
+      - name: Flatten artifacts
+        shell: bash
+        run: |
+          mkdir -p release
+          find dist -type f -exec cp {} release/ \;
+          ls -la release/
+
+      - name: Generate tag and release name
+        id: meta
+        shell: bash
+        run: |
+          GIT_COMMIT_ID=$(echo "${GITHUB_SHA}" | cut -c 1-7)
+          # Достаём версию из артефакта или пересчитываем
+          UPDATE_TIME=$(date -u +"%Y%m%d%H%M%S")
+          echo "tag_name=v${UPDATE_TIME}-${GIT_COMMIT_ID}" >> "$GITHUB_ENV"
+          echo "release_name=${GIT_COMMIT_ID}" >> "$GITHUB_ENV"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
           name: ${{ env.release_name }}
           tag_name: ${{ env.tag_name }}
           generate_release_notes: true
           prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GITHUB_TOKEN подставляется автоматически из permissions
