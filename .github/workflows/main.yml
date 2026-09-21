@@ -58,8 +58,9 @@ jobs:
         run: pyinstaller RFD.spec
 
       - name: Rename Executable
+        working-directory: Source
         shell: bash
-        run: mv Source/dist/* dist/${{ matrix.asset_name }}
+        run: mv dist/* dist/${{ matrix.asset_name }}
 
       - name: Upload Artefact
         uses: actions/upload-artifact@v4
