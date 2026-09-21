@@ -53,14 +53,13 @@ jobs:
           pip install requests
           pip install -r requirements.txt
 
-      - name: Build PyInstaller
+      - name: Build PyInstaller Package
         working-directory: Source
-        run: pyinstaller ./RFD.spec
+        run: pyinstaller RFD.spec
 
       - name: Rename Executable
-        working-directory: Source
         shell: bash
-        run: mv Source/dist/* Source/dist/${{ matrix.asset_name }}
+        run: mv Source/dist/* dist/${{ matrix.asset_name }}
 
       - name: Upload Artefact
         uses: actions/upload-artifact@v4
