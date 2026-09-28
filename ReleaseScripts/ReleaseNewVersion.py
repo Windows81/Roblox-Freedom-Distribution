@@ -79,6 +79,9 @@ def create_zipped_dirs(release_name_suffixed: str):
     for (t_path, version, typ) in version_data:
         zip_name = f'Roblox/{version}.{typ}.7z'
 
+        # Deletes old archive.
+        os.remove(zip_name)
+
         # Writes to the version-flag file.
         version_file = t_path + "/rfd_version"
         with open(version_file, 'w') as f:
