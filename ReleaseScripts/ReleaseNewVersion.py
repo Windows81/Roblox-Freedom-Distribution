@@ -70,14 +70,14 @@ def create_zipped_dirs(release_name_suffixed: str):
 
     version_data = [
         (t_path, version, typ)
-        for version in os.listdir('../Roblox')
-        if os.path.isdir(v_path := f'../Roblox/{version}')
+        for version in os.listdir('Roblox')
+        if os.path.isdir(v_path := f'Roblox/{version}')
         for typ in os.listdir(v_path)
         if not typ.startswith('_') and os.path.isdir(t_path := f'{v_path}/{typ}')
     ]
 
     for (t_path, version, typ) in version_data:
-        zip_name = f'../Roblox/{version}.{typ}.7z'
+        zip_name = f'Roblox/{version}.{typ}.7z'
 
         # Writes to the version-flag file.
         version_file = t_path + "/rfd_version"
