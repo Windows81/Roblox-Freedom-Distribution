@@ -3,6 +3,7 @@
 # This script was orignally AI slop.
 # Either Deepseek or Qwen did the initial conversion from PowerShell.  I forgot which one.
 
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 import subprocess
 import textwrap
@@ -14,32 +15,32 @@ os.chdir(curr_dir)
 
 
 def check_software(software_list: list[str]) -> bool:
-    """Checks if the appropriate software is installed."""
+    '''Checks if the appropriate software is installed.'''
     for software in software_list:
         if shutil.which(software) is None:
-            print(f"You need to install ``{software}``!")
+            print(f'You need to install ``{software}``!')
             return False
     return True
 
 
 def generate_commit_name() -> str:
-    return datetime.now().strftime("%Y-%m-%dT%H%MZ")
+    return datetime.now().strftime('%Y-%m-%dT%H%MZ')
 
 
 def input_version_title():
-    return input("Version title? ")
+    return input('Version title? (e.g. "0.67.0") ')
 
 
 def update_and_push(commit_name: str):
-    """Publishes all submodules, then the main top-level repository to GitHub."""
-    for cwd in ["./Guides", "./Examples", "."]:
-        subprocess.run(["git", "add", "."], cwd=cwd)
-        subprocess.run(["git", "commit", "-m", commit_name], cwd=cwd)
-        subprocess.run(["git", "push"], cwd=cwd)
+    '''Publishes all submodules, then the main top-level repository to GitHub.'''
+    for cwd in ['./Guides', './Examples', '.']:
+        subprocess.run(['git', 'add', '.'], cwd=cwd)
+        subprocess.run(['git', 'commit', '-m', commit_name], cwd=cwd)
+        subprocess.run(['git', 'push'], cwd=cwd)
 
 
 def update_const_release_version(labels: dict[str, str]):
-    const_file = "./Source/util/const.py"
+    const_file = './Source/util/const.py'
 
     with open(const_file, 'r') as f:
         const_txt = f.readlines()
@@ -64,96 +65,113 @@ def update_const_release_version(labels: dict[str, str]):
         f.writelines(const_txt)
 
 
+def zip_dir(dir_path: str, version: str, bin_typ: str) -> str:
+    zip_name = os.path.abspath(os.path.join(
+        dir_path, f'../../{version}.{bin_typ}.7z'
+    ))
+
+    # Deletes old archive.
+    if os.path.exists(zip_name):
+        os.remove(zip_name)
+
+    # Builds exclusion patterns.
+    exclude_patterns = [
+        '-xr!RFDStarterScript.lua',
+        '-x!_*',
+        '-xr!dxgi.dll',
+        '-xr!_dxgi.dll',
+        '-xr!Reshade.ini',
+        '-xr!ReShade.log',
+        '-xr!ReShade_RobloxPlayerBeta.log',
+        '-xr!AppSettings.xml',
+        '-xr!GlobalBasicSettings_13.xml',
+        '-xr!AnalysticsSettings.xml',
+        '-xr!LocalStorage',
+        '-xr!minidump',
+        '-xr!logs',
+        '-xr!*.id1', '-xr!*.i32', '-xr!*.i64',
+        '-xr!*.dd32', '-xr!*.dd64',
+        '-xr!*.1337',
+        '-x!*.bak'
+    ]
+
+    # Runs `7z`.
+    subprocess.run([
+        '7z', 'a', zip_name,
+        '*', *exclude_patterns,
+    ], cwd=dir_path, stdout=subprocess.DEVNULL)
+
+    return zip_name
+
+
 def create_zipped_dirs(release_name_suffixed: str):
-    """Creates zipped directories for Roblox files."""
+    '''Creates zipped directories for Roblox files.'''
     files: list[str] = []
 
     version_data = [
-        (t_path, version, typ)
+        (dir_path, version, typ)
         for version in os.listdir('Roblox')
         if os.path.isdir(v_path := f'Roblox/{version}')
         for typ in os.listdir(v_path)
-        if not typ.startswith('_') and os.path.isdir(t_path := f'{v_path}/{typ}')
+        if not typ.startswith('_') and os.path.isdir(dir_path := f'{v_path}/{typ}')
     ]
 
-    for (t_path, version, typ) in version_data:
-        zip_name = f'Roblox/{version}.{typ}.7z'
-
-        # Deletes old archive.
-        os.remove(zip_name)
+    thread_pool = ThreadPoolExecutor()
+    for (dir_path, version, bin_typ) in version_data:
+        zip_name = os.path.abspath(os.path.join(
+            dir_path, f'../../{version}.{bin_typ}.7z'
+        ))
 
         # Writes to the version-flag file.
-        version_file = t_path + "/rfd_version"
+        version_file = dir_path + '/rfd_version'
         with open(version_file, 'w') as f:
             f.write(release_name_suffixed)
 
-        # Builds exclusion patterns.
-        exclude_patterns = [
-            "-xr!RFDStarterScript.lua",
-            "-x!_*",
-            "-xr!dxgi.dll",
-            "-xr!_dxgi.dll",
-            "-xr!Reshade.ini",
-            "-xr!ReShade.log",
-            "-xr!ReShade_RobloxPlayerBeta.log",
-            "-xr!AppSettings.xml",
-            "-xr!GlobalBasicSettings_13.xml",
-            "-xr!AnalysticsSettings.xml",
-            "-xr!LocalStorage",
-            "-xr!minidump",
-            "-xr!logs",
-            "-xr!*.id1", "-xr!*.i32", "-xr!*.i64",
-            "-xr!*.dd32", "-xr!*.dd64",
-            "-xr!*.1337",
-            "-x!*.bak"
-        ]
-
-        # Runs `7z`` command.
-        subprocess.run([
-            "7z", "a", zip_name,
-            f"{t_path}/*", *exclude_patterns,
-        ])
-
         # Appends resultant zip file.
         files.append(zip_name)
+
+    with ThreadPoolExecutor() as thread_pool:
+        for zip_name in thread_pool.map(lambda a: zip_dir(*a), version_data):
+            print('PROCESSED  %s' % zip_name)
     return files
 
 
 def mark_latest_version():
-    """Marks the most recent release on GitHub as the latest."""
+    '''Marks the most recent release on GitHub as the latest.'''
     result = subprocess.run(
-        ["gh", "release", "list", "--json", "tagName", "--template",
-            "{{range .}}{{.tagName}}{{end}}", "--limit", "1"],
+        ['gh', 'release', 'list', '--json', 'tagName', '--template',
+            '{{range .}}{{.tagName}}{{end}}', '--limit', '1'],
         capture_output=True, text=True
     )
     latest = result.stdout.strip()
     subprocess.run([
-        "gh", "release", "edit", latest, "--latest",
+        'gh', 'release', 'edit', latest, '--latest',
     ])
 
 
 def release_to_github(files: list[str], release_name_suffixed: str):
-    """Creates a GitHub release with specified files."""
+    '''Creates a GitHub release with specified files.'''
     subprocess.run([
-        "gh", "release", "create",
+        'gh', 'release', 'create',
         release_name_suffixed, *files,
-        "--prerelease", "--generate-notes",
+        '--prerelease', '--generate-notes',
     ])
 
 
 def main():
     # Checks software.
-    if not check_software(["gh", "7z", "git"]):
+    if not check_software(['gh', '7z', 'git']):
         return
     files = []
 
     # Prompts user to select build mode.
-    mode = input(textwrap.dedent("""
+    mode = input(textwrap.dedent('''
 	0. Create and publish new commit
 	1. Update version string only
 	2. Update version string, then create and publish new commit
 	3. Zip binaries and add them to a new version in GitHub Releases
-	"""))
+	4. Zip binaries only
+	'''))
 
     # Executes selected build mode.
     match mode:
@@ -165,14 +183,14 @@ def main():
             release_name = input_version_title()
             update_const_release_version(
                 labels={
-                    "GIT_RELEASE_VERSION": release_name,
+                    'GIT_RELEASE_VERSION': release_name,
                 }
             )
         case '2':
             release_name = input_version_title()
             update_const_release_version(
                 labels={
-                    "GIT_RELEASE_VERSION": release_name,
+                    'GIT_RELEASE_VERSION': release_name,
                 }
             )
             commit_name = generate_commit_name()
@@ -182,17 +200,21 @@ def main():
             release_name_suffixed = release_name + '-binaries'
             update_const_release_version(
                 labels={
-                    "GIT_RELEASE_VERSION": release_name,
-                    "ZIPPED_RELEASE_VERSION": release_name_suffixed
+                    'GIT_RELEASE_VERSION': release_name,
+                    'ZIPPED_RELEASE_VERSION': release_name_suffixed
                 }
             )
             commit_name = generate_commit_name()
             update_and_push(commit_name)
             files = create_zipped_dirs(release_name_suffixed)
             release_to_github(files, release_name_suffixed)
+        case '4':
+            release_name = input_version_title()
+            release_name_suffixed = release_name + '-binaries'
+            files = create_zipped_dirs(release_name_suffixed)
         case _:
             pass
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
