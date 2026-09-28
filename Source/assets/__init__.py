@@ -7,7 +7,7 @@ import os
 
 # Internal or local application imports
 import util.const
-from . import material, queue, returns, serialisers, extractor, thumbnail
+from . import material, queue, returns, serialisers, default_grabber, thumbnail
 
 
 @dataclasses.dataclass
@@ -84,7 +84,7 @@ class asseter:
             pass
 
     def _load_online_asset(self, asset_id: int) -> bytes | None:
-        data = self.queuer.get(asset_id, extractor.download_rōblox_asset)
+        data = self.queuer.get(asset_id, default_grabber.download_rōblox_asset)
         if data is None:
             return None
 
@@ -166,7 +166,7 @@ class asseter:
             return returns.construct(
                 data=self.queuer.get(
                     redirect.cmd_line,
-                    extractor.process_command_line,
+                    default_grabber.process_command_line,
                 ),
             )
         elif redirect.raw_data is not None:

@@ -139,7 +139,7 @@ def get_creator_place_idens(asset_iden: int) -> list[int]:
     '''
     Creator place-iden lookup.
 
-    Queries economy.roblox.com for the asset's creator (User or Group),
+    Sends queries to `economy.roblox.com` for the asset's creator (User or Group),
     then games.roblox.com for every place they own, and returns the root
     place idens.
 
@@ -209,11 +209,17 @@ def download_rōblox_asset(
         # Step 1: no place iden.
         yield None
 
-        # Skip step 2 if no cookie is given, as no benefit is given there.
+        # Skip later steps if no cookie is given, as no benefit is given in this case.
         if cookie is None:
             return
 
-        # Step 2: creator's place idens.
+        # Step 2: user-defined `rfdplaceid` environment variable.
+        try:
+            yield int(os.environ.get('rfdplaceid', ''))
+        except Exception:
+            pass
+
+        # Step 3: creator's place idens.
         for iden in get_creator_place_idens(asset_iden):
             yield iden
 

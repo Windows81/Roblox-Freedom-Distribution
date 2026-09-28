@@ -46,9 +46,9 @@ class dir_type(enum.Enum):
 
 
 class bin_subtype(enum.Enum):
-    SERVER = 'Server'
-    PLAYER = 'Player'
-    STUDIO = 'Studio'
+    SERVER = 'server'
+    PLAYER = 'player'
+    STUDIO = 'studio'
 
 
 DEFAULT_CONFIG_PATH = './GameConfig.toml'
@@ -85,7 +85,7 @@ def retr_rōblox_full_path(
     result = retr_full_path(
         dir_type.RŌBLOX,
         version.name,
-        bin_type.value,
+        bin_type.value.title(),
         *paths,
     )
     if make_into_winepath:

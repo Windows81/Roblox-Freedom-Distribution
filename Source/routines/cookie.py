@@ -6,7 +6,7 @@ from typing import override
 
 # Local application imports
 from . import _logic as logic
-from assets import extractor
+from assets import default_grabber
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
@@ -16,7 +16,7 @@ class obj_type(logic.base_entry):
     @override
     def process(self) -> None:
         super().process()
-        cookie = extractor.get_rōblox_cookie()
+        cookie = default_grabber.get_rōblox_cookie()
         if cookie is None:
             print('No cookie is provided.')
             return

@@ -1,4 +1,4 @@
-from . import const, extractor
+from . import const, default_grabber
 import urllib.request
 import urllib.error
 
@@ -61,4 +61,4 @@ def load_asset(asset_id: str) -> bytes | None:
             continue
 
     id_num = transform_to_id_num(asset_id)
-    return extractor.download_rōblox_asset(id_num)
+    return default_grabber.download_rōblox_asset(id_num)

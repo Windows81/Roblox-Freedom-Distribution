@@ -49,7 +49,7 @@ def _(
         type=str,
         nargs='*',
         default=[],
-        help='Determines the user code for the player which joins the server.\nUser codes derive a user name, user iden number, and other characteristics of any particular player.',
+        help='Determines the user code for the player which joins the server.\nUser codes derive a username, user iden number, and other characteristics of any particular player.',
     )
     subparser.add_argument(
         '--quiet', '-q',

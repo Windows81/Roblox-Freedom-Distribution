@@ -21,18 +21,20 @@ def _(
     subparser.add_argument(
         '--rbx_version', '-v',
         type=util.versions.rōblox.from_name,
+        choices=[
+            name
+            for v in util.versions.rōblox.get_all_versions()
+            for name in v.value
+        ],
         help='Version to download.',
+        nargs='+', required=True,
     )
     subparser.add_argument(
         '--bin_subtype', '-b',
         type=util.resource.bin_subtype,
-        choices=[
-            player.obj_type.BIN_SUBTYPE,
-            rcc.obj_type.BIN_SUBTYPE,
-            studio.obj_type.BIN_SUBTYPE,
-        ],
+        choices=[v.value for v in util.resource.bin_subtype],
         help='Directories to download.',
-        nargs='+',
+        nargs='+', required=True,
     )
 
 

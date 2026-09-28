@@ -1,4 +1,4 @@
-from . import const, extractor
+from . import const, default_grabber
 import json
 import functools
 import game_config
@@ -40,7 +40,7 @@ def load_asset(asset_id: str) -> bytes | None:
     if icon is not None:
         return icon.extract()
 
-    raw = extractor.download_item(
+    raw = default_grabber.download_item(
         "https://thumbnails.roblox.com/v1/assets?assetids=%s&size=700x700&format=Png&isCircular=false" %
         (id,)
     )
@@ -52,4 +52,4 @@ def load_asset(asset_id: str) -> bytes | None:
     if "data" in parsed and len(parsed["data"]) != 1:
         return None
 
-    return extractor.download_item(parsed["data"][0]['imageUrl'])
+    return default_grabber.download_item(parsed["data"][0]['imageUrl'])

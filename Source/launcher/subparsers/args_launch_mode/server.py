@@ -80,7 +80,7 @@ def subparse(
         type=str,
         nargs='?',
         default=None,
-        help='If --run_client is passed in, determines the user code for the player which joins the server.\nUser codes derive a user name, user iden number, and other characteristics of any particular player',
+        help='If --run_client is passed in, determines the user code for the player which joins the server.\nUser codes derive a username, user iden number, and other characteristics of any particular player',
     )
 
     log_group = subparser.add_mutually_exclusive_group()
@@ -116,12 +116,12 @@ def subparse(
     skip_mutex.add_argument(
         "--skip_rcc",
         action="store_true",
-        help="Only runs the webserver, skipping the RCC binary completely.",
+        help="Only runs the web server, skipping the RCC binary completely.",
     )
     skip_mutex.add_argument(
         "--skip_web",
         action="store_true",
-        help="Only runs the Studio binary, skipping hosting the webserver.",
+        help="Only runs the Studio binary, skipping hosting the web server.",
     )
 
 

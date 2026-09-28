@@ -4,7 +4,7 @@ import urllib.request
 import unittest
 
 # Local application imports
-from assets import serialisers, extractor
+from assets import serialisers, default_grabber
 from assets.serialisers.csg.util import create_hash, recalculate_hash, xor_encrypt
 
 
@@ -16,13 +16,13 @@ class TestAssets(unittest.TestCase):
     @override
     @classmethod
     def setUpClass(cls):
-        if extractor.get_rōblox_cookie() is None:
+        if default_grabber.get_rōblox_cookie() is None:
             raise unittest.SkipTest(
                 'No cookie provided; skipping asset tests.',
             )
 
     def get_rōblox_asset(self, iden: int) -> bytes:
-        data = extractor.download_rōblox_asset(iden)
+        data = default_grabber.download_rōblox_asset(iden)
         self.assertIsNotNone(data, 'Unable to load asset')
         assert data is not None
         return data

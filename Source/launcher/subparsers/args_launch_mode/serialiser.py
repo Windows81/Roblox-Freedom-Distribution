@@ -19,8 +19,7 @@ def _(
         '--read',
         '-r',
         type=str,
-        nargs='+',
-        default=[],
+        nargs='+', required=True,
         help='Path to the file(s) to be loaded.',
     )
     subparser.add_argument(
@@ -28,8 +27,7 @@ def _(
         '--write',
         '-w',
         type=str,
-        nargs='+',
-        default=[],
+        nargs='+', required=True,
         help='Path to the file(s) to be saved.',
     )
     method_choices = [m.name for m in assets.serialisers.ALL_METHODS]

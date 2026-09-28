@@ -51,7 +51,7 @@ def subparse(
     subparser.add_argument(
         "--skip_web",
         action="store_true",
-        help="Skips hosting the webserver.",
+        help="Skips hosting the web server.",
     )
     subparser.add_argument(
         "--skip_studio",
