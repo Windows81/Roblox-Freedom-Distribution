@@ -1,9 +1,7 @@
-# Standard library imports
 import argparse
 import shlex
 import sys
 
-# Local application imports
 import util.const as const
 import launcher.subparsers._logic as sub_logic
 import routines
@@ -23,6 +21,7 @@ from .subparsers.args_aux import (
     clear_cache as _,
     download as _,
     debug as _,
+    logger as _,
 )
 
 

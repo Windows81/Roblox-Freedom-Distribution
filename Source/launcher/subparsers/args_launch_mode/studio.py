@@ -1,8 +1,6 @@
-# Standard library imports
 import argparse
 import dataclasses
 
-# Local application imports
 import game_config as config
 import logger
 import util.resource
@@ -44,11 +42,6 @@ def subparse(
     )
 
     subparser.add_argument(
-        '--quiet', '-q',
-        action='store_true',
-        help='Suppresses console output.',
-    )
-    subparser.add_argument(
         "--skip_web",
         action="store_true",
         help="Skips hosting the web server.",
@@ -71,19 +64,14 @@ def _(
         game_config = config.get_cached_config(args_ns.config_path)
 
     web_port: int = args_ns.web_port
-    log_filter = dataclasses.replace(
-        logger.PRINT_REASONABLE,
-        other_logs=not args_ns.quiet,
-    )
-
     routine_args: list[logic.base_entry] = []
+
     if not args_ns.skip_studio:
         routine_args.extend([
             studio.obj_type(
                 game_config=game_config,
                 web_host='localhost',
                 web_port=web_port,
-                logger=log_filter,
             ),
         ])
 
@@ -93,7 +81,6 @@ def _(
                 web_port=web_port,
                 is_ipv6=False,
                 is_ssl=True,
-                logger=log_filter,
                 game_config=game_config,
                 server_mode=web.SERVER_MODE_TYPE.STUDIO,
             ),

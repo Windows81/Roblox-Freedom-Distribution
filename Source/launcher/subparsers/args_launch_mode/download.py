@@ -1,7 +1,5 @@
-# Standard library imports
 import argparse
 
-# Local application imports
 import logger
 import util.resource
 import util.versions

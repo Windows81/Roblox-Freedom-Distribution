@@ -1,8 +1,5 @@
-# Standard library imports
 import dataclasses
-import re
 
-# Local application imports
 from . import flog_table
 
 
@@ -12,7 +9,12 @@ class filter_type_bin:
 
     @staticmethod
     def serialise_key(flog: str) -> str:
-        return re.sub('^(D?FLog)?', 'FLog', flog)
+        flog = flog.replace(':', '')
+        if flog.startswith('DFLog'):
+            return flog
+        if flog.startswith('FLog'):
+            return flog
+        return 'FLog' + flog
 
     @staticmethod
     def parse(*flogs: str) -> "filter_type_bin":

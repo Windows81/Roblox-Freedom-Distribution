@@ -1,9 +1,6 @@
-# Standard library imports
 import argparse
 import itertools
-import logger
 
-# Local application imports
 from routines import player
 from routines import _logic as logic
 
@@ -51,30 +48,6 @@ def _(
         default=[],
         help='Determines the user code for the player which joins the server.\nUser codes derive a username, user iden number, and other characteristics of any particular player.',
     )
-    subparser.add_argument(
-        '--quiet', '-q',
-        action='store_true',
-        help='Suppresses console output.',
-    )
-    subparser.add_argument(
-        '--loud',
-        action='store_true',
-        help='Makes the client\'s output log file very verbose.',
-    )
-
-
-def gen_log_filter(
-    parser: argparse.ArgumentParser,
-    args_ns: argparse.Namespace,
-) -> logger.obj_type:
-    if args_ns.quiet:
-        result = logger.PRINT_QUIET
-    elif args_ns.loud:
-        result = logger.PRINT_LOUD
-    else:
-        result = logger.PRINT_REASONABLE
-
-    return result
 
 
 @sub_logic.serialise_args(sub_logic.launch_mode.PLAYER)
@@ -83,10 +56,6 @@ def _(
     args_ns: argparse.Namespace,
 ) -> list[logic.base_entry]:
 
-    log_filter = gen_log_filter(
-        parser, args_ns,
-    )
-
     return [
         player.obj_type(
             rcc_host=rcc_host,
@@ -94,7 +63,6 @@ def _(
             web_host=web_host,
             web_port=web_port,
             user_code=user_code,
-            logger=log_filter,
         )
         for (
             web_host, rcc_host, web_port, rcc_port, user_code,

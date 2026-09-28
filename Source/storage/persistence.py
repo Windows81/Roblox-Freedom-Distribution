@@ -1,12 +1,9 @@
-# Standard library imports
 import dataclasses
 import enum
 import json
 
-# Typing imports
 from typing import Any, override
 
-# Local application imports
 from . import _logic
 
 

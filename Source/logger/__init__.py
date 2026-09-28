@@ -73,19 +73,19 @@ PRINT_QUIET = obj_type(
 
 PRINT_REASONABLE = obj_type(
     rcc_logs=filter.filter_type_bin.parse(
-        "Output",
-        "Error",
-        "LocalStorage",
-        "RCCServiceInit",
-        "RCCServiceJobs",
-        "RCCExecuteInfo",
-        "NetworkAudit",
+        "FLogOutput",
+        "FLogError",
+        "FLogLocalStorage",
+        "FLogRCCServiceInit",
+        "FLogRCCServiceJobs",
+        "DFLogRCCExecuteInfo",
+        "DFLogNetworkAudit",
     ),
     player_logs=filter.filter_type_bin.parse(
-        "Output",
-        "Error",
-        "LocalStorage",
-        "GameJoinLoadTime",
+        "FLogOutput",
+        "FLogError",
+        "FLogLocalStorage",
+        "FLogGameJoinLoadTime",
     ),
     web_logs=filter.filter_type_web(
         urls=True,

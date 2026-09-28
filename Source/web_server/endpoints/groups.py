@@ -1,7 +1,5 @@
-# Standard library imports
 import re
 
-# Local application imports
 from game_config import obj_type
 import util.versions as versions
 from web_server._logic import web_server_handler, server_path

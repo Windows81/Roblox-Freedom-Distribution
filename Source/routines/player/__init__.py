@@ -1,14 +1,11 @@
-# Standard library imports
 import functools
 import urllib.parse
 import dataclasses
 import ipaddress
 import time
 
-# Typing imports
 from typing import ClassVar, override
 
-# Local application imports
 from .. import _logic as logic
 import util.resource
 import util.versions
@@ -17,8 +14,8 @@ import util.const
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
 class obj_type(logic.bin_entry):
-    BIN_SUBTYPE: ClassVar = util.resource.bin_subtype.PLAYER
-    DIRS_TO_ADD: ClassVar = ['logs', 'LocalStorage']
+    BIN_SUBTYPE = util.resource.bin_subtype.PLAYER
+    DIRS_TO_ADD = ['logs', 'LocalStorage']
 
     web_host: str = 'localhost'
     web_port: int = util.const.RFD_DEFAULT_PORT

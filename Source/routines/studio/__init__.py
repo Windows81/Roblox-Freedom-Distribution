@@ -1,13 +1,10 @@
-# Standard library imports
 import dataclasses
 import functools
 import time
 import os
 
-# Typing imports
 from typing import ClassVar, override
 
-# Local application imports
 from routines.rcc import startup_scripts
 from config_type.types import wrappers
 from .. import _logic as logic

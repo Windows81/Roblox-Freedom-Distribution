@@ -1,10 +1,7 @@
-# Standard library imports
 import json
 
-# Typing imports
 from typing import Any
 
-# Local application imports
 import util.const
 import game_config
 import util.versions as versions

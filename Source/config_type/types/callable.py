@@ -1,12 +1,10 @@
 # pyright: reportUnknownLambdaType=false
 
-# Standard library imports
 import dataclasses
 import enum
 import textwrap
 import time
 
-# Typing imports
 from typing import Any, Callable, Hashable
 
 

@@ -1,7 +1,5 @@
-# Standard library imports
 import argparse
 
-# Local application imports
 import tester
 
 from routines import test

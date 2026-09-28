@@ -1,4 +1,3 @@
-# Standard library imports
 from typing import Callable
 import dataclasses
 import functools

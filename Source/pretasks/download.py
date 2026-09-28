@@ -1,4 +1,3 @@
-# Standard library imports
 import functools
 import sys
 import urllib.request

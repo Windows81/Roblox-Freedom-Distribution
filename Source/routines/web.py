@@ -1,4 +1,3 @@
-# Standard library imports
 import dataclasses
 import threading
 from typing import override

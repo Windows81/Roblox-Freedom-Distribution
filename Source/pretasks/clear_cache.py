@@ -1,4 +1,3 @@
-# Standard library imports
 from concurrent.futures import ThreadPoolExecutor
 import threading
 import os.path

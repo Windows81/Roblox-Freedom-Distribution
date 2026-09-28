@@ -1,4 +1,3 @@
-# Standard library imports
 import gzip
 import io
 import re
@@ -7,7 +6,6 @@ import struct
 
 import zlib
 
-# Local application imports
 import util.const
 from config_type.types import structs, wrappers, callable
 from web_server._logic import web_server_handler, server_path

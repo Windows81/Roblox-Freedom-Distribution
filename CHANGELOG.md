@@ -1,6 +1,14 @@
+# 0.68.1
+
+- docs: clarify info and fix spelling errors in main `README.md`
+- fix(download): correct handling when missing `--rbx_version` or `--bin_type`
+- feat: add override environment variable `placeid` for asset extraction
+- build: add pre-configured `./Source/RFD.spec` for use with PyInstaller
+- build(deps): `tomli` to be vendored ([?](https://stackoverflow.com/a/26217631/6879778))
+
 # 0.68.0
 
-- build!(deps): add dependency `tomli~=2.4.1` to force TOML 1.1.0 support
+- **feat!(deps): add dependency `tomli~=2.4.1` to force TOML 1.1.0 support**
 - feat: add `game_setup.roblox_setting_overrides` to override FFlags and other settings
 
 # 0.67.2
@@ -47,7 +55,7 @@
 
 # 0.66.{0,1}
 
-- **[fix](https://github.com/Windows81/Roblox-Freedom-Distribution/issues/138): repair v347 by replacing Player's `ClientAppSettings.json`**
+- **[fix!](https://github.com/Windows81/Roblox-Freedom-Distribution/issues/138): repair v347 by replacing Player's `ClientAppSettings.json`**
 - feat!(config): changed method signatures of `server_core.check_user_allowed` and `server_core.retrieve_default_user_code`
 - feat(config): add GameConfig option `server_core.retrieve_membership_type(id_num, user_code)`
 - feat(webserver): add `/Game/Badge/HasBadge.ashx` and `/assets/award-badge` endpoints

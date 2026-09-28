@@ -1,4 +1,3 @@
-# Local application imports
 from web_server._logic import web_server_handler, server_path
 from config_type.types import structs, wrappers
 from util import versions

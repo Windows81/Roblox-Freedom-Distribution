@@ -1,8 +1,6 @@
-# Standard library imports
 import dataclasses
 import functools
 
-# Typing imports
 from typing import Any, Callable, Union  # pyright: ignore[reportDeprecated]
 
 # Internal or local application imports

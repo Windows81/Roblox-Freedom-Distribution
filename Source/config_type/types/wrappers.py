@@ -1,14 +1,11 @@
-# Standard library imports
 import enum
 import fnmatch
 import os
 import urllib.request
 
-# Typing imports
 from typing import Self, get_args
 
 
-# Local application imports
 import util.const as const
 import assets.default_grabber as default_grabber
 

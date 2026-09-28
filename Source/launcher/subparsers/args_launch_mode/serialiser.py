@@ -1,7 +1,5 @@
-# Standard library imports
 import argparse
 
-# Local application imports
 import launcher.subparsers._logic as sub_logic
 from routines import serialiser
 from routines import _logic as logic

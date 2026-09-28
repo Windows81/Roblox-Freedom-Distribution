@@ -1,12 +1,8 @@
-# Standard library imports
 import argparse
-import dataclasses
 import itertools
 
-# Local application imports
 import game_config as config
 import logger.flog_table
-import logger.bcolors
 import util.resource
 import util.const
 import logger
@@ -83,35 +79,6 @@ def subparse(
         help='If --run_client is passed in, determines the user code for the player which joins the server.\nUser codes derive a username, user iden number, and other characteristics of any particular player',
     )
 
-    log_group = subparser.add_mutually_exclusive_group()
-    log_group.add_argument(
-        '--quiet', '-q',
-        action='store_true',
-        help='Suppresses console output.',
-    )
-    log_group.add_argument(
-        '--loud',
-        action='store_true',
-        help='Makes RCC console output very verbose.',
-    )
-
-    subparser.add_argument(
-        '--no_colour', '--no_color',
-        action='store_true',
-        help='Suppresses ANSI colour codes.',
-    )
-    subparser.add_argument(
-        '--rcc_log_options',
-        '--rcc_log',
-        '-log',
-        type=str,
-        nargs='*',
-        default=None,
-        choices=logger.flog_table.LOG_LEVEL_LIST,
-        help='Filter list for which FLog types to print in RCC.',
-        metavar='FLog',
-    )
-
     skip_mutex = subparser.add_mutually_exclusive_group()
     skip_mutex.add_argument(
         "--skip_rcc",
@@ -123,32 +90,6 @@ def subparse(
         action="store_true",
         help="Only runs the Studio binary, skipping hosting the web server.",
     )
-
-
-def gen_log_filter(
-    parser: argparse.ArgumentParser,
-    args_ns: argparse.Namespace,
-) -> logger.obj_type:
-    if args_ns.quiet:
-        result = logger.PRINT_QUIET
-    elif args_ns.loud:
-        result = logger.PRINT_LOUD
-    else:
-        result = logger.PRINT_REASONABLE
-
-    if args_ns.rcc_log_options is not None:
-        result = dataclasses.replace(
-            result,
-            rcc_logs=logger.filter.filter_type_bin.parse(*args_ns.rcc_log),
-        )
-
-    if args_ns.no_colour:
-        result = dataclasses.replace(
-            result,
-            bcolors=logger.bcolors.BCOLORS_INVISIBLE,
-        )
-
-    return result
 
 
 @sub_logic.serialise_args(sub_logic.launch_mode.SERVER)
@@ -172,9 +113,6 @@ def _(
 
     web_routine_args = set[logic.base_entry]()
     rcc_routine_args = set[logic.base_entry]()
-    log_filter = gen_log_filter(
-        parser, args_ns,
-    )
 
     def gen_next_seq_port(ports: list[int | None]):
         last_used = util.const.RFD_DEFAULT_PORT - 1
@@ -201,7 +139,6 @@ def _(
                     is_ssl=True,
                     is_ipv6=True,
                     server_mode=web.SERVER_MODE_TYPE.RCC,
-                    logger=log_filter,
                     game_config=game_config,
                 ))
             if has_ipv4:
@@ -210,7 +147,6 @@ def _(
                     is_ssl=True,
                     is_ipv6=False,
                     server_mode=web.SERVER_MODE_TYPE.RCC,
-                    logger=log_filter,
                     game_config=game_config,
                 ))
 
@@ -221,7 +157,6 @@ def _(
                     web_host='localhost',
                     web_port=web_port,
                     rcc_port=rcc_port,
-                    logger=log_filter,
                     game_config=game_config,
                 ),
             )

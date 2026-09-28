@@ -1,9 +1,7 @@
-# Standard library imports
 import dataclasses
 import queue
 import uuid
 
-# Typing imports
 from typing import Any
 
 

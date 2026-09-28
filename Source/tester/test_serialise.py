@@ -1,8 +1,6 @@
-# Standard library imports
 import urllib.request
 import unittest
 
-# Local application imports
 from assets import serialisers
 from assets.serialisers.csg.util import CSG_HEADER, create_hash, recalculate_hash, xor_encrypt
 

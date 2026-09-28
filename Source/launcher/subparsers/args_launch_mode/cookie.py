@@ -1,7 +1,5 @@
-# Standard library imports
 import argparse
 
-# Local application imports
 from routines import cookie
 from routines import _logic as logic
 

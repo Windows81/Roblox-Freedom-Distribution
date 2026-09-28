@@ -1,10 +1,7 @@
-# Standard library imports
 import dataclasses
 
-# Typing imports
 from typing import override
 
-# Local application imports
 import assets.serialisers
 from . import _logic as logic
 

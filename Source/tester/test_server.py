@@ -1,10 +1,8 @@
-# Standard library imports
 import time
 from typing import override
 import unittest
 import random
 
-# Local application imports
 from util import resource
 import game_config
 import routines

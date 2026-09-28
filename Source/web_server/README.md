@@ -34,7 +34,7 @@ web_server/
 
 The foundation of the web server. Key components:
 
-- **`server_path()` decorator** — Registers handler functions into the global `SERVER_FUNCS` routing table. Supports static path matching, regex path matching, version-specific routes, and HTTP method filtering (GET, POST, etc.).
+- **`server_path()` decorator** — Registers handler functions into the global `SERVER_FUNCS` routing table. Supports static path matching, regex path matching, version-specific routes, and HTTP method filtering (GET, POST, et c.).
 - **`web_server`** — Extends `http.server.ThreadingHTTPServer`. Accepts `port`, `is_ipv6`, `game_config`, `server_mode`, and `log_filter`. Holds references to game storage, data transferer, and logger.
 - **`web_server_ssl`** — Extends `web_server` with TLS support. Generates a self-signed certificate via the `trustme` library.
 - **`web_server_handler`** — Extends `BaseHTTPRequestHandler`. Handles GET, POST, HEAD, PATCH, and DELETE. Parses the Host header, query string, and request body. Routes requests by matching against `SERVER_FUNCS` using static path lookup then regex fallback. Provides helpers: `send_json()`, `send_data()`, `send_redirect()`.
@@ -47,7 +47,7 @@ Serves the root `/` path with server version and Rōblox version info: `"Rōblox
 
 ### `assets.py`
 
-- `/asset`, `/Asset`, `/v1/asset`, etc. — Fetches assets and thumbnails from the asset cache. Returns the asset data, a redirect, or a 404. Blocks access to the place file (`PLACE_IDEN_CONST`) unless the request is privileged (from localhost).
+- `/asset`, `/Asset`, `/v1/asset`, et c. — Fetches assets and thumbnails from the asset cache. Returns the asset data, a redirect, or a 404. Blocks access to the place file (`PLACE_IDEN_CONST`) unless the request is privileged (from localhost).
 - `/ownership/hasasset` — Always returns `true` (collective ownership — no catalogue API planned).
 - `/Game/Tools/ThumbnailAsset.ashx`, `/Thumbs/Asset.ashx` — Fetches asset thumbnails via cache.
 
@@ -83,7 +83,7 @@ Returns player character appearance data. Two version-specific implementations:
 Handles the player join and registration flow:
 
 - `gen_player()` / `init_player()` — Creates or retrieves a player entry in the database. Initializes default funds on first join.
-- `perform_and_send_join()` — Constructs the join-data JSON (server connection, user info, session ID, etc.) and sends it.
+- `perform_and_send_join()` — Constructs the join-data JSON (server connection, user info, session ID, et c.) and sends it.
 - `/game/join.ashx` (v347, v463) — Main join endpoint. Returns version-specific join data with appropriate `--rbxsig` prefix.
 - `/game/PlaceLauncher.ashx` — Returns join script URL and authentication ticket.
 - `/login/negotiate.ashx` — Always returns `true` (authentication passthrough).
@@ -137,7 +137,7 @@ Miscellaneous player/client configuration endpoints:
 - `/asset-thumbnail/json` — Returns game icon thumbnail URL.
 - `/Thumbs/GameIcon.ashx` — Serves the game icon from cache.
 - `/v1/settings/application` — Returns empty application settings.
-- `/v1/player-policies-client` — Returns player policy flags (ads allowed, trading allowed, etc.).
+- `/v1/player-policies-client` — Returns player policy flags (ads allowed, trading allowed, et c.).
 - `/users/{id}/canmanage/{id}` — Checks if a user has admin rights (via `server_core`).
 - `/v1/user/{id}/is-admin-developer-console-enabled` — Checks admin console access.
 
@@ -150,7 +150,7 @@ RCC (Rōblox Cloud Compute) configuration endpoints:
 - `/game/load-place-info` — Returns place metadata (creator, version, game ID).
 - `/v1.1/Counters/BatchIncrement`, `/v1.0/SequenceStatistics/BatchAddToSequencesV2` — No-op, returns empty JSON.
 - `/universal-app-configuration/v1/behaviors/app-patch/content` — Returns canary/rollout config.
-- `/universal-app-configuration/v1/behaviors/app-policy/content` — Returns app feature flags (chat, game details, catalog, etc.).
+- `/universal-app-configuration/v1/behaviors/app-policy/content` — Returns app feature flags (chat, game details, catalog, et c.).
 - `/v1/autolocalization/games/{id}/autolocalizationtable` — Returns localization disabled.
 
 ### `studio.py`

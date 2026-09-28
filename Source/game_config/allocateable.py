@@ -1,11 +1,8 @@
-# Standard library imports
 import dataclasses
 import functools
 
-# Typing imports
 from typing import Any
 
-# Local application imports
 from config_type import _logic
 from config_type.types import get_type_call, type_call_data
 

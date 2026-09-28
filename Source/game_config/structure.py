@@ -2,7 +2,6 @@
 # pyright: reportUnknownLambdaType=false
 import time
 
-# Local application imports
 from config_type.types import structs, wrappers
 from config_type.types.callable import obj_type as callable
 from . import allocateable

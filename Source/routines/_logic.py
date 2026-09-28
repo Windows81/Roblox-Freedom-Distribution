@@ -1,4 +1,3 @@
-# Standard library imports
 import urllib.request
 import urllib.error
 import http.client
@@ -13,10 +12,8 @@ import ssl
 import re
 import os
 
-# Typing imports
 from typing import ClassVar, Self, override
 
-# Local application imports
 import game_config as game_config_module
 import util.resource
 import util.versions
@@ -180,7 +177,7 @@ class popen_entry(base_entry):
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
 class loggable_entry(base_entry):
-    logger: logger.obj_type
+    logger: logger.obj_type = logger.PRINT_QUIET
 
     def log(self, message: bytes | str) -> None:
         self.logger.log(

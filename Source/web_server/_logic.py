@@ -1,4 +1,3 @@
-# Standard library imports
 import dataclasses
 import enum
 import functools
@@ -12,10 +11,8 @@ import tempfile
 import traceback
 from urllib import parse
 
-# Typing imports
 from typing import Any, Callable, override
 
-# Local application imports
 import util.versions as versions
 import game_config
 import logger

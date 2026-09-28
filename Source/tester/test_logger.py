@@ -1,8 +1,6 @@
-# Standard library imports
 from typing import override
 import unittest
 
-# Local application imports
 import logger.bcolors
 import logger
 

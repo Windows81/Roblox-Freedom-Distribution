@@ -130,6 +130,7 @@ def create_zipped_dirs(release_name_suffixed: str):
         # Appends resultant zip file.
         files.append(zip_name)
 
+    print('WILL CREATE ZIPPED DIRS...')
     with ThreadPoolExecutor() as thread_pool:
         for zip_name in thread_pool.map(lambda a: zip_dir(*a), version_data):
             print('PROCESSED  %s' % zip_name)

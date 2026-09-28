@@ -115,10 +115,11 @@ usage: _main.py server [--config_path [CONFIG_PATH ...] |
                        --place_path [PLACE_PATH ...]] [--ipv4_only |
                        --ipv6_only] [--rcc_port [RCC_PORT ...]]
                        [--web_port [WEB_PORT ...]] [--run_client]
-                       [--user_code [USER_CODE]] [--quiet | --loud]
-                       [--no_colour] [--rcc_log_options [FLog ...]]
-                       [--skip_rcc | --skip_web] [--clear_temp_cache]
-                       [--skip_download] [--debug | --debug_all] [--help]
+                       [--user_code [USER_CODE]] [--skip_rcc | --skip_web]
+                       [--clear_temp_cache] [--skip_download] [--debug |
+                       --debug_all] [--quiet | --loud]
+                       [--rcc_log_options [[FLog]Output, [FLog]Network, et c. ...]]
+                       [--no_colour] [--help]
 
 options:
   --config_path, --config, -cp [CONFIG_PATH ...]
@@ -145,16 +146,10 @@ options:
                         for the player which joins the server. User codes
                         derive a username, user iden number, and other
                         characteristics of any particular player
-  --quiet, -q           Suppresses console output.
-  --loud                Makes RCC console output very verbose.
-  --no_colour, --no_color
-                        Suppresses ANSI colour codes.
-  --rcc_log_options, --rcc_log, -log [FLog ...]
-                        Filter list for which FLog types to print in RCC.
   --skip_rcc            Only runs the web server, skipping the RCC binary
                         completely.
-  --skip_web            Only runs the Studio binary, skipping hosting the
-                        web server.
+  --skip_web            Only runs the Studio binary, skipping hosting the web
+                        server.
   --clear_temp_cache    Deletes cached content specific to the host you are
                         connecting to. Searches in the
                         %LocalAppData%\Temp\Roblox\http directory.
@@ -164,6 +159,12 @@ options:
                         running "server" binary.
   --debug_all           Opens instances of x96dbg and attaches them to all
                         running binaries.
+  --quiet, -q           Suppresses console output.
+  --loud                Makes console output very verbose.
+  --rcc_log_options, --rcc_log, -log [[FLog]Output, [FLog]Network, et c. ...]
+                        Filter list for which FLog types to print in RCC logs.
+  --no_colour, --no_color
+                        Suppresses ANSI colour codes.
   --help, -?            show this help message and exit
 ```
 
@@ -174,9 +175,11 @@ As of RFD 0.66.1, the available options are as follows:
 ```
 usage: _main.py player [--rcc_host [RCC_HOST ...]] [--rcc_port [RCC_PORT ...]]
                        [--web_host [WEB_HOST ...]] [--web_port [WEB_PORT ...]]
-                       [--user_code [USER_CODE ...]] [--quiet] [--loud]
-                       [--clear_temp_cache] [--skip_download] [--debug |
-                       --debug_all] [--help]
+                       [--user_code [USER_CODE ...]] [--clear_temp_cache]
+                       [--skip_download] [--debug | --debug_all] [--quiet |
+                       --loud]
+                       [--log_options [[FLog]Output, [FLog]LocalStorage, et c. ...]]
+                       [--no_colour] [--help]
 
 options:
   --rcc_host, --host, -rh [RCC_HOST ...]
@@ -194,8 +197,6 @@ options:
                         the server. User codes derive a username, user iden
                         number, and other characteristics of any particular
                         player.
-  --quiet, -q           Suppresses console output.
-  --loud                Makes the client's output log file very verbose.
   --clear_temp_cache    Deletes cached content specific to the host you are
                         connecting to. Searches in the
                         %LocalAppData%\Temp\Roblox\http directory.
@@ -205,6 +206,13 @@ options:
                         running "player" binary.
   --debug_all           Opens instances of x96dbg and attaches them to all
                         running binaries.
+  --quiet, -q           Suppresses console output.
+  --loud                Makes console output very verbose.
+  --log_options, --log, -log [[FLog]Output, [FLog]LocalStorage, et c. ...]
+                        Filter list for which FLog types to print in log
+                        files.
+  --no_colour, --no_color
+                        Suppresses ANSI colour codes.
   --help, -?            show this help message and exit
 ```
 
@@ -217,9 +225,11 @@ As of RFD 0.68.1, the available options are as follows:
 ```
 usage: _main.py studio [--config_path [CONFIG_PATH] |
                        --place_path [PLACE_PATH]] [--web_port [WEB_PORT]]
-                       [--quiet] [--skip_web] [--skip_studio]
-                       [--clear_temp_cache] [--skip_download] [--debug |
-                       --debug_all] [--help]
+                       [--skip_web] [--skip_studio] [--clear_temp_cache]
+                       [--skip_download] [--debug | --debug_all] [--quiet |
+                       --loud]
+                       [--log_options [[FLog]Output, [FLog]LocalStorage, et c. ...]]
+                       [--no_colour] [--help]
 
 options:
   --config_path, --config, -cp [CONFIG_PATH]
@@ -233,7 +243,6 @@ options:
   --web_port, -wp, -p [WEB_PORT]
                         Port number for which to run the locally-hosted web
                         server.
-  --quiet, -q           Suppresses console output.
   --skip_web            Skips hosting the web server.
   --skip_studio         Skips opening Studio.
   --clear_temp_cache    Deletes cached content specific to the host you are
@@ -245,6 +254,13 @@ options:
                         running "studio" binary.
   --debug_all           Opens instances of x96dbg and attaches them to all
                         running binaries.
+  --quiet, -q           Suppresses console output.
+  --loud                Makes console output very verbose.
+  --log_options, --log, -log [[FLog]Output, [FLog]LocalStorage, et c. ...]
+                        Filter list for which FLog types to print in log
+                        files.
+  --no_colour, --no_color
+                        Suppresses ANSI colour codes.
   --help, -?            show this help message and exit
 ```
 
@@ -255,8 +271,8 @@ The `serialise` command allows developers to modify files to be compatible with 
 As of RFD 0.68.1, the available options are as follows:
 
 ```
-usage: _main.py serialise [--load LOAD [LOAD ...]] [--save SAVE [SAVE ...]]
-                          [--method {rbxlx,rbxl,csg,video,mesh} [{rbxlx,rbxl,csg,video,mesh} ...]]
+usage: _main.py serialise --load LOAD [LOAD ...] --save SAVE [SAVE ...]
+                          [--method {video,rbxlx,mesh,rbxl,csg} [{video,rbxlx,mesh,rbxl,csg} ...]]
                           [--help]
 
 options:
@@ -264,7 +280,7 @@ options:
                         Path to the file(s) to be loaded.
   --save, --write, -w SAVE [SAVE ...]
                         Path to the file(s) to be saved.
-  --method, -m {rbxlx,rbxl,csg,video,mesh} [{rbxlx,rbxl,csg,video,mesh} ...]
+  --method, -m {video,rbxlx,mesh,rbxl,csg} [{video,rbxlx,mesh,rbxl,csg} ...]
                         Serialisers to use on the file(s) provided.
   --help, -?            show this help message and exit
 ```

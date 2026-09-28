@@ -1,9 +1,7 @@
-# Standard library imports
 import urllib.parse
 import json
 import re
 
-# Local application imports
 from web_server._logic import web_server_handler, server_path
 import util.const
 

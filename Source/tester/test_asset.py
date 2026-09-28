@@ -1,9 +1,7 @@
-# Standard library imports
 from typing import override
 import urllib.request
 import unittest
 
-# Local application imports
 from assets import serialisers, default_grabber
 from assets.serialisers.csg.util import create_hash, recalculate_hash, xor_encrypt
 

@@ -1,11 +1,9 @@
-# Standard library imports
 import enum
 import os
 import shutil
 import subprocess
 import sys
 
-# Local application imports
 import functools
 import util.versions
 
