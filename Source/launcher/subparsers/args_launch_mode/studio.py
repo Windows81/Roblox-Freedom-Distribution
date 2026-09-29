@@ -64,10 +64,10 @@ def _(
         game_config = config.get_cached_config(args_ns.config_path)
 
     web_port: int = args_ns.web_port
-    routine_args: list[logic.base_entry] = []
+    routine_params: list[logic.base_entry] = []
 
     if not args_ns.skip_studio:
-        routine_args.extend([
+        routine_params.extend([
             studio.obj_type(
                 game_config=game_config,
                 web_host='localhost',
@@ -76,7 +76,7 @@ def _(
         ])
 
     if not args_ns.skip_web:
-        routine_args.extend([
+        routine_params.extend([
             web.obj_type(
                 web_port=web_port,
                 is_ipv6=False,
@@ -85,4 +85,4 @@ def _(
                 server_mode=web.SERVER_MODE_TYPE.STUDIO,
             ),
         ])
-    return routine_args
+    return routine_params

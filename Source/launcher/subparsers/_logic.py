@@ -24,7 +24,7 @@ MODE_ALIASES = {
 }
 
 
-def prepare_var_and_func():
+def prepare_decorator_accumulator():
     result_table: dict[launch_mode, list[Callable[..., Any]]] = {
         m: [] for m in launch_mode
     }
@@ -39,10 +39,10 @@ def prepare_var_and_func():
     return (outer, result_table)
 
 
-(add_args, ADD_MODAL_ARGS) = prepare_var_and_func()
-(add_aux_args, ADD_AUX_ARGS) = prepare_var_and_func()
-(serialise_args, SERIALISE_MODAL_ARGS) = prepare_var_and_func()
-(serialise_aux_args, SERIALISE_AUX_ARGS) = prepare_var_and_func()
+(add_args, ADD_ARGS_FUNCS) = prepare_decorator_accumulator()
+(add_aux_args, ADD_AUX_ARGS_FUNCS) = prepare_decorator_accumulator()
+(serialise_args, SERIALISE_ARGS_FUNCS) = prepare_decorator_accumulator()
+(serialise_aux_args, SERIALISE_AUX_ARGS_FUNCS) = prepare_decorator_accumulator()
 
 
 def call_auxs(args_table: dict[launch_mode, list[Callable[..., Any]]], l_mode: launch_mode, *args, **kwargs) -> list[Any]:

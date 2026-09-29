@@ -1,5 +1,6 @@
 # 0.68.1
 
+- feat(flog): extend `--log_options` support to Player
 - docs: clarify info and fix spelling errors in main `README.md`
 - fix(download): correct handling when missing `--rbx_version` or `--bin_type`
 - feat: add override environment variable `placeid` for asset extraction

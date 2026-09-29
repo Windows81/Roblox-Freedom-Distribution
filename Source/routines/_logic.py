@@ -292,20 +292,27 @@ class bin_entry(popen_entry, loggable_entry):
         for p in paths:
             os.makedirs(p, exist_ok=True)
 
-    def update_fvars(self) -> None:
-        '''
-        Updates the FFlags in the game configuration.
-        '''
-        new_flags = {
-            **self.logger.rcc_logs.get_level_table(),
-        }
-
-        path = self.get_versioned_path(
+    def get_local_fvar_path(self) -> str:
+        return self.get_versioned_path(
             'ClientSettings',
             'ClientAppSettings.json',
         )
-        with open(path, 'r', encoding='utf-8') as f:
-            json_data = json.load(f)
+
+    def update_fvars(self) -> None:
+        '''
+        Updates FFlags, FInts, et c. in the game configuration based on the Rōblox version.
+        Individual fast variables, stored in variable `new_flags`, are what get overwritten to the flile.
+        '''
+        new_flags = {
+            **self.logger.bin_logs.get_level_table(),
+        }
+
+        path = self.get_local_fvar_path()
+        if os.path.exists(path):
+            with open(path, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+        else:
+            json_data = {}
 
         json_data |= new_flags
         with open(path, 'w', encoding='utf-8') as f:
@@ -337,8 +344,8 @@ class gameconfig_entry(base_entry):
 class routine:
     '''
     Contains a list of `entry` objects.
-    A routine is initialised with a list of argument data-class objects.
-    Each of these objects points to a class whose `__init__` method is called with the data in that argument object.
+    A routine is initialised with a list of parameter data-class objects.
+    Each of these objects points to a class whose `__init__` method is called with the data in that parameter object.
 
     Entries in `self.entries` have two stages of action:
     1) the time it takes to *complete* the `process` function, and
@@ -351,13 +358,13 @@ class routine:
     '''
     entries: list[base_entry]
 
-    def __init__(self, *args_list: base_entry) -> None:
+    def __init__(self, *param_list: base_entry) -> None:
         super().__init__()
         self.entries = []
-        for arg in args_list:
-            self.entries.append(arg)
-            arg.routine = self
-            arg.process()
+        for p in param_list:
+            self.entries.append(p)
+            p.routine = self
+            p.process()
 
     def __enter__(self) -> Self:
         return self

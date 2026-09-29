@@ -30,8 +30,7 @@ class TestServer(unittest.TestCase):
         cls.random_port = random.randint(49152, 65535)
 
         cls.logger = test_logger.log_recorder(
-            rcc_logs=logger.filter.FILTER_BIN_LOUD,
-            player_logs=logger.filter.FILTER_BIN_LOUD,
+            bin_logs=logger.filter.FILTER_BIN_LOUD,
             web_logs=logger.filter.FILTER_WEB_LOUD,
             bcolors=logger.bc.BCOLORS_INVISIBLE,
             other_logs=True,

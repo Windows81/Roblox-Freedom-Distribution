@@ -25,7 +25,7 @@ from .subparsers.args_aux import (
 )
 
 
-def parse_arg_list(args: list[str] | None) -> list[routines.base_entry] | None:
+def parse_arg_list(*args: str) -> list[routines.base_entry] | None:
     '''
     Generates a list of routines from `launcher/subparser` scripts, filtering by the `mode` command-line parameter.
     '''
@@ -63,7 +63,7 @@ def parse_arg_list(args: list[str] | None) -> list[routines.base_entry] | None:
     # Adds parseable arguments for `chosen_sub_parser` which exist only under
     # the current launch mode.
     sub_logic.call_subparser(
-        sub_logic.ADD_MODAL_ARGS,
+        sub_logic.ADD_ARGS_FUNCS,
         mode,
         parser,
         chosen_sub_parser,
@@ -72,7 +72,7 @@ def parse_arg_list(args: list[str] | None) -> list[routines.base_entry] | None:
     # Adds parseable arguments, which exist under all launch modes, into
     # `chosen_sub_parser`.
     sub_logic.call_auxs(
-        sub_logic.ADD_AUX_ARGS,
+        sub_logic.ADD_AUX_ARGS_FUNCS,
         mode,
         parser,
         chosen_sub_parser,
@@ -96,40 +96,40 @@ def parse_arg_list(args: list[str] | None) -> list[routines.base_entry] | None:
         chosen_sub_parser.print_help()
         parser.exit(1)
 
-    routine_args_list = sub_logic.call_subparser(
-        sub_logic.SERIALISE_MODAL_ARGS,
+    routine_params_list = sub_logic.call_subparser(
+        sub_logic.SERIALISE_ARGS_FUNCS,
         mode,
         parser,
         args_namespace,
     )
 
-    routine_args_list += sub_logic.call_auxs(
-        sub_logic.SERIALISE_AUX_ARGS,
+    routine_params_list += sub_logic.call_auxs(
+        sub_logic.SERIALISE_AUX_ARGS_FUNCS,
         mode,
         args_namespace,
-        routine_args_list,
+        routine_params_list,
     )
 
-    return routine_args_list
+    return routine_params_list
 
 
-def perform_with_args(args: list[str]) -> None:
-    arg_list = parse_arg_list(args)
-    if arg_list is None:
+def perform_with_args(*args: str) -> None:
+    param_list = parse_arg_list(*args)
+    if param_list is None:
         return
-    with routines.routine(*arg_list) as routine_group:
+    with routines.routine(*param_list) as routine_group:
         routine_group.wait()
 
 
-def read_eval_loop(args: list[str] | None = None) -> None:
+def read_eval_loop(*args: str) -> None:
     '''
     Highest-level main function which takes a list of arguments and does everything in one go.
     '''
-    if args is None:
-        args = sys.argv[1:]
+    if len(args) == 0:
+        args = tuple(sys.argv[1:])
 
     if len(args) > 0:
-        perform_with_args(args)
+        perform_with_args(*args)
         return
 
     while True:
@@ -141,7 +141,7 @@ def read_eval_loop(args: list[str] | None = None) -> None:
             break
 
         try:
-            perform_with_args(shlex.split(arg_str))
+            perform_with_args(*shlex.split(arg_str))
         # Upon Ctrl+C, the program should not completely stop.
         # Rather, we want to make RFD ask for `arg_str` again.
         except KeyboardInterrupt:

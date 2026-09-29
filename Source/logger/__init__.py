@@ -18,8 +18,7 @@ class log_context(enum.Enum):
 
 @dataclasses.dataclass(frozen=True, unsafe_hash=True)
 class obj_type:
-    rcc_logs: filter.filter_type_bin
-    player_logs: filter.filter_type_bin
+    bin_logs: filter.filter_type_bin
     web_logs: filter.filter_type_web
     other_logs: bool
     bcolors: bc.bcolors = bc.BCOLORS_VISIBLE
@@ -49,7 +48,7 @@ def get_message(
 
     match context:
         case log_context.RCC_SERVER:
-            return rcc.get_message(filter.rcc_logs, filter.bcolors, text, *a, **kwa)
+            return rcc.get_message(filter.bin_logs, filter.bcolors, text, *a, **kwa)
         case log_context.WEB_SERVER:
             return web.get_message(filter.web_logs, filter.bcolors, text, *a, **kwa)
         case log_context.PYTHON_SETUP:
@@ -61,8 +60,7 @@ def default_message_print(message: str) -> None:
 
 
 PRINT_QUIET = obj_type(
-    rcc_logs=filter.FILTER_BIN_QUIET,
-    player_logs=filter.FILTER_BIN_QUIET,
+    bin_logs=filter.FILTER_BIN_QUIET,
     web_logs=filter.filter_type_web(
         urls=False,
         errors=False,
@@ -72,20 +70,15 @@ PRINT_QUIET = obj_type(
 )
 
 PRINT_REASONABLE = obj_type(
-    rcc_logs=filter.filter_type_bin.parse(
+    bin_logs=filter.filter_type_bin.parse(
         "FLogOutput",
         "FLogError",
         "FLogLocalStorage",
         "FLogRCCServiceInit",
         "FLogRCCServiceJobs",
         "DFLogRCCExecuteInfo",
-        "DFLogNetworkAudit",
-    ),
-    player_logs=filter.filter_type_bin.parse(
-        "FLogOutput",
-        "FLogError",
-        "FLogLocalStorage",
         "FLogGameJoinLoadTime",
+        "DFLogNetworkAudit",
     ),
     web_logs=filter.filter_type_web(
         urls=True,
@@ -97,8 +90,7 @@ PRINT_REASONABLE = obj_type(
 
 
 PRINT_LOUD = obj_type(
-    rcc_logs=filter.FILTER_BIN_LOUD,
-    player_logs=filter.FILTER_BIN_LOUD,
+    bin_logs=filter.FILTER_BIN_LOUD,
     web_logs=filter.filter_type_web(
         urls=True,
         errors=True,

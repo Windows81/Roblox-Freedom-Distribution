@@ -86,6 +86,7 @@ def zip_dir(dir_path: str, version: str, bin_typ: str) -> str:
         '-xr!AppSettings.xml',
         '-xr!GlobalBasicSettings_13.xml',
         '-xr!AnalysticsSettings.xml',
+        '-xr!ClientSettings/ClientAppSettings.json',
         '-xr!LocalStorage',
         '-xr!minidump',
         '-xr!logs',

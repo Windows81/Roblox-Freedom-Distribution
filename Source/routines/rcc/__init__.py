@@ -119,34 +119,18 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             f.write(startup_script)
 
     @override
-    def update_fvars(self) -> None:
-        '''
-        Updates FFlags, FInts, et c. in the game configuration based on the Rōblox version.
-        Individual fast variables, stored in variable `new_flags`, are what get overwritten to the flile.
-        '''
-        version = self.retr_version()
-        new_flags = {
-            **self.logger.rcc_logs.get_level_table(),
-        }
-
-        match version:
+    def get_local_fvar_path(self) -> str:
+        match self.retr_version():
             case util.versions.rōblox.v347:
-                path = self.get_versioned_path(
+                return self.get_versioned_path(
                     'ClientSettings',
                     'RCCService.json',
                 )
             case util.versions.rōblox.v463:
-                path = self.get_versioned_path(
+                return self.get_versioned_path(
                     'ClientSettings',
                     'RCCFlagOverride.json',
                 )
-
-        with open(path, 'r', encoding='utf-8') as f:
-            json_data = json.load(f)
-
-        json_data |= new_flags
-        with open(path, 'w', encoding='utf-8') as f:
-            json.dump(json_data, f, indent='\t')
 
     def save_gameserver(self) -> str:
         '''
@@ -212,7 +196,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
         # There is a chance that RFD can be overwhelmed with processing output.
         # Removing the `-verbose` flag here will reduce the amount of data piped from RCC.
-        if not self.logger.rcc_logs.is_empty():
+        if not self.logger.bin_logs.is_empty():
             suffix_args.append('-verbose')
 
         return (

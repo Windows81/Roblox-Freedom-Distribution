@@ -79,7 +79,7 @@ def gen_log_filter(args_ns: argparse.Namespace) -> logger.obj_type:
 
     if args_ns.log_options is not None:
         mods = logger.filter.filter_type_bin.parse(*args_ns.log_options)
-        result = dataclasses.replace(result, rcc_logs=mods, player_logs=mods)
+        result = dataclasses.replace(result, bin_logs=mods)
 
     if args_ns.no_colour:
         result = dataclasses.replace(
