@@ -169,7 +169,6 @@ def _(
                     rcc_port=rcc_port,
                     web_port=web_port,
                     user_code=args_ns.user_code,
-                    logger=log_filter,
                     # Some CoreGUI elements don't render properly if we join too early.
                     launch_delay=3,
                 ),
