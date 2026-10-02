@@ -20,7 +20,7 @@ def _(
     sub_parser.add_argument(
         '--clear_temp_cache',
         action='store_true',
-        help=r'Deletes cached content specific to the host you are connecting to.  Searches in the %%LocalAppData%%\Temp\Roblox\http directory.',
+        help=r'delete cached content specific to your specified host, searching in the "%%LocalAppData%%\Temp\Roblox\http"',
     )
 
 

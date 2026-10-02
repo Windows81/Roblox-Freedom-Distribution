@@ -199,7 +199,7 @@ def convert_to_csgmdl2(csgmdl_buffer: bytes) -> bytes:
     (vertex_data, vertex_count) = read_vertices(stream)
     range_markers = read_range_markers(stream)
 
-    # Read the state machine indices and store them in a list
+    # Reads the state machine indices and store them in a list.
     indices = read_state_machine(vertex_data, vertex_count)
     indices = trim_indices(indices, range_markers)
 

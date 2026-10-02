@@ -1,8 +1,10 @@
 import argparse
-import functools
+import sys
+import os
 
 import launcher.subparsers._logic as sub_logic
 from routines import _logic as logic
+import util.const
 
 AUX_MODES = (
     sub_logic.launch_mode.PLAYER,
@@ -20,7 +22,12 @@ def _(
     subparser.add_argument(
         '--skip_download',
         action='store_true',
-        help='Disables auto-download of RFD binaries from the internet.'
+        help='disable auto-download of RFD binaries from the internet',
+    )
+    subparser.add_argument(
+        '--force_update_bins',
+        action='store_true',
+        help='forcibly overwrite the RFD binary\'s directory if one already exists',
     )
 
 
@@ -31,11 +38,10 @@ def _(
     args_list: list[logic.base_entry],
 ) -> list[logic.base_entry]:
 
-    # Enables the `auto_download` flag for every routine, but adds no new routines of its own.
-    auto_download = not args_ns.skip_download
-
+    # Enables auto_download flags for every routine, but adds *no* new routines of its own.
     for a in args_list:
         if not isinstance(a, logic.bin_entry):
             continue
-        a.auto_download = auto_download
+        a.auto_download = not args_ns.skip_download
+        a.overwrite_auto_download_dir = args_ns.force_update_bins
     return []

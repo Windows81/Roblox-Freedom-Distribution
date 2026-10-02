@@ -27,7 +27,7 @@ def subparse(
         type=str,
         nargs='*',
         default=[util.resource.DEFAULT_CONFIG_PATH],
-        help='Game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up.',
+        help='game-specific options; defaults to ./GameConfig.toml; please review each option before starting a new server up',
     )
     place_thing.add_argument(
         '--place_path',
@@ -36,7 +36,7 @@ def subparse(
         type=str,
         nargs='*',
         default=[],
-        help='Path to the place file to be loaded.  Argument `config_path` can\'t be passed in when using this option.',
+        help='path to the place file to be loaded; argument `config_path` can\'t be passed in when using this option',
     )
     ip_version = subparser.add_mutually_exclusive_group()
 
@@ -44,51 +44,52 @@ def subparse(
         '--ipv4_only',
         '--ipv4-only',
         action='store_true',
-        help='Run server using IPv4 only.',
+        help='run server using IPv4 only',
     )
     ip_version.add_argument(
         '--ipv6_only',
         '--ipv6-only',
         action='store_true',
-        help='Run server using IPv6 only.',
+        help='run server using IPv6 only',
     )
     subparser.add_argument(
         '--rcc_port', '--port', '-rp',
         type=int,
         nargs='*',
         default=[],
-        help='Port number for which to run the the RCC server.',
+        help='port number for which to run the the RCC server',
     )
     subparser.add_argument(
         '--web_port', '--webserver_port', '-wp', '-p',
         type=int,
         nargs='*',
         default=[],
-        help='Port number for which to run the the web server.',
+        help='port number for which to run the the web server',
     )
     subparser.add_argument(
         '--run_client', '-rc', '--run_player',
         action='store_true',
-        help='Runs an instance of the player immediately after starting the server.',
+        help='run an instance of the player immediately after starting the server',
     )
+    argparse.RawTextHelpFormatter
     subparser.add_argument(
         '--user_code', '-u',
         type=str,
         nargs='?',
         default=None,
-        help='If --run_client is passed in, determines the user code for the player which joins the server.\nUser codes derive a username, user iden number, and other characteristics of any particular player',
+        help='if --run_client is passed in, determine the user code for the player which joins the server; user codes derive a username, user iden number, and other characteristics of any particular player',
     )
 
     skip_mutex = subparser.add_mutually_exclusive_group()
     skip_mutex.add_argument(
         "--skip_rcc",
         action="store_true",
-        help="Only runs the web server, skipping the RCC binary completely.",
+        help='only run the web server, skipping the RCC binary completely',
     )
     skip_mutex.add_argument(
         "--skip_web",
         action="store_true",
-        help="Only runs the Studio binary, skipping hosting the web server.",
+        help='only run the Studio binary, skipping hosting the web server',
     )
 
 

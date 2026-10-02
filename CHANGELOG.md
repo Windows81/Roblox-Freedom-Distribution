@@ -1,3 +1,17 @@
+# 0.68.3
+
+- docs: reformat `--help` messages
+- feat(bootstrap): replace TTY prompt with `--force_update_bins` and `--skip_existing_bins` flags
+- feat: notify users of shell-based one-liner fix when opening unserialised `rbxl` file in `studio` mode
+- fix: quitting action via Ctrl+C on Studio
+- fix: re-re-review of CSGPHS8
+
+# 0.68.2
+
+- build: reduce Studio v463 size by removing duplicate files
+- refactor: merge RCC flags-filter with Player flag-filter
+- fix: streamline default FFlag and FLog options
+
 # 0.68.1
 
 - feat(flog): extend `--log_options` support to Player

@@ -40,7 +40,7 @@ class dicter[key_typ, item_typ](dict[key_typ, item_typ]):
 
 class path_str(str):
     def __new__(cls, value: str, dir_root: str) -> Self:
-        return str.__new__(cls, os.path.join(dir_root, value))
+        return str.__new__(cls, os.path.normpath(os.path.join(dir_root, value)))
 
 
 class uri_type(enum.Enum):

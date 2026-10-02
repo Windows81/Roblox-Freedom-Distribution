@@ -1,17 +1,17 @@
 import dataclasses
 import functools
+import textwrap
 import time
 import os
 
 from typing import ClassVar, override
 
+import assets
 from routines.rcc import startup_scripts
 from config_type.types import wrappers
 from .. import _logic as logic
 import util.resource
 import util.versions
-import game_config
-import logger
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
@@ -59,22 +59,21 @@ class obj_type(logic.bin_entry, logic.loggable_entry, logic.gameconfig_entry):
     @functools.cache
     def setup_place(self) -> str:
         rbx_uri = self.game_config.server_core.place_file.rbxl_uri
-        # If the file is local, simply have Studio load its path directly.
-        if rbx_uri.uri_type == wrappers.uri_type.LOCAL:
-            assert isinstance(rbx_uri.value, wrappers.path_str)
-            return str(rbx_uri.value)
+        if rbx_uri.uri_type != wrappers.uri_type.LOCAL:
+            raise Exception('RFD only supports local-based `rbxl` paths.')
 
-        # If the file is remote, have RFD fetch the data and save it locally.
-        new_path = util.resource.retr_full_path(
-            util.resource.dir_type.MISC,
-            "_.rbxl",
-        )
         rbxl_data = rbx_uri.extract()
         if rbxl_data is None:
-            raise Exception('RBXL was not found.')
-        with open(new_path, 'wb') as f:
-            f.write(rbxl_data)
-        return new_path
+            raise FileNotFoundError('Your selected file does not exist.')
+
+        if assets.serialisers.rbxl.should_parse(rbxl_data):
+            raise Exception(textwrap.dedent(f'''
+                Your `rbxl` file needs to be serialised by RFD; try running this one-liner, then try opening Studio again:
+                mv "%(f)s" "%(f)s.BAK" && %(a)s serialise -r "%(f)s.BAK" -w "%(f)s" -m rbxl
+            ''' % {'f': rbx_uri.value, 'a': util.resource.get_cli_prefix()}))
+
+        assert isinstance(rbx_uri.value, wrappers.path_str)
+        return str(rbx_uri.value)
 
     @override
     def bootstrap(self) -> None:

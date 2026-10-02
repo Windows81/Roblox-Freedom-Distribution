@@ -50,6 +50,8 @@ def _(self: web_server_handler) -> bool:
 
 @server_path("/points/get-point-balance")
 def _(self: web_server_handler) -> bool:
-    # TODO: maybe implement the old player-point sytem.
+    '''
+    TODO: maybe implement the old player-point sytem.
+    '''
     self.send_json({"success": True, "pointBalance": 0})
     return True

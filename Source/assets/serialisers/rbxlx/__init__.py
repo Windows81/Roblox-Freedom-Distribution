@@ -20,14 +20,18 @@ class method(enum.Enum):
 ALL_METHODS = set(method)
 
 
-def check(data: bytes) -> bool:
+def is_valid(data: bytes) -> bool:
     return data.startswith(HEADER_SIGNATURE)
 
 
 def parse(data: bytes, methods: set[method] = ALL_METHODS) -> bytes | None:
-    if not check(data):
+    if not is_valid(data):
         return
     tree = ElementTree.fromstring(data)
     for method in [m.value for m in methods]:
         tree = method(tree) or tree
     return ElementTree.tostring(tree, encoding='utf-8')
+
+
+def should_parse(data: bytes) -> bool:
+    return is_valid(data)

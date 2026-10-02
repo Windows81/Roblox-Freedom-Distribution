@@ -16,7 +16,7 @@ def _(
     subparser.add_argument(
         'tests_to_run',
         type=str,
-        help='Unit tests which are run by RFD.',
+        help='unit test suites to be run',
         default=tester.DEFAULT_TEST_NAMES,
         nargs='*',
     )

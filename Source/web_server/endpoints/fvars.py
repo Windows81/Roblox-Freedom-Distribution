@@ -1146,7 +1146,9 @@ def produce_settings(self: web_server_handler, settings: structs.settings_type) 
 @server_path('/Setting/QuietGet/StudioAppSettings/', versions={versions.rōblox.v347})
 @server_path('/Setting/QuietGet/ClientAppSettings/', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
-    self.send_json(produce_settings(self, DEFAULT_SETTINGS_v347))
+    self.send_json(
+        produce_settings(self, DEFAULT_SETTINGS_v347),
+    )
     return true
 
 
@@ -1156,5 +1158,6 @@ def _(self: web_server_handler) -> bool:
     # application_name = self.query.get('applicationName', None)
 
     self.send_json(
-        {'applicationSettings': produce_settings(self, DEFAULT_SETTINGS_v463)})
+        {'applicationSettings': produce_settings(self, DEFAULT_SETTINGS_v463)},
+    )
     return true

@@ -32,7 +32,7 @@ class TestAssets(unittest.TestCase):
         parsed by the RBXL parser.
         '''
         data = self.get_rōblox_asset(1818)
-        self.assertTrue(serialisers.rbxl.check(data))
+        self.assertTrue(serialisers.rbxl.is_valid(data))
 
     def test_audio_load(self) -> None:
         '''
@@ -48,7 +48,7 @@ class TestAssets(unittest.TestCase):
         Tests that video data can be loaded and parsed by the parser.
         '''
         data = self.get_rōblox_asset(5608333583)
-        self.assertTrue(serialisers.video.check(data))
+        self.assertTrue(serialisers.video.is_valid(data))
         webm_data = serialisers.video.parse(data)
         self.assertIsNotNone(webm_data)
 
@@ -68,7 +68,7 @@ class TestAssets(unittest.TestCase):
         data = self.get_rōblox_asset(120627289)
         result = serialisers.mesh.parse(data) or data
         self.assertTrue(
-            serialisers.mesh.check(result),
+            serialisers.mesh.is_valid(result),
             'Invalid mesh',
         )
 
@@ -107,7 +107,7 @@ class TestAssets(unittest.TestCase):
         data = self.get_rōblox_asset(63043890)
         result = serialisers.rbxlx.parse(data) or data
         self.assertTrue(
-            serialisers.rbxlx.check(result),
+            serialisers.rbxlx.is_valid(result),
             'Invalid RBXLX stream',
         )
 

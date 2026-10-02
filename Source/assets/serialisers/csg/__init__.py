@@ -100,3 +100,14 @@ def parse(data: bytes) -> bytes | None:
 
     elif data.startswith(CSG_HEADER.PHS8.value):
         return csgphs8.convert_to_csgphs3(data)
+
+
+def should_parse(data: bytes) -> bool:
+    return data.startswith((
+        CSG_HEADER.MDL4.value,
+        CSG_HEADER.MDL5.value,
+        CSG_HEADER.PHS5.value,
+        CSG_HEADER.PHS6.value,
+        CSG_HEADER.PHS7.value,
+        CSG_HEADER.PHS8.value,
+    ))

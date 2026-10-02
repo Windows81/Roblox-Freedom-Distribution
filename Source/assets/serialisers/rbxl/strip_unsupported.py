@@ -2,6 +2,7 @@ from . import _logic
 
 REMOVAL_SET = {
     (b'Capabilities', 0x21),
+    (b'UniqueId', 0x1F),
 }
 
 

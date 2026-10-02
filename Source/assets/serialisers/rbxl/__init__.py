@@ -33,15 +33,40 @@ DEFAULT_METHODS = set(method).difference({
 })
 
 
-def check(data: bytes) -> bool:
+def is_valid(data: bytes) -> bool:
     return data.startswith(_logic.HEADER_SIGNATURE)
 
 
 def parse(data: bytes, methods: set[method] = DEFAULT_METHODS) -> bytes | None:
-    if not check(data):
+    if not is_valid(data):
         return
     parser = _logic.rbxl_parser(data)
     return parser.parse_file([
         m.value
         for m in methods
     ])
+
+
+def should_parse(data: bytes) -> bool:
+    '''
+    Since Rōblox v553, all instances saved within a `rbxl` file will contain a `PROP` field `"UniqueId"`.
+
+    This procedure attempts a linear search for the region in the file in which `PROP` fields live, then does another linear search for the `"UniqueId"` field.
+
+    If there ends up being a `"UniqueId"` field, then the `rbxl` file is too new for RFD, and full serialisiation becomes necessary.
+    '''
+    if not is_valid(data):
+        return False
+
+    unique_str = _logic.wrap_string(b'UniqueId')+b'\x1F'
+    halfway_point_idx = int(len(data) * 0.40)
+
+    start_search_idx = data.find(b'PROP', halfway_point_idx)
+    uniqueid_idx = data.find(unique_str, start_search_idx)
+    if uniqueid_idx == -1:
+        return False
+
+    if data[uniqueid_idx-0x16:uniqueid_idx-0x12] != b'PROP':
+        return False
+
+    return True

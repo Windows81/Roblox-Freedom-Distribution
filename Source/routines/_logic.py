@@ -39,8 +39,7 @@ class base_entry:
 
     def wait(self) -> None:
         for t in self.threads:
-            while t.is_alive():
-                t.join(timeout=1)
+            t.join()
 
     def stop(self) -> None:
         self.wait()
@@ -193,6 +192,7 @@ class bin_entry(popen_entry, loggable_entry):
     '''
 
     auto_download: bool = False
+    overwrite_auto_download_dir: bool = False
     clear_temp_cache: bool = False
     web_host: str = 'localhost'
     web_port: int = util.const.RFD_DEFAULT_PORT
@@ -373,8 +373,14 @@ class routine:
         self.stop()
 
     def wait(self) -> None:
-        for e in self.entries:
-            e.wait()
+        threads = [
+            threading.Thread(target=e.wait, daemon=True)
+            for e in self.entries
+        ]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
     def stop(self) -> None:
         for e in self.entries:

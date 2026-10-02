@@ -18,9 +18,11 @@ import io
 
 # 40-byte magic header that prefixes a CSGPHS3, 6, or 7 mesh struct.
 _CSGPHS_MESH_MAGIC = (
-    b"\x10\0\0\0" + b"\0" * 16 +
-    b"\x10\0\0\0" + b"\0" * 12 +
-    b"\0\0\x80\x3F"
+    # class btVector3 (transformTrans)
+    b"\x10\x00\x00\x00" + (b"\x00" * 16) +
+
+    # class btQuaternion (rotationStride)
+    b"\x10\x00\x00\x00" + (b"\x00" * 12) + b"\x00\x00\x80\x3F"
 )
 
 
@@ -83,13 +85,15 @@ def test_lists(
     if len(index_list) != len(adjacency_list):
         return False
 
-    for i in range(len(index_list)):
+    for i in range(len(adjacency_list)):
         if adjacency_list[i] == SENTINEL_BOUNDARY:
             continue
         if adjacency_list[i] == SENTINEL_PROCESSING:
             continue
         if adjacency_list[i] == SENTINEL_UNINIT:
             continue
+        if not (0 <= index_list[i] < len(adjacency_list)):
+            return False
         if i != adjacency_list[adjacency_list[i]]:
             return False
     return True
@@ -97,10 +101,10 @@ def test_lists(
 
 class CLERS(enum.Enum):
     C = 0b0
-    L = 0b110
-    E = 0b111
-    R = 0b101
-    S = 0b100
+    L = 0b1_01
+    E = 0b1_11
+    R = 0b1_10
+    S = 0b1_00
 
 
 def decode_clers_symbols(bitreader: Iterator[int]) -> Iterator[CLERS]:
@@ -169,7 +173,7 @@ def zip_boundary(c: int, adjacency_list: list[int], index_list: list[int]):
 def _decode_triangles(
     clers_iter: Iterator[CLERS],
     est_capacity: int,
-) -> tuple[int, list[int], list[int]]:
+) -> tuple[int, int, list[int], list[int]]:
 
     # Middle edge (1) left as SENTINEL_UNINIT so the decoder starts walking from it.
     adjacency_list = [
@@ -187,28 +191,27 @@ def _decode_triangles(
         *[+0] * (est_capacity - 3),  # [3:]
     ]
 
-    current_triangle = 1
-    vertex_counter = 0
+    vertex_counter = 3
     cursor_stack = [1]
+    triangle_count = 1
 
     # Infinitely loops if bad format.
     while len(cursor_stack) > 0:
-        temp_cursor_edge = cursor_stack[-1]
 
         # Emits a new triangle and glue its edge 0 to cursor_edge as twins;
         # Edges 1 and 2 inherit the corner vertices from the gate edge.
-        tri_base_edge = 3 * current_triangle
-        current_triangle += 1
+        tri_base_edge = 3 * triangle_count
+        triangle_count += 1
 
-        adjacency_list[tri_base_edge] = temp_cursor_edge
-        adjacency_list[temp_cursor_edge] = tri_base_edge
+        adjacency_list[tri_base_edge] = cursor_stack[-1]
+        adjacency_list[cursor_stack[-1]] = tri_base_edge
 
         (
             index_list[get_next_edge(tri_base_edge)],
             index_list[get_prev_edge(tri_base_edge)],
         ) = (
-            index_list[get_prev_edge(temp_cursor_edge)],
-            index_list[get_next_edge(temp_cursor_edge)],
+            index_list[get_prev_edge(cursor_stack[-1])],
+            index_list[get_next_edge(cursor_stack[-1])],
         )
 
         cursor_stack[-1] = get_next_edge(tri_base_edge)
@@ -218,20 +221,15 @@ def _decode_triangles(
             break
 
         if op == CLERS.C:  # C: introduce new vertex
-            vertex_counter += 1
             index_list[tri_base_edge] = vertex_counter
             next_edge = get_next_edge(cursor_stack[-1])
             adjacency_list[next_edge] = SENTINEL_BOUNDARY
+            vertex_counter += 1
             continue
 
         if op == CLERS.L:  # L: turn left
-            next_edge = get_next_edge(cursor_stack[-1])
-            adjacency_list[next_edge] = SENTINEL_PROCESSING
-            zip_boundary(
-                c=next_edge,
-                adjacency_list=adjacency_list,
-                index_list=index_list,
-            )
+            adjacency_list[cursor_stack[-1]] = SENTINEL_PROCESSING
+            cursor_stack[-1] = get_next_edge(cursor_stack[-1])
             continue
 
         if op == CLERS.E:  # E: end
@@ -247,8 +245,13 @@ def _decode_triangles(
             continue
 
         if op == CLERS.R:  # R: turn right
-            cursor_stack[-1] = get_next_edge(cursor_stack[-1])
-            adjacency_list[cursor_stack[-1]] = SENTINEL_PROCESSING
+            next_edge = get_next_edge(cursor_stack[-1])
+            adjacency_list[next_edge] = SENTINEL_PROCESSING
+            zip_boundary(
+                c=next_edge,
+                adjacency_list=adjacency_list,
+                index_list=index_list,
+            )
             continue
 
         if op == CLERS.S:  # S: split
@@ -257,7 +260,7 @@ def _decode_triangles(
             cursor_stack.append(current)
             continue
 
-    return (current_triangle, adjacency_list, index_list)
+    return (vertex_counter, triangle_count, adjacency_list, index_list)
 
 
 def _edgebreaker_decode(
@@ -276,30 +279,25 @@ def _edgebreaker_decode(
     clers_reader = decode_clers_symbols(bitreader)
     clers_data = list(clers_reader)
     clers_iter = iter(clers_data)
-    current_triangle = 0
-    vertex_offset = 2
+    vertex_offset = 0
 
-    for _h in range(hull_count):
-        (current_triangle, adjacency_list, index_list) = _decode_triangles(
+    for _ in range(hull_count):
+        (vertex_count, triangle_count, adjacency_list, index_list) = _decode_triangles(
             clers_iter=clers_iter,
             est_capacity=est_capacity,
         )
 
-        assert (test_lists(adjacency_list, index_list))
+        assert test_lists(adjacency_list, index_list)
 
         hull_tris = []
         max_local_idx = 0
-        for t in range(current_triangle):
-            base = 3 * t
-            i0 = index_list[base + 0] + vertex_offset
-            i1 = index_list[base + 1] + vertex_offset
-            i2 = index_list[base + 2] + vertex_offset
-            if i0 == i1:
-                continue
-            if i0 == i2:
-                continue
-            if i1 == i2:
-                continue
+        for base in range(0, vertex_count, 3):
+            i0 = index_list[base + 0]
+            i1 = index_list[base + 1]
+            i2 = index_list[base + 2]
+            assert i0 != i1
+            assert i0 != i2
+            assert i1 != i2
             vals = (i0, i1, i2)
             hull_tris.append(vals)
             max_local_idx = max(max_local_idx, *vals)
@@ -316,29 +314,29 @@ def _edgebreaker_decode(
             triangles=hull_tris,
         ))
 
-        vertex_offset = max_local_idx
+        assert max_local_idx - vertex_offset < vertex_count
+        vertex_offset += vertex_count
 
     return hulls
 
 
-def decode_raw_hulls(data: bytes) -> list[Hull]:
+def _decode_raw_hulls(data: bytes) -> list[Hull]:
     if len(data) == 0:
         return []
 
     stream = io.BytesIO(initial_bytes=data)
-    hull_range_count = util.read_u32(stream)
+    tri_range_count = util.read_u32(stream)
 
-    hull_ranges = [
+    tri_ranges = [
         util.read_u32(stream)
-        for _ in range(hull_range_count)
-    ]
+        for _ in range(tri_range_count)
+    ] or [0]
 
-    # Index-base length is equal to the value of the last hull range (or 0 if none).
-    total_index_count = hull_ranges[-1] if hull_ranges else 0
-
-    index_base = [
+    # Count length is equal to the value of the last range's value (or 0 if none).
+    total_triangle_count = tri_ranges[-1]
+    triangle_array = [
         util.read_u32(stream)
-        for _ in range(total_index_count)
+        for _ in range(total_triangle_count)
     ]
 
     # If no component section exists, then there are no hulls to build.
@@ -350,25 +348,32 @@ def decode_raw_hulls(data: bytes) -> list[Hull]:
     vertex_ranges = [
         util.read_u32(stream)
         for _ in range(vertex_range_count)
-    ]
+    ] or [0]
 
-    total_vertex_count = vertex_ranges[-1] if vertex_ranges else 0
+    # Count is equal to the value of the last range's value (or 0 if none).
+    total_vertex_count = vertex_ranges[-1]
     assert total_vertex_count % 3 == 0
-    component_data = [
+    vertex_array = [
         read_vector3(stream)
         for _ in range(total_vertex_count//3)
     ]
 
     hulls: list[Hull] = []
 
-    idx_start = 0   # offset into `index_base` (in *elements*, not bytes)
+    tri_start = 0   # offset into `index_base` (in *elements*, not bytes)
     vert_start = 0  # offset into `component_data`
 
-    for idx_end, vert_end in zip(hull_ranges, vertex_ranges):
+    for i in range(1, len(tri_ranges)):
+
+        tri_start = tri_ranges[i-1]
+        tri_end = tri_ranges[i-0]
+
+        vert_start = vertex_ranges[i-1]
+        vert_end = vertex_ranges[i-0]
 
         # Slices the raw buffers for this hull.
-        idx_slice = index_base[idx_start:idx_end]
-        vert_slice = component_data[vert_start:vert_end]
+        idx_slice = triangle_array[tri_start:tri_end]
+        vert_slice = vertex_array[vert_start:vert_end]
 
         # Converts the flat slices into groups of three.
         triangles = [
@@ -377,10 +382,6 @@ def decode_raw_hulls(data: bytes) -> list[Hull]:
         ]
 
         hulls.append(Hull(vertices=vert_slice, triangles=triangles))
-
-        # Advances the start pointers for the next iteration.
-        idx_start = idx_end
-        vert_start = vert_end
 
     return hulls
 
@@ -409,31 +410,31 @@ def convert_to_csgphs3(csgphs_buffer: bytes) -> bytes:
     zipped_stream = io.BytesIO(phs_data)
 
     hull_count = util.read_u32(zipped_stream)
-    total_verts = util.read_u32(zipped_stream)
-    total_tris = util.read_u32(zipped_stream)
+    vert_count = util.read_u32(zipped_stream)
+    tri_count = util.read_u32(zipped_stream)
     first_hull_vert_count = util.read_u32(zipped_stream)
     first_hull_tri_count = util.read_u32(zipped_stream)
-    raw_hulls_size = util.read_u32(zipped_stream)
+    raw_hulls_len = util.read_u32(zipped_stream)
     clers_bit_count = util.read_u32(zipped_stream)
-    clers_buffer_size = util.read_u32(zipped_stream)
-    positions_size = util.read_u32(zipped_stream)
+    clers_buffer_len = util.read_u32(zipped_stream)
+    verts_len = util.read_u32(zipped_stream)
     bounding_box_min = read_vector3(zipped_stream)
     bounding_box_max = read_vector3(zipped_stream)
-    raw_hulls = zipped_stream.read(raw_hulls_size)
-    clers_bytes = zipped_stream.read(clers_buffer_size)
+    raw_hulls = zipped_stream.read(raw_hulls_len)
+    clers_bytes = zipped_stream.read(clers_buffer_len)
     all_vertices = [
         read_vector3(zipped_stream)
-        for _ in range(total_verts)
+        for _ in range(vert_count)
     ]
 
     hulls = [
-        *decode_raw_hulls(raw_hulls),
+        *_decode_raw_hulls(raw_hulls),
         *_edgebreaker_decode(
             clers_bytes,
             clers_bit_count,
             hull_count,
             all_vertices,
-            total_tris,
+            tri_count,
             geom_type,
         ),
     ]

@@ -22,7 +22,7 @@ def subparse(
         type=str,
         nargs='?',
         default=util.resource.DEFAULT_CONFIG_PATH,
-        help='Game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up.',
+        help='game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up',
     )
     place_thing.add_argument(
         '--place_path',
@@ -31,25 +31,25 @@ def subparse(
         type=str,
         nargs='?',
         default=None,
-        help='Path to the place file to be loaded.  Argument `config_path` can\'t be passed in when using this option.',
+        help='path to the place file to be loaded; argument `config_path` can\'t be passed in when using this option',
     )
     subparser.add_argument(
         '--web_port', '-wp', '-p',
         type=int,
         nargs='?',
         default=20059,
-        help='Port number for which to run the locally-hosted web server.',
+        help='port number for which to run the locally-hosted web server',
     )
 
     subparser.add_argument(
         "--skip_web",
         action="store_true",
-        help="Skips hosting the web server.",
+        help='skip hosting the web server',
     )
     subparser.add_argument(
         "--skip_studio",
         action="store_true",
-        help="Skips opening Studio.",
+        help='skip opening Studio',
     )
 
 
@@ -66,15 +66,6 @@ def _(
     web_port: int = args_ns.web_port
     routine_params: list[logic.base_entry] = []
 
-    if not args_ns.skip_studio:
-        routine_params.extend([
-            studio.obj_type(
-                game_config=game_config,
-                web_host='localhost',
-                web_port=web_port,
-            ),
-        ])
-
     if not args_ns.skip_web:
         routine_params.extend([
             web.obj_type(
@@ -85,4 +76,14 @@ def _(
                 server_mode=web.SERVER_MODE_TYPE.STUDIO,
             ),
         ])
+
+    if not args_ns.skip_studio:
+        routine_params.extend([
+            studio.obj_type(
+                game_config=game_config,
+                web_host='localhost',
+                web_port=web_port,
+            ),
+        ])
+
     return routine_params

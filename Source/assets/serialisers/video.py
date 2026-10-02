@@ -4,7 +4,7 @@ import re
 HEADER_SIGNATURE = b'#EXTM3U'
 
 
-def check(data: bytes) -> bool:
+def is_valid(data: bytes) -> bool:
     return data.startswith(HEADER_SIGNATURE)
 
 
@@ -33,10 +33,14 @@ def get_m3u8_links(data: bytes) -> list[str]:
 
 
 def parse(data: bytes) -> bytes | None:
-    if not check(data):
+    if not is_valid(data):
         return
     concat_data = []
     for url in get_m3u8_links(data):
         with urllib.request.urlopen(url) as response:
             concat_data.append(response.read())
     return b''.join(concat_data)
+
+
+def should_parse(data: bytes) -> bool:
+    return is_valid(data)

@@ -16,7 +16,7 @@ def _(
         '--show',
         '-v',
         action='store_true',
-        help='Exposes the entire cookie in plaintext.',
+        help='expose the entire cookie in plaintext',
     )
 
 

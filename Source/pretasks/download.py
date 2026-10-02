@@ -58,35 +58,20 @@ def download(remote_link: str, quiet: bool = False) -> io.BytesIO:
     return downloaded_data
 
 
-@functools.cache
-def should_overwrite(full_dir: str) -> bool:
-    rfd_ver_path = os.path.join(
-        full_dir, 'rfd_version',
-    )
-    if not os.path.isfile(rfd_ver_path):
-        version_str = ''
-    else:
-        with open(rfd_ver_path, 'r') as f:
-            version_str = f.read()
-
-    if not sys.stdin or not sys.stdin.isatty():
-        return False
-
-    if version_str.startswith(util.const.ZIPPED_RELEASE_VERSION):
-        return False
-
-    return input('Should RFD overwrite `%s`? (y/N) ' % full_dir).lower().startswith('y')
+def get_full_dir(rōblox_version: util.versions.rōblox, bin_type: util.resource.bin_subtype) -> str:
+    return util.resource.retr_rōblox_full_path(rōblox_version, bin_type)
 
 
 def bootstrap_binary(
     rōblox_version: util.versions.rōblox,
     bin_type: util.resource.bin_subtype,
     log_filter: logger.obj_type,
+    force_overwrite: bool = False,
 ) -> None:
-    full_dir = util.resource.retr_rōblox_full_path(rōblox_version, bin_type)
+    full_dir = get_full_dir(rōblox_version, bin_type)
 
     if os.path.isdir(full_dir):
-        if should_overwrite(full_dir):
+        if force_overwrite:
             shutil.rmtree(full_dir)
         else:
             log_filter.log(

@@ -1,5 +1,6 @@
 import enum
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -9,6 +10,13 @@ import util.versions
 
 
 MADE_WITH_PYINSTALLER = hasattr(sys, '_MEIPASS')
+
+
+def get_cli_prefix():
+    args = sys.orig_argv[:len(sys.orig_argv)-len(sys.argv)+1]
+    if args[1].endswith('.py'):
+        args[0:2] = ['.', args[0], os.path.abspath(args[1])]
+    return shlex.join(args)
 
 
 def convert_to_winepath(path: str) -> str:

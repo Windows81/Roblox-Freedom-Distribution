@@ -5,12 +5,16 @@ def get_version(original_data: bytes) -> str:
     return rbxmesh.get_mesh_version(original_data)
 
 
-def check(original_data: bytes) -> bool:
+def is_valid(original_data: bytes) -> bool:
     try:
         get_version(original_data)
         return True
     except:
         return False
+
+
+def skip_version(mesh_version: str) -> bool:
+    return mesh_version < "4.01"
 
 
 def parse(original_data: bytes) -> bytes | None:
@@ -19,7 +23,7 @@ def parse(original_data: bytes) -> bytes | None:
     except Exception:
         return None
 
-    if mesh_version < "4.01":
+    if skip_version(mesh_version):
         return original_data
 
     '''
@@ -37,3 +41,11 @@ def parse(original_data: bytes) -> bytes | None:
         return bytes(rbxmesh.export_mesh_v4(mesh_data))
     else:
         return bytes(rbxmesh.export_mesh_v2(mesh_data))
+
+
+def should_parse(data: bytes) -> bool:
+    try:
+        mesh_version = rbxmesh.get_mesh_version(data)
+    except Exception:
+        return False
+    return not skip_version(mesh_version)

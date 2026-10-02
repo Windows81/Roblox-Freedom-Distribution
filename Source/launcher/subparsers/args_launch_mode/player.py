@@ -18,35 +18,35 @@ def _(
         type=str,
         nargs='*',
         default=[],
-        help='Hostname or IP address to connect this program to the RCC server.',
+        help='hostname or IP address to connect this program to the RCC server',
     )
     subparser.add_argument(
         '--rcc_port', '--port', '-rp',
         type=int,
         nargs='*',
         default=[],
-        help='Port number to connect this program to the RCC server.',
+        help='port number to connect this program to the RCC server',
     )
     subparser.add_argument(
         '--web_host', '--webserver_host', '-wh', '-h',
         type=str,
         nargs='*',
         default=[],
-        help='Hostname or IP address to connect this program to the web server.',
+        help='hostname or IP address to connect this program to the web server',
     )
     subparser.add_argument(
         '--web_port', '--webserver_port', '-wp', '-p',
         type=int,
         nargs='*',
         default=[],
-        help='Port number to connect this program to the web server.',
+        help='port number to connect this program to the web server',
     )
     subparser.add_argument(
         '--user_code', '-u',
         type=str,
         nargs='*',
         default=[],
-        help='Determines the user code for the player which joins the server.\nUser codes derive a username, user iden number, and other characteristics of any particular player.',
+        help='determine the user code for the player which joins the server; user codes derive a username, user iden number, and other characteristics of any particular player',
     )
 
 

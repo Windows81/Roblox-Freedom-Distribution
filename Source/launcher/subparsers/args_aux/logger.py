@@ -27,13 +27,13 @@ def _(
     log_group.add_argument(
         '--quiet', '-q',
         action='store_true',
-        help='Suppresses console output.',
+        help='suppress console output',
     )
 
     log_group.add_argument(
         '--loud',
         action='store_true',
-        help='Makes console output very verbose.',
+        help='make console output very verbose',
     )
 
     if mode == sub_logic.launch_mode.SERVER:
@@ -46,7 +46,7 @@ def _(
             type=str,
             nargs='*',
             default=None,
-            help='Filter list for which FLog types to print in RCC logs.',
+            help='filter list for which FLog types to print in RCC logs and to log files',
             metavar='[FLog]Output, [FLog]Network, et c.',
         )
     else:
@@ -58,14 +58,14 @@ def _(
             type=str,
             nargs='*',
             default=None,
-            help='Filter list for which FLog types to print in log files.',
+            help='filter list for which FLog types to print in log files',
             metavar='[FLog]Output, [FLog]LocalStorage, et c.',
         )
 
     subparser.add_argument(
         '--no_colour', '--no_color',
         action='store_true',
-        help='Suppresses ANSI colour codes.',
+        help='suppress ANSI colour codes',
     )
 
 
