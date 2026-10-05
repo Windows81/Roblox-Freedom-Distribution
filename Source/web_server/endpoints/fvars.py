@@ -5,7 +5,12 @@ from util import versions
 # TODO: aggressively petition the Python developers to fully adopt lower-case Boolean keywords.
 true, false = True, False
 
+# This table is intended for maintainers of RFD to incorporate into other Python code.
+# I'd use it to bisect bugs spawning from Rōblox executables.
+DEBUG_TEST: structs.settings_type = {}
+
 DEFAULT_SETTINGS_v347: structs.settings_type = {
+    "DFFlagEnableReverseCSGDataMigration": true,
     "FIntStudioRobloxAnalyticsLoad": 0,
     "FFlagLuaChatNotificationButtonEnabled": true,
     "FFlagLuaChatPerformanceTracking": true,
@@ -1133,13 +1138,9 @@ DEFAULT_SETTINGS_v463: structs.settings_type = {
     "FFlagReportReplicationVariantLimitHit": true,
 }
 
-# This table is intended for maintainers of RFD to incorporate into other Python code.
-# I'd use it to bisect bugs spawning from Rōblox executables.
-DEBUG_TEST: structs.settings_type = {}
-
 
 def produce_settings(self: web_server_handler, settings: structs.settings_type) -> structs.settings_type:
-    return self.game_config.server_core.roblox_setting_overrides | settings
+    return settings | DEBUG_TEST | self.game_config.server_core.roblox_setting_overrides
 
 
 @server_path('/Setting/QuietGet/RCCService/', versions={versions.rōblox.v347})

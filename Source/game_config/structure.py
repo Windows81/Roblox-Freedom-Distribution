@@ -58,7 +58,7 @@ class config_type(allocateable.obj_type):
         chat_style: structs.chat_style = structs.chat_style.CLASSIC_CHAT
 
         retrieve_default_user_code: callable[[], str] = (
-            lambda tick: 'Guest %d' % (int(time.time() * 0x100) % 10000)
+            lambda: 'Guest %d' % (int(time.time() * 0x100) % 10000)
         )
 
         allow_unsafe_users: bool = False
