@@ -176,10 +176,10 @@ class popen_entry(base_entry):
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
 class loggable_entry(base_entry):
-    logger: logger.obj_type = logger.PRINT_QUIET
+    logger_obj: logger.obj_type = logger.PRINT_QUIET
 
     def log(self, message: bytes | str) -> None:
-        self.logger.log(
+        self.logger_obj.log(
             message,
             context=logger.log_context.PYTHON_SETUP,
         )
@@ -304,7 +304,7 @@ class bin_entry(popen_entry, loggable_entry):
         Individual fast variables, stored in variable `new_flags`, are what get overwritten to the flile.
         '''
         new_flags = {
-            **self.logger.bin_logs.get_level_table(),
+            **self.logger_obj.bin_logs.get_level_table(),
         }
 
         path = self.get_local_fvar_path()
@@ -324,7 +324,7 @@ class bin_entry(popen_entry, loggable_entry):
             download.bootstrap_binary(
                 rōblox_version=self.retr_version(),
                 bin_type=self.BIN_SUBTYPE,
-                log_filter=self.logger,
+                log_filter=self.logger_obj,
             )
         if self.clear_temp_cache:
             clear_cache.process(base_url=self.web_host)

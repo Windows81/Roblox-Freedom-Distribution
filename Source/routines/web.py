@@ -33,7 +33,7 @@ class obj_type(logic.gameconfig_entry, logic.loggable_entry):
             self.is_ipv6,
             self.game_config,
             self.server_mode,
-            self.logger,
+            self.logger_obj,
         )
 
         th = threading.Thread(

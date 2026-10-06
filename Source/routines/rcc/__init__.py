@@ -67,7 +67,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             thumbnail_data = icon_uri.extract() or bytes()
             cache.add_asset(const.THUMBNAIL_ID_CONST, thumbnail_data)
         except Exception as _:
-            self.logger.log(
+            self.logger_obj.log(
                 text='Warning: thumbnail data not found.',
                 context=logger.log_context.PYTHON_SETUP,
             )
@@ -99,7 +99,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             place_uri.uri_type != wrappers.uri_type.LOCAL and
             config.server_core.place_file.enable_saveplace
         ):
-            self.logger.log(
+            self.logger_obj.log(
                 (
                     'Warning: config option "enable_saveplace" is redundant '
                     'when the place file is an online resource.'
@@ -196,7 +196,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
         # There is a chance that RFD can be overwhelmed with processing output.
         # Removing the `-verbose` flag here will reduce the amount of data piped from RCC.
-        if not self.logger.bin_logs.is_empty():
+        if not self.logger_obj.bin_logs.is_empty():
             suffix_args.append('-verbose')
 
         return (
@@ -231,7 +231,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
                 continue
             line = bytes(stream_data[:line_index])
             del stream_data[:line_index]
-            self.logger.log(
+            self.logger_obj.log(
                 line.rstrip(b'\r\n'),
                 context=logger.log_context.RCC_SERVER,
             )
@@ -311,9 +311,9 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         self.save_thumbnail()
         self.save_gameserver()
 
-        self.logger.log(
+        self.logger_obj.log(
             (
-                f"{self.logger.bcolors.BOLD}[UDP %d]{self.logger.bcolors.ENDC}: " +
+                f"{self.logger_obj.bcolors.BOLD}[UDP %d]{self.logger_obj.bcolors.ENDC}: " +
                 "initialising Rōblox Cloud Compute"
             ) % (
                 self.rcc_port,

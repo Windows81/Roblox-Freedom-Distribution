@@ -101,6 +101,6 @@ def _(
     for a in args_list:
         if not isinstance(a, logic.loggable_entry):
             continue
-        a.logger = log_filter
+        a.logger_obj = log_filter
 
     return []

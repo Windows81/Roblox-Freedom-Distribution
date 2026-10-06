@@ -38,7 +38,7 @@ class TestServer(unittest.TestCase):
         cls.routine = routines.routine(
             web.obj_type(
                 web_port=cls.random_port,
-                logger=cls.logger,
+                logger_obj=cls.logger,
                 game_config=cls.game_config,
                 server_mode=web.SERVER_MODE_TYPE.RCC,
                 is_ipv6=False,
@@ -47,7 +47,7 @@ class TestServer(unittest.TestCase):
             rcc.obj_type(
                 rcc_port=cls.random_port,
                 web_port=cls.random_port,
-                logger=cls.logger,
+                logger_obj=cls.logger,
                 game_config=cls.game_config,
             ),
         )

@@ -10,6 +10,7 @@ true, false = True, False
 DEBUG_TEST: structs.settings_type = {}
 
 DEFAULT_SETTINGS_v347: structs.settings_type = {
+    "FFlagDebugLocalRccServerConnection": true,
     "FFlagLuaChatNotificationButtonEnabled": true,
     "FFlagLuaChatPerformanceTracking": true,
     "FFlagLuaChatUseCppTextTruncation": false,
