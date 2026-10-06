@@ -10,7 +10,6 @@ true, false = True, False
 DEBUG_TEST: structs.settings_type = {}
 
 DEFAULT_SETTINGS_v347: structs.settings_type = {
-    "FFlagDebugLocalRccServerConnection": true,
     "FFlagLuaChatNotificationButtonEnabled": true,
     "FFlagLuaChatPerformanceTracking": true,
     "FFlagLuaChatUseCppTextTruncation": false,
@@ -105,6 +104,7 @@ DEFAULT_SETTINGS_v347: structs.settings_type = {
     "DFStringAdditionalBlacklistHeaders": "SOAPAction",
     "DFFlagPGSSolverSimIslandsEnabled2": true,
     "DFIntMaxDataPayloadSize": 96000000,
+    "DFIntHttpConnectExtendedTimeoutMillis": 600000,
     "DFFlagCLI16089_2": true,
     "DFIntSendJoinTimeDeltasToDiag_HundredthsPercentage": 100,
     "DFFlagCleanCacheMoveMutex": true,
@@ -149,6 +149,7 @@ DEFAULT_SETTINGS_v347: structs.settings_type = {
     "DFFlagFixFreefallStuckIgnoreSelfContact": true,
     "DFFlagRbxFormatMultiByteSizeFix": true,
     "DFFlagDeprecatableBroadcasts": true,
+    "DFIntHttpSendExtendedTimeoutMillis": 600000,
     "DFFlagLockViolationScriptCrash": false,
     "DFFlagHttpZeroLatencyCaching": true,
     "DFFlagReportSolverUsageStats": true,
@@ -252,8 +253,9 @@ DEFAULT_SETTINGS_v347: structs.settings_type = {
     "DFFlagLogMemoryStatsOnCompressionError": true,
     "DFStringDataStoreThrottleMsg": "DataStore request was added to queue. If request queue fills, further requests will be dropped. Try sending fewer requests. Key =",
     "DFIntS2PhysicsSenderRate": 15,
+    "DFIntHttpResponseExtendedTimeoutMillis": 600000,
     "DFIntWeldPermyriad": 100,
-    "DFFlagGetTeamLazyEvaluation": true
+    "DFFlagGetTeamLazyEvaluation": true,
 }
 
 DEFAULT_SETTINGS_v463: structs.settings_type = {
@@ -261,6 +263,7 @@ DEFAULT_SETTINGS_v463: structs.settings_type = {
     "DFFlagWhitelistUserInputEvents": true,
     "DFIntAnalyticsNS1CDNProbeChancePercent": 0,
     "FFlagDebugLocalRccServerConnection": true,
+    "DFFlagDebugLocalRccServerConnection": true,
     "DFFlagCLI120342": true,
     "FFlagCSGv2UnionOrientationFromFirstPart": true,
     "DFFlagAllowFocusInThreeDThumbnails": false,

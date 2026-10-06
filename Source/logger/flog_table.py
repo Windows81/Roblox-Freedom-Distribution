@@ -278,9 +278,11 @@ LOG_LEVEL_LIST = [
 ]
 
 
-LOG_LEVEL_DICT = {
-    "FLogRCCServiceInit": 6,
-} | {
-    l: i
-    for i, l in enumerate(LOG_LEVEL_LIST, INDEX_OFFSET)
-}
+LOG_LEVEL_ITEMS = [
+    *enumerate(LOG_LEVEL_LIST, INDEX_OFFSET),
+    (6, "FLogRCCServiceInit"),
+    (114, "FLogOutput"),
+]
+
+LOG_LEVEL_INT_LOOKUP = dict[int, str](LOG_LEVEL_ITEMS)
+LOG_LEVEL_STR_LOOKUP = dict[str, int]((v, k) for (k, v) in LOG_LEVEL_ITEMS)

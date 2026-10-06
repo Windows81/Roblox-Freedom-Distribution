@@ -298,7 +298,7 @@ class bin_entry(popen_entry, loggable_entry):
             'ClientAppSettings.json',
         )
 
-    def update_fvars(self) -> None:
+    def update_local_fvar_file(self) -> None:
         '''
         Updates FFlags, FInts, et c. in the game configuration based on the Rōblox version.
         Individual fast variables, stored in variable `new_flags`, are what get overwritten to the flile.
@@ -307,12 +307,11 @@ class bin_entry(popen_entry, loggable_entry):
             **self.logger_obj.bin_logs.get_level_table(),
         }
 
+        json_data = {}
         path = self.get_local_fvar_path()
         if os.path.exists(path):
             with open(path, 'r', encoding='utf-8') as f:
-                json_data = json.load(f)
-        else:
-            json_data = {}
+                json_data |= json.load(f)
 
         json_data |= new_flags
         with open(path, 'w', encoding='utf-8') as f:
@@ -330,7 +329,7 @@ class bin_entry(popen_entry, loggable_entry):
             clear_cache.process(base_url=self.web_host)
         self.save_app_settings()
         self.make_aux_directories()
-        self.update_fvars()
+        self.update_local_fvar_file()
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)

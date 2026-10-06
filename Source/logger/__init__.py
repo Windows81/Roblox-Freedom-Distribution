@@ -30,7 +30,7 @@ class obj_type:
         context: log_context,
         *a, **kwa,
     ) -> None:
-        message = get_message(text, context, self, *a, **kwa)
+        message = get_message(text, context, filter=self, *a, **kwa)
         if message is None:
             return
         self.action(message)

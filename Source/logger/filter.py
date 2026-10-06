@@ -18,10 +18,12 @@ class filter_type_bin:
 
     @staticmethod
     def parse(*flogs: str) -> "filter_type_bin":
-        return filter_type_bin(flogs=frozenset(
-            flog_table.LOG_LEVEL_DICT[filter_type_bin.serialise_key(flog)]
+        flog_set = frozenset(
+            flog_table.LOG_LEVEL_STR_LOOKUP[filter_type_bin.serialise_key(
+                flog)]
             for flog in flogs
-        ))
+        )
+        return filter_type_bin(flogs=flog_set)
 
     def __contains__(self, item: int) -> bool:
         return item in self.flogs
@@ -31,8 +33,8 @@ class filter_type_bin:
 
     def get_level_table(self) -> dict[str, int]:
         return {
-            i: (v if v in self.flogs else 0)
-            for i, v in flog_table.LOG_LEVEL_DICT.items()
+            s: (n if n in self.flogs else 0)
+            for (n, s) in flog_table.LOG_LEVEL_ITEMS
         }
 
 

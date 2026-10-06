@@ -1,7 +1,9 @@
+from re import Match
+
 from . import bc, filter, flog_table
 import re
 
-patterns = [
+REGEX_PATTERNS = [
     re.compile(b''.join([
         # 2021E
         br'^',
@@ -124,26 +126,23 @@ patterns = [
 
 
 def get_log_name(i: int) -> str:
-    if i - flog_table.INDEX_OFFSET < len(flog_table.LOG_LEVEL_LIST):
-        return flog_table.LOG_LEVEL_LIST[i - flog_table.INDEX_OFFSET]
-    else:
-        return '%3d (unknown log level)' % i
+    return flog_table.LOG_LEVEL_INT_LOOKUP.get(i, '%3d (unknown log level)' % i)
+
+
+def get_matched_pattern(text: bytes) -> Match[bytes] | None:
+    for pattern in REGEX_PATTERNS:
+        match = pattern.match(text)
+        if match is not None:
+            return match
 
 
 def get_message(log_filter: filter.filter_type_bin, bcolors: bc.bcolors, text: bytes) -> str | None:
     if log_filter.is_empty():
         return
 
-    match = next(
-        (
-            pattern.match(text)
-            for pattern in patterns
-            if (match := pattern.match(text)) is not None
-        ), None,
-    )
-
+    match = get_matched_pattern(text)
     if match is None:
-        return None
+        return
 
     rcc_log_num = int(match['rcc_log_num'])
     if rcc_log_num not in log_filter:

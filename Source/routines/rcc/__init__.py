@@ -1,3 +1,4 @@
+import io
 from typing import IO, override
 import dataclasses
 import subprocess
@@ -213,24 +214,15 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         Pipes output from the RCC server to the logger module for processing.
         This is done in a separate thread to avoid blocking the main process from terminating RCC when necessary.
         '''
-        stdout = self.popen_mains[0].stdout
+        proc = self.popen_mains[0]
+        stdout = proc.stdout
         if stdout is None:
             return
-        try:
-            os.set_blocking(stdout.fileno(), False)
-        except (AttributeError, OSError, Exception):
-            pass
-        os.set_blocking(stdout.fileno(), False)
         assert stdout is not None
-        stream_data = bytearray()
+
         while True:
-            stream_data.extend(stdout.read1())
-            try:
-                line_index = stream_data.index(b'\n') + 1
-            except ValueError:
-                continue
-            line = bytes(stream_data[:line_index])
-            del stream_data[:line_index]
+            line = stdout.readline()
+
             self.logger_obj.log(
                 line.rstrip(b'\r\n'),
                 context=logger.log_context.RCC_SERVER,
