@@ -259,6 +259,9 @@ DEFAULT_SETTINGS_v347: structs.settings_type = {
 }
 
 DEFAULT_SETTINGS_v463: structs.settings_type = {
+    "DFFlagEnableReverseCSGDataMigration": true,
+    "FIntStudioRobloxAnalyticsLoad": 0,
+    "DFFlagWhitelistUserInputEvents": true,
     "DFStringAnalyticsNS1BeaconConfig": "",
     "DFFlagWhitelistUserInputEvents": true,
     "DFIntAnalyticsNS1CDNProbeChancePercent": 0,

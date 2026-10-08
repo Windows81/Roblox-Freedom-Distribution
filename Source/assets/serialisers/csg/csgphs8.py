@@ -157,10 +157,9 @@ def zip_boundary(c: int, adjacency_list: list[int], index_list: list[int]):
         a = get_prev_edge(c)
         index_list[get_prev_edge(a)] = index_list[get_prev_edge(b)]
 
-        while adjacency_list[a] >= 0 and b != a:
+        while b != a and adjacency_list[a] >= 0:
             a = get_prev_edge(adjacency_list[a])
-            index_list[get_prev_edge(
-                a)] = index_list[get_prev_edge(b)]
+            index_list[get_prev_edge(a)] = index_list[get_prev_edge(b)]
 
         c = get_prev_edge(c)
         while adjacency_list[c] >= 0 and c != b:
