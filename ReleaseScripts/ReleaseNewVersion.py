@@ -5,6 +5,7 @@
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
+import http.client
 import subprocess
 import textwrap
 import shutil
@@ -12,6 +13,15 @@ import os
 
 curr_dir = os.path.dirname(os.path.dirname(__file__))
 os.chdir(curr_dir)
+
+
+def get_time() -> datetime:
+    conn = http.client.HTTPSConnection("1.1.1.1")
+    conn.request("GET", "/")
+    response = conn.getresponse()
+    date_str = response.getheader('Date')
+    assert date_str is not None
+    return datetime.strptime(date_str, '%a, %d %b %Y %H:%M:%S %Z')
 
 
 def check_software(software_list: list[str]) -> bool:
@@ -24,7 +34,7 @@ def check_software(software_list: list[str]) -> bool:
 
 
 def generate_commit_name() -> str:
-    return datetime.now().strftime('%Y-%m-%dT%H%MZ')
+    return get_time().strftime('%Y-%m-%dT%H%MZ')
 
 
 def input_version_title():
