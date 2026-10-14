@@ -95,9 +95,12 @@ class popen_entry(base_entry):
 
         # Checks if Wine is installed.  Redundant if using Windows.
         if shutil.which('wine') is not None:
+            env = os.environ.copy()
+            env['WINEDBG'] = '-all'
+
             principal = subprocess.Popen(
                 ('wine', exe_path, *cmd_args),
-                env={'WINEDBG': '-all'},
+                env=env,
                 cwd=os.path.dirname(exe_path),
                 *args, **kwargs,
             )
