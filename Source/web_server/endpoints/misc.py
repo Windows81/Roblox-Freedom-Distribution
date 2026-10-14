@@ -202,51 +202,6 @@ def _(self: web_server_handler) -> bool:
     return True
 
 
-@server_path(r'/Setting/Get/AndroidAppSettings/')
-def _(self: web_server_handler) -> bool:
-    '''
-    https://github.com/conewasnthere/unix-src/blob/58ef6b9b6cb59921552a9d4bb2de8783db579736/Setting/Get/AndroidAppSettings/index.php
-    '''
-    self.send_json({
-        "GoogleVideoAdUrl": "",
-        "AdColonyZoneId": "",
-        "AdColonyAppId": "",
-        "EnableRbxAnalytics": "False",
-        "UseNewWebGamesPage": "False",
-        "GigyaPrefix": "",
-        "EnabledSponsoredZoom": "False",
-        "EnableUtilsAlertFix": "True",
-        "EnableFacebookAuth": "False",
-        "EnableGameStartFix": "False",
-        "EnableGoogleAnalyticsChange": "False",
-        "FIntAvatarEditorAndroidRollout": "1",
-        "FIntEnableAvatarEditorAndroid": "1",
-        "FIntEnableAvatarEditoriOS": "100",
-        "EnableCookieConsistencyChecks": "False",
-        "EnableRotationGestureFix": "True",
-        "EnableRbxReportingManager": "False",
-        "EnableInfluxV2": "False",
-        "InfluxUrl": "",
-        "InfluxDatabase": "",
-        "InfluxUser": "",
-        "InfluxPassword": "",
-        "InfluxThrottleRate": "0",
-        "EnableNeonBlocker": "True",
-        "EnableLoginFailureExactReason": "True",
-        "EnableLoginWriteOnSuccessOnly": "False",
-        "EnableXBOXSignupRules": "False",
-        "EnableInputListenerActivePointerNullFix": "False",
-        "EnableWelcomeAnimation": "False",
-        "EnableShellLogoutOnWebViewLogout": "False",
-        "EnableSetWebViewBlankOnLogout": "False",
-        "EnableLoginLogoutSignupWithApi": "False",
-        "EnableSessionLogin": "True",
-        "AndroidInferredCrashReporting": "False",
-        "EnableAuthCookieAnalytics": "False"
-    })
-    return True
-
-
 @server_path(r'/v1.1/Counters/Increment/')
 def _(self: web_server_handler) -> bool:
     '''

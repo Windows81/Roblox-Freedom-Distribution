@@ -704,6 +704,8 @@ def produce_settings(self: web_server_handler, settings: structs.settings_type) 
 @server_path('/Setting/QuietGet/RCCService/', versions={versions.rōblox.v347})
 @server_path('/Setting/QuietGet/StudioAppSettings/', versions={versions.rōblox.v347})
 @server_path('/Setting/QuietGet/ClientAppSettings/', versions={versions.rōblox.v347})
+@server_path('/Setting/QuietGet/AndroidAppSettings/', versions={versions.rōblox.v347})
+@server_path('/Setting/Get/AndroidAppSettings/', versions={versions.rōblox.v347})
 def _(self: web_server_handler) -> bool:
     self.send_json(
         produce_settings(self, DEFAULT_SETTINGS_v347),
