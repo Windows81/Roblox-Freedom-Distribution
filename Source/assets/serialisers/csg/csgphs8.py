@@ -88,8 +88,6 @@ def test_lists(
     for i in range(len(adjacency_list)):
         if adjacency_list[i] == SENTINEL_BOUNDARY:
             continue
-        if adjacency_list[i] == SENTINEL_PROCESSING:
-            continue
         if adjacency_list[i] == SENTINEL_UNINIT:
             continue
         if not (0 <= index_list[i] < len(adjacency_list)):
@@ -306,6 +304,7 @@ def _edgebreaker_decode(
             global_vert_start:
             global_vert_end
         ]
+
         global_vert_start = global_vert_end
 
         hulls.append(Hull(
@@ -359,9 +358,6 @@ def _decode_raw_hulls(data: bytes) -> list[Hull]:
 
     hulls: list[Hull] = []
 
-    tri_start = 0   # offset into `index_base` (in *elements*, not bytes)
-    vert_start = 0  # offset into `component_data`
-
     for i in range(1, len(tri_ranges)):
 
         tri_start = tri_ranges[i-1]
@@ -391,6 +387,7 @@ def read_vector3(stream: io.BytesIO) -> bytes:
 
 
 def convert_to_csgphs3(csgphs_buffer: bytes) -> bytes:
+
     # Creates a buffer stream for reading the data.
     stream = io.BytesIO(csgphs_buffer)
 
@@ -406,23 +403,45 @@ def convert_to_csgphs3(csgphs_buffer: bytes) -> bytes:
     except Exception as e:
         pass
 
-    zipped_stream = io.BytesIO(phs_data)
+    if True:
+        from . import temp_csgphs8
+        result = temp_csgphs8.decodePayload(phs_data, 67)
+        return b''.join([
+            util.CSG_HEADER.PHS3.value,
+            *(
+                b''.join([
+                    _CSGPHS_MESH_MAGIC,
 
-    hull_count = util.read_u32(zipped_stream)
-    vert_count = util.read_u32(zipped_stream)
-    tri_count = util.read_u32(zipped_stream)
-    first_hull_vert_count = util.read_u32(zipped_stream)
-    first_hull_tri_count = util.read_u32(zipped_stream)
-    raw_hulls_len = util.read_u32(zipped_stream)
-    clers_bit_count = util.read_u32(zipped_stream)
-    clers_buffer_len = util.read_u32(zipped_stream)
-    verts_len = util.read_u32(zipped_stream)
-    bounding_box_min = read_vector3(zipped_stream)
-    bounding_box_max = read_vector3(zipped_stream)
-    raw_hulls = zipped_stream.read(raw_hulls_len)
-    clers_bytes = zipped_stream.read(clers_buffer_len)
+                    # Vertices
+                    struct.pack("<I", len(h['vertices']) * 3),
+                    struct.pack("<I", 4),
+                    b''.join(h['vertices']),
+
+                    # Triangles
+                    struct.pack("<I", len(h['triangles']) * 3),
+                    b''.join(struct.pack("<3I", *t) for t in h['triangles']),
+                ])
+                for h in result['hulls']
+            ),
+        ])
+
+    phs_data_stream = io.BytesIO(phs_data)
+
+    hull_count = util.read_u32(phs_data_stream)
+    vert_count = util.read_u32(phs_data_stream)
+    tri_count = util.read_u32(phs_data_stream)
+    first_hull_vert_count = util.read_u32(phs_data_stream)
+    first_hull_tri_count = util.read_u32(phs_data_stream)
+    raw_hulls_len = util.read_u32(phs_data_stream)
+    clers_bit_count = util.read_u32(phs_data_stream)
+    clers_buffer_len = util.read_u32(phs_data_stream)
+    verts_len = util.read_u32(phs_data_stream)
+    bounding_box_min = read_vector3(phs_data_stream)
+    bounding_box_max = read_vector3(phs_data_stream)
+    raw_hulls = phs_data_stream.read(raw_hulls_len)
+    clers_bytes = phs_data_stream.read(clers_buffer_len)
     all_vertices = [
-        read_vector3(zipped_stream)
+        read_vector3(phs_data_stream)
         for _ in range(vert_count)
     ]
 

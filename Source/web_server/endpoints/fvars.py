@@ -259,6 +259,11 @@ DEFAULT_SETTINGS_v347: structs.settings_type = {
 }
 
 DEFAULT_SETTINGS_v463: structs.settings_type = {
+    "FFlagDebugSkipGsiUrlPath": true,
+    "DFStringPerfTelegrafAddress": "",
+    "DFStringAltTelegrafAddress": "",
+    "DFStringAltTelegrafHTTPTransportUrl": "",
+    "DFStringTelegrafAddress": "",
     "DFFlagEnableReverseCSGDataMigration": true,
     "FIntStudioRobloxAnalyticsLoad": 0,
     "DFFlagWhitelistUserInputEvents": true,

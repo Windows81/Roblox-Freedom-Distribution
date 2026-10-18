@@ -1,3 +1,25 @@
+# 0.68.5
+
+- fix(fvars, v463): add some FFlags to mitigate telemetry risk
+- fix: re-re-re-review of CSGPHS8
+
+---
+
+![alt text](image.png)
+
+**I've been waiting for this result for over a year!** CSGPHS8 now works perfectly on at least two pieces of CSG that I tested.
+These unions are _not_ anchored and their physics were stored in the CSGPHS8 format. CSGPHS8 was released in 2025 and RFD did not properly support it before 0.68.5.
+
+Credit to [Salenware](https://github.com/Salenware/HYDROXIDE/blob/136fb36eb204c9dcd3926d040ab2bb2ce1319bad/DEPENDENCIES/Captcha.lua) for the reference implementation.
+
+# 0.68.4
+
+- [fix](https://github.com/Windows81/Roblox-Freedom-Distribution/pull/213): copy host environment before passing `env` attribute to Popen when launching Wine
+- test: add Speed Run 4 to _Examples_ sub-repository
+- build: enforce remote timestamp for commit messages
+- feat(webserver): add `/Setting/QuietGet/AndroidAppSettings/` for future Android release of RFD
+- docs(guides): document full coverage of x86 patches for v347 Player
+
 # 0.68.3
 
 - docs: reformat `--help` messages
@@ -10,7 +32,7 @@
 
 - build: reduce Studio v463 size by removing duplicate files
 - refactor: merge RCC flags-filter with Player flag-filter
-- fix: streamline default FFlag and FLog options
+- fix(fvars): streamline default FFlag and FLog options
 
 # 0.68.1
 
