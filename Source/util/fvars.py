@@ -1,6 +1,6 @@
-from web_server._logic import web_server_handler, server_path
-from config_type.types import structs, wrappers
+from config_type.types import structs
 from util import versions
+
 
 # TODO: aggressively petition the Python developers to fully adopt lower-case Boolean keywords.
 true, false = True, False
@@ -9,7 +9,9 @@ true, false = True, False
 # I'd use it to bisect bugs spawning from Rōblox executables.
 DEBUG_TEST: structs.settings_type = {}
 
-DEFAULT_SETTINGS_v347: structs.settings_type = {
+DEFAULT_SETTINGS_2018: structs.settings_type = {
+    "DFFlagWhitelistUserInputEvents": true,
+    "DFFlagServerCopiesPlayerGui": true,
     "FFlagLuaChatNotificationButtonEnabled": true,
     "FFlagLuaChatPerformanceTracking": true,
     "FFlagLuaChatUseCppTextTruncation": false,
@@ -134,7 +136,6 @@ DEFAULT_SETTINGS_v347: structs.settings_type = {
     "DFFlagNPCUnequipTools": true,
     "DFFlagFixCharacterAppearanceLoadedEvent2": true,
     "DFFlagFixCharacterStuckInFreefall": true,
-    "DFFlagWhitelistUserInputEvents": true,
     "DFFlagPGSWakeOtherAssemblyForJoints": true,
     "DFFlagServerGenPlayerXboxFixTag": true,
     "DFFlagDataStoreAutoHttpRetry": false,
@@ -258,7 +259,9 @@ DEFAULT_SETTINGS_v347: structs.settings_type = {
     "DFFlagGetTeamLazyEvaluation": true,
 }
 
-DEFAULT_SETTINGS_v463: structs.settings_type = {
+DEFAULT_SETTINGS_2021: structs.settings_type = {
+    "DFFlagAnimateScriptWalkRunBlendFix": true,
+    "FFlagMeshPartHeadOption": true,
     "FFlagDebugSkipGsiUrlPath": true,
     "DFStringPerfTelegrafAddress": "",
     "DFStringAltTelegrafAddress": "",
@@ -268,7 +271,6 @@ DEFAULT_SETTINGS_v463: structs.settings_type = {
     "FIntStudioRobloxAnalyticsLoad": 0,
     "DFFlagWhitelistUserInputEvents": true,
     "DFStringAnalyticsNS1BeaconConfig": "",
-    "DFFlagWhitelistUserInputEvents": true,
     "DFIntAnalyticsNS1CDNProbeChancePercent": 0,
     "FFlagDebugLocalRccServerConnection": true,
     "DFFlagDebugLocalRccServerConnection": true,
@@ -701,29 +703,7 @@ DEFAULT_SETTINGS_v463: structs.settings_type = {
     "FFlagCSGv2EnablePerPrimitiveBoxMaps": true,
 }
 
-
-def produce_settings(self: web_server_handler, settings: structs.settings_type) -> structs.settings_type:
-    return settings | DEBUG_TEST | self.game_config.server_core.roblox_setting_overrides
-
-
-@server_path('/Setting/QuietGet/RCCService/', versions={versions.rōblox.v347})
-@server_path('/Setting/QuietGet/StudioAppSettings/', versions={versions.rōblox.v347})
-@server_path('/Setting/QuietGet/ClientAppSettings/', versions={versions.rōblox.v347})
-@server_path('/Setting/QuietGet/AndroidAppSettings/', versions={versions.rōblox.v347})
-@server_path('/Setting/Get/AndroidAppSettings/', versions={versions.rōblox.v347})
-def _(self: web_server_handler) -> bool:
-    self.send_json(
-        produce_settings(self, DEFAULT_SETTINGS_v347),
-    )
-    return true
-
-
-@server_path('/v1/settings/application', versions={versions.rōblox.v463})
-def _(self: web_server_handler) -> bool:
-    # Expect this to be `PCDesktopClient` or `RCCService`.
-    # application_name = self.query.get('applicationName', None)
-
-    self.send_json(
-        {'applicationSettings': produce_settings(self, DEFAULT_SETTINGS_v463)},
-    )
-    return true
+DEFAULT_SETTINGS = {
+    versions.rōblox.v347: DEFAULT_SETTINGS_2018,
+    versions.rōblox.v463: DEFAULT_SETTINGS_2021,
+}

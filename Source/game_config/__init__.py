@@ -13,7 +13,6 @@ import storage
 
 import data_transfer.transferer
 from config_type import _logic
-from assets import asseter
 from . import structure
 import util.resource
 import util.versions
@@ -47,12 +46,8 @@ class obj_type(structure.config_type, _logic.base_type):
 
         self.data_transferer = data_transfer.transferer.obj_type()
 
-        self.asset_cache = asseter(
-            dir_path=self.game_setup.asset_cache.dir_path,
-            redirect_func=self.remote_data.asset_redirects,
-            asset_name_func=self.game_setup.asset_cache.name_template,
-            clear_on_start=self.game_setup.asset_cache.clear_on_start,
-        )
+        from assets import asseter
+        self.asset_cache = asseter(self)
 
     def retr_version(self) -> util.versions.rōblox:
         return self.game_setup.roblox_version
@@ -79,7 +74,7 @@ def read_file_data(path: str) -> bytes:
 
 
 @functools.cache
-def get_cached_config(path: str = util.resource.DEFAULT_CONFIG_PATH) -> obj_type:
+def get_cached_config_at_path(path: str) -> obj_type:
     base_dir = get_config_dir_path(path)
     file_data = read_file_data(path)
     for parse in PARSERS.values():

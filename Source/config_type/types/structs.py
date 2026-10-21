@@ -77,4 +77,4 @@ class avatar_data:
     colors: avatar_colors
 
 
-settings_type = dict[str, bool | int | str]
+settings_type = dict[str, str | int | bool]

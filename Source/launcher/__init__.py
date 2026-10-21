@@ -3,25 +3,26 @@ import shlex
 import sys
 
 import util.const as const
-import launcher.subparsers._logic as sub_logic
+import launcher._logic as sub_logic
 import routines
 
 
-from .subparsers.args_launch_mode import (
+from .argparse_launch_mode import (
+    serialiser as _,
     download as _,
     player as _,
     server as _,
     studio as _,
-    serialiser as _,
-    test as _,
     cookie as _,
+    test as _,
 )
 
-from .subparsers.args_aux import (
+from .argparse_aux import (
     clear_cache as _,
     download as _,
-    debug as _,
     logger as _,
+    triage as _,
+    debug as _,
 )
 
 
@@ -103,7 +104,7 @@ def parse_arg_list(*args: str) -> list[routines.base_entry] | None:
         args_namespace,
     )
 
-    routine_params_list += sub_logic.call_auxs(
+    sub_logic.call_auxs(
         sub_logic.SERIALISE_AUX_ARGS_FUNCS,
         mode,
         args_namespace,

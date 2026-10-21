@@ -1,51 +1,37 @@
-from . import rbxmesh
+from . import mesh_processing
 
 
 def get_version(original_data: bytes) -> str:
-    return rbxmesh.get_mesh_version(original_data)
+    return mesh_processing._mesh_header(original_data)
 
 
 def is_valid(original_data: bytes) -> bool:
-    try:
-        get_version(original_data)
-        return True
-    except:
-        return False
+    return mesh_processing.is_mesh_data(original_data)
 
 
 def skip_version(mesh_version: str) -> bool:
-    return mesh_version < "4.01"
+    return mesh_version < "version 4.01"
 
 
 def parse(original_data: bytes) -> bytes | None:
     try:
-        mesh_version = rbxmesh.get_mesh_version(original_data)
+        mesh_version = get_version(original_data)
     except Exception:
         return None
 
     if skip_version(mesh_version):
         return original_data
 
-    '''
-    # Quite simply replaces the header with `version 4.00`.
-    elif mesh_version == "4.01":
-        return b''.join([
-            b'version 4.00',
-            original_data[0xC:],
-        ])
-    '''
+    v2_data = mesh_processing.convert(original_data)
+    if v2_data is None:
+        return None
 
-    mesh_data = rbxmesh.read_mesh_data(original_data)
-    # Exports as v4 if bones present, v2 otherwise; bones are not yet tested.
-    if len(mesh_data.bones) > 0:
-        return bytes(rbxmesh.export_mesh_v4(mesh_data))
-    else:
-        return bytes(rbxmesh.export_mesh_v2(mesh_data))
+    return v2_data
 
 
 def should_parse(data: bytes) -> bool:
-    try:
-        mesh_version = rbxmesh.get_mesh_version(data)
-    except Exception:
+    if not is_valid(data):
         return False
+
+    mesh_version = get_version(data)
     return not skip_version(mesh_version)

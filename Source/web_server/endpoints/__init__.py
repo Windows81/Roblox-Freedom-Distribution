@@ -2,22 +2,22 @@ from web_server._logic import server_path, web_server_handler
 import util.const
 
 from . import (
-    assets,
-    avatar,
-    badges,
+    client_settings,
     data_transfer,
-    funds,
-    groups,
-    join_data,
     marketplace,
     persistence,
-    player_info,
-    save_place,
     setup_player,
     text_filter,
+    player_info,
+    save_place,
+    join_data,
+    assets,
+    avatar,
+    groups,
+    badges,
     studio,
+    funds,
     misc,
-    fvars,
 )
 
 

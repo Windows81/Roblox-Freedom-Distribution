@@ -1,0 +1,676 @@
+# mesh_processing.py
+# Complete Roblox mesh converter supporting versions 1.x through 7.00
+# Handles all mesh formats including Draco-compressed v6/v7 meshes
+
+# Credit to https://github.com/fleasion/Fleasion/blob/main/src/fleasion/cache/mesh_processing.py
+
+
+import gzip
+import json
+import struct
+
+
+def mesh_log(tag: str, msg: str):
+    """No-op function that replaces a logging function previously used by Fleason"""
+    pass
+
+
+# Shared Data Structures
+class Vertex:
+    """Represents a single vertex with all attributes"""
+
+    def __init__(self):
+        # Position
+        self.px = self.py = self.pz = 0.0
+        # Normal
+        self.nx = self.ny = self.nz = 0.0
+        # UV coordinates
+        self.tu = self.tv = self.tw = 0.0
+        # Tangent (signed byte)
+        self.tx = self.ty = self.tz = self.ts = 0
+        # Color (RGBA)
+        self.r = self.g = self.b = self.a = 255
+
+
+class Face:
+    """Represents a triangular face (OBJ uses 1-based indexing)"""
+
+    def __init__(self, a=0, b=0, c=0):
+        self.a, self.b, self.c = a, b, c
+
+
+# Utility Functions
+def fix_float(s: str) -> str:
+    """Convert comma decimals to period decimals for OBJ format"""
+    return s.replace(',', '.')
+
+
+def read_vertices(data: bytes, offset: int, count: int, vsize: int) -> tuple[list[Vertex], int]:
+    """
+    Read vertex data from binary mesh formats (v2-v5)
+    Args:
+        data: Binary mesh data
+        offset: Starting position in data
+        count: Number of vertices to read
+        vsize: Size of each vertex (36 or 40 bytes)
+    Returns:
+        Tuple of (vertex list, new offset)
+    """
+    verts = []
+    pos = offset
+    for _ in range(count):
+        v = Vertex()
+        # Position (3 floats)
+        (v.px,) = struct.unpack_from('<f', data, pos)
+        pos += 4
+        (v.py,) = struct.unpack_from('<f', data, pos)
+        pos += 4
+        (v.pz,) = struct.unpack_from('<f', data, pos)
+        pos += 4
+        # Normal (3 floats)
+        (v.nx,) = struct.unpack_from('<f', data, pos)
+        pos += 4
+        (v.ny,) = struct.unpack_from('<f', data, pos)
+        pos += 4
+        (v.nz,) = struct.unpack_from('<f', data, pos)
+        pos += 4
+        # UV coordinates (2 floats)
+        (v.tu,) = struct.unpack_from('<f', data, pos)
+        pos += 4
+        (tv,) = struct.unpack_from('<f', data, pos)
+        pos += 4
+        v.tv = 1.0 - tv  # Flip V coordinate for Roblox
+        # Tangent (4 signed bytes)
+        (v.tx,) = struct.unpack_from('<b', data, pos)
+        pos += 1
+        (v.ty,) = struct.unpack_from('<b', data, pos)
+        pos += 1
+        (v.tz,) = struct.unpack_from('<b', data, pos)
+        pos += 1
+        (v.ts,) = struct.unpack_from('<b', data, pos)
+        pos += 1
+        # Color (4 unsigned bytes, only in 40-byte format)
+        if vsize == 40:
+            (v.r,) = struct.unpack_from('<B', data, pos)
+            pos += 1
+            (v.g,) = struct.unpack_from('<B', data, pos)
+            pos += 1
+            (v.b,) = struct.unpack_from('<B', data, pos)
+            pos += 1
+            (v.a,) = struct.unpack_from('<B', data, pos)
+            pos += 1
+        verts.append(v)
+    return verts, pos
+
+
+def write_obj_data(
+    v_lines: list[str], n_lines: list[str], t_lines: list[str], f_lines: list[str]
+) -> str:
+    """
+    Generate OBJ file content from vertex/normal/texture/face data
+    Args:
+        v_lines: Vertex position lines
+        n_lines: Vertex normal lines
+        t_lines: Texture coordinate lines
+        f_lines: Face lines
+    Returns:
+        Complete OBJ file content as string
+    """
+    lines = ['# Converted from Roblox mesh format\n']
+    lines.append(f'# Vertices: {len(v_lines)}, Faces: {len(f_lines)}\n\n')
+    lines.extend(line + '\n' for line in v_lines)
+    lines.append('\n')
+    lines.extend(line + '\n' for line in n_lines)
+    lines.append('\n')
+    lines.extend(line + '\n' for line in t_lines)
+    lines.append('\n')
+    lines.extend(line + '\n' for line in f_lines)
+    return ''.join(lines)
+
+
+# Version-Specific Processors
+def process_v1(data: bytes) -> bytes | None:
+    """
+    Process version 1.x mesh format (JSON-based)
+    Args:
+        data: Complete mesh file data
+    Returns:
+        OBJ file content as string, or None on failure
+    """
+    try:
+        lines = data.decode('utf-8', errors='replace').splitlines()
+        if len(lines) < 3:
+            mesh_log('Mesh', 'Invalid v1 mesh: not enough lines')
+            return None
+        version = lines[0].strip()
+        try:
+            face_count = int(lines[1].strip())
+        except ValueError as e:
+            mesh_log('Mesh', f'Invalid v1 face count: {e}')
+            return None
+        # Parse JSON vertex data (on line 3)
+        try:
+            # Convert ][ to ],[ for valid JSON array
+            content = json.loads('[' + lines[2].replace('][', '],[') + ']')
+        except json.JSONDecodeError as e:
+            mesh_log('Mesh', f'Failed to parse v1 JSON: {e}')
+            return None
+        # Each vertex group has 3 elements: position, normal, uv
+        groups = len(content) // 3
+        if groups != face_count * 3:
+            mesh_log('Mesh', f'Invalid v1 mesh: {groups} vertices for {face_count} faces')
+            return None
+        position_scale = 0.5 if version == 'version 1.00' else 1.0
+        verts = []
+        norms = []
+        uvs = []
+        faces = []
+        for idx in range(groups):
+            vert = Vertex()
+            v = content[idx * 3 + 0]  # Position [x, y, z]
+            n = content[idx * 3 + 1]  # Normal [x, y, z]
+            uv = content[idx * 3 + 2]  # UV [u, v, w]
+            vert.px = v[0] * position_scale
+            vert.py = v[1] * position_scale
+            vert.pz = v[2] * position_scale
+            vert.nx, vert.ny, vert.nz = n
+            vert.tu, vert.tv, vert.tw = uv
+            verts.append(vert)
+            norms.append(f'vn {fix_float(str(n[0]))} {fix_float(str(n[1]))} {fix_float(str(n[2]))}')
+            uvs.append(
+                f'vt {fix_float(str(uv[0]))} {fix_float(str(1 - uv[1]))} {fix_float(str(uv[2]))}'
+            )
+
+        # Create faces (every 3 vertices form a triangle)
+        for idx in range(0, groups, 3):
+            faces.append(Face(idx+0, idx+1, idx+2))
+
+        return _mesh_to_v2(verts, faces)
+    except Exception as e:
+        mesh_log('Mesh', f'Error processing v1 mesh: {e}')
+        return None
+
+
+def process_v2_to_v5(data: bytes, version_num: str) -> bytes | None:
+    """
+    Process version 2.00 through 5.00 mesh formats.
+
+    Each version has a different header layout:
+      V2: sizeof_header(u16) sizeof_vertex(u8) sizeof_face(u8) numVerts(u32) numFaces(u32)
+      V3: sizeof_header(u16) sizeof_vertex(u8) sizeof_face(u8) sizeof_LodOffset(u16)
+          numLodOffsets(u16) numVerts(u32) numFaces(u32)
+      V4: sizeof_header(u16) lodType(u16) numVerts(u32) numFaces(u32) numLodOffsets(u16)
+          numBones(u16) sizeof_boneNames(u32) numSubsets(u16) numHighQualityLODs(u8) unused(u8)
+      V5: same as V4 + facsDataFormat(u32) facsDataSize(u32)
+
+    After vertices, V4/V5 may have skinning data (8 bytes per vertex) if numBones > 0.
+    After faces, V3/V4/V5 have LOD offset arrays.
+
+    Args:
+        data: Complete mesh file data
+        version_num: Version string (e.g., "3.00", "4.01", "5.00")
+    Returns:
+        OBJ file content as string, or None on failure
+    """
+    try:
+        offset = 13  # Skip "version X.XX\n"
+
+        # Read sizeof_header (common to all versions)
+        header_size = struct.unpack_from('<H', data, offset)[0]
+
+        # --- Parse header fields based on version ---
+        sizeof_vertex = 40  # default
+        num_verts = 0
+        num_faces = 0
+        num_lod_offsets = 0
+        num_bones = 0
+        lod_type = 0
+
+        if version_num in ('2.00',):
+            # V2 header: sizeof_header(2) + sizeof_vertex(1) + sizeof_face(1)
+            #          + numVerts(4) + numFaces(4) = 12 bytes
+            sizeof_vertex = struct.unpack_from('<B', data, offset + 2)[0]
+            # sizeof_face at offset+3 (always 12, not needed)
+            num_verts = struct.unpack_from('<I', data, offset + 4)[0]
+            num_faces = struct.unpack_from('<I', data, offset + 8)[0]
+            num_lod_offsets = 0
+            num_bones = 0
+            lod_type = 0  # V2 has no LOD data
+
+        elif version_num in ('3.00', '3.01'):
+            # V3 header: sizeof_header(2) + sizeof_vertex(1) + sizeof_face(1)
+            #          + sizeof_LodOffset(2) + numLodOffsets(2)
+            #          + numVerts(4) + numFaces(4) = 16 bytes
+            sizeof_vertex = struct.unpack_from('<B', data, offset + 2)[0]
+            # sizeof_face at offset+3
+            # sizeof_LodOffset at offset+4 (always 4, skip)
+            num_lod_offsets = struct.unpack_from('<H', data, offset + 6)[0]
+            num_verts = struct.unpack_from('<I', data, offset + 8)[0]
+            num_faces = struct.unpack_from('<I', data, offset + 12)[0]
+            num_bones = 0
+            lod_type = 0  # V3 doesn't have lodType in header
+
+        elif version_num in ('4.00', '4.01'):
+            # V4 header: sizeof_header(2) + lodType(2) + numVerts(4) + numFaces(4)
+            #          + numLodOffsets(2) + numBones(2) + sizeof_boneNames(4)
+            #          + numSubsets(2) + numHighQualityLODs(1) + unused(1) = 24 bytes
+            lod_type = struct.unpack_from('<H', data, offset + 2)[0]
+            num_verts = struct.unpack_from('<I', data, offset + 4)[0]
+            num_faces = struct.unpack_from('<I', data, offset + 8)[0]
+            num_lod_offsets = struct.unpack_from('<H', data, offset + 12)[0]
+            num_bones = struct.unpack_from('<H', data, offset + 14)[0]
+            sizeof_vertex = 40  # V4 always uses 40-byte vertices
+
+        elif version_num in ('5.00',):
+            # V5 header: same as V4 + facsDataFormat(4) + facsDataSize(4) = 32 bytes
+            lod_type = struct.unpack_from('<H', data, offset + 2)[0]
+            num_verts = struct.unpack_from('<I', data, offset + 4)[0]
+            num_faces = struct.unpack_from('<I', data, offset + 8)[0]
+            num_lod_offsets = struct.unpack_from('<H', data, offset + 12)[0]
+            num_bones = struct.unpack_from('<H', data, offset + 14)[0]
+            sizeof_vertex = 40  # V5 always uses 40-byte vertices
+
+        else:
+            mesh_log('Mesh', f'Unsupported version in v2-v5 path: {version_num}')
+            return None
+
+        mesh_log(
+            'Mesh',
+            f'v{version_num} header: {num_verts} verts, {num_faces} faces, ' +
+            f'vertex_size={sizeof_vertex}, bones={num_bones}, lod_offsets={num_lod_offsets}',
+        )
+
+        # Advance past the entire header
+        offset = 13 + header_size
+
+        # --- Read vertices ---
+        verts, offset = read_vertices(data, offset, num_verts, sizeof_vertex)
+
+        # --- Skip skinning data for V4/V5 when bones are present ---
+        if version_num in ('4.00', '4.01', '5.00') and num_bones > 0:
+            skinning_size = num_verts * 8  # sizeof(FileMeshSkinning) = 8
+            mesh_log(
+                'Mesh',
+                f'Skipping {skinning_size} bytes of skinning data ({num_verts} verts × 8 bytes)',
+            )
+            offset += skinning_size
+
+        # --- Read faces ---
+        faces = []
+        for _ in range(num_faces):
+            a, b, c = struct.unpack_from('<III', data, offset)
+            faces.append(Face(a, b, c))
+            offset += 12
+
+        # --- Read and apply LOD offsets (V3/V4/V5 only) ---
+        if num_lod_offsets >= 2:
+            try:
+                lod_offsets = []
+                for _ in range(num_lod_offsets):
+                    lod_val = struct.unpack_from('<I', data, offset)[0]
+                    lod_offsets.append(lod_val)
+                    offset += 4
+
+                # The main mesh uses faces [0, lod_offsets[1])
+                # lod_offsets[0] is typically 0 (start of main mesh faces)
+                if len(lod_offsets) >= 2 and lod_offsets[1] > 0 and lod_offsets[1] < len(faces):
+                    original_count = len(faces)
+                    faces = faces[: lod_offsets[1]]
+                    mesh_log(
+                        'Mesh',
+                        f'Applied LOD: {original_count} → {len(faces)} faces ' +
+                        f'(offsets: {lod_offsets})',
+                    )
+            except Exception as e:
+                mesh_log('Mesh', f'LOD parsing failed: {e}')
+
+        return _mesh_to_v2(verts, faces)
+    except Exception as e:
+        mesh_log('Mesh', f'Error processing v{version_num} mesh: {e}')
+        return None
+
+
+def _read_chunked_mesh(data: bytes) -> list[tuple[str, int, bytes]]:
+    """Read v6/v7 chunks, whose declared size includes their whole payload."""
+    chunks = []
+    offset = 13  # Skip "version X.XX\n".
+    while offset < len(data):
+        if len(data) - offset < 16:
+            raise ValueError('truncated chunk header')
+
+        chunk_type = data[offset: offset + 8].decode('ascii', errors='replace').rstrip('\0')
+        chunk_version, chunk_size = struct.unpack_from('<II', data, offset + 8)
+        offset += 16
+        chunk_end = offset + chunk_size
+        if chunk_end > len(data):
+            raise ValueError(f'{chunk_type} chunk exceeds file size')
+
+        chunks.append((chunk_type, chunk_version, data[offset:chunk_end]))
+        offset = chunk_end
+    return chunks
+
+
+def _read_raw_coremesh(data: bytes) -> tuple[list[Vertex], list[Face]]:
+    """Read the uncompressed COREMESH v1 payload used by FileMesh v6."""
+    if len(data) < 8:
+        raise ValueError('COREMESH v1 payload is too small')
+
+    num_verts = struct.unpack_from('<I', data, 0)[0]
+    vertex_end = 4 + num_verts * 40
+    if vertex_end + 4 > len(data):
+        raise ValueError('COREMESH v1 vertex data exceeds chunk size')
+
+    verts, offset = read_vertices(data, 4, num_verts, 40)
+    num_faces = struct.unpack_from('<I', data, offset)[0]
+    offset += 4
+    face_end = offset + num_faces * 12
+    if face_end != len(data):
+        raise ValueError('COREMESH v1 face data does not match chunk size')
+
+    faces = []
+    for _ in range(num_faces):
+        a, b, c = struct.unpack_from('<III', data, offset)
+        if a >= num_verts or b >= num_verts or c >= num_verts:
+            raise ValueError('COREMESH v1 face references an invalid vertex')
+        faces.append(Face(a, b, c))
+        offset += 12
+    return verts, faces
+
+
+def _apply_chunked_lod(faces: list[Face], lod_data: bytes | None) -> list[Face]:
+    """Select the highest-quality face range from a v6/v7 LODS v1 payload."""
+    if not lod_data:
+        return faces
+    if len(lod_data) < 7:
+        raise ValueError('LODS payload is too small')
+
+    num_offsets = struct.unpack_from('<I', lod_data, 3)[0]
+    offsets_end = 7 + num_offsets * 4
+    if offsets_end > len(lod_data):
+        raise ValueError('LODS offsets exceed chunk size')
+    if num_offsets < 2:
+        return faces
+
+    first, second = struct.unpack_from('<II', lod_data, 7)
+    if first > second or second > len(faces):
+        raise ValueError('LODS face range is invalid')
+    if first == 0 and 0 < second < len(faces):
+        mesh_log(
+            'Mesh',
+            f'Applying high-quality LOD: {len(faces):,} → {second:,} faces',
+        )
+        return faces[:second]
+    return faces[first:second] if second > first else faces
+
+
+def _mesh_to_v2(verts: list[Vertex], faces: list[Face]) -> bytes | None:
+    if len(verts) == 0 or len(faces) == 0:
+        mesh_log("Mesh", f"export_mesh_v2: meshData is empty")
+        return None
+
+    finalmesh: bytes = b""
+    finalmesh += b"version 2.00\n"
+    finalmesh += bytes(b''.join([
+        (12).to_bytes(2, "little"),
+        (40).to_bytes(1, "little"),
+        (12).to_bytes(1, "little"),
+        (len(verts)).to_bytes(4, "little"),
+        (len(faces)).to_bytes(4, "little"),
+    ]))
+
+    for vert in verts:
+        finalmesh += bytes(b''.join([
+            struct.pack("<f", vert.px),
+            struct.pack("<f", vert.py),
+            struct.pack("<f", vert.pz),
+            struct.pack("<f", vert.nx),
+            struct.pack("<f", vert.ny),
+            struct.pack("<f", vert.nz),
+            struct.pack("<f", vert.tu),
+            struct.pack("<f", vert.tv),
+            vert.tx.to_bytes(1, "little"),
+            vert.ty.to_bytes(1, "little"),
+            vert.tz.to_bytes(1, "little"),
+            vert.ts.to_bytes(1, "little"),
+            vert.r.to_bytes(1, "little"),
+            vert.g.to_bytes(1, "little"),
+            vert.b.to_bytes(1, "little"),
+            vert.a.to_bytes(1, "little"),
+        ]))
+
+    for face in faces:
+        finalmesh += bytes(b''.join([
+            face.a.to_bytes(4, "little"),
+            face.b.to_bytes(4, "little"),
+            face.c.to_bytes(4, "little"),
+        ]))
+
+    return finalmesh
+
+
+def process_v6_v7(data: bytes) -> bytes | None:
+    """Process chunked v6 geometry and Draco-compressed v7 geometry."""
+    try:
+        version = data[:12].decode('ascii', errors='replace').strip()
+        coremesh = None
+        lod_data = None
+        for chunk_type, chunk_version, chunk_data in _read_chunked_mesh(data):
+            if chunk_type == 'COREMESH':
+                coremesh = (chunk_version, chunk_data)
+            elif chunk_type == 'LODS' and chunk_version == 1:
+                lod_data = chunk_data
+
+        if coremesh is None:
+            raise ValueError('no COREMESH chunk found')
+
+        coremesh_version, coremesh_data = coremesh
+        if coremesh_version == 1:
+            if version != 'version 6.00':
+                raise ValueError(f'COREMESH v1 is not valid for {version}')
+            verts, faces = _read_raw_coremesh(coremesh_data)
+            mesh_log(
+                'Mesh',
+                f'Raw v6 mesh decoded: {len(verts):,} vertices, {len(faces):,} faces',
+            )
+        elif coremesh_version == 2:
+            if version != 'version 7.00':
+                raise ValueError(f'COREMESH v2 is not valid for {version}')
+            if len(coremesh_data) < 4:
+                raise ValueError('COREMESH v2 payload is too small')
+
+            draco_size = struct.unpack_from('<I', coremesh_data, 0)[0]
+            if draco_size != len(coremesh_data) - 4:
+                raise ValueError('COREMESH v2 Draco size does not match chunk size')
+
+            try:
+                import DracoPy
+                import numpy as np
+            except ImportError:
+                mesh_log('Mesh', 'DracoPy or Numpy not available - cannot process v7 meshes')
+                return None
+
+            try:
+                mesh = DracoPy.decode(coremesh_data[4:])
+            except Exception as e:
+                mesh_log('Mesh', f'DracoPy decoding error: {e}')
+                return None
+            if mesh is None or not hasattr(mesh, 'points'):
+                raise ValueError('Draco decode returned invalid mesh data')
+
+            positions = np.array(mesh.points, dtype=np.float32)
+            num_verts = len(positions)
+            if num_verts == 0:
+                raise ValueError('Draco mesh has no vertices')
+            verts = [Vertex() for _ in range(num_verts)]
+            for i in range(num_verts):
+                verts[i].px, verts[i].py, verts[i].pz = positions[i]
+
+            normals = None
+            if hasattr(mesh, 'get_attribute_by_unique_id'):
+                try:
+                    normal_attr = mesh.get_attribute_by_unique_id(1)
+                    if normal_attr is not None and 'data' in normal_attr:
+                        normals = np.array(normal_attr['data'], dtype=np.float32)
+                        if normals.ndim == 1:
+                            normals = normals.reshape(-1, 3)
+                except Exception:
+                    pass
+            if normals is None and hasattr(mesh, 'normals') and mesh.normals is not None:
+                normals = np.array(mesh.normals, dtype=np.float32)
+                if normals.ndim == 1:
+                    normals = normals.reshape(-1, 3)
+            if normals is not None:
+                if len(normals) == num_verts:
+                    for i in range(num_verts):
+                        verts[i].nx, verts[i].ny, verts[i].nz = normals[i]
+                else:
+                    mesh_log(
+                        'Mesh',
+                        f'Warning: Normal count mismatch ({len(normals)} vs {num_verts})',
+                    )
+
+            tex_coords = None
+            if hasattr(mesh, 'get_attribute_by_unique_id'):
+                try:
+                    uv_attr = mesh.get_attribute_by_unique_id(2)
+                    if uv_attr is not None and 'data' in uv_attr:
+                        tex_coords = np.array(uv_attr['data'], dtype=np.float32)
+                        if tex_coords.ndim == 1:
+                            tex_coords = tex_coords.reshape(-1, 2)
+                except Exception:
+                    pass
+
+            colors = None
+            if hasattr(mesh, 'get_attribute_by_unique_id'):
+                try:
+                    color_attr = mesh.get_attribute_by_unique_id(4)
+                    if color_attr is not None and 'data' in color_attr:
+                        colors = np.array(color_attr['data'], dtype=np.uint8)
+                        if colors.ndim == 1:
+                            colors = colors.reshape(-1, 4)
+                except Exception:
+                    pass
+            if colors is not None:
+                if len(colors) == num_verts:
+                    for i in range(num_verts):
+                        verts[i].r, verts[i].g, verts[i].b, verts[i].a = colors[i]
+                else:
+                    mesh_log(
+                        'Mesh',
+                        f'Warning: Color count mismatch ({len(colors)} vs {num_verts})',
+                    )
+
+            if tex_coords is None and hasattr(mesh, 'tex_coord') and mesh.tex_coord is not None:
+                tex_coords = np.array(mesh.tex_coord, dtype=np.float32)
+                if tex_coords.ndim == 1:
+                    tex_coords = tex_coords.reshape(-1, 2)
+            if tex_coords is not None:
+                if len(tex_coords) == num_verts:
+                    for i in range(num_verts):
+                        verts[i].tu = tex_coords[i][0]
+                        verts[i].tv = 1.0 - tex_coords[i][1]
+                else:
+                    mesh_log(
+                        'Mesh',
+                        f'Warning: UV count mismatch ({len(tex_coords)} vs {num_verts})',
+                    )
+
+            faces = []
+            if hasattr(mesh, 'faces') and mesh.faces is not None:
+                for triangle in mesh.faces:
+                    a, b, c = map(int, triangle)
+                    if (
+                        a < 0
+                        or b < 0
+                        or c < 0
+                        or a >= num_verts
+                        or b >= num_verts
+                        or c >= num_verts
+                    ):
+                        raise ValueError('Draco face references an invalid vertex')
+                    faces.append(Face(a, b, c))
+            mesh_log(
+                'Mesh',
+                f'Draco mesh decoded: {num_verts:,} vertices, {len(faces):,} faces',
+            )
+        else:
+            raise ValueError(f'unsupported COREMESH chunk version {coremesh_version}')
+
+        faces = _apply_chunked_lod(faces, lod_data)
+        return _mesh_to_v2(verts, faces)
+    except Exception as e:
+        mesh_log('Mesh', f'Error processing v6/v7 mesh: {e}')
+        return None
+
+
+SUPPORTED_MESH_HEADERS = (
+    'version 1.',
+    'version 2.00',
+    'version 3.00',
+    'version 3.01',
+    'version 4.00',
+    'version 4.01',
+    'version 5.00',
+    'version 6.00',
+    'version 7.00',
+)
+
+
+def _mesh_header(data: bytes) -> str:
+    if data.startswith(b'\x1f\x8b'):
+        try:
+            data = gzip.decompress(data)
+        except Exception:
+            return ''
+    return data[:12].decode('utf-8', errors='ignore').strip()
+
+
+def is_mesh_data(data: bytes) -> bool:
+    """Return True when bytes look like a Roblox mesh payload."""
+    if not data or len(data) < 12:
+        return False
+    header = _mesh_header(data)
+    return any(header.startswith(prefix) for prefix in SUPPORTED_MESH_HEADERS)
+
+
+# Main Conversion Function
+def convert(data: bytes) -> bytes | None:
+    """
+    Convert Roblox mesh data to OBJ format
+    Args:
+        data: Binary mesh file data
+    Returns:
+        "version 2.00" file content as bytes, or None on failure
+    """
+    if not data or len(data) < 12:
+        mesh_log('Mesh', 'Invalid mesh data: file too small')
+        return None
+    if data.startswith(b'\x1f\x8b'):
+        try:
+            data = gzip.decompress(data)
+        except Exception as e:
+            mesh_log('Mesh', f'Failed to decompress gzip mesh data: {e}')
+            return None
+    # Detect version from header
+    header = _mesh_header(data)
+    mesh_log('Mesh', f'Detected mesh version: {header}')
+    obj_content = None
+    # Route to appropriate processor
+    if header.startswith('version 1.'):
+        obj_content = process_v1(data)
+    elif header in [
+        'version 2.00',
+        'version 3.00',
+        'version 3.01',
+        'version 4.00',
+        'version 4.01',
+        'version 5.00',
+    ]:
+        version_num = header.split()[1]  # Extract "X.XX"
+        obj_content = process_v2_to_v5(data, version_num)
+    elif header in ['version 6.00', 'version 7.00']:
+        obj_content = process_v6_v7(data)
+    else:
+        mesh_log('Mesh', f'Unsupported mesh version: {header}')
+        return None
+    return obj_content

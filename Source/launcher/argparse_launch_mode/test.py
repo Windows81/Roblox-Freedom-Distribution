@@ -5,10 +5,10 @@ import tester
 from routines import test
 from routines import _logic as logic
 
-import launcher.subparsers._logic as sub_logic
+import launcher._logic as sub_logic
 
 
-@sub_logic.add_args(sub_logic.launch_mode.TEST)
+@sub_logic.add_args(sub_logic.launch_mode.RUN_TESTS)
 def _(
     parser: argparse.ArgumentParser,
     subparser: argparse.ArgumentParser,
@@ -22,7 +22,7 @@ def _(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.TEST)
+@sub_logic.serialise_args(sub_logic.launch_mode.RUN_TESTS)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,

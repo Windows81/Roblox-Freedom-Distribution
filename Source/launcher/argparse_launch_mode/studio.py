@@ -6,10 +6,10 @@ import logger
 import util.resource
 from routines import player, rcc, studio, web
 from routines import _logic as logic
-import launcher.subparsers._logic as sub_logic
+import launcher._logic as sub_logic
 
 
-@sub_logic.add_args(sub_logic.launch_mode.STUDIO)
+@sub_logic.add_args(sub_logic.launch_mode.LAUNCH_STUDIO)
 def subparse(
     parser: argparse.ArgumentParser,
     subparser: argparse.ArgumentParser,
@@ -22,7 +22,7 @@ def subparse(
         type=str,
         nargs='?',
         default=util.resource.DEFAULT_CONFIG_PATH,
-        help='game-specific options; defaults to ./GameConfig.toml.  Please review each option before starting a new server up',
+        help='game-specific options; defaults to ./GameConfig.toml; please review each option before starting a new server up; use "-" for stdin',
     )
     place_thing.add_argument(
         '--place_path',
@@ -31,7 +31,7 @@ def subparse(
         type=str,
         nargs='?',
         default=None,
-        help='path to the place file to be loaded; argument `config_path` can\'t be passed in when using this option',
+        help='path to the place file to be loaded; `--config_path` can\'t be passed in when using this option',
     )
     subparser.add_argument(
         '--web_port', '-wp', '-p',
@@ -53,7 +53,7 @@ def subparse(
     )
 
 
-@sub_logic.serialise_args(sub_logic.launch_mode.STUDIO)
+@sub_logic.serialise_args(sub_logic.launch_mode.LAUNCH_STUDIO)
 def _(
     parser: argparse.ArgumentParser,
     args_ns: argparse.Namespace,
@@ -61,7 +61,7 @@ def _(
     if args_ns.place_path is not None:
         game_config = config.generate_config(args_ns.place_path)
     else:
-        game_config = config.get_cached_config(args_ns.config_path)
+        game_config = config.get_cached_config_at_path(args_ns.config_path)
 
     web_port: int = args_ns.web_port
     routine_params: list[logic.base_entry] = []

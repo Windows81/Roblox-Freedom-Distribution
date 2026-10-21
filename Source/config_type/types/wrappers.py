@@ -7,7 +7,6 @@ from typing import Self, get_args
 
 
 import util.const as const
-import assets.default_grabber as default_grabber
 
 
 class dicter[key_typ, item_typ](dict[key_typ, item_typ]):
@@ -87,6 +86,7 @@ class uri_obj:
                 return response.read()
 
         elif self.uri_type == uri_type.RŌBLOX:
+            import assets.default_grabber as default_grabber
             return default_grabber.download_item(self.value)
 
 

@@ -423,7 +423,7 @@ Objects transformed include:
 
 1. Fonts which existed in their respective versions, and
 2. Meshes encoded with versions 4.01+ _back_ to version 2 (courtesy [rbxmesh](https://github.com/PrintedScript/RBXMesh/blob/main/RBXMesh.py)).
-3. _Limited_ CSG data built using post-2021 formats (such as CSGMDL5 and CSGPHS8)
+3. CSG data built using post-2021 formats (such as CSGMDL5 and CSGPHS8)
 
 Some modern programs do weird things to client-side scripts. They use `Script` class objects, but with a [`RunContext`](https://setup-rbxcdn.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://setup-rbxcdn.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
 

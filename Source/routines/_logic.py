@@ -1,3 +1,4 @@
+from typing import ClassVar, Self, override
 import urllib.request
 import urllib.error
 import http.client
@@ -12,8 +13,7 @@ import ssl
 import re
 import os
 
-from typing import ClassVar, Self, override
-
+import config_type.types.structs as structs
 import game_config as game_config_module
 import util.resource
 import util.versions
@@ -83,6 +83,7 @@ class popen_entry(base_entry):
     )
     is_terminated: bool = dataclasses.field(init=False, default=False)
     is_running: bool = dataclasses.field(init=False, default=False)
+    is_restarting: bool = dataclasses.field(init=False, default=False)
 
     def init_popen(self, exe_path: str, cmd_args: tuple[str, ...], *args, **kwargs) -> None:
         '''
@@ -121,6 +122,8 @@ class popen_entry(base_entry):
 
     @override
     def stop(self) -> None:
+        if self.is_restarting:
+            return
         if self.is_terminated:
             return
         if not self.is_running:
@@ -149,6 +152,7 @@ class popen_entry(base_entry):
 
         self.is_running = False
         self.is_terminated = True
+        self._on_finish()
         super().wait()
 
     def restart(self) -> None:
@@ -156,6 +160,8 @@ class popen_entry(base_entry):
             return
 
         self.is_running = False
+        self.is_restarting = True
+
         for p in self.popen_mains:
             p.terminate()
         for p in self.popen_daemons:
@@ -165,8 +171,9 @@ class popen_entry(base_entry):
         self.popen_daemons.clear()
         self.threads.clear()
 
-        self.is_running = True
         self.bootstrap()
+        self.is_running = True
+        self.is_restarting = False
 
     @override
     def process(self) -> None:
@@ -175,6 +182,9 @@ class popen_entry(base_entry):
 
     def bootstrap(self) -> None:
         raise NotImplementedError()
+
+    def _on_finish(self) -> None:
+        pass
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
@@ -200,6 +210,12 @@ class bin_entry(popen_entry, loggable_entry):
     web_host: str = 'localhost'
     web_port: int = util.const.RFD_DEFAULT_PORT
 
+    '''If None, keep ClientAppSettings as-is, except for FLogs'''
+    replacement_fvars: structs.settings_type | None = dataclasses.field(
+        default=None,
+        hash=False,
+    )
+
     @staticmethod
     def get_none_ssl() -> ssl.SSLContext:
         ctx = ssl.create_default_context()
@@ -208,7 +224,17 @@ class bin_entry(popen_entry, loggable_entry):
         return ctx
 
     @staticmethod
-    def maybe_differenciate_web_and_rcc_stuff[T](web: T, rcc: T | None) -> tuple[T, T]:
+    def _maybe_differentiate_web_and_rcc_for_field[T](web: T, rcc: T | None) -> tuple[T, T]:
+        '''
+        Calculates new `web_XXX` and `rcc_XXX` from their existing values, where `XXX` can be whatever you want.
+        ```py
+        (
+            self.web_host, self.rcc_host,
+        ) = self._maybe_differentiate_web_and_rcc_for_field(
+            self.web_host, self.rcc_host,
+        )
+        ```
+        '''
         has_rcc = rcc is not None
         if has_rcc:
             return (web, rcc)
@@ -306,18 +332,20 @@ class bin_entry(popen_entry, loggable_entry):
         Updates FFlags, FInts, et c. in the game configuration based on the Rōblox version.
         Individual fast variables, stored in variable `new_flags`, are what get overwritten to the flile.
         '''
-        new_flags = {
-            **self.logger_obj.bin_logs.get_level_table(),
-        }
-
+        fvar_path = self.get_local_fvar_path()
         json_data = {}
-        path = self.get_local_fvar_path()
-        if os.path.exists(path):
-            with open(path, 'r', encoding='utf-8') as f:
-                json_data |= json.load(f)
 
-        json_data |= new_flags
-        with open(path, 'w', encoding='utf-8') as f:
+        # So `replacement_fvars` is designed to replace all your flags.
+        if self.replacement_fvars is not None:
+            json_data = self.replacement_fvars
+
+        # This branch is for updating flags in an already-existing file.
+        elif os.path.exists(fvar_path):
+            with open(fvar_path, 'r', encoding='utf-8') as f:
+                json_data = json.load(f)
+
+        json_data |= self.logger_obj.bin_logs.get_level_table()
+        with open(fvar_path, 'w', encoding='utf-8') as f:
             json.dump(json_data, f, indent='\t')
 
     @override
@@ -333,6 +361,14 @@ class bin_entry(popen_entry, loggable_entry):
         self.save_app_settings()
         self.make_aux_directories()
         self.update_local_fvar_file()
+
+    @override
+    def _on_finish(self) -> None:
+        if self.replacement_fvars is not None:
+            try:
+                os.remove(self.get_local_fvar_path())
+            except OSError:
+                pass
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)

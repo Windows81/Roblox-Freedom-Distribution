@@ -188,6 +188,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
 
         self.is_valid_request = True
         self.game_config = self.server.game_config
+        self.rōblox_version = self.game_config.game_setup.roblox_version
 
         # Some endpoints should allow only the RCC to do stuff.
         # Trust the peer socket address, not the user-controlled Host header.
@@ -296,7 +297,7 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
     def __open_from_static(self) -> bool:
         key = server_func_key(
             mode=func_mode.STATIC,
-            version=self.game_config.game_setup.roblox_version,
+            version=self.rōblox_version,
             path=self.url_split.path,
             command=self.command,
         )
@@ -307,11 +308,10 @@ class web_server_handler(http.server.BaseHTTPRequestHandler):
         return func(self)
 
     def __open_from_regex(self) -> bool:
-        version = self.game_config.game_setup.roblox_version
         for key, func in SERVER_FUNCS.items():
             if key.mode != func_mode.REGEX:
                 continue
-            if key.version != version:
+            if key.version != self.rōblox_version:
                 continue
             match = re.fullmatch(key.path, self.url_split.path)
             if match is None:

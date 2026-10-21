@@ -1,18 +1,14 @@
-from urllib3.response import BaseHTTPResponse
 from collections.abc import Generator
 from typing import Any
+import urllib.request
+import urllib.error
 import subprocess
 import functools
-import urllib3
 import base64
 import json
 import gzip
 import os
 import re
-
-
-# Shared connection pool; created once, reused across all requests.
-_http = urllib3.PoolManager()
 
 
 def _get_cookie_from_system() -> str | None:
@@ -68,8 +64,8 @@ def get_rōblox_cookie() -> str | None:
     return next(
         (
             v for v in (
-                _get_cookie_from_system(),
                 os.environ.get('ROBLOSECURITY', None),
+                _get_cookie_from_system(),
             )
             if test_cookie(v)
         ),
@@ -84,11 +80,11 @@ def unzip(data: bytes) -> bytes:
         return data
 
 
-def _download_helper(
+def download_item(
     url: str,
     cookie: str | None = None,
     place_id: int | None = None,
-) -> tuple[bytes, BaseHTTPResponse] | tuple[None, None]:
+) -> bytes | None:
 
     if cookie is None:
         cookie = get_rōblox_cookie()
@@ -97,7 +93,7 @@ def _download_helper(
         'User-Agent': 'Roblox/WinInet',
         'Referer': 'https://www.roblox.com/',
         'Cookie': f'.ROBLOSECURITY={cookie}',
-        # CDN may returns gzip-compressed data; request it explicitly.
+        # CDN may return gzip-compressed data; request it explicitly.
         'Accept-Encoding': 'gzip',
     }
 
@@ -106,32 +102,14 @@ def _download_helper(
         headers['Roblox-Browser-Asset-Request'] = 'false'
 
     try:
-        result = _http.request(
-            method='GET',
-            url=url,
-            headers=headers,
-        )
-        return (unzip(result.data), result)
-    except urllib3.exceptions.HTTPError:
-        return (None, None)
-
-
-def download_item(
-    url: str,
-    cookie: str | None = None,
-    place_id: int | None = None,
-) -> bytes | None:
-    (data, response) = _download_helper(
-        url=url,
-        cookie=cookie,
-        place_id=place_id,
-    )
-
-    if response is None:
+        req = urllib.request.Request(url)
+        req.headers.update(headers)
+        with urllib.request.urlopen(req) as response:
+            if response.status != 200:
+                return None
+            return unzip(response.read())
+    except urllib.error.HTTPError:
         return None
-    if response.status != 200:
-        return None
-    return data
 
 
 @functools.cache
@@ -149,20 +127,19 @@ def get_creator_place_idens(asset_iden: int) -> list[int]:
 
     Credit to https://github.com/mytailcaughtonfire for this ingenious idea.
     '''
-    _json_headers = {
+    headers = {
         'User-Agent': 'Roblox/WinInet',
         'Accept': 'application/json',
     }
 
     try:
-        resp = _http.request(
-            'GET',
-            f'https://economy.roblox.com/v2/assets/{asset_iden}/details',
-            headers=_json_headers,
-        )
-        if resp.status != 200:
-            return []
-        details = json.loads(resp.data)
+        url = f'https://economy.roblox.com/v2/assets/{asset_iden}/details'
+        req = urllib.request.Request(url)
+        req.headers.update(headers)
+        with urllib.request.urlopen(req) as response:
+            if response.status != 200:
+                return []
+            details = json.loads(response.read())
     except Exception:
         return []
 
@@ -179,10 +156,12 @@ def get_creator_place_idens(asset_iden: int) -> list[int]:
         games_url = f'https://games.roblox.com/v2/users/{creator_id}/games?limit=50&sortOrder=Asc'
 
     try:
-        resp = _http.request('GET', games_url, headers=_json_headers)
-        if resp.status != 200:
-            return []
-        games = json.loads(resp.data)
+        req = urllib.request.Request(games_url)
+        req.headers.update(headers)
+        with urllib.request.urlopen(req) as response:
+            if response.status != 200:
+                return []
+            games = json.loads(response.read())
     except Exception:
         return []
 
@@ -224,18 +203,11 @@ def download_rōblox_asset(
             yield iden
 
     for place_id in gen_place_idens_candidates():
-        (data, response) = _download_helper(
+        return download_item(
             url=url,
             cookie=cookie,
             place_id=place_id,
         )
-        if response is None:
-            break
-        elif response.status == 403:
-            continue
-        elif response.status != 200:
-            break
-        return data
 
     # Genuinely inaccessible with any known place iden.
     return None

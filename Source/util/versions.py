@@ -13,7 +13,7 @@ class rōblox(enum.Enum):
 
     @staticmethod
     def from_name(value: int | str) -> "rōblox":
-        return VERSION_MAP[str(value)]
+        return VERSION_NAME_MAP[str(value)]
 
     def __lt__(self, other: typing.Self) -> bool:
         return self.get_number() < other.get_number()
@@ -27,7 +27,7 @@ FIRST_VERSION = min(rōblox)
 LAST_VERSION = max(rōblox)
 
 
-VERSION_MAP = dict(
+VERSION_NAME_MAP = dict(
     (k, e)
     for e in rōblox
     for k in

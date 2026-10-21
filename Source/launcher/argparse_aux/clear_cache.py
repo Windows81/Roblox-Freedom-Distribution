@@ -1,13 +1,13 @@
 import argparse
 
-import launcher.subparsers._logic as sub_logic
+import launcher._logic as sub_logic
 from routines import _logic as logic
 from pretasks import clear_cache
 
 AUX_MODES = (
-    sub_logic.launch_mode.PLAYER,
-    sub_logic.launch_mode.SERVER,
-    sub_logic.launch_mode.STUDIO,
+    sub_logic.launch_mode.LAUNCH_PLAYER,
+    sub_logic.launch_mode.LAUNCH_SERVER,
+    sub_logic.launch_mode.LAUNCH_STUDIO,
 )
 
 
@@ -29,10 +29,10 @@ def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
     args_list: list[logic.base_entry],
-) -> list[logic.base_entry]:
+) -> None:
 
     if not args_ns.clear_temp_cache:
-        return []
+        return
 
     base_args = [
         arg
@@ -41,11 +41,11 @@ def _(
     ]
 
     if len(base_args) == 0:
-        return []
+        return
 
     for base in base_args:
         clear_cache.process(
             base_url=base.get_app_base_url(),
         )
 
-    return []
+    return

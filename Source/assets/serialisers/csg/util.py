@@ -164,3 +164,11 @@ def read_u32(stream) -> int:
 
 def read_f32(stream) -> float:
     return struct.unpack('<f', stream.read(4))[0]
+
+
+def read_vec3_u32(stream) -> tuple[int, int, int]:
+    return struct.unpack('<3I', stream.read(4*3))
+
+
+def read_vec3_f32(stream) -> tuple[float, float, float]:
+    return struct.unpack('<3f', stream.read(4*3))

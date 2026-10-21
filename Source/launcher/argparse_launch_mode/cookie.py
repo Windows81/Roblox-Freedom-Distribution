@@ -3,7 +3,7 @@ import argparse
 from routines import cookie
 from routines import _logic as logic
 
-import launcher.subparsers._logic as sub_logic
+import launcher._logic as sub_logic
 
 
 @sub_logic.add_args(sub_logic.launch_mode.SHOW_COOKIE)
@@ -11,6 +11,11 @@ def _(
     parser: argparse.ArgumentParser,
     subparser: argparse.ArgumentParser,
 ) -> None:
+    subparser.add_argument(
+        '--validate',
+        action='store_true',
+        help='send your cookie to Roblox.com to evaluate its validity',
+    )
     subparser.add_argument(
         '--verbose',
         '--show',
@@ -26,5 +31,8 @@ def _(
     args_ns: argparse.Namespace,
 ) -> list[logic.base_entry]:
     return [
-        cookie.obj_type(verbose=args_ns.verbose)
+        cookie.obj_type(
+            verbose=args_ns.verbose,
+            validate=args_ns.validate,
+        )
     ]

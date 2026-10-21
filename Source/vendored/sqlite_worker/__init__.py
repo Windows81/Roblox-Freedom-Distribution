@@ -17,12 +17,12 @@ class SqliteWorker:
         self._results = {}
         self._tokens = set()
         self._select_events = {}
-        self._lock = threading.Lock()
         self._close_event = threading.Event()
-        self._thread = threading.Thread(target=self._run, daemon=True)
-        self._thread.start()
         self.execute_init = execute_init
         self.max_count = max_count
+        self._lock = threading.Lock()
+        self._thread = threading.Thread(target=self._run, daemon=True)
+        self._thread.start()
 
     def _run(self):
         try:

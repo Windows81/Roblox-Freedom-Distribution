@@ -55,8 +55,8 @@ def load_asset(asset_id: str) -> bytes | None:
         )
 
         try:
-            response = urllib.request.urlopen(url)
-            return response.read()
+            with urllib.request.urlopen(url) as response:
+                return response.read()
         except urllib.error.HTTPError:
             continue
 

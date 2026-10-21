@@ -38,7 +38,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
         super().__post_init__()
         (
             self.web_port, self.rcc_port,
-        ) = self.maybe_differenciate_web_and_rcc_stuff(
+        ) = self._maybe_differentiate_web_and_rcc_for_field(
             self.web_port, self.rcc_port,
         )
 

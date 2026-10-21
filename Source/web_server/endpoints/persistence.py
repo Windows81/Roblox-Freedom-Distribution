@@ -1,5 +1,5 @@
-import itertools
 import urllib.parse
+import itertools
 
 import json
 

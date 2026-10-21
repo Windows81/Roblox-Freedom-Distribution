@@ -1,0 +1,49 @@
+import argparse
+from routines import _logic as logic
+import launcher._logic as sub_logic
+
+
+AUX_MODES = (
+    sub_logic.launch_mode.LAUNCH_PLAYER,
+    sub_logic.launch_mode.LAUNCH_SERVER,
+    sub_logic.launch_mode.LAUNCH_STUDIO,
+)
+
+
+@sub_logic.add_aux_args(*AUX_MODES)
+def _(
+    mode: sub_logic.launch_mode,
+    parser: argparse.ArgumentParser,
+    subparser: argparse.ArgumentParser,
+) -> None:
+    debug_mutex = subparser.add_mutually_exclusive_group()
+
+    debug_mutex.add_argument(
+        '--debug',
+        action='store_true',
+        help='open an instance of x96dbg and attaches it to the running "%s" binary' % mode.value,
+    )
+
+    debug_mutex.add_argument(
+        '--debug_all',
+        action='store_true',
+        help='open instances of x96dbg and attaches them to all running binaries',
+    )
+
+
+@sub_logic.serialise_aux_args(*AUX_MODES)
+def _(
+    mode: sub_logic.launch_mode,
+    args_ns: argparse.Namespace,
+    args_list: list[logic.base_entry],
+) -> None:
+
+    for a in args_list:
+        if not isinstance(a, logic.bin_entry):
+            continue
+        if args_ns.debug_all:
+            a.debug_x96 = True
+        elif args_ns.debug:
+            a.debug_x96 = sub_logic.is_primary_bin(mode, a.BIN_SUBTYPE)
+
+    return

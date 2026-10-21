@@ -1,3 +1,5 @@
+import re
+
 from web_server._logic import web_server_handler, server_path
 from config_type.types import structs, wrappers
 import util.versions as versions
@@ -77,6 +79,87 @@ def _(self: web_server_handler) -> bool:
             {
                 "assetId": item,
                 "assetTypeId": 8
+            }
+            for item in avatar.items
+        ],
+        "animationAssetIds": {},
+        "bodyColors": {
+            "headColorId": avatar.colors.head,
+            "leftArmColorId": avatar.colors.left_arm,
+            "leftLegColorId": avatar.colors.left_leg,
+            "rightArmColorId": avatar.colors.right_arm,
+            "rightLegColorId": avatar.colors.right_leg,
+            "torsoColorId": avatar.colors.torso,
+        },
+        "scales": {
+            "height": avatar.scales.height,
+            "width": avatar.scales.width,
+            "head": avatar.scales.head,
+            "depth": avatar.scales.depth,
+            "proportion": max(avatar.scales.proportion, 1e-2),
+            "bodyType": max(avatar.scales.body_type, 1e-2),
+        },
+        "emotes": [
+            {
+                "assetId": 3696763549,
+                "assetName": "Heisman Pose",
+                "position": 1
+            },
+            {
+                "assetId": 3360692915,
+                "assetName": "Tilt",
+                "position": 2
+            },
+            {
+                "assetId": 3696761354,
+                "assetName": "Air Guitar",
+                "position": 3
+            },
+            {
+                "assetId": 3576968026,
+                "assetName": "Shrug",
+                "position": 4
+            },
+            {
+                "assetId": 3576686446,
+                "assetName": "Hello",
+                "position": 5
+            },
+            {
+                "assetId": 3696759798,
+                "assetName": "Superhero Reveal",
+                "position": 6
+            },
+            {
+                "assetId": 3360689775,
+                "assetName": "Salute",
+                "position": 7
+            },
+            {
+                "assetId": 3360686498,
+                "assetName": "Stadium",
+                "position": 8
+            }
+        ]
+    })
+    return True
+
+
+@server_path(r'/v1/users/(\d+)/avatar', versions={versions.rōblox.v463}, regex=True)
+def _(self: web_server_handler, match: re.Match[str]) -> bool:
+    '''
+    Character appearance for v463.
+    https://github.com/AlroviOfficial/RoZod/blob/e84b493af74f5438985f6e6baeecb371ae15e633/src/endpoints/avatarv1.ts#L99
+    '''
+    id_num = int(match.group(1))
+    avatar = get_avatar(id_num, self.game_config)
+
+    self.send_json({
+        "playerAvatarType": avatar.type.name,
+        "assets": [
+            {
+                "id": item,
+                "assetType": 8
             }
             for item in avatar.items
         ],

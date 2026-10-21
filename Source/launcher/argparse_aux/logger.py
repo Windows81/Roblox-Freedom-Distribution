@@ -3,16 +3,15 @@ import dataclasses
 
 
 from routines import _logic as logic
-import launcher.subparsers._logic as sub_logic
-import logger.flog_table
+import launcher._logic as sub_logic
 import logger.bcolors
 import logger
 
 
 AUX_MODES = (
-    sub_logic.launch_mode.PLAYER,
-    sub_logic.launch_mode.SERVER,
-    sub_logic.launch_mode.STUDIO,
+    sub_logic.launch_mode.LAUNCH_PLAYER,
+    sub_logic.launch_mode.LAUNCH_SERVER,
+    sub_logic.launch_mode.LAUNCH_STUDIO,
 )
 
 
@@ -36,7 +35,7 @@ def _(
         help='make console output very verbose',
     )
 
-    if mode == sub_logic.launch_mode.SERVER:
+    if mode == sub_logic.launch_mode.LAUNCH_SERVER:
         # TODO: unify options for a future breaking release.
         subparser.add_argument(
             '--rcc_log_options',
@@ -95,7 +94,7 @@ def _(
     mode: sub_logic.launch_mode,
     args_ns: argparse.Namespace,
     args_list: list[logic.base_entry],
-) -> list[logic.base_entry]:
+) -> None:
 
     log_filter = gen_log_filter(args_ns)
     for a in args_list:
@@ -103,4 +102,4 @@ def _(
             continue
         a.logger_obj = log_filter
 
-    return []
+    return

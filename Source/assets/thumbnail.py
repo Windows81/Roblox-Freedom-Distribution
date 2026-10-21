@@ -1,13 +1,13 @@
-from . import const, default_grabber
 import json
 import functools
+
 import game_config
+from . import const, default_grabber
 from config_type.types import wrappers
 
 
 @functools.cache
-def _get_icon_map() -> dict[int, 'wrappers.uri_obj']:
-    config = game_config.get_cached_config()
+def _get_icon_map(config: game_config.obj_type) -> dict[int, 'wrappers.uri_obj']:
     result = {}
     for gp in config.remote_data.gamepasses.values():
         if gp.icon is not None:
@@ -31,12 +31,12 @@ def check(asset_id: str):
     return asset_id.startswith(const.THUMB_PREFIX)
 
 
-def load_asset(asset_id: str) -> bytes | None:
+def load_asset(asset_id: str, config: game_config.obj_type) -> bytes | None:
     id = transform_to_id_num(asset_id)
     if id == 0:
         return None
 
-    icon = _get_icon_map().get(id)
+    icon = _get_icon_map(config).get(id)
     if icon is not None:
         return icon.extract()
 

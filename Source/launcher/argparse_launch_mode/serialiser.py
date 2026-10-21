@@ -1,6 +1,6 @@
 import argparse
 
-import launcher.subparsers._logic as sub_logic
+import launcher._logic as sub_logic
 from routines import serialiser
 from routines import _logic as logic
 import assets.serialisers

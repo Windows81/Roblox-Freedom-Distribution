@@ -1,5 +1,3 @@
-import functools
-import sys
 import urllib.request
 import shutil
 import io

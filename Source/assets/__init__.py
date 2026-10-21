@@ -1,10 +1,10 @@
-from typing import Callable
 import dataclasses
 import functools
 import shutil
 import os
 
 # Internal or local application imports
+import game_config
 import util.const
 from . import material, queue, returns, serialisers, default_grabber, thumbnail
 
@@ -27,31 +27,25 @@ class asset_redirect:
 
 
 class asseter:
-    def __init__(
-        self,
-        dir_path: str,
-        redirect_func: Callable[[int | str], asset_redirect | None],
-        asset_name_func: Callable[[int | str], str],
-        clear_on_start: bool,
-    ) -> None:
+    def __init__(self, config: game_config.obj_type) -> None:
         super().__init__()
-        self.dir_path = dir_path
-        self.redirect_func = redirect_func
-        self.asset_name_func = asset_name_func
+        self.game_config = config
+        self.dir_path = config.game_setup.asset_cache.dir_path
         self.queuer = queue.queuer()
 
-        if os.path.isdir(dir_path):
-            if clear_on_start:
-                shutil.rmtree(dir_path)
-                os.makedirs(dir_path)
+        if os.path.isdir(self.dir_path):
+            if config.game_setup.asset_cache.clear_on_start:
+                shutil.rmtree(self.dir_path)
+                os.makedirs(self.dir_path)
         else:
-            os.makedirs(dir_path)
+            os.makedirs(self.dir_path)
 
     @functools.cache
     def get_asset_path(self, asset_id: int | str) -> str:
         # Build the candidate path then normalise and convert to an absolute path.
         candidate_abs = os.path.abspath(os.path.join(
-            self.dir_path, self.asset_name_func(asset_id),
+            self.dir_path,
+            self.game_config.game_setup.asset_cache.name_template(asset_id),
         ))
         base_abs = os.path.abspath(self.dir_path)
 
@@ -146,7 +140,7 @@ class asseter:
         if material.check(asset_id):
             return material.load_asset(asset_id)
         if thumbnail.check(asset_id):
-            return thumbnail.load_asset(asset_id)
+            return thumbnail.load_asset(asset_id, self.game_config)
         return None
 
     def _load_redir_asset(self, asset_id: int | str, redirect: asset_redirect) -> returns.base_type | None:
@@ -176,7 +170,7 @@ class asseter:
             return returns.construct()
 
     def _fetch_asset(self, asset_id: int | str) -> returns.base_type:
-        redirect_info = self.redirect_func(asset_id)
+        redirect_info = self.game_config.remote_data.asset_redirects(asset_id)
         if redirect_info is not None:
             redir = self._load_redir_asset(
                 asset_id=asset_id, redirect=redirect_info,

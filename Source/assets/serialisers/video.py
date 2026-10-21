@@ -22,8 +22,8 @@ def get_m3u8_links(data: bytes) -> list[str]:
 
         elif not line.startswith('#'):
             url = line.format_map(format_dict)
+            prefix = url.rsplit('/', 1)[0]
             with urllib.request.urlopen(url) as response:
-                prefix = url.rsplit('/', 1)[0]
                 return [
                     f'{prefix}/{line.decode('utf-8')}'
                     for line in response.read().splitlines(keepends=False)
