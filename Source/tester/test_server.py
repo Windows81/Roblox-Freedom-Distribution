@@ -57,7 +57,7 @@ class TestServer(unittest.TestCase):
     @override
     @classmethod
     def tearDownClass(cls):
-        cls.routine.kill()
+        cls.routine.stop()
 
     def test_servers_started(self) -> None:
         '''

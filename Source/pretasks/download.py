@@ -4,11 +4,9 @@ import io
 import os
 import ssl
 
-# Third-party imports
 from vendored import tqdm
 import py7zr
 
-# Local application/library specific imports
 import util.resource
 import util.versions
 import util.const
@@ -17,7 +15,7 @@ import logger
 
 def get_remote_link(
     rōblox_version: util.versions.rōblox,
-    bin_type: util.resource.bin_subtype
+    bin_type: util.resource.bin_subtype,
 ) -> str:
     return util.const.ZIPPED_RELEASE_LINK_FORMAT % (
         util.const.ZIPPED_RELEASE_VERSION,

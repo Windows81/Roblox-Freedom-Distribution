@@ -92,4 +92,4 @@ class obj_type(logic.bin_entry, logic.loggable_entry, logic.gameconfig_entry):
     @override
     def wait(self):
         super().wait()
-        self.kill()
+        self.stop_routine()

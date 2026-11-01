@@ -74,7 +74,7 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
         self.headers.get('Roblox-Session-Id', '{}'),
     ) | self.query
 
-    rcc_host_addr = str(query_args.get('MachineAddress', self.hostname))
+    rcc_host_addr = str(query_args.get('MachineAddress', self.domain))
     rcc_port = int(query_args.get('ServerPort', self.port_num))
     user_code = query_args['UserCode']
 
@@ -92,6 +92,8 @@ def perform_and_send_join(self: web_server_handler, additional_return_data: dict
                 'Port': rcc_port,
             }
         ],
+        'UserCode':
+            user_code,
         'UserCode':
             user_code,
         'UserId':

@@ -10,6 +10,7 @@ true, false = True, False
 DEBUG_TEST: structs.settings_type = {}
 
 DEFAULT_SETTINGS_2018: structs.settings_type = {
+    "FFlagDebugLocalRccServerConnection": false,
     "DFFlagWhitelistUserInputEvents": true,
     "DFFlagServerCopiesPlayerGui": true,
     "FFlagLuaChatNotificationButtonEnabled": true,
@@ -260,6 +261,22 @@ DEFAULT_SETTINGS_2018: structs.settings_type = {
 }
 
 DEFAULT_SETTINGS_2021: structs.settings_type = {
+
+    # The flags below gives you 21 graphics levels instead of 10.
+    "FFlagCommitToGraphicsQualityFix": true,
+    "FFlagFixGraphicsQuality": true,
+
+    "FFlagStudioExpressivePrintFixMultipleToStringCalls2": true,
+    "FFlagStudioNewTableOutputWidget": false,
+    "FFlagRenderThrottleLocalLights": false,
+
+    # Set flag below to `false`, and Studio nags you
+    # with "Save As" even if you want to only "Save"
+    # a file that you've explicitly opened.
+    "FFlagReplaceGetCurrentUserashx": true,
+
+    "FFlagReplicateStarterPackServiceProperties": true,
+    "FFlagReplicateTeamServiceProperties": true,
     "DFFlagAnimateScriptWalkRunBlendFix": true,
     "FFlagMeshPartHeadOption": true,
     "FFlagDebugSkipGsiUrlPath": true,
@@ -267,7 +284,10 @@ DEFAULT_SETTINGS_2021: structs.settings_type = {
     "DFStringAltTelegrafAddress": "",
     "DFStringAltTelegrafHTTPTransportUrl": "",
     "DFStringTelegrafAddress": "",
+
+    # Set flag below to `false` and CSG just does not render.
     "DFFlagEnableReverseCSGDataMigration": true,
+
     "FIntStudioRobloxAnalyticsLoad": 0,
     "DFFlagWhitelistUserInputEvents": true,
     "DFStringAnalyticsNS1BeaconConfig": "",

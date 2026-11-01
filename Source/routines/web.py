@@ -1,8 +1,7 @@
+from typing import override
 import dataclasses
 import threading
-from typing import override
 
-# Local application/library specific imports
 import web_server._logic as web_server_logic
 from . import _logic as logic
 import util.const

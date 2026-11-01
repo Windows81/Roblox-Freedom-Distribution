@@ -108,12 +108,6 @@ class obj_type(logic.bin_entry):
                     'MachineAddress': self.rcc_host,
                     'ServerPort': self.rcc_port,
                     'UserCode': self.user_code,
-
-                    # Temporary backwards compatibility below 0.65.1.
-                    # Might get rid of in six or seven months.
-                    'rcc-host-addr': self.rcc_host,
-                    'rcc-port': self.rcc_port,
-                    'user-code': self.user_code,
                 }.items() if v}),
                 '-t', '1',
             ))

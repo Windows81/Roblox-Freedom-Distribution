@@ -24,6 +24,8 @@ from pretasks import (
     clear_cache,
 )
 
+mutex = threading.Lock()
+
 
 @dataclasses.dataclass(unsafe_hash=True)
 class base_entry:
@@ -33,18 +35,22 @@ class base_entry:
     routine: 'routine | None' = (
         dataclasses.field(default=None, init=False)
     )
-    _completed: bool = (
+    completed: bool = (
         dataclasses.field(default=False, init=False)
     )
 
     def wait(self) -> None:
-        for t in self.threads:
-            t.join()
+        self._join_threads()
 
     def stop(self) -> None:
-        self.wait()
+        self._join_threads()
 
-    def kill(self) -> None:
+    def _join_threads(self) -> None:
+        for t in self.threads:
+            t.join()
+        self.threads.clear()
+
+    def stop_routine(self) -> None:
         if self.routine is not None:
             self.routine.stop()
         else:
@@ -54,8 +60,8 @@ class base_entry:
         return self.stop()
 
     def process(self) -> None:
-        assert not self._completed
-        self._completed = True
+        assert not self.completed
+        self.completed = True
 
     def __post_init__(self) -> None:
         '''
@@ -129,14 +135,20 @@ class popen_entry(base_entry):
         if not self.is_running:
             return
 
-        self.is_running = False
-        for p in self.popen_mains:
-            p.terminate()
-        for p in self.popen_daemons:
-            p.terminate()
+        with mutex:
+            for p in self.popen_mains:
+                p.terminate()
+            for p in self.popen_daemons:
+                p.terminate()
 
+            self.popen_mains.clear()
+            self.popen_daemons.clear()
+
+        self.is_running = False
         self.is_terminated = True
-        super().stop()
+
+        self._join_threads()
+        self._on_finish()
 
     @override
     def wait(self) -> None:
@@ -145,34 +157,49 @@ class popen_entry(base_entry):
         if not self.is_running:
             return
 
-        for p in self.popen_mains:
-            p.wait()
-        for p in self.popen_daemons:
-            p.terminate()
+        while True:
+            for p in self.popen_mains:
+                p.wait()
+            if not self.is_restarting:
+                break
+
+        with mutex:
+            for p in self.popen_daemons:
+                p.terminate()
+            self.popen_daemons.clear()
 
         self.is_running = False
         self.is_terminated = True
-        self._on_finish()
+
         super().wait()
+        self._on_finish()
+
+    def _on_finish(self) -> None:
+        raise NotImplementedError()
 
     def restart(self) -> None:
+        if self.is_restarting:
+            return
+        if self.is_terminated:
+            return
         if not self.is_running:
             return
 
-        self.is_running = False
         self.is_restarting = True
 
-        for p in self.popen_mains:
-            p.terminate()
-        for p in self.popen_daemons:
-            p.terminate()
+        with mutex:
+            for p in self.popen_mains:
+                p.terminate()
+            for p in self.popen_daemons:
+                p.terminate()
 
-        self.popen_mains.clear()
-        self.popen_daemons.clear()
-        self.threads.clear()
+            self.popen_mains.clear()
+            self.popen_daemons.clear()
+
+        self.is_running = False
+        self._join_threads()
 
         self.bootstrap()
-        self.is_running = True
         self.is_restarting = False
 
     @override
@@ -182,9 +209,6 @@ class popen_entry(base_entry):
 
     def bootstrap(self) -> None:
         raise NotImplementedError()
-
-    def _on_finish(self) -> None:
-        pass
 
 
 @dataclasses.dataclass(kw_only=True, unsafe_hash=True)
@@ -392,7 +416,7 @@ class routine:
     For entries in the `self.entries` list field:
     - Entries evaluate stage (1) synchronously in forwards order.
     - Entries evaluate stage (2) asynchronously.
-        - If an entry calls `kill` whilst in stage (2), forcibly terminate *all* the entries in the `self.entries` list field.
+        - If an entry calls `stop_routine` whilst in stage (2), forcibly terminate *all* the entries in the `self.entries` list field.
     '''
     entries: list[base_entry]
 
@@ -400,6 +424,7 @@ class routine:
         super().__init__()
         self.entries = []
         for p in param_list:
+            assert p.routine is None
             self.entries.append(p)
             p.routine = self
             p.process()
@@ -423,7 +448,3 @@ class routine:
     def stop(self) -> None:
         for e in self.entries:
             e.stop()
-
-    def kill(self) -> None:
-        for e in self.entries:
-            e.kill()

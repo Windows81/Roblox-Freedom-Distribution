@@ -1,5 +1,4 @@
-import io
-from typing import IO, override
+from typing import override
 import dataclasses
 import subprocess
 import threading
@@ -7,7 +6,6 @@ import time
 import json
 import os
 
-# Local application/library specific imports
 from config_type.types import structs, wrappers, callable
 from .. import _logic as logic
 import util.const as const
@@ -220,7 +218,7 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
             return
         assert stdout is not None
 
-        while True:
+        while proc.poll() is None:
             line = stdout.readline()
 
             self.logger_obj.log(
@@ -230,14 +228,14 @@ class obj_type(logic.bin_entry, logic.gameconfig_entry):
 
             action = log_action.check(line)
 
-            # The `restart` and `kill` methods must take place in a new thread.
-            # It waits for *this* thread to finish running.
+            # The `restart` and `stop` methods must take place in a new thread.
+            # These function wait for *this* thread to finish running.
             match action:
                 case log_action.LogAction.RESTART:
                     threading.Thread(target=self.restart).start()
                     break
                 case log_action.LogAction.TERMINATE:
-                    threading.Thread(target=self.kill).start()
+                    threading.Thread(target=self.stop).start()
                     break
                 case log_action.LogAction.READY:
                     # TODO: make RCC logging more speedy.
