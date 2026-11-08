@@ -40,7 +40,8 @@ def _(
 ) -> None:
     subparser.add_argument(
         '--rbx_version', '-v',
-        type=util.versions.rōblox.from_name,
+        # `choices` is checked against the value *after* `type` runs, so
+        # converting here makes every name fail.  Names are converted below.
         choices=[
             name
             for v in util.versions.rōblox.get_all_versions()
@@ -51,7 +52,6 @@ def _(
     )
     subparser.add_argument(
         '--bin_subtype', '-b',
-        type=util.resource.bin_subtype,
         choices=[v.value for v in util.resource.bin_subtype],
         help='directories to download',
         nargs='+', required=True,
@@ -74,15 +74,31 @@ def _(
     args_ns: argparse.Namespace,
 ) -> list[logic.base_entry]:
 
-    for bin_type in args_ns.bin_subtype:
-        force_overwrite = prompt_overwrite(
-            rōblox_version=args_ns.rbx_version,
-            bin_type=bin_type,
-        )
-        download.bootstrap_binary(
-            rōblox_version=args_ns.rbx_version,
-            bin_type=bin_type,
-            force_overwrite=force_overwrite,
-            log_filter=logger.PRINT_REASONABLE,
-        )
+    # `nargs='+'` gives lists; de-duplicate aliases such as `2018M` and `2018`.
+    rōblox_versions = list(dict.fromkeys(
+        util.versions.rōblox.from_name(name)
+        for name in args_ns.rbx_version
+    ))
+    bin_types = list(dict.fromkeys(
+        util.resource.bin_subtype(name)
+        for name in args_ns.bin_subtype
+    ))
+
+    for rōblox_version in rōblox_versions:
+        for bin_type in bin_types:
+            if args_ns.force_update_bins:
+                force_overwrite = True
+            elif args_ns.skip_existing_bins:
+                force_overwrite = False
+            else:
+                force_overwrite = prompt_overwrite(
+                    rōblox_version=rōblox_version,
+                    bin_type=bin_type,
+                )
+            download.bootstrap_binary(
+                rōblox_version=rōblox_version,
+                bin_type=bin_type,
+                force_overwrite=force_overwrite,
+                log_filter=logger.PRINT_REASONABLE,
+            )
     return []
