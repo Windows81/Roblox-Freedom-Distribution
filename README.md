@@ -427,7 +427,7 @@ Objects transformed include:
 
 Some modern programs do weird things to client-side scripts. They use `Script` class objects, but with a [`RunContext`](https://setup-rbxcdn.github.io/ref/class/BaseScript.html#member-RunContext) property set to [`"Client"`](https://setup-rbxcdn.github.io/ref/enum/RunContext.html#member-Client). You will also need to _manually_ convert these objects to `LocalScripts`.
 
-Parsing union operations done in current-day Studio still needs work. This is because CSGv2 support was completely removed in late 2022.
+Parsing union operations done in current-day Studio is not perfect, but it works as long as scaling was done uniformly prior to conversion. This is because CSGv2 support was completely removed in late 2022.
 
 If you need any help, please shoot me an issue on GitHub or a message to an account with some form of 'VisualPlugin' elsewhere.
 
